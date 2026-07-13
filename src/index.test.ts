@@ -24,7 +24,9 @@ const EXPECTED_EXPORTS = new Set([
 	"ConfirmDialog",
 	"controlVariants",
 	"cva",
+	"DataTable",
 	"DateTimePicker",
+	"DEFAULT_PAGE_SIZE",
 	"FieldError",
 	"FieldHint",
 	"FileUpload",
@@ -34,6 +36,7 @@ const EXPECTED_EXPORTS = new Set([
 	"Label",
 	"Loading",
 	"loadingVariants",
+	"MAX_PAGE_SIZE",
 	"Modal",
 	"NumberInput",
 	"Portal",
@@ -54,7 +57,10 @@ const EXPECTED_EXPORTS = new Set([
 	"Toggle",
 	"Tooltip",
 	"TopNav",
+	"applyRowTransaction",
+	"buildDefaultQuery",
 	"toastVariants",
+	"useDataTableRows",
 	"useDebounce",
 ]);
 

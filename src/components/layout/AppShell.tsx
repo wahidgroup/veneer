@@ -3,9 +3,9 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "../../utils/cn.js";
 
-/** Tailwind `md` ceiling — below this is mobile drawer mode. */
+/** Tailwind `md` ceiling - below this is mobile drawer mode. */
 const APP_SHELL_MOBILE_MAX_PX = 767;
-/** Tailwind `lg` ceiling — below this (and above mobile) is tablet icon rail. */
+/** Tailwind `lg` ceiling - below this (and above mobile) is tablet icon rail. */
 const APP_SHELL_TABLET_MAX_PX = 1023;
 
 const APP_SHELL_MOBILE_QUERY = `(max-width: ${String(APP_SHELL_MOBILE_MAX_PX)}px)`;
@@ -271,7 +271,10 @@ function AppShell({
 		);
 
 		if (railIsCollapsed) {
-			railClass = cn(railClass, "w-0 overflow-hidden border-l-0");
+			railClass = cn(
+				railClass,
+				"w-0 min-w-0 shrink overflow-hidden border-l-0",
+			);
 		} else if (isMobile) {
 			railClass = cn(
 				railClass,

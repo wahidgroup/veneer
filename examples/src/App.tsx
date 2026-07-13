@@ -1,4 +1,5 @@
-import { useEffect, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 import {
 	Boxes,
 	FormInput,
@@ -8,6 +9,7 @@ import {
 	PanelRight,
 	PanelRightClose,
 	Sun,
+	Table2,
 } from "lucide-react";
 
 import {
@@ -54,6 +56,9 @@ function categoryIcon(id: CategoryId): ReactNode {
 	if (id === "combobox") {
 		return <ListTree className="size-4 shrink-0" aria-hidden="true" />;
 	}
+	if (id === "data") {
+		return <Table2 className="size-4 shrink-0" aria-hidden="true" />;
+	}
 
 	return <LayoutTemplate className="size-4 shrink-0" aria-hidden="true" />;
 }
@@ -70,6 +75,9 @@ function parseCategoryId(value: string): CategoryId | null {
 	}
 	if (value === "shell") {
 		return "shell";
+	}
+	if (value === "data") {
+		return "data";
 	}
 
 	return null;
@@ -196,7 +204,7 @@ function App() {
 	});
 
 	return (
-		<DemoProvider key={category}>
+		<DemoProvider key={`${category}:${component}`}>
 			<AppShell
 				sidebarCollapsed={sidebarCollapsed}
 				onSidebarCollapsedChange={setSidebarCollapsed}

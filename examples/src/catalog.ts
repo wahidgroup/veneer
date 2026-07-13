@@ -1,4 +1,4 @@
-type CategoryId = "primitives" | "forms" | "combobox" | "shell";
+type CategoryId = "primitives" | "forms" | "combobox" | "shell" | "data";
 
 interface CatalogComponent {
 	id: string;
@@ -184,6 +184,24 @@ const CATALOG: CatalogCategory[] = [
 			},
 		],
 	},
+	{
+		id: "data",
+		label: "Data",
+		components: [
+			{
+				id: "server-page",
+				label: "Server page",
+				description:
+					"Server-driven paging, sort, search, and column filters. Mock API returns one page plus rowCount.",
+			},
+			{
+				id: "live-patch",
+				label: "Live patch",
+				description:
+					"applyRowTransaction / useDataTableRows patch the current result set by stable row id.",
+			},
+		],
+	},
 ];
 
 function getCategory(id: CategoryId): CatalogCategory {
@@ -205,6 +223,7 @@ function getComponent(
 			return component;
 		}
 	}
+
 	return category.components[0];
 }
 

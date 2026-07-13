@@ -187,6 +187,7 @@ describe("AppShell", () => {
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(root).toHaveAttribute("data-rail-collapsed", "true");
 		expect(rail).toHaveAttribute("data-collapsed", "true");
+		expect(rail).toHaveClass("w-0", "min-w-0", "overflow-hidden");
 	});
 
 	it("locks the shell and scrolls main as the primary pane", () => {

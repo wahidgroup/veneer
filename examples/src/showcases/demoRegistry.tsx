@@ -8,6 +8,12 @@ import {
 	ComboboxCategoryProvider,
 } from "./comboboxDemos.js";
 import {
+	LivePatchCanvas,
+	LivePatchKnobs,
+	ServerPageCanvas,
+	ServerPageKnobs,
+} from "./dataDemos.js";
+import {
 	ChoicesCanvas,
 	ChoicesDemoProvider,
 	ChoicesKnobs,
@@ -191,12 +197,26 @@ const SHELL: Record<string, DemoEntry> = {
 	},
 };
 
+const DATA: Record<string, DemoEntry> = {
+	"server-page": {
+		Provider: PassthroughProvider,
+		Canvas: ServerPageCanvas,
+		Knobs: ServerPageKnobs,
+	},
+	"live-patch": {
+		Provider: PassthroughProvider,
+		Canvas: LivePatchCanvas,
+		Knobs: LivePatchKnobs,
+	},
+};
+
 function getDemo(category: CategoryId, component: string): DemoEntry {
 	if (category === "primitives") {
 		const entry = PRIMITIVES[component];
 		if (entry !== undefined) {
 			return entry;
 		}
+
 		return PRIMITIVES.alert;
 	}
 	if (category === "forms") {
@@ -204,6 +224,7 @@ function getDemo(category: CategoryId, component: string): DemoEntry {
 		if (entry !== undefined) {
 			return entry;
 		}
+
 		return FORMS["form-field"];
 	}
 	if (category === "combobox") {
@@ -213,11 +234,20 @@ function getDemo(category: CategoryId, component: string): DemoEntry {
 			Knobs: ComboboxCategoryKnobs,
 		};
 	}
+	if (category === "data") {
+		const entry = DATA[component];
+		if (entry !== undefined) {
+			return entry;
+		}
+
+		return DATA["server-page"];
+	}
 
 	const entry = SHELL[component];
 	if (entry !== undefined) {
 		return entry;
 	}
+
 	return SHELL["app-shell"];
 }
 

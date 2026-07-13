@@ -51,6 +51,24 @@ export { ConfirmDialog } from "./components/overlays/ConfirmDialog.js";
 export type { ConfirmDialogProps } from "./components/overlays/ConfirmDialog.js";
 export { DateTimePicker } from "./components/forms/DateTimePicker.js";
 export type { DateTimePickerProps } from "./components/forms/DateTimePicker.js";
+export {
+	DataTable,
+	DEFAULT_PAGE_SIZE,
+	MAX_PAGE_SIZE,
+	buildDefaultQuery,
+} from "./components/data/DataTable.js";
+export type {
+	DataTableColumn,
+	DataTableColumnFilter,
+	DataTableColumnMeta,
+	DataTableProps,
+	DataTableQuery,
+	DataTableRowSelection,
+	DataTableSort,
+} from "./components/data/DataTable.js";
+export { applyRowTransaction } from "./components/data/applyRowTransaction.js";
+export type { RowTransaction } from "./components/data/applyRowTransaction.js";
+export { useDataTableRows } from "./components/data/useDataTableRows.js";
 export { FieldError } from "./components/forms/FieldError.js";
 export type { FieldErrorProps } from "./components/forms/FieldError.js";
 export { FieldHint } from "./components/forms/FieldHint.js";
