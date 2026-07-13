@@ -196,7 +196,7 @@ function App() {
 	});
 
 	return (
-		<DemoProvider key={`${category}-${component}`}>
+		<DemoProvider key={category}>
 			<AppShell
 				sidebarCollapsed={sidebarCollapsed}
 				onSidebarCollapsedChange={setSidebarCollapsed}
@@ -277,9 +277,14 @@ function App() {
 				}
 				rail={<DemoKnobs />}
 			>
-				<div className="flex flex-col gap-4 p-4">
-					<Breadcrumbs items={breadcrumbItems} />
-					{mainBody}
+				<div className="flex min-h-full flex-col">
+					<div className="flex flex-1 flex-col gap-4 p-4">
+						<Breadcrumbs items={breadcrumbItems} />
+						{mainBody}
+					</div>
+					<footer className="shrink-0 border-t border-border px-4 py-3 text-xs text-muted-foreground">
+						© 2026 Wahid Group, LLC.
+					</footer>
 				</div>
 			</AppShell>
 		</DemoProvider>

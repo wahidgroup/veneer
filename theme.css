@@ -26,10 +26,10 @@
 	--shadow-md: 0 2px 4px -1px rgb(0 0 0 / 0.12);
 	--shadow-lg: 0 4px 8px -2px rgb(0 0 0 / 0.16);
 
-	--z-dropdown: 50;
-	--z-modal: 100;
-	--z-toast: 9999;
-	--z-tooltip: 99999;
+	--z-index-dropdown: 50;
+	--z-index-modal: 100;
+	--z-index-toast: 9999;
+	--z-index-tooltip: 99999;
 }
 
 /* ========================================================================
