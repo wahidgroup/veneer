@@ -42,19 +42,19 @@ describe("TopNav", () => {
 		expect(clicks).toBe(1);
 	});
 
-	it("uses a custom menu label", () => {
+	it("exposes menuExpanded on the menu button", () => {
 		render(
 			<TopNav
 				brand="Veneer"
+				menuExpanded
 				onMenuClick={() => {
 					return;
 				}}
-				menuLabel="Open nav"
 			/>,
 		);
 		expect(
-			screen.getByRole("button", { name: "Open nav" }),
-		).toBeInTheDocument();
+			screen.getByRole("button", { name: "Toggle sidebar" }),
+		).toHaveAttribute("aria-expanded", "true");
 	});
 
 	it("merges className onto the root", () => {

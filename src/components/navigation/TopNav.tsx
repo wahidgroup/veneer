@@ -11,6 +11,8 @@ interface TopNavProps extends Omit<ComponentProps<"div">, "children"> {
 	children?: ReactNode;
 	onMenuClick?: () => void;
 	menuLabel?: string;
+	/** Reflects sidebar / drawer open state for `aria-expanded`. */
+	menuExpanded?: boolean;
 }
 
 /**
@@ -23,6 +25,7 @@ function TopNav({
 	children,
 	onMenuClick,
 	menuLabel,
+	menuExpanded,
 	className,
 	...rest
 }: TopNavProps) {
@@ -31,11 +34,15 @@ function TopNav({
 
 	let menuNode: ReactNode = null;
 	if (onMenuClick !== undefined) {
+		let expanded = menuExpanded;
+		expanded ??= false;
+
 		menuNode = (
 			<Button
 				variant="ghost"
 				size="icon"
 				aria-label={resolvedMenuLabel}
+				aria-expanded={expanded}
 				onClick={onMenuClick}
 			>
 				<Menu className="size-4" aria-hidden="true" />

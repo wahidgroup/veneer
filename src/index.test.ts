@@ -6,6 +6,12 @@ import * as lib from "./index.js";
  */
 const EXPECTED_EXPORTS = new Set([
 	"ActionMenu",
+	"Alert",
+	"alertVariants",
+	"APP_SHELL_COMPACT_QUERY",
+	"APP_SHELL_MOBILE_MAX_PX",
+	"APP_SHELL_MOBILE_QUERY",
+	"APP_SHELL_TABLET_MAX_PX",
 	"AppShell",
 	"Badge",
 	"badgeVariants",
@@ -32,6 +38,7 @@ const EXPECTED_EXPORTS = new Set([
 	"NumberInput",
 	"Portal",
 	"RadioGroup",
+	"resolveAppShellViewport",
 	"SearchInput",
 	"Select",
 	"SideNav",

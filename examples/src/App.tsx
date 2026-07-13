@@ -1,49 +1,35 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ReactNode } from "react";
+import {
+	Boxes,
+	FormInput,
+	LayoutTemplate,
+	ListTree,
+	Moon,
+	PanelRight,
+	PanelRightClose,
+	Sun,
+} from "lucide-react";
 
 import {
+	AppShell,
+	Breadcrumbs,
 	Button,
+	SideNav,
 	Tabs,
 	TabsList,
 	TabsPanel,
 	TabsTrigger,
+	TopNav,
 } from "@wahidgroup/veneer";
 
-import { ComboboxShowcase } from "./showcases/ComboboxShowcase.js";
-import { FormsShowcase } from "./showcases/FormsShowcase.js";
-import { PrimitivesShowcase } from "./showcases/PrimitivesShowcase.js";
-import { ShellShowcase } from "./showcases/ShellShowcase.js";
-
-type CategoryId = "primitives" | "forms" | "combobox" | "shell";
-
-interface Category {
-	id: CategoryId;
-	label: string;
-	description: string;
-}
-
-const CATEGORIES: Category[] = [
-	{
-		id: "primitives",
-		label: "Primitives",
-		description:
-			"Button, Badge, Loading, Tabs, Modal, ConfirmDialog, Tooltip, ActionMenu, Toast",
-	},
-	{
-		id: "forms",
-		label: "Forms",
-		description: "Inputs, tags, files, schedule, toggles, search",
-	},
-	{
-		id: "combobox",
-		label: "Combobox",
-		description: "Search select, multi chips, loading / invalid / disabled",
-	},
-	{
-		id: "shell",
-		label: "Shell",
-		description: "AppShell, TopNav, SideNav, Breadcrumbs",
-	},
-];
+import { getDemo } from "./showcases/demoRegistry.js";
+import {
+	CATALOG,
+	firstComponentId,
+	getCategory,
+	getComponent,
+	type CategoryId,
+} from "./catalog.js";
 
 type ThemeMode = "light" | "dark";
 
@@ -58,13 +44,58 @@ function readSystemTheme(): ThemeMode {
 	return "light";
 }
 
+function categoryIcon(id: CategoryId): ReactNode {
+	if (id === "primitives") {
+		return <Boxes className="size-4 shrink-0" aria-hidden="true" />;
+	}
+	if (id === "forms") {
+		return <FormInput className="size-4 shrink-0" aria-hidden="true" />;
+	}
+	if (id === "combobox") {
+		return <ListTree className="size-4 shrink-0" aria-hidden="true" />;
+	}
+
+	return <LayoutTemplate className="size-4 shrink-0" aria-hidden="true" />;
+}
+
+function parseCategoryId(value: string): CategoryId | null {
+	if (value === "primitives") {
+		return "primitives";
+	}
+	if (value === "forms") {
+		return "forms";
+	}
+	if (value === "combobox") {
+		return "combobox";
+	}
+	if (value === "shell") {
+		return "shell";
+	}
+
+	return null;
+}
+
+function categoryShowsTabs(categoryId: CategoryId): boolean {
+	const category = getCategory(categoryId);
+	if (category.showTabs === false) {
+		return false;
+	}
+
+	return true;
+}
+
 /**
- * Category-switcher shell for Veneer showcases.
+ * Live AppShell host: category SideNav, optional component Tabs, knobs rail, theme toggle.
  */
 function App() {
 	const [category, setCategory] = useState<CategoryId>("primitives");
+	const [component, setComponent] = useState(() => {
+		return firstComponentId("primitives");
+	});
 	const [theme, setTheme] = useState<ThemeMode>(readSystemTheme);
 	const [themePinned, setThemePinned] = useState(false);
+	const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+	const [railCollapsed, setRailCollapsed] = useState(false);
 
 	useEffect(() => {
 		document.documentElement.setAttribute("data-theme", theme);
@@ -86,91 +117,172 @@ function App() {
 		};
 	}, [themePinned]);
 
-	let nextTheme: ThemeMode = "dark";
+	const activeCategory = getCategory(category);
+	const activeComponent = getComponent(category, component);
+	const showTabs = categoryShowsTabs(category);
+	const demo = getDemo(category, component);
+	const DemoProvider = demo.Provider;
+	const DemoCanvas = demo.Canvas;
+	const DemoKnobs = demo.Knobs;
+
+	let themeLabel = "Switch to dark theme";
+	let themeIcon: ReactNode = <Moon className="size-4" aria-hidden="true" />;
 	if (theme === "dark") {
-		nextTheme = "light";
+		themeLabel = "Switch to light theme";
+		themeIcon = <Sun className="size-4" aria-hidden="true" />;
 	}
 
-	let activeDescription = "";
-	for (const item of CATEGORIES) {
-		if (item.id === category) {
-			activeDescription = item.description;
-		}
+	let railLabel = "Collapse controls";
+	let railIcon: ReactNode = (
+		<PanelRightClose className="size-4" aria-hidden="true" />
+	);
+	if (railCollapsed) {
+		railLabel = "Expand controls";
+		railIcon = <PanelRight className="size-4" aria-hidden="true" />;
 	}
 
-	return (
-		<div className="min-h-full">
+	const breadcrumbItems = [
+		{ label: "Examples" },
+		{ label: activeCategory.label },
+	];
+	if (showTabs) {
+		breadcrumbItems.push({ label: activeComponent.label });
+	}
+
+	let mainBody: ReactNode;
+	if (showTabs) {
+		mainBody = (
 			<Tabs
-				value={category}
+				value={component}
 				onValueChange={(next) => {
-					if (next === "primitives") {
-						setCategory("primitives");
-						return;
-					}
-					if (next === "forms") {
-						setCategory("forms");
-						return;
-					}
-					if (next === "combobox") {
-						setCategory("combobox");
-						return;
-					}
-					if (next === "shell") {
-						setCategory("shell");
-					}
+					setComponent(next);
 				}}
 			>
-				<header className="border-b border-border bg-card">
-					<div className="mx-auto flex max-w-5xl flex-col gap-4 px-4 py-6 sm:flex-row sm:items-end sm:justify-between">
-						<div className="flex flex-col gap-1">
-							<p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-								@wahidgroup/veneer
-							</p>
-							<h1 className="text-2xl font-semibold text-foreground">
-								Examples
-							</h1>
-							<p className="text-sm text-muted-foreground">
-								{activeDescription}
-							</p>
-						</div>
-						<Button
-							variant="outlined"
-							onClick={() => {
-								setThemePinned(true);
-								setTheme(nextTheme);
-							}}
-						>
-							Theme: {theme}
-						</Button>
-					</div>
-					<nav className="mx-auto max-w-5xl px-4">
-						<TabsList aria-label="Component categories">
-							{CATEGORIES.map((item) => {
-								return (
-									<TabsTrigger key={item.id} value={item.id}>
-										{item.label}
-									</TabsTrigger>
-								);
-							})}
-						</TabsList>
-					</nav>
-				</header>
-				<main className="mx-auto max-w-5xl px-4 pb-16">
-					<TabsPanel value="primitives">
-						<PrimitivesShowcase />
-					</TabsPanel>
-					<TabsPanel value="forms">
-						<FormsShowcase />
-					</TabsPanel>
-					<TabsPanel value="combobox">
-						<ComboboxShowcase />
-					</TabsPanel>
-					<TabsPanel value="shell">
-						<ShellShowcase />
-					</TabsPanel>
-				</main>
+				<TabsList aria-label="Components">
+					{activeCategory.components.map((item) => {
+						return (
+							<TabsTrigger key={item.id} value={item.id}>
+								{item.label}
+							</TabsTrigger>
+						);
+					})}
+				</TabsList>
+				{activeCategory.components.map((item) => {
+					let panel: ReactNode = null;
+					if (item.id === component) {
+						panel = <DemoCanvas />;
+					}
+
+					return (
+						<TabsPanel key={item.id} value={item.id}>
+							{panel}
+						</TabsPanel>
+					);
+				})}
 			</Tabs>
-		</div>
+		);
+	} else {
+		mainBody = <DemoCanvas />;
+	}
+
+	const sideItems = CATALOG.map((item) => {
+		return {
+			id: item.id,
+			label: item.label,
+			href: `#${item.id}`,
+			icon: categoryIcon(item.id),
+			active: item.id === category,
+		};
+	});
+
+	return (
+		<DemoProvider key={`${category}-${component}`}>
+			<AppShell
+				sidebarCollapsed={sidebarCollapsed}
+				onSidebarCollapsedChange={setSidebarCollapsed}
+				railCollapsed={railCollapsed}
+				onRailCollapsedChange={setRailCollapsed}
+				header={
+					<TopNav
+						brand="@wahidgroup/veneer"
+						menuExpanded={!sidebarCollapsed}
+						onMenuClick={() => {
+							setSidebarCollapsed(!sidebarCollapsed);
+						}}
+						end={
+							<div className="flex items-center gap-1">
+								<Button
+									variant="ghost"
+									size="icon"
+									aria-label={themeLabel}
+									onClick={() => {
+										setThemePinned(true);
+										if (theme === "dark") {
+											setTheme("light");
+											return;
+										}
+										setTheme("dark");
+									}}
+								>
+									{themeIcon}
+								</Button>
+								<Button
+									variant="ghost"
+									size="icon"
+									aria-label={railLabel}
+									aria-pressed={!railCollapsed}
+									aria-expanded={!railCollapsed}
+									onClick={() => {
+										setRailCollapsed(!railCollapsed);
+									}}
+								>
+									{railIcon}
+								</Button>
+							</div>
+						}
+					/>
+				}
+				sidebar={
+					<SideNav
+						collapsed={sidebarCollapsed}
+						items={sideItems}
+						renderLink={({
+							href,
+							children,
+							className,
+							...rest
+						}) => {
+							return (
+								<a
+									href={href}
+									className={className}
+									onClick={(event) => {
+										event.preventDefault();
+										const next = parseCategoryId(
+											href.replace("#", ""),
+										);
+										if (next === null) {
+											return;
+										}
+										setCategory(next);
+										setComponent(firstComponentId(next));
+									}}
+									{...rest}
+								>
+									{children}
+								</a>
+							);
+						}}
+					/>
+				}
+				rail={<DemoKnobs />}
+			>
+				<div className="flex flex-col gap-4 p-4">
+					<Breadcrumbs items={breadcrumbItems} />
+					{mainBody}
+				</div>
+			</AppShell>
+		</DemoProvider>
 	);
 }
 

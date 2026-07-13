@@ -1,0 +1,1552 @@
+import { createContext, useContext, useState, type ReactNode } from "react";
+
+import {
+	ActionMenu,
+	Alert,
+	Badge,
+	Button,
+	ConfirmDialog,
+	Loading,
+	Modal,
+	NumberInput,
+	Select,
+	Slider,
+	Tabs,
+	TabsList,
+	TabsPanel,
+	TabsTrigger,
+	Toast,
+	ToastViewport,
+	Toggle,
+	Tooltip,
+} from "@wahidgroup/veneer";
+import type {
+	AlertType,
+	ToastFade,
+	ToastPosition,
+	ToastType,
+} from "@wahidgroup/veneer";
+
+import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
+
+interface DemoToast {
+	id: number;
+	message: string;
+	type: ToastType;
+	duration: number;
+	opacity: number;
+	fade: ToastFade;
+	withActions: boolean;
+}
+
+const TOAST_POSITIONS: { value: ToastPosition; label: string }[] = [
+	{ value: "top-right", label: "Top right" },
+	{ value: "top-left", label: "Top left" },
+	{ value: "bottom-right", label: "Bottom right" },
+	{ value: "bottom-left", label: "Bottom left" },
+];
+
+interface ToastDemoValue {
+	pushToast: (type: ToastType, message: string) => void;
+	toastPosition: ToastPosition;
+	setToastPosition: (value: ToastPosition) => void;
+	toastDuration: number;
+	setToastDuration: (value: number) => void;
+	toastOpacity: number;
+	setToastOpacity: (value: number) => void;
+	toastFade: boolean;
+	setToastFade: (value: boolean) => void;
+	toastEnterMs: number;
+	setToastEnterMs: (value: number) => void;
+	toastExitMs: number;
+	setToastExitMs: (value: number) => void;
+	toastActions: boolean;
+	setToastActions: (value: boolean) => void;
+	toasts: DemoToast[];
+	dismissToast: (id: number) => void;
+	lastAction: string;
+	setLastAction: (value: string) => void;
+}
+
+const ToastDemoContext = createContext<ToastDemoValue | null>(null);
+
+function useToastDemo(): ToastDemoValue {
+	const value = useContext(ToastDemoContext);
+	if (value === null) {
+		throw new Error("ToastDemoProvider required");
+	}
+	return value;
+}
+
+function ToastDemoProvider({ children }: { children: ReactNode }) {
+	const [toasts, setToasts] = useState<DemoToast[]>([]);
+	const [toastSeq, setToastSeq] = useState(0);
+	const [toastPosition, setToastPosition] =
+		useState<ToastPosition>("top-right");
+	const [toastDuration, setToastDuration] = useState(4000);
+	const [toastOpacity, setToastOpacity] = useState(0.95);
+	const [toastFade, setToastFade] = useState(true);
+	const [toastEnterMs, setToastEnterMs] = useState(200);
+	const [toastExitMs, setToastExitMs] = useState(200);
+	const [toastActions, setToastActions] = useState(false);
+	const [lastAction, setLastAction] = useState("none");
+
+	function pushToast(type: ToastType, message: string) {
+		const id = toastSeq + 1;
+		setToastSeq(id);
+
+		let fade: ToastFade = false;
+		if (toastFade) {
+			fade = { enterMs: toastEnterMs, exitMs: toastExitMs };
+		}
+
+		setToasts((prev) => {
+			return [
+				...prev,
+				{
+					id,
+					message,
+					type,
+					duration: toastDuration,
+					opacity: toastOpacity,
+					fade,
+					withActions: toastActions,
+				},
+			];
+		});
+	}
+
+	function dismissToast(id: number) {
+		setToasts((prev) => {
+			return prev.filter((toast) => {
+				return toast.id !== id;
+			});
+		});
+	}
+
+	const value: ToastDemoValue = {
+		pushToast,
+		toastPosition,
+		setToastPosition,
+		toastDuration,
+		setToastDuration,
+		toastOpacity,
+		setToastOpacity,
+		toastFade,
+		setToastFade,
+		toastEnterMs,
+		setToastEnterMs,
+		toastExitMs,
+		setToastExitMs,
+		toastActions,
+		setToastActions,
+		toasts,
+		dismissToast,
+		lastAction,
+		setLastAction,
+	};
+
+	return (
+		<ToastDemoContext.Provider value={value}>
+			{children}
+		</ToastDemoContext.Provider>
+	);
+}
+
+function ToastCanvas() {
+	const demo = useToastDemo();
+
+	return (
+		<Canvas>
+			<ToastViewport position={demo.toastPosition}>
+				{demo.toasts.map((toast) => {
+					let actions;
+					if (toast.withActions) {
+						actions = [
+							{
+								label: "Undo",
+								onClick: () => {
+									demo.setLastAction("toast-undo");
+									demo.dismissToast(toast.id);
+								},
+							},
+							{
+								label: "Details",
+								onClick: () => {
+									demo.setLastAction("toast-details");
+								},
+							},
+						];
+					}
+
+					return (
+						<Toast
+							key={toast.id}
+							message={toast.message}
+							type={toast.type}
+							actions={actions}
+							duration={toast.duration}
+							opacity={toast.opacity}
+							fade={toast.fade}
+							onClose={() => {
+								demo.dismissToast(toast.id);
+							}}
+						/>
+					);
+				})}
+			</ToastViewport>
+			<DemoRow label="Push">
+				<Button
+					variant="outlined"
+					size="sm"
+					onClick={() => {
+						demo.pushToast("success", "Change set apply accepted");
+					}}
+				>
+					Success
+				</Button>
+				<Button
+					variant="outlined"
+					size="sm"
+					onClick={() => {
+						demo.pushToast("error", "Stack update failed");
+					}}
+				>
+					Error
+				</Button>
+				<Button
+					variant="outlined"
+					size="sm"
+					onClick={() => {
+						demo.pushToast("info", "Drift detection started");
+					}}
+				>
+					Info
+				</Button>
+				<Button
+					variant="outlined"
+					size="sm"
+					onClick={() => {
+						demo.pushToast("warning", "Quota nearing limit");
+					}}
+				>
+					Warning
+				</Button>
+			</DemoRow>
+			<p className="text-sm text-muted-foreground">
+				Last action: {demo.lastAction}
+			</p>
+		</Canvas>
+	);
+}
+
+function ToastKnobs() {
+	const demo = useToastDemo();
+
+	return (
+		<RailPanel
+			title="Toast"
+			description="Knobs feed the next push. Stack inherits viewport corner."
+		>
+			<DemoRow
+				label="Position"
+				description="Corner of the viewport where the toast stack appears."
+			>
+				<Select
+					id="toast-position"
+					options={TOAST_POSITIONS}
+					value={demo.toastPosition}
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "top-right") {
+							demo.setToastPosition("top-right");
+							return;
+						}
+						if (next === "top-left") {
+							demo.setToastPosition("top-left");
+							return;
+						}
+						if (next === "bottom-right") {
+							demo.setToastPosition("bottom-right");
+							return;
+						}
+						if (next === "bottom-left") {
+							demo.setToastPosition("bottom-left");
+						}
+					}}
+					aria-label="Toast position"
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Duration"
+				description="Auto-dismiss delay in ms. Use 0 to keep the toast until closed."
+			>
+				<NumberInput
+					id="toast-duration"
+					min={0}
+					step={500}
+					value={demo.toastDuration}
+					aria-label="Toast duration"
+					onValueChange={(value) => {
+						let next = 0;
+						if (value !== undefined) {
+							next = value;
+						}
+						demo.setToastDuration(next);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Opacity"
+				description={`Panel opacity for the next toast (${demo.toastOpacity.toFixed(2)}).`}
+			>
+				<Slider
+					id="toast-opacity"
+					min={0.2}
+					max={1}
+					step={0.05}
+					value={demo.toastOpacity}
+					aria-label="Toast opacity"
+					onValueChange={(value) => {
+						demo.setToastOpacity(value);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Fade"
+				description="Animate enter and exit. Enter/exit ms apply when fade is on."
+			>
+				<Toggle
+					checked={demo.toastFade}
+					label="Fade enter/exit"
+					onCheckedChange={demo.setToastFade}
+				/>
+				<NumberInput
+					id="toast-enter-ms"
+					min={0}
+					step={50}
+					disabled={!demo.toastFade}
+					value={demo.toastEnterMs}
+					aria-label="Enter fade ms"
+					onValueChange={(value) => {
+						let next = 0;
+						if (value !== undefined) {
+							next = value;
+						}
+						demo.setToastEnterMs(next);
+					}}
+				/>
+				<NumberInput
+					id="toast-exit-ms"
+					min={0}
+					step={50}
+					disabled={!demo.toastFade}
+					value={demo.toastExitMs}
+					aria-label="Exit fade ms"
+					onValueChange={(value) => {
+						let next = 0;
+						if (value !== undefined) {
+							next = value;
+						}
+						demo.setToastExitMs(next);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Actions"
+				description="Attach Undo and Details action buttons to the next toast."
+			>
+				<Toggle
+					checked={demo.toastActions}
+					label="Include Undo / Details"
+					onCheckedChange={demo.setToastActions}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+type AlertDemoType = AlertType;
+
+interface AlertDemoValue {
+	type: AlertDemoType;
+	setType: (value: AlertDemoType) => void;
+	showTitle: boolean;
+	setShowTitle: (value: boolean) => void;
+}
+
+const AlertDemoContext = createContext<AlertDemoValue | null>(null);
+
+function useAlertDemo() {
+	const value = useContext(AlertDemoContext);
+	if (value === null) {
+		throw new Error("AlertDemoProvider required");
+	}
+	return value;
+}
+
+function AlertDemoProvider({ children }: { children: ReactNode }) {
+	const [type, setType] = useState<AlertDemoType>("info");
+	const [showTitle, setShowTitle] = useState(true);
+
+	return (
+		<AlertDemoContext.Provider
+			value={{ type, setType, showTitle, setShowTitle }}
+		>
+			{children}
+		</AlertDemoContext.Provider>
+	);
+}
+
+const ALERT_TYPE_OPTIONS = [
+	{ value: "info", label: "Info" },
+	{ value: "success", label: "Success" },
+	{ value: "warning", label: "Warning" },
+	{ value: "danger", label: "Danger" },
+];
+
+function AlertCanvas() {
+	const demo = useAlertDemo();
+
+	let title: string | undefined;
+	if (demo.showTitle) {
+		title = "Playground";
+	}
+
+	return (
+		<Canvas>
+			<DemoRow label="Playground">
+				<Alert
+					type={demo.type}
+					title={title}
+					className="w-full max-w-lg"
+				>
+					Controls in the rail change this notice type and title.
+				</Alert>
+			</DemoRow>
+			<DemoRow label="Types">
+				<div className="flex w-full max-w-lg flex-col gap-3">
+					<Alert type="info" title="Info">
+						Drift detection started for the selected stack.
+					</Alert>
+					<Alert type="success" title="Success">
+						Change set apply accepted.
+					</Alert>
+					<Alert type="warning" title="Warning">
+						Quota nearing the soft limit for this region.
+					</Alert>
+					<Alert type="danger" title="Danger">
+						Stack update failed. Review events before retrying.
+					</Alert>
+				</div>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function AlertKnobs() {
+	const demo = useAlertDemo();
+
+	return (
+		<RailPanel
+			title="Alert"
+			description="Static inline notice for page or panel context. Prefer Toast for ephemeral feedback."
+		>
+			<DemoRow
+				label="Type"
+				description="Severity tone for the playground alert (info, success, warning, danger)."
+			>
+				<Select
+					id="alert-type"
+					options={ALERT_TYPE_OPTIONS}
+					value={demo.type}
+					aria-label="Alert type"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "info") {
+							demo.setType("info");
+							return;
+						}
+						if (next === "success") {
+							demo.setType("success");
+							return;
+						}
+						if (next === "warning") {
+							demo.setType("warning");
+							return;
+						}
+						if (next === "danger") {
+							demo.setType("danger");
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Title"
+				description="Show or hide the bold title above the alert body."
+			>
+				<Toggle
+					label="Show title"
+					checked={demo.showTitle}
+					onCheckedChange={demo.setShowTitle}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+function ButtonCanvas() {
+	const demo = useButtonDemo();
+
+	return (
+		<Canvas>
+			<DemoRow label="Playground">
+				<Button
+					variant={demo.variant}
+					size={demo.size}
+					disabled={demo.disabled}
+				>
+					Action
+				</Button>
+			</DemoRow>
+			<DemoRow label="Variants">
+				<Button variant="filled">Filled</Button>
+				<Button variant="outlined">Outlined</Button>
+				<Button variant="text">Text</Button>
+				<Button variant="ghost">Ghost</Button>
+				<Button variant="secondary">Secondary</Button>
+				<Button variant="danger">Danger</Button>
+			</DemoRow>
+			<DemoRow label="Sizes">
+				<Button size="sm">Small</Button>
+				<Button size="md">Medium</Button>
+				<Button variant="ghost" size="icon" aria-label="Icon ghost">
+					×
+				</Button>
+				<Button variant="danger" size="icon" aria-label="Icon danger">
+					×
+				</Button>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+type ButtonVariant =
+	| "filled"
+	| "outlined"
+	| "text"
+	| "ghost"
+	| "secondary"
+	| "danger";
+type ButtonSize = "sm" | "md" | "icon";
+
+interface ButtonDemoValue {
+	variant: ButtonVariant;
+	setVariant: (value: ButtonVariant) => void;
+	size: ButtonSize;
+	setSize: (value: ButtonSize) => void;
+	disabled: boolean;
+	setDisabled: (value: boolean) => void;
+}
+
+const ButtonDemoContext = createContext<ButtonDemoValue | null>(null);
+
+function useButtonDemo() {
+	const value = useContext(ButtonDemoContext);
+	if (value === null) {
+		throw new Error("ButtonDemoProvider required");
+	}
+	return value;
+}
+
+function ButtonDemoProvider({ children }: { children: ReactNode }) {
+	const [variant, setVariant] = useState<ButtonVariant>("filled");
+	const [size, setSize] = useState<ButtonSize>("md");
+	const [disabled, setDisabled] = useState(false);
+
+	return (
+		<ButtonDemoContext.Provider
+			value={{
+				variant,
+				setVariant,
+				size,
+				setSize,
+				disabled,
+				setDisabled,
+			}}
+		>
+			{children}
+		</ButtonDemoContext.Provider>
+	);
+}
+
+const BUTTON_VARIANT_OPTIONS = [
+	{ value: "filled", label: "Filled" },
+	{ value: "outlined", label: "Outlined" },
+	{ value: "text", label: "Text" },
+	{ value: "ghost", label: "Ghost" },
+	{ value: "secondary", label: "Secondary" },
+	{ value: "danger", label: "Danger" },
+];
+
+const BUTTON_SIZE_OPTIONS = [
+	{ value: "sm", label: "Small" },
+	{ value: "md", label: "Medium" },
+	{ value: "icon", label: "Icon" },
+];
+
+function ButtonKnobs() {
+	const demo = useButtonDemo();
+
+	return (
+		<RailPanel
+			title="Button"
+			description="Primary actions for consoles and forms. Prefer filled for the main CTA."
+		>
+			<DemoRow
+				label="Variant"
+				description="Visual style applied to the playground button."
+			>
+				<Select
+					id="button-variant"
+					options={BUTTON_VARIANT_OPTIONS}
+					value={demo.variant}
+					aria-label="Button variant"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "filled") {
+							demo.setVariant("filled");
+							return;
+						}
+						if (next === "outlined") {
+							demo.setVariant("outlined");
+							return;
+						}
+						if (next === "text") {
+							demo.setVariant("text");
+							return;
+						}
+						if (next === "ghost") {
+							demo.setVariant("ghost");
+							return;
+						}
+						if (next === "secondary") {
+							demo.setVariant("secondary");
+							return;
+						}
+						if (next === "danger") {
+							demo.setVariant("danger");
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Size"
+				description="Control height and padding. Icon is square chrome sizing."
+			>
+				<Select
+					id="button-size"
+					options={BUTTON_SIZE_OPTIONS}
+					value={demo.size}
+					aria-label="Button size"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "sm") {
+							demo.setSize("sm");
+							return;
+						}
+						if (next === "md") {
+							demo.setSize("md");
+							return;
+						}
+						if (next === "icon") {
+							demo.setSize("icon");
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Disabled"
+				description="Blocks interaction and dims the playground button."
+			>
+				<Toggle
+					label="Disabled"
+					checked={demo.disabled}
+					onCheckedChange={demo.setDisabled}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+type BadgeVariant =
+	| "default"
+	| "primary"
+	| "success"
+	| "warning"
+	| "danger"
+	| "info";
+type BadgeSize = "sm" | "md";
+
+interface BadgeDemoValue {
+	variant: BadgeVariant;
+	setVariant: (value: BadgeVariant) => void;
+	size: BadgeSize;
+	setSize: (value: BadgeSize) => void;
+}
+
+const BadgeDemoContext = createContext<BadgeDemoValue | null>(null);
+
+function useBadgeDemo() {
+	const value = useContext(BadgeDemoContext);
+	if (value === null) {
+		throw new Error("BadgeDemoProvider required");
+	}
+	return value;
+}
+
+function BadgeDemoProvider({ children }: { children: ReactNode }) {
+	const [variant, setVariant] = useState<BadgeVariant>("primary");
+	const [size, setSize] = useState<BadgeSize>("md");
+
+	return (
+		<BadgeDemoContext.Provider
+			value={{ variant, setVariant, size, setSize }}
+		>
+			{children}
+		</BadgeDemoContext.Provider>
+	);
+}
+
+const BADGE_VARIANT_OPTIONS = [
+	{ value: "default", label: "Default" },
+	{ value: "primary", label: "Primary" },
+	{ value: "success", label: "Success" },
+	{ value: "warning", label: "Warning" },
+	{ value: "danger", label: "Danger" },
+	{ value: "info", label: "Info" },
+];
+
+const BADGE_SIZE_OPTIONS = [
+	{ value: "sm", label: "Small" },
+	{ value: "md", label: "Medium" },
+];
+
+function BadgeCanvas() {
+	const demo = useBadgeDemo();
+
+	return (
+		<Canvas>
+			<DemoRow label="Playground">
+				<Badge variant={demo.variant} size={demo.size}>
+					Status
+				</Badge>
+			</DemoRow>
+			<DemoRow label="Variants">
+				<Badge>Default</Badge>
+				<Badge variant="primary">Primary</Badge>
+				<Badge variant="success">Success</Badge>
+				<Badge variant="warning">Warning</Badge>
+				<Badge variant="danger">Danger</Badge>
+				<Badge variant="info">Info</Badge>
+			</DemoRow>
+			<DemoRow label="Sizes">
+				<Badge size="sm">Small</Badge>
+				<Badge size="md">Medium</Badge>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function BadgeKnobs() {
+	const demo = useBadgeDemo();
+
+	return (
+		<RailPanel
+			title="Badge"
+			description="Status and metadata chips for inventory tables and headers."
+		>
+			<DemoRow
+				label="Variant"
+				description="Semantic color for the playground badge."
+			>
+				<Select
+					id="badge-variant"
+					options={BADGE_VARIANT_OPTIONS}
+					value={demo.variant}
+					aria-label="Badge variant"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "default") {
+							demo.setVariant("default");
+							return;
+						}
+						if (next === "primary") {
+							demo.setVariant("primary");
+							return;
+						}
+						if (next === "success") {
+							demo.setVariant("success");
+							return;
+						}
+						if (next === "warning") {
+							demo.setVariant("warning");
+							return;
+						}
+						if (next === "danger") {
+							demo.setVariant("danger");
+							return;
+						}
+						if (next === "info") {
+							demo.setVariant("info");
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Size"
+				description="Padding and type scale for the playground badge."
+			>
+				<Select
+					id="badge-size"
+					options={BADGE_SIZE_OPTIONS}
+					value={demo.size}
+					aria-label="Badge size"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "sm") {
+							demo.setSize("sm");
+							return;
+						}
+						if (next === "md") {
+							demo.setSize("md");
+						}
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+type LoadingVariant = "spinner" | "skeleton";
+type LoadingSize = "sm" | "md" | "lg";
+
+interface LoadingDemoValue {
+	variant: LoadingVariant;
+	setVariant: (value: LoadingVariant) => void;
+	size: LoadingSize;
+	setSize: (value: LoadingSize) => void;
+	lines: number;
+	setLines: (value: number) => void;
+	showText: boolean;
+	setShowText: (value: boolean) => void;
+}
+
+const LoadingDemoContext = createContext<LoadingDemoValue | null>(null);
+
+function useLoadingDemo() {
+	const value = useContext(LoadingDemoContext);
+	if (value === null) {
+		throw new Error("LoadingDemoProvider required");
+	}
+	return value;
+}
+
+function LoadingDemoProvider({ children }: { children: ReactNode }) {
+	const [variant, setVariant] = useState<LoadingVariant>("spinner");
+	const [size, setSize] = useState<LoadingSize>("md");
+	const [lines, setLines] = useState(3);
+	const [showText, setShowText] = useState(true);
+
+	return (
+		<LoadingDemoContext.Provider
+			value={{
+				variant,
+				setVariant,
+				size,
+				setSize,
+				lines,
+				setLines,
+				showText,
+				setShowText,
+			}}
+		>
+			{children}
+		</LoadingDemoContext.Provider>
+	);
+}
+
+const LOADING_VARIANT_OPTIONS = [
+	{ value: "spinner", label: "Spinner" },
+	{ value: "skeleton", label: "Skeleton" },
+];
+
+const LOADING_SIZE_OPTIONS = [
+	{ value: "sm", label: "Small" },
+	{ value: "md", label: "Medium" },
+	{ value: "lg", label: "Large" },
+];
+
+function LoadingCanvas() {
+	const demo = useLoadingDemo();
+
+	let text: string | undefined;
+	if (demo.showText) {
+		text = "Deploying stack…";
+	}
+
+	return (
+		<Canvas>
+			<DemoRow label="Playground">
+				<Loading
+					variant={demo.variant}
+					size={demo.size}
+					lines={demo.lines}
+					text={text}
+					className="w-full max-w-sm"
+					aria-label="Loading playground"
+				/>
+			</DemoRow>
+			<DemoRow label="Spinner">
+				<Loading size="sm" aria-label="Loading small" />
+				<Loading size="md" text="Deploying stack…" />
+				<Loading size="lg" aria-label="Loading large" />
+			</DemoRow>
+			<DemoRow label="Skeleton">
+				<Loading variant="skeleton" size="sm" lines={2} />
+				<Loading
+					variant="skeleton"
+					size="md"
+					lines={3}
+					className="w-full max-w-sm"
+				/>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function LoadingKnobs() {
+	const demo = useLoadingDemo();
+
+	return (
+		<RailPanel
+			title="Loading"
+			description="Spinner or skeleton bones for busy page sections."
+		>
+			<DemoRow
+				label="Variant"
+				description="Spinner for indeterminate wait; skeleton for content placeholders."
+			>
+				<Select
+					id="loading-variant"
+					options={LOADING_VARIANT_OPTIONS}
+					value={demo.variant}
+					aria-label="Loading variant"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "spinner") {
+							demo.setVariant("spinner");
+							return;
+						}
+						if (next === "skeleton") {
+							demo.setVariant("skeleton");
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Size"
+				description="Scale of the spinner ring or skeleton bone height."
+			>
+				<Select
+					id="loading-size"
+					options={LOADING_SIZE_OPTIONS}
+					value={demo.size}
+					aria-label="Loading size"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "sm") {
+							demo.setSize("sm");
+							return;
+						}
+						if (next === "md") {
+							demo.setSize("md");
+							return;
+						}
+						if (next === "lg") {
+							demo.setSize("lg");
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Skeleton lines"
+				description="Number of bone rows when variant is skeleton."
+			>
+				<NumberInput
+					id="loading-lines"
+					min={1}
+					max={8}
+					value={demo.lines}
+					disabled={demo.variant !== "skeleton"}
+					aria-label="Skeleton lines"
+					onValueChange={(value) => {
+						let next = 3;
+						if (value !== undefined) {
+							next = value;
+						}
+						demo.setLines(next);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Status text"
+				description="Optional caption beside the indicator (for example Deploying stack)."
+			>
+				<Toggle
+					label="Show status text"
+					checked={demo.showText}
+					onCheckedChange={demo.setShowText}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+function TabsCanvas() {
+	return (
+		<Canvas>
+			<Tabs defaultValue="overview" className="max-w-md">
+				<TabsList aria-label="Demo tabs">
+					<TabsTrigger value="overview">Overview</TabsTrigger>
+					<TabsTrigger value="details">Details</TabsTrigger>
+					<TabsTrigger value="logs" disabled>
+						Logs
+					</TabsTrigger>
+				</TabsList>
+				<TabsPanel
+					value="overview"
+					className="pt-4 text-sm text-foreground"
+				>
+					Overview panel body.
+				</TabsPanel>
+				<TabsPanel
+					value="details"
+					className="pt-4 text-sm text-foreground"
+				>
+					Details panel body.
+				</TabsPanel>
+				<TabsPanel
+					value="logs"
+					className="pt-4 text-sm text-foreground"
+				>
+					Logs panel body.
+				</TabsPanel>
+			</Tabs>
+		</Canvas>
+	);
+}
+
+function TabsKnobs() {
+	return (
+		<RailPanel
+			title="Tabs"
+			description="Underline tablist + panels. Arrow keys move selection."
+		/>
+	);
+}
+
+interface ModalDemoValue {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	closeOnBackdropClick: boolean;
+	setCloseOnBackdropClick: (value: boolean) => void;
+	showCloseButton: boolean;
+	setShowCloseButton: (value: boolean) => void;
+}
+
+const ModalDemoContext = createContext<ModalDemoValue | null>(null);
+
+function useModalDemo() {
+	const value = useContext(ModalDemoContext);
+	if (value === null) {
+		throw new Error("ModalDemoProvider required");
+	}
+	return value;
+}
+
+function ModalDemoProvider({ children }: { children: ReactNode }) {
+	const [open, setOpen] = useState(false);
+	const [closeOnBackdropClick, setCloseOnBackdropClick] = useState(true);
+	const [showCloseButton, setShowCloseButton] = useState(true);
+
+	return (
+		<ModalDemoContext.Provider
+			value={{
+				open,
+				setOpen,
+				closeOnBackdropClick,
+				setCloseOnBackdropClick,
+				showCloseButton,
+				setShowCloseButton,
+			}}
+		>
+			{children}
+		</ModalDemoContext.Provider>
+	);
+}
+
+function ModalCanvas() {
+	const demo = useModalDemo();
+
+	return (
+		<Canvas>
+			<Button
+				variant="outlined"
+				onClick={() => {
+					demo.setOpen(true);
+				}}
+			>
+				Open modal
+			</Button>
+			<Modal
+				open={demo.open}
+				title="Confirm apply"
+				onOpenChange={demo.setOpen}
+				closeOnBackdropClick={demo.closeOnBackdropClick}
+				showCloseButton={demo.showCloseButton}
+			>
+				<p className="text-muted-foreground">
+					Apply this change set to the selected stack? This may update
+					resources in place.
+				</p>
+				<div className="mt-4 flex justify-end gap-2">
+					<Button
+						variant="outlined"
+						onClick={() => {
+							demo.setOpen(false);
+						}}
+					>
+						Cancel
+					</Button>
+					<Button
+						onClick={() => {
+							demo.setOpen(false);
+						}}
+					>
+						Apply
+					</Button>
+				</div>
+			</Modal>
+		</Canvas>
+	);
+}
+
+function ModalKnobs() {
+	const demo = useModalDemo();
+
+	return (
+		<RailPanel
+			title="Modal"
+			description="Dialog with backdrop, Esc, focus trap, and scroll lock."
+		>
+			<DemoRow
+				label="Close on backdrop click"
+				description="When on, clicking the dimmed overlay dismisses the modal."
+			>
+				<Toggle
+					label="Enabled"
+					checked={demo.closeOnBackdropClick}
+					onCheckedChange={demo.setCloseOnBackdropClick}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Show close button"
+				description="Shows the X control in the modal header."
+			>
+				<Toggle
+					label="Enabled"
+					checked={demo.showCloseButton}
+					onCheckedChange={demo.setShowCloseButton}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+interface ConfirmDemoValue {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	variant: "danger" | "filled";
+	setVariant: (value: "danger" | "filled") => void;
+	requirePhrase: boolean;
+	setRequirePhrase: (value: boolean) => void;
+	closeOnBackdropClick: boolean;
+	setCloseOnBackdropClick: (value: boolean) => void;
+}
+
+const ConfirmDemoContext = createContext<ConfirmDemoValue | null>(null);
+
+function useConfirmDemo() {
+	const value = useContext(ConfirmDemoContext);
+	if (value === null) {
+		throw new Error("ConfirmDemoProvider required");
+	}
+	return value;
+}
+
+function ConfirmDemoProvider({ children }: { children: ReactNode }) {
+	const [open, setOpen] = useState(false);
+	const [variant, setVariant] = useState<"danger" | "filled">("danger");
+	const [requirePhrase, setRequirePhrase] = useState(true);
+	const [closeOnBackdropClick, setCloseOnBackdropClick] = useState(true);
+
+	return (
+		<ConfirmDemoContext.Provider
+			value={{
+				open,
+				setOpen,
+				variant,
+				setVariant,
+				requirePhrase,
+				setRequirePhrase,
+				closeOnBackdropClick,
+				setCloseOnBackdropClick,
+			}}
+		>
+			{children}
+		</ConfirmDemoContext.Provider>
+	);
+}
+
+const CONFIRM_VARIANT_OPTIONS = [
+	{ value: "danger", label: "Danger" },
+	{ value: "filled", label: "Filled" },
+];
+
+function ConfirmCanvas() {
+	const demo = useConfirmDemo();
+
+	let confirmPhrase: string | undefined;
+	if (demo.requirePhrase) {
+		confirmPhrase = "prod-api";
+	}
+
+	return (
+		<Canvas>
+			<Button
+				variant="danger"
+				onClick={() => {
+					demo.setOpen(true);
+				}}
+			>
+				Destroy stack
+			</Button>
+			<ConfirmDialog
+				open={demo.open}
+				title="Destroy stack"
+				description="This permanently deletes prod-api and its resources."
+				confirmPhrase={confirmPhrase}
+				confirmLabel="Destroy"
+				variant={demo.variant}
+				closeOnBackdropClick={demo.closeOnBackdropClick}
+				onOpenChange={demo.setOpen}
+				onConfirm={() => {
+					demo.setOpen(false);
+				}}
+			/>
+		</Canvas>
+	);
+}
+
+function ConfirmKnobs() {
+	const demo = useConfirmDemo();
+
+	return (
+		<RailPanel
+			title="ConfirmDialog"
+			description="Modal confirm with optional typed phrase for destroy."
+		>
+			<DemoRow
+				label="Confirm tone"
+				description="Danger for destructive confirms; filled for neutral confirms."
+			>
+				<Select
+					id="confirm-variant"
+					options={CONFIRM_VARIANT_OPTIONS}
+					value={demo.variant}
+					aria-label="Confirm tone"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "danger") {
+							demo.setVariant("danger");
+							return;
+						}
+						if (next === "filled") {
+							demo.setVariant("filled");
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Require typed phrase"
+				description="Confirm stays disabled until the user types prod-api."
+			>
+				<Toggle
+					label="Enabled"
+					checked={demo.requirePhrase}
+					onCheckedChange={demo.setRequirePhrase}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Close on backdrop click"
+				description="When on, clicking the dimmed overlay dismisses the dialog."
+			>
+				<Toggle
+					label="Enabled"
+					checked={demo.closeOnBackdropClick}
+					onCheckedChange={demo.setCloseOnBackdropClick}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+type TooltipSide = "top" | "bottom";
+
+interface TooltipDemoValue {
+	side: TooltipSide;
+	setSide: (value: TooltipSide) => void;
+	delayMs: number;
+	setDelayMs: (value: number) => void;
+	disabled: boolean;
+	setDisabled: (value: boolean) => void;
+}
+
+const TooltipDemoContext = createContext<TooltipDemoValue | null>(null);
+
+function useTooltipDemo() {
+	const value = useContext(TooltipDemoContext);
+	if (value === null) {
+		throw new Error("TooltipDemoProvider required");
+	}
+	return value;
+}
+
+function TooltipDemoProvider({ children }: { children: ReactNode }) {
+	const [side, setSide] = useState<TooltipSide>("top");
+	const [delayMs, setDelayMs] = useState(200);
+	const [disabled, setDisabled] = useState(false);
+
+	return (
+		<TooltipDemoContext.Provider
+			value={{
+				side,
+				setSide,
+				delayMs,
+				setDelayMs,
+				disabled,
+				setDisabled,
+			}}
+		>
+			{children}
+		</TooltipDemoContext.Provider>
+	);
+}
+
+const TOOLTIP_SIDE_OPTIONS = [
+	{ value: "top", label: "Top" },
+	{ value: "bottom", label: "Bottom" },
+];
+
+function TooltipCanvas() {
+	const demo = useTooltipDemo();
+
+	return (
+		<Canvas>
+			<DemoRow label="Playground">
+				<Tooltip
+					content="arn:aws:cloudformation:us-east-1:123:stack/prod-api"
+					side={demo.side}
+					delayMs={demo.delayMs}
+					disabled={demo.disabled}
+				>
+					<Button variant="outlined">Stack ARN</Button>
+				</Tooltip>
+			</DemoRow>
+			<DemoRow label="Disabled trigger">
+				<Tooltip content="Disabled until plan finishes" side="bottom">
+					<Button disabled>Apply</Button>
+				</Tooltip>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function TooltipKnobs() {
+	const demo = useTooltipDemo();
+
+	return (
+		<RailPanel
+			title="Tooltip"
+			description="Hover or focus to reveal truncated IDs and hints."
+		>
+			<DemoRow
+				label="Placement"
+				description="Preferred side relative to the trigger (flips if needed)."
+			>
+				<Select
+					id="tooltip-side"
+					options={TOOLTIP_SIDE_OPTIONS}
+					value={demo.side}
+					aria-label="Tooltip side"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "top") {
+							demo.setSide("top");
+							return;
+						}
+						if (next === "bottom") {
+							demo.setSide("bottom");
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Delay"
+				description="Milliseconds to wait before showing on hover or focus."
+			>
+				<NumberInput
+					id="tooltip-delay"
+					min={0}
+					step={50}
+					value={demo.delayMs}
+					aria-label="Tooltip delay"
+					onValueChange={(value) => {
+						let next = 0;
+						if (value !== undefined) {
+							next = value;
+						}
+						demo.setDelayMs(next);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Disabled"
+				description="When on, the playground tooltip never opens."
+			>
+				<Toggle
+					label="Tooltip disabled"
+					checked={demo.disabled}
+					onCheckedChange={demo.setDisabled}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+const ActionMenuDemoContext = createContext<{
+	lastAction: string;
+	setLastAction: (value: string) => void;
+} | null>(null);
+
+function useActionMenuDemo() {
+	const value = useContext(ActionMenuDemoContext);
+	if (value === null) {
+		throw new Error("ActionMenuDemoProvider required");
+	}
+	return value;
+}
+
+function ActionMenuDemoProvider({ children }: { children: ReactNode }) {
+	const [lastAction, setLastAction] = useState("none");
+
+	return (
+		<ActionMenuDemoContext.Provider value={{ lastAction, setLastAction }}>
+			{children}
+		</ActionMenuDemoContext.Provider>
+	);
+}
+
+function ActionMenuCanvas() {
+	const demo = useActionMenuDemo();
+
+	return (
+		<Canvas>
+			<DemoRow label="Open">
+				<ActionMenu
+					label="Stack"
+					items={[
+						{
+							key: "view",
+							label: "View events",
+							onSelect: () => {
+								demo.setLastAction("view");
+							},
+						},
+						{
+							key: "update",
+							label: "Update",
+							onSelect: () => {
+								demo.setLastAction("update");
+							},
+						},
+						{ key: "div-1", type: "divider" },
+						{
+							key: "destroy",
+							label: "Destroy",
+							variant: "danger",
+							onSelect: () => {
+								demo.setLastAction("destroy");
+							},
+						},
+					]}
+				/>
+				<span className="text-sm text-muted-foreground">
+					Last: {demo.lastAction}
+				</span>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function ActionMenuKnobs() {
+	return (
+		<RailPanel
+			title="ActionMenu"
+			description="Portaled row actions with keyboard menu navigation."
+		/>
+	);
+}
+
+export {
+	ActionMenuCanvas,
+	ActionMenuDemoProvider,
+	ActionMenuKnobs,
+	AlertCanvas,
+	AlertDemoProvider,
+	AlertKnobs,
+	BadgeCanvas,
+	BadgeDemoProvider,
+	BadgeKnobs,
+	ButtonCanvas,
+	ButtonDemoProvider,
+	ButtonKnobs,
+	ConfirmCanvas,
+	ConfirmDemoProvider,
+	ConfirmKnobs,
+	LoadingCanvas,
+	LoadingDemoProvider,
+	LoadingKnobs,
+	ModalCanvas,
+	ModalDemoProvider,
+	ModalKnobs,
+	TabsCanvas,
+	TabsKnobs,
+	ToastCanvas,
+	ToastDemoProvider,
+	ToastKnobs,
+	TooltipCanvas,
+	TooltipDemoProvider,
+	TooltipKnobs,
+};

@@ -14,8 +14,20 @@ export type {
 	ActionMenuItem,
 	ActionMenuProps,
 } from "./components/overlays/ActionMenu.js";
+export { Alert, alertVariants } from "./components/feedback/Alert.js";
+export type { AlertProps, AlertType } from "./components/feedback/Alert.js";
 export { AppShell } from "./components/layout/AppShell.js";
-export type { AppShellProps } from "./components/layout/AppShell.js";
+export type {
+	AppShellProps,
+	AppShellViewport,
+} from "./components/layout/AppShell.js";
+export {
+	APP_SHELL_COMPACT_QUERY,
+	APP_SHELL_MOBILE_MAX_PX,
+	APP_SHELL_MOBILE_QUERY,
+	APP_SHELL_TABLET_MAX_PX,
+	resolveAppShellViewport,
+} from "./components/layout/AppShell.js";
 export { Badge, badgeVariants } from "./components/indicators/Badge.js";
 export type { BadgeProps } from "./components/indicators/Badge.js";
 export { Breadcrumbs } from "./components/navigation/Breadcrumbs.js";
