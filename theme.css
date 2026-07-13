@@ -1,0 +1,153 @@
+/* Auto-register this library for Tailwind v4 class scanning */
+@source "./dist";
+
+/*
+ * App-owned dark activation (not prefers-color-scheme alone).
+ * Prefer data-theme on <html>.
+ */
+@custom-variant dark (
+	&:where(.dark, .dark *, [data-theme="dark"], [data-theme="dark"] *)
+);
+
+/* ========================================================================
+   Static Tokens - do not swap per theme
+   ======================================================================== */
+
+@theme {
+	--font-sans: "Source Sans 3", ui-sans-serif, sans-serif;
+
+	--radius-sm: 0.25rem;
+	--radius-md: 0.5rem;
+	--radius-lg: 1rem;
+	--radius-xl: 1.5rem;
+	--radius-full: 9999px;
+
+	--shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	--shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+	--shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+
+	--z-dropdown: 50;
+	--z-modal: 100;
+	--z-toast: 9999;
+	--z-tooltip: 99999;
+}
+
+/* ========================================================================
+   Semantic bridge - utilities read var(--token); themes reassign --token
+   ======================================================================== */
+
+@theme inline {
+	--color-background: var(--background);
+	--color-foreground: var(--foreground);
+	--color-card: var(--card);
+	--color-card-foreground: var(--card-foreground);
+	--color-muted: var(--muted);
+	--color-muted-foreground: var(--muted-foreground);
+	--color-accent: var(--accent);
+	--color-accent-foreground: var(--accent-foreground);
+	--color-primary: var(--primary);
+	--color-primary-foreground: var(--primary-foreground);
+	--color-secondary: var(--secondary);
+	--color-secondary-foreground: var(--secondary-foreground);
+	--color-destructive: var(--destructive);
+	--color-destructive-foreground: var(--destructive-foreground);
+	--color-destructive-muted: var(--destructive-muted);
+	--color-destructive-muted-foreground: var(--destructive-muted-foreground);
+	--color-success: var(--success);
+	--color-success-foreground: var(--success-foreground);
+	--color-warning: var(--warning);
+	--color-warning-foreground: var(--warning-foreground);
+	--color-info: var(--info);
+	--color-info-foreground: var(--info-foreground);
+	--color-border: var(--border);
+	--color-input: var(--input);
+	--color-ring: var(--ring);
+	--color-primary-dark: var(--primary-dark);
+	--color-primary-light: var(--primary-light);
+	--color-primary-bg: var(--primary-bg);
+}
+
+/* ========================================================================
+   Theme values - override on <html data-theme="…"> (or .dark alias)
+   Add brand themes as extra [data-theme="…"] blocks in the consumer or here.
+   ======================================================================== */
+
+@layer theme {
+	:root,
+	[data-theme="light"] {
+		--background: #ffffff;
+		--foreground: #111827;
+		--card: #ffffff;
+		--card-foreground: #111827;
+		--muted: #f3f4f6;
+		--muted-foreground: #667085;
+		--accent: #f3f4f6;
+		--accent-foreground: #111827;
+
+		--primary: #003b5c;
+		--primary-foreground: #ffffff;
+		--primary-dark: #002a42;
+		--primary-light: #004d75;
+		--primary-bg: #eaf7ff;
+
+		--secondary: #ffffff;
+		--secondary-foreground: #4b5563;
+
+		--destructive: #d93025;
+		--destructive-foreground: #ffffff;
+		--destructive-muted: #fee2e2;
+		--destructive-muted-foreground: #991b1b;
+
+		--success: #2e7d32;
+		--success-foreground: #ffffff;
+
+		--warning: #fef9c3;
+		--warning-foreground: #854d0e;
+
+		--info: #dbeafe;
+		--info-foreground: #1e40af;
+
+		--border: #e5e7eb;
+		--input: #e5e7eb;
+		--ring: rgb(0 59 92 / 0.5);
+	}
+
+	.dark,
+	[data-theme="dark"] {
+		--background: #111827;
+		--foreground: #f9fafb;
+		--card: #1f2937;
+		--card-foreground: #f9fafb;
+		--muted: #374151;
+		--muted-foreground: #d1d5db;
+		--accent: #374151;
+		--accent-foreground: #f9fafb;
+
+		--primary: #004d75;
+		--primary-foreground: #ffffff;
+		--primary-dark: #002a42;
+		--primary-light: #006699;
+		--primary-bg: #1a3344;
+
+		--secondary: #374151;
+		--secondary-foreground: #e5e7eb;
+
+		--destructive: #d93025;
+		--destructive-foreground: #ffffff;
+		--destructive-muted: rgb(127 29 29 / 0.3);
+		--destructive-muted-foreground: #fca5a5;
+
+		--success: rgb(20 83 45 / 0.3);
+		--success-foreground: #86efac;
+
+		--warning: rgb(113 63 18 / 0.3);
+		--warning-foreground: #fde68a;
+
+		--info: rgb(30 58 138 / 0.3);
+		--info-foreground: #93c5fd;
+
+		--border: #374151;
+		--input: #4b5563;
+		--ring: rgb(0 77 117 / 0.5);
+	}
+}

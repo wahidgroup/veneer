@@ -1,0 +1,17 @@
+{
+	"extends": "@wahidgroup/lint-rules/tsconfig",
+	"compilerOptions": {
+		"module": "NodeNext",
+		"moduleResolution": "NodeNext",
+		"types": ["node", "vitest/globals", "@testing-library/jest-dom"],
+		"paths": {
+			"@/*": ["./src/*"],
+			"vitest-axe/matchers": ["./node_modules/vitest-axe/matchers.d.ts"],
+			"vitest-axe/extend-expect": [
+				"./node_modules/vitest-axe/extend-expect.d.ts"
+			]
+		}
+	},
+	"include": ["src", "scripts", "vitest.config.ts"],
+	"exclude": ["node_modules", "dist"]
+}
