@@ -1,0 +1,19 @@
+@import "tailwindcss";
+@import "../../theme.css";
+
+/* Live source for Vite alias (theme.css @source points at package dist) */
+@source "../../src";
+@source "./**/*.{ts,tsx}";
+
+html,
+body,
+#root {
+	min-height: 100%;
+}
+
+body {
+	margin: 0;
+	background: var(--background);
+	color: var(--foreground);
+	font-family: var(--font-sans);
+}

@@ -1,4 +1,4 @@
-.PHONY: all help help-body help-ref version setup lint test build audit spellcheck sbom smoke pack ci release clean clean-dist
+.PHONY: all help help-body help-ref version setup lint test build audit spellcheck sbom smoke pack ci release clean clean-dist examples-setup examples examples-build
 
 .NOTPARALLEL: ci
 
@@ -71,6 +71,9 @@ help-body:
 	@printf '    sbom         Generate software bill of materials\n'
 	@printf '    ci           Lint + build + test + smoke + pack\n'
 	@printf '    release      Release workflow (see OPTIONS)\n'
+	@printf '    examples-setup  Install examples/ deps\n'
+	@printf '    examples        Run Vite examples (http://localhost:5173)\n'
+	@printf '    examples-build  Production build of examples/\n'
 	@printf '    clean-dist   Remove dist and artifacts\n'
 	@printf '    clean        Remove dist, artifacts, and node_modules\n\n'
 	@printf 'OPTIONS / VARIABLES:\n'
@@ -83,6 +86,7 @@ help-body:
 	@printf '    NPM_INSTALL_FLAGS  Extra flags for npm install/ci (e.g. --ignore-scripts)\n\n'
 	@printf 'EXAMPLES:\n'
 	@printf '    make setup\n'
+	@printf '    make examples-setup && make examples\n'
 	@printf '    make lint\n'
 	@printf '    make lint fix=1\n'
 	@printf '    make test debug=1\n'
@@ -167,8 +171,22 @@ ci:
 release: node_modules
 	@./scripts/release.sh "$(VERSION)" $(RELEASE_FLAGS)
 
+examples/node_modules: examples/package.json node_modules
+	npm install --prefix examples
+	@touch $@
+
+examples-setup: examples/node_modules
+
+examples: examples/node_modules
+	@echo "Starting examples (Vite)..."
+	npm run dev --prefix examples
+
+examples-build: examples/node_modules
+	@echo "Building examples..."
+	npm run build --prefix examples
+
 clean-dist:
-	rm -rf dist artifacts sbom.json
+	rm -rf dist artifacts sbom.json examples/dist
 
 clean: clean-dist
-	rm -rf node_modules
+	rm -rf node_modules examples/node_modules

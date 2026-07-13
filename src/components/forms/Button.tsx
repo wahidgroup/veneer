@@ -3,7 +3,7 @@ import type { ComponentProps } from "react";
 
 import { cva } from "class-variance-authority";
 
-import { cn } from "../utils/cn.js";
+import { cn } from "../../utils/cn.js";
 
 const buttonVariants = cva(
 	[

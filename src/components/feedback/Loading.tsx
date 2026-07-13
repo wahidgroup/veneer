@@ -2,7 +2,7 @@ import type { VariantProps } from "class-variance-authority";
 import type { ComponentProps, ReactNode } from "react";
 import { cva } from "class-variance-authority";
 
-import { cn } from "../utils/cn.js";
+import { cn } from "../../utils/cn.js";
 
 const loadingVariants = cva(
 	"animate-spin rounded-full border-b-2 border-primary mx-auto",

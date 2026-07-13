@@ -10,16 +10,24 @@ import strict from "@wahidgroup/lint-rules/eslint/strict";
  */
 const reactConfigs = react;
 
-export default defineConfig(...base, ...reactConfigs, ...strict, {
-	languageOptions: {
-		parserOptions: {
-			projectService: {
-				allowDefaultProject: [
-					"eslint.config.mjs",
-					"prettier.config.mjs",
-				],
+export default defineConfig(
+	{
+		ignores: ["examples/**"],
+	},
+	...base,
+	...reactConfigs,
+	...strict,
+	{
+		languageOptions: {
+			parserOptions: {
+				projectService: {
+					allowDefaultProject: [
+						"eslint.config.mjs",
+						"prettier.config.mjs",
+					],
+				},
+				tsconfigRootDir: import.meta.dirname,
 			},
-			tsconfigRootDir: import.meta.dirname,
 		},
 	},
-});
+);

@@ -22,6 +22,17 @@ npm run test:watch
 
 `make help` lists all targets. Fix lint with `make lint fix=1`.
 
+## Examples
+
+Runnable category showcases (live `src` via Vite alias):
+
+```bash
+make examples-setup
+make examples
+```
+
+See [`examples/README.md`](examples/README.md).
+
 ## Install (when published)
 
 ```bash
@@ -98,7 +109,10 @@ export function Example() {
 
 - `class-variance-authority` - typed variants (`buttonVariants`, etc.)
 - `cn` - `clsx` + `tailwind-merge` for conditionals and conflict resolution
+- `lucide-react` - icons in SearchInput, Select, Combobox, TagInput, FileUpload
 - Semantic CSS variables via `theme.css` (`@theme inline` bridge + `@layer theme` values)
+
+New components MUST follow [`docs/COMPONENT.md`](docs/COMPONENT.md).
 
 ## License
 

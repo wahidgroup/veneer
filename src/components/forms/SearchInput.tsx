@@ -1,0 +1,117 @@
+import type { ComponentProps, ReactNode } from "react";
+import { useEffect, useState } from "react";
+import { Search, X } from "lucide-react";
+
+import { useDebounce } from "../../hooks/useDebounce.js";
+import { cn } from "../../utils/cn.js";
+import { controlVariants } from "./FormField.js";
+
+interface SearchInputProps extends Omit<ComponentProps<"div">, "onChange"> {
+	value?: string;
+	defaultValue?: string;
+	onValueChange?: (value: string) => void;
+	placeholder?: string;
+	debounceMs?: number;
+	disabled?: boolean;
+	startAdornment?: ReactNode;
+}
+
+/**
+ * Search field with optional debounce and clear control. Defaults to a Search icon;
+ * pass `startAdornment` to override.
+ */
+function SearchInput({
+	value: controlledValue,
+	defaultValue,
+	onValueChange,
+	placeholder,
+	debounceMs,
+	disabled,
+	startAdornment,
+	className,
+	...rest
+}: SearchInputProps) {
+	const isControlled = controlledValue !== undefined;
+
+	let initial = "";
+	if (isControlled) {
+		initial = controlledValue;
+	} else if (defaultValue !== undefined) {
+		initial = defaultValue;
+	}
+
+	const [draft, setDraft] = useState(initial);
+	const [prevControlled, setPrevControlled] = useState(controlledValue);
+
+	if (isControlled && controlledValue !== prevControlled) {
+		setPrevControlled(controlledValue);
+		setDraft(controlledValue);
+	}
+
+	let delay = debounceMs;
+	delay ??= 300;
+
+	const debouncedValue = useDebounce(draft, delay);
+
+	useEffect(() => {
+		if (onValueChange !== undefined) {
+			onValueChange(debouncedValue);
+		}
+	}, [debouncedValue, onValueChange]);
+
+	let resolvedPlaceholder = placeholder;
+	resolvedPlaceholder ??= "Search";
+
+	let clearNode: ReactNode = null;
+	if (draft.length > 0 && disabled !== true) {
+		clearNode = (
+			<button
+				type="button"
+				aria-label="Clear search"
+				className="absolute right-2 top-1/2 inline-flex size-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
+				onClick={() => {
+					setDraft("");
+				}}
+			>
+				<X className="size-4" aria-hidden="true" />
+			</button>
+		);
+	}
+
+	let resolvedAdornment: ReactNode = (
+		<Search className="size-4" aria-hidden="true" />
+	);
+	if (startAdornment !== undefined) {
+		resolvedAdornment = startAdornment;
+	}
+
+	return (
+		<div
+			data-slot="search-input"
+			className={cn("relative w-full", className)}
+			{...rest}
+		>
+			<span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
+				{resolvedAdornment}
+			</span>
+			<input
+				type="search"
+				value={draft}
+				disabled={disabled}
+				placeholder={resolvedPlaceholder}
+				aria-label={resolvedPlaceholder}
+				className={cn(
+					controlVariants({ invalid: false }),
+					"py-2 pl-9 pr-10",
+				)}
+				onChange={(event) => {
+					setDraft(event.target.value);
+				}}
+			/>
+			{clearNode}
+		</div>
+	);
+}
+
+export type { SearchInputProps };
+export { SearchInput };

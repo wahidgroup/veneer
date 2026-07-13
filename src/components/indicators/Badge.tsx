@@ -3,7 +3,7 @@ import type { ComponentProps } from "react";
 
 import { cva } from "class-variance-authority";
 
-import { cn } from "../utils/cn.js";
+import { cn } from "../../utils/cn.js";
 
 const badgeVariants = cva(
 	"inline-flex items-center font-semibold rounded-md whitespace-nowrap",

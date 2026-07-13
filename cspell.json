@@ -1,7 +1,15 @@
 {
 	"$schema": "https://raw.githubusercontent.com/streetsidesoftware/cspell/main/packages/cspell-types/cspell.schema.json",
 	"import": ["@wahidgroup/lint-rules/cspell"],
-	"words": ["clsx", "cva", "jsdom", "twmerge", "veneer"],
+	"words": [
+		"clsx",
+		"cva",
+		"jsdom",
+		"lucide",
+		"twmerge",
+		"veneer",
+		"Adornment"
+	],
 	"ignorePaths": [
 		"node_modules",
 		"dist",
@@ -9,6 +17,9 @@
 		"*.lock",
 		"package-lock.json",
 		"npm-shrinkwrap.json",
-		"sbom.json"
+		"sbom.json",
+		"examples/node_modules",
+		"examples/dist",
+		"examples/package-lock.json"
 	]
 }

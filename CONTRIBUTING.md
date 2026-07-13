@@ -21,6 +21,10 @@ Contributors MUST:
 - Pass `make lint` before opening a PR
 - NEVER use ternary statements in TypeScript
 
+### Components
+
+New UI components MUST follow [`docs/COMPONENT.md`](docs/COMPONENT.md) (stamp, tests, Definition of Done).
+
 ## Pull Requests
 
 All pull requests MUST conform to the title, body, and metadata specifications below. The `PR Checks` workflow (`Title`, `Body`, `Metadata` jobs) blocks merge on non-compliance.
