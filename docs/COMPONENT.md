@@ -2,7 +2,23 @@
 
 The key words "MUST", "MUST NOT", "SHOULD", and "MAY" are interpreted as in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
-Canonical reference: [`src/components/forms/Button.tsx`](../src/components/forms/Button.tsx).
+## Canonical primitives
+
+Composites MUST reuse these instead of reinventing chrome, fields, or portals:
+
+| Primitive    | Path                                                             | Use for                      |
+| ------------ | ---------------------------------------------------------------- | ---------------------------- |
+| `Button`     | [`forms/Button.tsx`](../src/components/forms/Button.tsx)         | Actions, icon/ghost chrome   |
+| `Input`      | [`forms/Input.tsx`](../src/components/forms/Input.tsx)           | Text entry                   |
+| `Label`      | [`forms/Label.tsx`](../src/components/forms/Label.tsx)           | Control labels               |
+| `FieldError` | [`forms/FieldError.tsx`](../src/components/forms/FieldError.tsx) | Field-level errors           |
+| `FieldHint`  | [`forms/FieldHint.tsx`](../src/components/forms/FieldHint.tsx)   | Field-level hints            |
+| `FormField`  | [`forms/FormField.tsx`](../src/components/forms/FormField.tsx)   | Label + control + hint/error |
+| `Badge`      | [`indicators/Badge.tsx`](../src/components/indicators/Badge.tsx) | Status / removable chips     |
+| `Loading`    | [`feedback/Loading.tsx`](../src/components/feedback/Loading.tsx) | Busy / skeleton              |
+| `Portal`     | [`overlays/Portal.tsx`](../src/components/overlays/Portal.tsx)   | Portaled layers              |
+
+`Button.tsx` remains the stamp example for exports, `cva`/`cn`, `data-slot`, and tokens.
 
 ## Layout
 
@@ -13,23 +29,22 @@ src/components/<category>/<Name>.test.tsx
 
 - File name MUST match the primary export (`Input.tsx`).
 - Tests MUST be co-located. Setup helpers live in `src/test/` only.
-- Categories: `forms/`, `feedback/`, `indicators/`, `overlays/`, `navigation/`, `layout/` (add folders when a new IA bucket appears).
 - Public API stays flat via `src/index.ts` - no category re-exports.
 
 ## Implementation
 
-| Rule         | Requirement                                                                      |
-| ------------ | -------------------------------------------------------------------------------- |
-| Exports      | Named: `Name`, `nameVariants` (if any), `NameProps` type                         |
-| Variants     | `cva` + `cn(variants(...), className)`                                           |
-| DOM          | Extend `ComponentProps<"el">` (+ `VariantProps`)                                 |
-| Slot         | `data-slot="<name>"` on root                                                     |
-| Tokens       | Semantic utilities only; no `dark:` in primitives                                |
-| Icons        | Prefer `lucide-react`; extra icons via `ReactNode` slots                         |
-| Reuse        | Prefer Veneer primitives inside composites (e.g. `Button` ghost/icon for chrome) |
-| Control flow | No ternaries in `.ts` / `.tsx`                                                   |
-| Docs         | Multi-line JSDoc on the public component                                         |
-| Barrel       | Update `src/index.ts` + `EXPECTED_EXPORTS` in the same PR                        |
+| Rule         | Requirement                                                   |
+| ------------ | ------------------------------------------------------------- |
+| Exports      | Named: `Name`, `nameVariants` (if any), `NameProps` type      |
+| Variants     | `cva` + `cn(variants(...), className)`                        |
+| DOM          | Extend `ComponentProps<"el">` (+ `VariantProps`)              |
+| Slot         | `data-slot="<name>"` on root                                  |
+| Tokens       | Semantic utilities only; no `dark:` in primitives             |
+| Icons        | Prefer `lucide-react`; extra icons via `ReactNode` slots      |
+| Reuse        | Prefer the canonical primitives table above inside composites |
+| Control flow | No ternaries in `.ts` / `.tsx`                                |
+| Docs         | Multi-line JSDoc on the public component                      |
+| Barrel       | Update `src/index.ts` + `EXPECTED_EXPORTS` in the same PR     |
 
 ## Tests
 
@@ -45,13 +60,3 @@ MUST:
 8. Reuse `src/test/component-harness.js` helpers when applicable
 
 Overlays MUST also cover Esc, focus trap/restore, and activation keys.
-
-## Definition of Done
-
-A component PR MUST NOT merge unless:
-
-1. `make ci` PASS
-2. Stamp + tests + export lock satisfied
-3. Code Reviewer PASS
-4. QA PASS
-5. Software Architect PASS for composites only (Modal, DataTable, AppShell, Stepper, LogViewer)

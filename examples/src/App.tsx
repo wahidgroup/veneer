@@ -4,6 +4,7 @@ import {
 	Boxes,
 	FormInput,
 	LayoutTemplate,
+	ListOrdered,
 	ListTree,
 	Moon,
 	PanelRight,
@@ -56,6 +57,9 @@ function categoryIcon(id: CategoryId): ReactNode {
 	if (id === "combobox") {
 		return <ListTree className="size-4 shrink-0" aria-hidden="true" />;
 	}
+	if (id === "workflow") {
+		return <ListOrdered className="size-4 shrink-0" aria-hidden="true" />;
+	}
 	if (id === "data") {
 		return <Table2 className="size-4 shrink-0" aria-hidden="true" />;
 	}
@@ -75,6 +79,9 @@ function parseCategoryId(value: string): CategoryId | null {
 	}
 	if (value === "shell") {
 		return "shell";
+	}
+	if (value === "workflow") {
+		return "workflow";
 	}
 	if (value === "data") {
 		return "data";

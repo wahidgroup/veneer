@@ -23,7 +23,7 @@ Contributors MUST:
 
 ### Components
 
-New UI components MUST follow [`docs/COMPONENT.md`](docs/COMPONENT.md) (stamp, tests, Definition of Done).
+New UI components MUST follow [`docs/COMPONENT.md`](docs/COMPONENT.md) (stamp, tests, canonical primitive reuse).
 
 ## Pull Requests
 

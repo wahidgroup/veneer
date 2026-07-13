@@ -76,6 +76,12 @@ import {
 	TopNavCanvas,
 	TopNavKnobs,
 } from "./shellDemos.js";
+import {
+	LinearDeployCanvas,
+	LinearDeployKnobs,
+	MultiNodeCanvas,
+	MultiNodeKnobs,
+} from "./workflowDemos.js";
 
 interface DemoEntry {
 	Provider: ComponentType<{ children: ReactNode }>;
@@ -197,6 +203,19 @@ const SHELL: Record<string, DemoEntry> = {
 	},
 };
 
+const WORKFLOW: Record<string, DemoEntry> = {
+	linear: {
+		Provider: PassthroughProvider,
+		Canvas: LinearDeployCanvas,
+		Knobs: LinearDeployKnobs,
+	},
+	nodes: {
+		Provider: PassthroughProvider,
+		Canvas: MultiNodeCanvas,
+		Knobs: MultiNodeKnobs,
+	},
+};
+
 const DATA: Record<string, DemoEntry> = {
 	"server-page": {
 		Provider: PassthroughProvider,
@@ -233,6 +252,14 @@ function getDemo(category: CategoryId, component: string): DemoEntry {
 			Canvas: ComboboxCategoryCanvas,
 			Knobs: ComboboxCategoryKnobs,
 		};
+	}
+	if (category === "workflow") {
+		const entry = WORKFLOW[component];
+		if (entry !== undefined) {
+			return entry;
+		}
+
+		return WORKFLOW.linear;
 	}
 	if (category === "data") {
 		const entry = DATA[component];

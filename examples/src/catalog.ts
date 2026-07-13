@@ -1,4 +1,10 @@
-type CategoryId = "primitives" | "forms" | "combobox" | "shell" | "data";
+type CategoryId =
+	| "primitives"
+	| "forms"
+	| "combobox"
+	| "shell"
+	| "workflow"
+	| "data";
 
 interface CatalogComponent {
 	id: string;
@@ -185,6 +191,24 @@ const CATALOG: CatalogCategory[] = [
 		],
 	},
 	{
+		id: "workflow",
+		label: "Workflow",
+		components: [
+			{
+				id: "linear",
+				label: "Linear deploy",
+				description:
+					"Region → plan → confirm with progress track, panels, and Back/Next.",
+			},
+			{
+				id: "nodes",
+				label: "Multi-node",
+				description:
+					"Cluster + node:* instance steps + review. Add node expands the track.",
+			},
+		],
+	},
+	{
 		id: "data",
 		label: "Data",
 		components: [
@@ -210,6 +234,7 @@ function getCategory(id: CategoryId): CatalogCategory {
 			return category;
 		}
 	}
+
 	return CATALOG[0];
 }
 

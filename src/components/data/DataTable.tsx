@@ -6,6 +6,7 @@ import type {
 	SortingState,
 	VisibilityState,
 } from "@tanstack/react-table";
+import { useEffect, useId, useMemo, useState } from "react";
 import {
 	getCoreRowModel,
 	getFilteredRowModel,
@@ -13,28 +14,27 @@ import {
 	getSortedRowModel,
 	useReactTable,
 } from "@tanstack/react-table";
-import { useEffect, useId, useMemo, useState } from "react";
 
+import type { DataTableProps, DataTableQuery } from "./DataTable.types.js";
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
-import type { DataTableProps, DataTableQuery } from "./DataTable.types.js";
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "./DataTable.types.js";
+import { DataTableBody } from "./DataTableBody.js";
+import { DataTableHeaderCell } from "./DataTableHeaderCell.js";
+import { DataTableToolbar } from "./DataTableToolbar.js";
+import { buildSelectColumnDef, toColumnDefs } from "./dataTableColumns.js";
+import { useDataTableSelection } from "./useDataTableSelection.js";
 import {
 	computeAriaRowCount,
 	leafAriaColIndex,
 	shouldAnnounceColIndices,
 } from "./dataTableAria.js";
-import { DataTableBody } from "./DataTableBody.js";
-import { buildSelectColumnDef, toColumnDefs } from "./dataTableColumns.js";
 import {
 	buildDefaultQuery,
 	clampPageSize,
 	queriesEqual,
 	resolveUpdater,
 } from "./dataTableQuery.js";
-import { DataTableHeaderCell } from "./DataTableHeaderCell.js";
-import { DataTableToolbar } from "./DataTableToolbar.js";
-import { useDataTableSelection } from "./useDataTableSelection.js";
 
 /**
  * Server-first data table. Default mode treats `data` as one page and emits

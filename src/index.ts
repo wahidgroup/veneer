@@ -151,6 +151,24 @@ export { Tooltip } from "./components/overlays/Tooltip.js";
 export type { TooltipProps } from "./components/overlays/Tooltip.js";
 export { TopNav } from "./components/navigation/TopNav.js";
 export type { TopNavProps } from "./components/navigation/TopNav.js";
+export {
+	Workflow,
+	WorkflowActions,
+	WorkflowPanel,
+	WorkflowStep,
+	WorkflowTrack,
+} from "./components/navigation/Workflow.js";
+export type {
+	WorkflowActionsProps,
+	WorkflowIsFinishFn,
+	WorkflowOrientation,
+	WorkflowPanelProps,
+	WorkflowProps,
+	WorkflowResolveFn,
+	WorkflowStepProps,
+	WorkflowStepStatus,
+	WorkflowTrackProps,
+} from "./components/navigation/Workflow.js";
 export { useDebounce } from "./hooks/useDebounce.js";
 export { cn, cva } from "./utils/index.js";
 export type { VariantProps } from "./utils/index.js";
