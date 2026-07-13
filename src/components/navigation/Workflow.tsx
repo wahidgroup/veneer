@@ -1,5 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
-import { useId, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
 
 import { cn } from "../../utils/cn.js";
 import { WorkflowActions } from "./WorkflowActions.js";
@@ -89,7 +89,7 @@ function Workflow({
 		});
 	};
 
-	const syncStepIds = (ids: string[]) => {
+	const syncStepIds = useCallback((ids: string[]) => {
 		setStepIds((prev) => {
 			if (stepIdsEqual(prev, ids)) {
 				return prev;
@@ -97,7 +97,7 @@ function Workflow({
 
 			return ids;
 		});
-	};
+	}, []);
 
 	return (
 		<WorkflowContext.Provider
@@ -145,7 +145,7 @@ function WorkflowTrack({ children, className, ...rest }: WorkflowTrackProps) {
 		}
 
 		syncStepIds(readStepIdsFromList(list));
-	});
+	}, [children, syncStepIds]);
 
 	let listClass = "flex gap-4";
 	if (orientation === "vertical") {

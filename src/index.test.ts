@@ -39,6 +39,7 @@ const EXPECTED_EXPORTS = new Set([
 	"MAX_PAGE_SIZE",
 	"Modal",
 	"NumberInput",
+	"Pagination",
 	"Portal",
 	"RadioGroup",
 	"resolveAppShellViewport",

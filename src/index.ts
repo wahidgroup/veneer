@@ -95,6 +95,8 @@ export { Modal } from "./components/overlays/Modal.js";
 export type { ModalProps } from "./components/overlays/Modal.js";
 export { NumberInput } from "./components/forms/NumberInput.js";
 export type { NumberInputProps } from "./components/forms/NumberInput.js";
+export { Pagination } from "./components/navigation/Pagination.js";
+export type { PaginationProps } from "./components/navigation/Pagination.js";
 export { Portal } from "./components/overlays/Portal.js";
 export type { PortalProps } from "./components/overlays/Portal.js";
 export { RadioGroup } from "./components/forms/RadioGroup.js";

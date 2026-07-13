@@ -17,7 +17,7 @@ import {
 
 import type { DataTableProps, DataTableQuery } from "./DataTable.types.js";
 import { cn } from "../../utils/cn.js";
-import { Button } from "../forms/Button.js";
+import { Pagination } from "../navigation/Pagination.js";
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "./DataTable.types.js";
 import { DataTableBody } from "./DataTableBody.js";
 import { DataTableHeaderCell } from "./DataTableHeaderCell.js";
@@ -274,20 +274,6 @@ function DataTable<TData>({
 	const headerRowCount = headerGroups.length;
 	const ariaRowCount = computeAriaRowCount(resolvedRowCount, headerRowCount);
 
-	const fromRow = activeQuery.pageIndex * pageSize + 1;
-	let toRow = (activeQuery.pageIndex + 1) * pageSize;
-	if (toRow > resolvedRowCount) {
-		toRow = resolvedRowCount;
-	}
-
-	let rangeLabel = "0 rows";
-	if (resolvedRowCount > 0) {
-		rangeLabel = `${String(fromRow)}–${String(toRow)} of ${String(resolvedRowCount)}`;
-	}
-
-	const canPrevious = table.getCanPreviousPage();
-	const canNext = table.getCanNextPage();
-
 	return (
 		<div
 			data-slot="data-table"
@@ -357,42 +343,16 @@ function DataTable<TData>({
 				</table>
 			</div>
 
-			<div
-				data-slot="data-table-pagination"
-				className="flex flex-wrap items-center justify-between gap-3"
-			>
-				<p className="text-sm text-muted-foreground">{rangeLabel}</p>
-				<div className="flex items-center gap-2">
-					<Button
-						type="button"
-						variant="outlined"
-						size="sm"
-						disabled={!canPrevious}
-						aria-label="Previous page"
-						onClick={() => {
-							table.previousPage();
-						}}
-					>
-						Previous
-					</Button>
-					<span className="text-sm text-muted-foreground">
-						Page {String(activeQuery.pageIndex + 1)} of{" "}
-						{String(pageCount)}
-					</span>
-					<Button
-						type="button"
-						variant="outlined"
-						size="sm"
-						disabled={!canNext}
-						aria-label="Next page"
-						onClick={() => {
-							table.nextPage();
-						}}
-					>
-						Next
-					</Button>
-				</div>
-			</div>
+			<Pagination
+				pageIndex={activeQuery.pageIndex}
+				pageCount={pageCount}
+				pageSize={pageSize}
+				itemCount={resolvedRowCount}
+				disabled={loading}
+				onPageChange={(next) => {
+					table.setPageIndex(next);
+				}}
+			/>
 		</div>
 	);
 }

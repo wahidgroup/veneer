@@ -10,6 +10,8 @@ import {
 import {
 	LivePatchCanvas,
 	LivePatchKnobs,
+	PaginationCanvas,
+	PaginationKnobs,
 	ServerPageCanvas,
 	ServerPageKnobs,
 } from "./dataDemos.js";
@@ -226,6 +228,11 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: LivePatchCanvas,
 		Knobs: LivePatchKnobs,
+	},
+	pagination: {
+		Provider: PassthroughProvider,
+		Canvas: PaginationCanvas,
+		Knobs: PaginationKnobs,
 	},
 };
 

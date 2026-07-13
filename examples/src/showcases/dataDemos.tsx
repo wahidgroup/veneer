@@ -5,6 +5,7 @@ import {
 	Badge,
 	Button,
 	DataTable,
+	Pagination,
 	applyRowTransaction,
 	useDataTableRows,
 } from "@wahidgroup/veneer";
@@ -332,5 +333,58 @@ function LivePatchKnobs() {
 	);
 }
 
+const PAGE_SIZE = 5;
+const PAGE_ITEMS = ALL_ROWS.map((row) => {
+	return row.name;
+});
+
+function PaginationCanvas() {
+	const [pageIndex, setPageIndex] = useState(0);
+	const pageCount = Math.max(1, Math.ceil(PAGE_ITEMS.length / PAGE_SIZE));
+	const start = pageIndex * PAGE_SIZE;
+	const visible = PAGE_ITEMS.slice(start, start + PAGE_SIZE);
+
+	return (
+		<Canvas>
+			<ul className="mb-4 list-disc space-y-1 pl-5 text-sm text-foreground">
+				{visible.map((name) => {
+					return <li key={name}>{name}</li>;
+				})}
+			</ul>
+			<Pagination
+				pageIndex={pageIndex}
+				pageCount={pageCount}
+				pageSize={PAGE_SIZE}
+				itemCount={PAGE_ITEMS.length}
+				aria-label="Inventory"
+				onPageChange={setPageIndex}
+			/>
+		</Canvas>
+	);
+}
+
+function PaginationKnobs() {
+	return (
+		<RailPanel
+			title="Pagination"
+			description="Controlled Prev/Next with optional item range. DataTable footer uses the same component; page size stays in the table toolbar."
+		>
+			<DemoRow label="Props">
+				<span className="text-sm text-muted-foreground">
+					pageIndex (0-based) · pageCount · itemCount + pageSize for
+					range
+				</span>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 export type { InventoryRow };
-export { ServerPageCanvas, ServerPageKnobs, LivePatchCanvas, LivePatchKnobs };
+export {
+	ServerPageCanvas,
+	ServerPageKnobs,
+	LivePatchCanvas,
+	LivePatchKnobs,
+	PaginationCanvas,
+	PaginationKnobs,
+};

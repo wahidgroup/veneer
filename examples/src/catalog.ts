@@ -224,6 +224,12 @@ const CATALOG: CatalogCategory[] = [
 				description:
 					"applyRowTransaction / useDataTableRows patch the current result set by stable row id.",
 			},
+			{
+				id: "pagination",
+				label: "Pagination",
+				description:
+					"Standalone Prev/Next chrome with optional item range. DataTable reuses the same control.",
+			},
 		],
 	},
 ];

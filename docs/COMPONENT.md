@@ -17,6 +17,7 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `Badge`      | [`indicators/Badge.tsx`](../src/components/indicators/Badge.tsx) | Status / removable chips     |
 | `Loading`    | [`feedback/Loading.tsx`](../src/components/feedback/Loading.tsx) | Busy / skeleton              |
 | `Portal`     | [`overlays/Portal.tsx`](../src/components/overlays/Portal.tsx)   | Portaled layers              |
+| `Pagination` | [`navigation/Pagination.tsx`](../src/components/navigation/Pagination.tsx) | Prev/Next + item-range chrome |
 
 `Button.tsx` remains the stamp example for exports, `cva`/`cn`, `data-slot`, and tokens.
 
