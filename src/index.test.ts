@@ -6,8 +6,10 @@ import * as lib from "./index.js";
  */
 const EXPECTED_EXPORTS = new Set([
 	"ActionMenu",
+	"AppShell",
 	"Badge",
 	"badgeVariants",
+	"Breadcrumbs",
 	"Button",
 	"buttonVariants",
 	"Checkbox",
@@ -32,6 +34,7 @@ const EXPECTED_EXPORTS = new Set([
 	"RadioGroup",
 	"SearchInput",
 	"Select",
+	"SideNav",
 	"Slider",
 	"Tabs",
 	"TabsList",
@@ -43,6 +46,7 @@ const EXPECTED_EXPORTS = new Set([
 	"ToastViewport",
 	"Toggle",
 	"Tooltip",
+	"TopNav",
 	"toastVariants",
 	"useDebounce",
 ]);

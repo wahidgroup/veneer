@@ -13,7 +13,7 @@ src/components/<category>/<Name>.test.tsx
 
 - File name MUST match the primary export (`Input.tsx`).
 - Tests MUST be co-located. Setup helpers live in `src/test/` only.
-- Categories: `forms/`, `feedback/`, `indicators/`, `overlays/`, `navigation/` (add folders when a new IA bucket appears).
+- Categories: `forms/`, `feedback/`, `indicators/`, `overlays/`, `navigation/`, `layout/` (add folders when a new IA bucket appears).
 - Public API stays flat via `src/index.ts` - no category re-exports.
 
 ## Implementation

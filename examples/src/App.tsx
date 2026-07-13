@@ -11,8 +11,9 @@ import {
 import { ComboboxShowcase } from "./showcases/ComboboxShowcase.js";
 import { FormsShowcase } from "./showcases/FormsShowcase.js";
 import { PrimitivesShowcase } from "./showcases/PrimitivesShowcase.js";
+import { ShellShowcase } from "./showcases/ShellShowcase.js";
 
-type CategoryId = "primitives" | "forms" | "combobox";
+type CategoryId = "primitives" | "forms" | "combobox" | "shell";
 
 interface Category {
 	id: CategoryId;
@@ -36,6 +37,11 @@ const CATEGORIES: Category[] = [
 		id: "combobox",
 		label: "Combobox",
 		description: "Search select, multi chips, loading / invalid / disabled",
+	},
+	{
+		id: "shell",
+		label: "Shell",
+		description: "AppShell, TopNav, SideNav, Breadcrumbs",
 	},
 ];
 
@@ -107,6 +113,10 @@ function App() {
 					}
 					if (next === "combobox") {
 						setCategory("combobox");
+						return;
+					}
+					if (next === "shell") {
+						setCategory("shell");
 					}
 				}}
 			>
@@ -154,6 +164,9 @@ function App() {
 					</TabsPanel>
 					<TabsPanel value="combobox">
 						<ComboboxShowcase />
+					</TabsPanel>
+					<TabsPanel value="shell">
+						<ShellShowcase />
 					</TabsPanel>
 				</main>
 			</Tabs>

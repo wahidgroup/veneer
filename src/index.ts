@@ -14,8 +14,16 @@ export type {
 	ActionMenuItem,
 	ActionMenuProps,
 } from "./components/overlays/ActionMenu.js";
+export { AppShell } from "./components/layout/AppShell.js";
+export type { AppShellProps } from "./components/layout/AppShell.js";
 export { Badge, badgeVariants } from "./components/indicators/Badge.js";
 export type { BadgeProps } from "./components/indicators/Badge.js";
+export { Breadcrumbs } from "./components/navigation/Breadcrumbs.js";
+export type {
+	BreadcrumbItem,
+	BreadcrumbLinkRenderProps,
+	BreadcrumbsProps,
+} from "./components/navigation/Breadcrumbs.js";
 export { Button, buttonVariants } from "./components/forms/Button.js";
 export type { ButtonProps } from "./components/forms/Button.js";
 export { Checkbox } from "./components/forms/Checkbox.js";
@@ -68,6 +76,12 @@ export { SearchInput } from "./components/forms/SearchInput.js";
 export type { SearchInputProps } from "./components/forms/SearchInput.js";
 export { Select } from "./components/forms/Select.js";
 export type { SelectOption, SelectProps } from "./components/forms/Select.js";
+export { SideNav } from "./components/navigation/SideNav.js";
+export type {
+	SideNavItem,
+	SideNavLinkRenderProps,
+	SideNavProps,
+} from "./components/navigation/SideNav.js";
 export { Slider } from "./components/forms/Slider.js";
 export type { SliderProps } from "./components/forms/Slider.js";
 export {
@@ -105,6 +119,8 @@ export type {
 } from "./components/feedback/Toast.js";
 export { Tooltip } from "./components/overlays/Tooltip.js";
 export type { TooltipProps } from "./components/overlays/Tooltip.js";
+export { TopNav } from "./components/navigation/TopNav.js";
+export type { TopNavProps } from "./components/navigation/TopNav.js";
 export { useDebounce } from "./hooks/useDebounce.js";
 export { cn, cva } from "./utils/index.js";
 export type { VariantProps } from "./utils/index.js";
