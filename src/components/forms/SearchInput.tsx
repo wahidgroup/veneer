@@ -4,6 +4,7 @@ import { Search, X } from "lucide-react";
 
 import { useDebounce } from "../../hooks/useDebounce.js";
 import { cn } from "../../utils/cn.js";
+import { Button } from "./Button.js";
 import { controlVariants } from "./FormField.js";
 
 interface SearchInputProps extends Omit<ComponentProps<"div">, "onChange"> {
@@ -43,6 +44,11 @@ function SearchInput({
 	const [draft, setDraft] = useState(initial);
 	const [prevControlled, setPrevControlled] = useState(controlledValue);
 
+	/**
+	 * Sync draft when controlled `value` changes. Prefer this over
+	 * effect+setState - `react-hooks/set-state-in-effect` rejects the effect form.
+	 * @see https://react.dev/learn/you-might-not-need-an-effect#adjusting-some-state-when-a-prop-changes
+	 */
 	if (isControlled && controlledValue !== prevControlled) {
 		setPrevControlled(controlledValue);
 		setDraft(controlledValue);
@@ -65,16 +71,17 @@ function SearchInput({
 	let clearNode: ReactNode = null;
 	if (draft.length > 0 && disabled !== true) {
 		clearNode = (
-			<button
-				type="button"
+			<Button
+				variant="ghost"
+				size="icon"
 				aria-label="Clear search"
-				className="absolute right-2 top-1/2 inline-flex size-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-muted-foreground hover:text-foreground"
+				className="absolute right-1.5 top-1/2 size-7 -translate-y-1/2"
 				onClick={() => {
 					setDraft("");
 				}}
 			>
 				<X className="size-4" aria-hidden="true" />
-			</button>
+			</Button>
 		);
 	}
 

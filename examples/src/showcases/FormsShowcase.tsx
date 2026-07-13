@@ -232,7 +232,7 @@ function FormsShowcase() {
 
 			<ShowcaseSection
 				title="Tags, numbers, schedule, files"
-				description="TagInput, NumberInput, Slider, DateTimePicker, FileUpload — grouped with FormSection."
+				description="TagInput, NumberInput, Slider, DateTimePicker, FileUpload - grouped with FormSection."
 			>
 				<FormSection
 					title="Deploy options"

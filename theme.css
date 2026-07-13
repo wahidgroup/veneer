@@ -127,17 +127,21 @@
 		--accent: #374151;
 		--accent-foreground: #f9fafb;
 
-		--primary: #004d75;
-		--primary-foreground: #ffffff;
-		--primary-dark: #002a42;
-		--primary-light: #006699;
+		/*
+		 * Primary must stay readable as text on card/secondary
+		 * (outlined / text buttons). Navy fills belong to light theme.
+		 */
+		--primary: #7dd3fc;
+		--primary-foreground: #0f172a;
+		--primary-dark: #38bdf8;
+		--primary-light: #bae6fd;
 		--primary-bg: #1a3344;
 
 		--secondary: #374151;
 		--secondary-foreground: #e5e7eb;
 
-		--destructive: #d93025;
-		--destructive-foreground: #ffffff;
+		--destructive: #f87171;
+		--destructive-foreground: #0f172a;
 		--destructive-muted: rgb(127 29 29 / 0.3);
 		--destructive-muted-foreground: #fca5a5;
 
@@ -150,8 +154,8 @@
 		--info: rgb(30 58 138 / 0.3);
 		--info-foreground: #93c5fd;
 
-		--border: #374151;
+		--border: #4b5563;
 		--input: #4b5563;
-		--ring: rgb(0 77 117 / 0.5);
+		--ring: rgb(125 211 252 / 0.55);
 	}
 }

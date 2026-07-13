@@ -14,21 +14,22 @@ src/components/<category>/<Name>.test.tsx
 - File name MUST match the primary export (`Input.tsx`).
 - Tests MUST be co-located. Setup helpers live in `src/test/` only.
 - Categories: `forms/`, `feedback/`, `indicators/`, `overlays/`, `navigation/` (add folders when a new IA bucket appears).
-- Public API stays flat via `src/index.ts` — no category re-exports.
+- Public API stays flat via `src/index.ts` - no category re-exports.
 
 ## Implementation
 
-| Rule         | Requirement                                               |
-| ------------ | --------------------------------------------------------- |
-| Exports      | Named: `Name`, `nameVariants` (if any), `NameProps` type  |
-| Variants     | `cva` + `cn(variants(...), className)`                    |
-| DOM          | Extend `ComponentProps<"el">` (+ `VariantProps`)          |
-| Slot         | `data-slot="<name>"` on root                              |
-| Tokens       | Semantic utilities only; no `dark:` in primitives         |
-| Icons        | Prefer `lucide-react`; extra icons via `ReactNode` slots  |
-| Control flow | No ternaries in `.ts` / `.tsx`                            |
-| Docs         | Multi-line JSDoc on the public component                  |
-| Barrel       | Update `src/index.ts` + `EXPECTED_EXPORTS` in the same PR |
+| Rule         | Requirement                                                                      |
+| ------------ | -------------------------------------------------------------------------------- |
+| Exports      | Named: `Name`, `nameVariants` (if any), `NameProps` type                         |
+| Variants     | `cva` + `cn(variants(...), className)`                                           |
+| DOM          | Extend `ComponentProps<"el">` (+ `VariantProps`)                                 |
+| Slot         | `data-slot="<name>"` on root                                                     |
+| Tokens       | Semantic utilities only; no `dark:` in primitives                                |
+| Icons        | Prefer `lucide-react`; extra icons via `ReactNode` slots                         |
+| Reuse        | Prefer Veneer primitives inside composites (e.g. `Button` ghost/icon for chrome) |
+| Control flow | No ternaries in `.ts` / `.tsx`                                                   |
+| Docs         | Multi-line JSDoc on the public component                                         |
+| Barrel       | Update `src/index.ts` + `EXPECTED_EXPORTS` in the same PR                        |
 
 ## Tests
 
@@ -39,7 +40,7 @@ MUST:
 3. Cover variants with `it.each`
 4. Cover disabled / invalid when applicable
 5. Assert `className` merge
-6. Use real callbacks — never `vi.fn` / `vi.mock`
+6. Use real callbacks - never `vi.fn` / `vi.mock`
 7. Keep tests linear (no `if` in test bodies)
 8. Reuse `src/test/component-harness.js` helpers when applicable
 

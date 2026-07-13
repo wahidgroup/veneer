@@ -13,10 +13,10 @@ const AZ_OPTIONS = [
 ];
 
 const INSTANCE_OPTIONS = [
-	{ value: "t3.micro", label: "t3.micro — 2 vCPU, 1 GiB" },
-	{ value: "t3.small", label: "t3.small — 2 vCPU, 2 GiB" },
-	{ value: "m5.large", label: "m5.large — 2 vCPU, 8 GiB" },
-	{ value: "c6i.large", label: "c6i.large — 2 vCPU, 4 GiB" },
+	{ value: "t3.micro", label: "t3.micro - 2 vCPU, 1 GiB" },
+	{ value: "t3.small", label: "t3.small - 2 vCPU, 2 GiB" },
+	{ value: "m5.large", label: "m5.large - 2 vCPU, 8 GiB" },
+	{ value: "c6i.large", label: "c6i.large - 2 vCPU, 4 GiB" },
 ];
 
 /**
@@ -125,7 +125,7 @@ function ComboboxShowcase() {
 						<FormField
 							label="Non-searchable"
 							htmlFor="demo-no-search"
-							hint="searchable={false} — open list only"
+							hint="searchable={false} - open list only"
 						>
 							<Combobox
 								id="demo-no-search"

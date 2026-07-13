@@ -4,6 +4,7 @@ import { X } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
 import { Badge } from "../indicators/Badge.js";
+import { Button } from "./Button.js";
 import { controlVariants } from "./FormField.js";
 
 interface TagInputProps extends Omit<
@@ -51,6 +52,7 @@ function TagInput({
 		if (defaultValue !== undefined) {
 			return defaultValue;
 		}
+
 		const empty: string[] = [];
 		return empty;
 	});
@@ -110,6 +112,7 @@ function TagInput({
 		if (event.key === "Enter" || event.key === ",") {
 			event.preventDefault();
 			addFromDraft();
+
 			return;
 		}
 		if (
@@ -118,6 +121,7 @@ function TagInput({
 			tags.length > 0
 		) {
 			event.preventDefault();
+
 			const last = tags[tags.length - 1];
 			if (last !== undefined) {
 				removeTag(last);
@@ -131,12 +135,12 @@ function TagInput({
 			<div className="flex flex-wrap gap-1.5">
 				{tags.map((tag) => {
 					return (
-						<button
+						<Button
 							key={tag}
-							type="button"
+							variant="ghost"
 							disabled={disabled}
 							aria-label={`Remove ${tag}`}
-							className="inline-flex"
+							className="h-auto rounded-full p-0 hover:bg-transparent"
 							onClick={() => {
 								removeTag(tag);
 							}}
@@ -149,7 +153,7 @@ function TagInput({
 								{tag}
 								<X className="size-3" aria-hidden="true" />
 							</Badge>
-						</button>
+						</Button>
 					);
 				})}
 			</div>

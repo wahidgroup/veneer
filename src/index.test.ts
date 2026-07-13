@@ -24,6 +24,7 @@ const EXPECTED_EXPORTS = new Set([
 	"Label",
 	"Loading",
 	"loadingVariants",
+	"Modal",
 	"NumberInput",
 	"Portal",
 	"RadioGroup",

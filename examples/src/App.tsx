@@ -24,7 +24,7 @@ const CATEGORIES: Category[] = [
 	{
 		id: "primitives",
 		label: "Primitives",
-		description: "Button, Badge, Loading, Tabs",
+		description: "Button, Badge, Loading, Tabs, Modal",
 	},
 	{
 		id: "forms",

@@ -4,10 +4,11 @@ import { Check, ChevronDown, X } from "lucide-react";
 
 import { usePopover } from "../../hooks/usePopover.js";
 import { cn } from "../../utils/cn.js";
-import { Badge } from "../indicators/Badge.js";
-import { controlVariants } from "./FormField.js";
 import { Loading } from "../feedback/Loading.js";
+import { Badge } from "../indicators/Badge.js";
 import { Portal } from "../overlays/Portal.js";
+import { Button } from "./Button.js";
+import { controlVariants } from "./FormField.js";
 
 interface ComboboxOption {
 	value: string;
@@ -336,12 +337,12 @@ function Combobox(props: ComboboxProps) {
 					}
 
 					return (
-						<button
+						<Button
 							key={item}
-							type="button"
+							variant="ghost"
 							disabled={disabled}
 							aria-label={`Remove ${chipLabel}`}
-							className="inline-flex"
+							className="h-auto rounded-full p-0 hover:bg-transparent"
 							onClick={() => {
 								toggleMulti(item);
 							}}
@@ -354,7 +355,7 @@ function Combobox(props: ComboboxProps) {
 								{chipLabel}
 								<X className="size-3" aria-hidden="true" />
 							</Badge>
-						</button>
+						</Button>
 					);
 				})}
 			</div>

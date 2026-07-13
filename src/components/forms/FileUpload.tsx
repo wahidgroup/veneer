@@ -3,6 +3,7 @@ import { useId, useRef, useState } from "react";
 import { Trash2, Upload } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
+import { Button } from "./Button.js";
 
 interface FileUploadProps extends Omit<
 	ComponentProps<"div">,
@@ -161,17 +162,11 @@ function FileUpload({
 							key={`${file.name}-${file.size}-${index}`}
 							className="flex items-center gap-2"
 						>
-							<button
-								type="button"
+							<Button
+								variant="danger"
+								size="icon"
 								disabled={disabled}
 								aria-label={`Remove ${file.name}`}
-								className={cn(
-									"inline-flex size-8 shrink-0 items-center justify-center rounded-md",
-									"cursor-pointer text-destructive transition-colors",
-									"hover:bg-destructive-muted focus-visible:outline-none",
-									"focus-visible:ring-2 focus-visible:ring-destructive",
-									"disabled:cursor-not-allowed disabled:opacity-50",
-								)}
 								onClick={() => {
 									commit(
 										files.filter((_, i) => {
@@ -181,7 +176,7 @@ function FileUpload({
 								}}
 							>
 								<Trash2 className="size-4" aria-hidden="true" />
-							</button>
+							</Button>
 							<span className="min-w-0 truncate text-foreground">
 								{file.name}
 							</span>

@@ -1,7 +1,10 @@
+import { useState } from "react";
+
 import {
 	Badge,
 	Button,
 	Loading,
+	Modal,
 	Tabs,
 	TabsList,
 	TabsPanel,
@@ -11,11 +14,56 @@ import {
 import { DemoRow, ShowcaseSection } from "./ShowcaseSection.js";
 
 /**
- * Primitives: Button, Badge, Loading, Tabs.
+ * Primitives: Button, Badge, Loading, Tabs, Modal.
  */
 function PrimitivesShowcase() {
+	const [modalOpen, setModalOpen] = useState(false);
+
 	return (
 		<div className="flex flex-col">
+			<ShowcaseSection
+				title="Modal"
+				description="Dialog with backdrop, Esc, focus trap, and scroll lock."
+			>
+				<DemoRow label="Open">
+					<Button
+						variant="outlined"
+						onClick={() => {
+							setModalOpen(true);
+						}}
+					>
+						Open modal
+					</Button>
+				</DemoRow>
+				<Modal
+					open={modalOpen}
+					title="Confirm apply"
+					onOpenChange={setModalOpen}
+				>
+					<p className="text-muted-foreground">
+						Apply this change set to the selected stack? This may
+						update resources in place.
+					</p>
+					<div className="mt-4 flex justify-end gap-2">
+						<Button
+							variant="outlined"
+							onClick={() => {
+								setModalOpen(false);
+							}}
+						>
+							Cancel
+						</Button>
+						<Button
+							onClick={() => {
+								setModalOpen(false);
+							}}
+						>
+							Apply
+						</Button>
+					</div>
+				</Modal>
+			</ShowcaseSection>
+
 			<ShowcaseSection
 				title="Tabs"
 				description="Underline tablist + panels. Arrow keys move selection."
@@ -57,8 +105,23 @@ function PrimitivesShowcase() {
 					<Button variant="filled">Filled</Button>
 					<Button variant="outlined">Outlined</Button>
 					<Button variant="text">Text</Button>
+					<Button variant="ghost">Ghost</Button>
 					<Button variant="secondary">Secondary</Button>
 					<Button variant="danger">Danger</Button>
+				</DemoRow>
+				<DemoRow label="Sizes">
+					<Button size="sm">Small</Button>
+					<Button size="md">Medium</Button>
+					<Button variant="ghost" size="icon" aria-label="Icon ghost">
+						×
+					</Button>
+					<Button
+						variant="danger"
+						size="icon"
+						aria-label="Icon danger"
+					>
+						×
+					</Button>
 				</DemoRow>
 				<DemoRow label="Disabled">
 					<Button disabled>Disabled</Button>

@@ -37,8 +37,26 @@ describe("Button", () => {
 			expectedClass: "border",
 			label: "outlined",
 		},
+		{
+			variant: "ghost" as const,
+			expectedClass: "text-muted-foreground",
+			label: "ghost",
+		},
 	])("applies $label variant class", ({ variant, expectedClass }) => {
 		render(<Button variant={variant}>Btn</Button>);
+		expect(screen.getByRole("button").className).toContain(expectedClass);
+	});
+
+	it.each([
+		{ size: undefined, expectedClass: "px-5", label: "default md" },
+		{ size: "icon" as const, expectedClass: "size-8", label: "icon" },
+		{ size: "sm" as const, expectedClass: "text-xs", label: "sm" },
+	])("applies $label size class", ({ size, expectedClass }) => {
+		render(
+			<Button size={size} aria-label="Sized">
+				×
+			</Button>,
+		);
 		expect(screen.getByRole("button").className).toContain(expectedClass);
 	});
 

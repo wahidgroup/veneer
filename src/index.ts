@@ -41,6 +41,8 @@ export { Label } from "./components/forms/Label.js";
 export type { LabelProps } from "./components/forms/Label.js";
 export { Loading, loadingVariants } from "./components/feedback/Loading.js";
 export type { LoadingProps } from "./components/feedback/Loading.js";
+export { Modal } from "./components/overlays/Modal.js";
+export type { ModalProps } from "./components/overlays/Modal.js";
 export { NumberInput } from "./components/forms/NumberInput.js";
 export type { NumberInputProps } from "./components/forms/NumberInput.js";
 export { Portal } from "./components/overlays/Portal.js";
