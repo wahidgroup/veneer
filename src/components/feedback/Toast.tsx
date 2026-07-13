@@ -49,7 +49,7 @@ const POSITION_CLASS: Record<ToastPosition, string> = {
 
 const toastVariants = cva(
 	[
-		"flex min-w-[300px] max-w-md items-center gap-3 rounded-lg border px-4 py-3 text-sm shadow-lg",
+		"flex min-w-[300px] max-w-md items-center gap-3 rounded-md border px-4 py-3 text-sm shadow-md",
 		/*
 		 * `bg-card` under a type wash. Dark semantic fills are translucent;
 		 * stacking them on card keeps typed color without see-through panels.

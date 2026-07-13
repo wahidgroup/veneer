@@ -130,7 +130,7 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 					tabIndex={-1}
 					style={floatingStyles}
 					className={cn(
-						"z-dropdown min-w-44 overflow-auto rounded-lg border border-border bg-card py-1 shadow-md",
+						"z-dropdown min-w-44 overflow-auto rounded-md border border-border bg-card py-1 shadow-md",
 					)}
 					onKeyDown={onMenuKeyDown}
 				>

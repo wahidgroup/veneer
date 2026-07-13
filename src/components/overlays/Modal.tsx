@@ -180,7 +180,7 @@ function Modal({
 					aria-labelledby={titleId}
 					tabIndex={-1}
 					className={cn(
-						"relative z-10 flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-lg outline-none",
+						"relative z-10 flex max-h-[90vh] w-full max-w-md flex-col overflow-hidden rounded-lg border border-border bg-card text-card-foreground shadow-lg outline-none",
 						className,
 					)}
 					{...rest}

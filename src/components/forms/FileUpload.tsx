@@ -195,7 +195,7 @@ function FileUpload({
 	}
 
 	let dropClass =
-		"block rounded-lg border border-dashed bg-secondary px-4 py-6 text-center transition-colors";
+		"block rounded-md border border-dashed bg-secondary px-4 py-6 text-center transition-colors";
 	dropClass = cn(dropClass, borderClass);
 	if (disabled === true) {
 		dropClass = cn(dropClass, "cursor-not-allowed opacity-50");

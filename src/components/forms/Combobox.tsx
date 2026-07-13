@@ -342,7 +342,7 @@ function Combobox(props: ComboboxProps) {
 							variant="ghost"
 							disabled={disabled}
 							aria-label={`Remove ${chipLabel}`}
-							className="h-auto rounded-full p-0 hover:bg-transparent"
+							className="h-auto rounded-sm p-0 hover:bg-transparent"
 							onClick={() => {
 								toggleMulti(item);
 							}}
@@ -468,7 +468,7 @@ function Combobox(props: ComboboxProps) {
 					data-slot="combobox-listbox"
 					aria-multiselectable={isMulti}
 					className={cn(
-						"z-dropdown overflow-auto rounded-lg border border-border bg-card shadow-md",
+						"z-dropdown overflow-auto rounded-md border border-border bg-card shadow-md",
 						"py-1",
 					)}
 					style={floatingStyles}

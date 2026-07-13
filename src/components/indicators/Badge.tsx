@@ -6,7 +6,7 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../utils/cn.js";
 
 const badgeVariants = cva(
-	"inline-flex items-center font-semibold rounded-md whitespace-nowrap",
+	"inline-flex items-center font-semibold rounded-full whitespace-nowrap",
 	{
 		variants: {
 			variant: {

@@ -51,7 +51,7 @@ const buttonVariants = cva(
 					"disabled:bg-muted disabled:text-muted-foreground",
 				].join(" "),
 				danger: [
-					"bg-secondary border border-destructive/30 text-destructive shadow-sm",
+					"bg-secondary border border-destructive/30 text-destructive",
 					"hover:bg-destructive-muted hover:border-destructive/50",
 					"focus-visible:ring-destructive",
 					"active:bg-destructive-muted",
@@ -59,8 +59,8 @@ const buttonVariants = cva(
 				].join(" "),
 			},
 			size: {
-				md: "rounded-full px-5 py-2.5 text-sm",
-				sm: "rounded-full px-3 py-1.5 text-xs",
+				md: "rounded-md px-5 py-2.5 text-sm",
+				sm: "rounded-md px-3 py-1.5 text-xs",
 				icon: "size-8 shrink-0 rounded-md p-0",
 			},
 		},
@@ -68,7 +68,7 @@ const buttonVariants = cva(
 			{
 				variant: "danger",
 				size: "md",
-				class: "rounded-md px-3 py-1.5 text-sm",
+				class: "px-3 py-1.5 text-sm",
 			},
 			{
 				variant: "danger",

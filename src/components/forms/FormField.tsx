@@ -66,8 +66,8 @@ function FormField({
 
 const controlVariants = cva(
 	[
-		"flex w-full rounded-lg border bg-secondary px-4 py-3 text-sm text-foreground",
-		"placeholder:text-muted-foreground shadow-sm outline-none transition-colors",
+		"flex w-full rounded-md border bg-secondary px-4 py-3 text-sm text-foreground",
+		"placeholder:text-muted-foreground outline-none transition-colors",
 		"focus-visible:ring-2 focus-visible:ring-offset-0",
 		"disabled:cursor-not-allowed disabled:bg-muted disabled:text-muted-foreground",
 	].join(" "),

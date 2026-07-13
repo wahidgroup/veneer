@@ -140,7 +140,7 @@ function TagInput({
 							variant="ghost"
 							disabled={disabled}
 							aria-label={`Remove ${tag}`}
-							className="h-auto rounded-full p-0 hover:bg-transparent"
+							className="h-auto rounded-sm p-0 hover:bg-transparent"
 							onClick={() => {
 								removeTag(tag);
 							}}
