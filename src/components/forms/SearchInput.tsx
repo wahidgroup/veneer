@@ -110,6 +110,8 @@ function SearchInput({
 				className={cn(
 					controlVariants({ invalid: false }),
 					"py-2 pl-9 pr-10",
+					"[&::-webkit-search-cancel-button]:hidden",
+					"[&::-webkit-search-decoration]:hidden",
 				)}
 				onChange={(event) => {
 					setDraft(event.target.value);

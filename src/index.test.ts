@@ -5,6 +5,7 @@ import * as lib from "./index.js";
  * Runtime export lock. Grow as public API expands.
  */
 const EXPECTED_EXPORTS = new Set([
+	"ActionMenu",
 	"Badge",
 	"badgeVariants",
 	"Button",
@@ -12,6 +13,7 @@ const EXPECTED_EXPORTS = new Set([
 	"Checkbox",
 	"cn",
 	"Combobox",
+	"ConfirmDialog",
 	"controlVariants",
 	"cva",
 	"DateTimePicker",
@@ -37,7 +39,11 @@ const EXPECTED_EXPORTS = new Set([
 	"TabsTrigger",
 	"TagInput",
 	"TextArea",
+	"Toast",
+	"ToastViewport",
 	"Toggle",
+	"Tooltip",
+	"toastVariants",
 	"useDebounce",
 ]);
 
@@ -51,7 +57,6 @@ describe("public API surface", () => {
 		const unexpected = [...actualKeys].filter((k) => {
 			return !EXPECTED_EXPORTS.has(k);
 		});
-
 		expect(missing).toEqual([]);
 		expect(unexpected).toEqual([]);
 	});

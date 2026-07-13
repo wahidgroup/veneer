@@ -24,7 +24,8 @@ const CATEGORIES: Category[] = [
 	{
 		id: "primitives",
 		label: "Primitives",
-		description: "Button, Badge, Loading, Tabs, Modal",
+		description:
+			"Button, Badge, Loading, Tabs, Modal, ConfirmDialog, Tooltip, ActionMenu, Toast",
 	},
 	{
 		id: "forms",
@@ -40,16 +41,44 @@ const CATEGORIES: Category[] = [
 
 type ThemeMode = "light" | "dark";
 
+function readSystemTheme(): ThemeMode {
+	if (typeof window === "undefined") {
+		return "dark";
+	}
+	if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
+		return "dark";
+	}
+
+	return "light";
+}
+
 /**
  * Category-switcher shell for Veneer showcases.
  */
 function App() {
 	const [category, setCategory] = useState<CategoryId>("primitives");
-	const [theme, setTheme] = useState<ThemeMode>("light");
+	const [theme, setTheme] = useState<ThemeMode>(readSystemTheme);
+	const [themePinned, setThemePinned] = useState(false);
 
 	useEffect(() => {
 		document.documentElement.setAttribute("data-theme", theme);
 	}, [theme]);
+
+	useEffect(() => {
+		if (themePinned) {
+			return;
+		}
+
+		const media = window.matchMedia("(prefers-color-scheme: dark)");
+		function onSystemThemeChange() {
+			setTheme(readSystemTheme());
+		}
+
+		media.addEventListener("change", onSystemThemeChange);
+		return () => {
+			media.removeEventListener("change", onSystemThemeChange);
+		};
+	}, [themePinned]);
 
 	let nextTheme: ThemeMode = "dark";
 	if (theme === "dark") {
@@ -97,6 +126,7 @@ function App() {
 						<Button
 							variant="outlined"
 							onClick={() => {
+								setThemePinned(true);
 								setTheme(nextTheme);
 							}}
 						>
