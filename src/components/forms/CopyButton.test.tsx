@@ -1,19 +1,25 @@
-import { act, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { CopyButton } from "./CopyButton.js";
 
-const clipboardStore = { text: "" };
+const clipboardStore = { text: "", failNext: false };
 
 function installClipboard() {
 	clipboardStore.text = "";
+	clipboardStore.failNext = false;
 	Object.defineProperty(navigator, "clipboard", {
 		configurable: true,
 		value: {
 			writeText: (text: string) => {
+				if (clipboardStore.failNext) {
+					return Promise.reject(new Error("clipboard denied"));
+				}
+
 				clipboardStore.text = text;
+
 				return Promise.resolve();
 			},
 			readText: () => {
@@ -28,6 +34,7 @@ beforeEach(() => {
 });
 
 afterEach(() => {
+	vi.useRealTimers();
 	Object.defineProperty(navigator, "clipboard", {
 		configurable: true,
 		value: undefined,
@@ -60,23 +67,54 @@ describe("CopyButton", () => {
 		expect(seen).toEqual(["arn:aws:s3:::bucket"]);
 	});
 
-	it("resets after resetMs", async () => {
+	it("stays idle when clipboard write fails", async () => {
 		const user = userEvent.setup();
 
 		installClipboard();
-		render(<CopyButton value="id-1" resetMs={20} />);
+
+		clipboardStore.failNext = true;
+
+		const seen: string[] = [];
+		render(
+			<CopyButton
+				value="secret"
+				onCopied={(value) => {
+					seen.push(value);
+				}}
+			/>,
+		);
 
 		await user.click(
 			screen.getByRole("button", { name: "Copy to clipboard" }),
 		);
+		await act(async () => {
+			await Promise.resolve();
+		});
+
 		expect(
-			await screen.findByRole("button", { name: "Copied" }),
+			screen.getByRole("button", { name: "Copy to clipboard" }),
+		).toHaveAttribute("data-copied", "false");
+		expect(clipboardStore.text).toBe("");
+		expect(seen).toEqual([]);
+	});
+
+	it("resets after resetMs", async () => {
+		vi.useFakeTimers();
+		installClipboard();
+		render(<CopyButton value="id-1" resetMs={20} />);
+
+		fireEvent.click(
+			screen.getByRole("button", { name: "Copy to clipboard" }),
+		);
+		await act(async () => {
+			await Promise.resolve();
+		});
+		expect(
+			screen.getByRole("button", { name: "Copied" }),
 		).toBeInTheDocument();
 
 		await act(async () => {
-			await new Promise((resolve) => {
-				window.setTimeout(resolve, 30);
-			});
+			await vi.advanceTimersByTimeAsync(20);
 		});
 
 		expect(

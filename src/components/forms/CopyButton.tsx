@@ -1,8 +1,7 @@
 import type { ComponentProps, ReactNode } from "react";
-import { useEffect, useState } from "react";
 import { Check, Copy } from "lucide-react";
+import { useEffect, useState } from "react";
 
-import { cn } from "../../utils/cn.js";
 import { Button } from "./Button.js";
 
 interface CopyButtonProps extends Omit<
@@ -19,6 +18,7 @@ interface CopyButtonProps extends Omit<
 /**
  * Copies `value` to the clipboard. Shows a brief copied affordance, then
  * resets. Builds on Button (`ghost` / `icon` by default for ARN/ID chrome).
+ * Clipboard write failures leave the control idle (no false copied state).
  */
 function CopyButton({
 	value,
@@ -97,11 +97,17 @@ function CopyButton({
 			size={resolvedSize}
 			disabled={disabled}
 			aria-label={resolvedAriaLabel}
-			className={cn(className)}
+			className={className}
 			onClick={() => {
 				void (async () => {
-					await navigator.clipboard.writeText(value);
+					try {
+						await navigator.clipboard.writeText(value);
+					} catch {
+						return;
+					}
+
 					setCopied(true);
+
 					if (onCopied !== undefined) {
 						onCopied(value);
 					}

@@ -2,11 +2,11 @@
 
 The key words "MUST", "MUST NOT", "SHOULD", and "MAY" are interpreted as in [RFC 2119](https://www.rfc-editor.org/rfc/rfc2119).
 
-## Canonical primitives
+## Canonical reuse
 
 Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 
-| Primitive         | Path                                                                         | Use for                       |
+| Component         | Path                                                                         | Use for                       |
 | ----------------- | ---------------------------------------------------------------------------- | ----------------------------- |
 | `Button`          | [`forms/Button.tsx`](../src/components/forms/Button.tsx)                     | Actions, icon/ghost chrome    |
 | `Input`           | [`forms/Input.tsx`](../src/components/forms/Input.tsx)                       | Text entry                    |

@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
-import { Badge } from "./Badge.js";
 import type { BadgeProps } from "./Badge.js";
+import { Badge } from "./Badge.js";
 
 type StatusBadgeStatus =
 	| "running"
@@ -16,6 +16,9 @@ interface StatusBadgeProps extends Omit<BadgeProps, "variant" | "children"> {
 	children: ReactNode;
 }
 
+/**
+ * Maps inventory status tokens onto Badge tone variants.
+ */
 function variantForStatus(
 	status: StatusBadgeStatus,
 ): NonNullable<BadgeProps["variant"]> {
@@ -34,8 +37,12 @@ function variantForStatus(
 	if (status === "danger") {
 		return "danger";
 	}
+	if (status === "drifted") {
+		return "warning";
+	}
 
-	return "warning";
+	const _exhaustive: never = status;
+	return _exhaustive;
 }
 
 /**
