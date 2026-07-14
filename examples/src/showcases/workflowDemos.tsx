@@ -119,9 +119,8 @@ function WorkflowDemoProvider({ children }: { children: ReactNode }) {
 	}
 
 	function addNode(): void {
-		let id = "";
+		const id = `edge-${String(nodes.length + 1)}`;
 		setNodes((prev) => {
-			id = `edge-${String(prev.length + 1)}`;
 			return [...prev, { id, name: id }];
 		});
 		setNames((prev) => {
@@ -130,31 +129,25 @@ function WorkflowDemoProvider({ children }: { children: ReactNode }) {
 	}
 
 	function removeNode(): void {
-		let removedId = "";
-		setNodes((prev) => {
-			if (prev.length <= 1) {
-				return prev;
-			}
-
-			const next = prev.slice(0, -1);
-			const removed = prev[prev.length - 1];
-			if (removed !== undefined) {
-				removedId = removed.id;
-			}
-
-			return next;
-		});
-
-		if (removedId.length === 0) {
+		if (nodes.length <= 1) {
 			return;
 		}
 
+		const removed = nodes[nodes.length - 1];
+		if (removed === undefined) {
+			return;
+		}
+
+		const removedId = removed.id;
+
+		setNodes((prev) => {
+			return prev.slice(0, -1);
+		});
 		setNames((prev) => {
 			const next = { ...prev };
 			delete next[removedId];
 			return next;
 		});
-
 		setStep((current) => {
 			if (current === `node:${removedId}`) {
 				return "cluster";
