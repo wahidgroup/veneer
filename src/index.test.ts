@@ -1,4 +1,7 @@
 import { describe, expect, it } from "vitest";
+
+import * as dataTable from "./data-table.js";
+import * as diff from "./diff.js";
 import * as lib from "./index.js";
 
 /**
@@ -27,12 +30,9 @@ const EXPECTED_EXPORTS = new Set([
 	"controlVariants",
 	"CopyButton",
 	"cva",
-	"DataTable",
 	"DateTimePicker",
-	"DEFAULT_PAGE_SIZE",
 	"DescriptionList",
 	"descriptionListVariants",
-	"DiffView",
 	"Drawer",
 	"drawerPanelVariants",
 	"EmptyState",
@@ -46,11 +46,9 @@ const EXPECTED_EXPORTS = new Set([
 	"Label",
 	"Loading",
 	"loadingVariants",
-	"MAX_PAGE_SIZE",
 	"Modal",
 	"NumberInput",
 	"Pagination",
-	"PlanSummary",
 	"Portal",
 	"ProgressBar",
 	"progressBarTrackVariants",
@@ -85,12 +83,23 @@ const EXPECTED_EXPORTS = new Set([
 	"WorkflowPanel",
 	"WorkflowStep",
 	"WorkflowTrack",
+	"toastVariants",
+	"useDebounce",
+]);
+
+const EXPECTED_DATA_TABLE_EXPORTS = new Set([
+	"DataTable",
+	"DEFAULT_PAGE_SIZE",
+	"MAX_PAGE_SIZE",
 	"applyRowTransaction",
 	"buildDefaultQuery",
-	"buildDiffLines",
-	"toastVariants",
 	"useDataTableRows",
-	"useDebounce",
+]);
+
+const EXPECTED_DIFF_EXPORTS = new Set([
+	"DiffView",
+	"PlanSummary",
+	"buildDiffLines",
 ]);
 
 describe("public API surface", () => {
@@ -102,6 +111,32 @@ describe("public API surface", () => {
 		});
 		const unexpected = [...actualKeys].filter((k) => {
 			return !EXPECTED_EXPORTS.has(k);
+		});
+		expect(missing).toEqual([]);
+		expect(unexpected).toEqual([]);
+	});
+
+	it("exposes the data-table subpath runtime exports", () => {
+		const actualKeys = new Set(Object.keys(dataTable));
+
+		const missing = [...EXPECTED_DATA_TABLE_EXPORTS].filter((k) => {
+			return !actualKeys.has(k);
+		});
+		const unexpected = [...actualKeys].filter((k) => {
+			return !EXPECTED_DATA_TABLE_EXPORTS.has(k);
+		});
+		expect(missing).toEqual([]);
+		expect(unexpected).toEqual([]);
+	});
+
+	it("exposes the diff subpath runtime exports", () => {
+		const actualKeys = new Set(Object.keys(diff));
+
+		const missing = [...EXPECTED_DIFF_EXPORTS].filter((k) => {
+			return !actualKeys.has(k);
+		});
+		const unexpected = [...actualKeys].filter((k) => {
+			return !EXPECTED_DIFF_EXPORTS.has(k);
 		});
 		expect(missing).toEqual([]);
 		expect(unexpected).toEqual([]);

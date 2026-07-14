@@ -57,24 +57,6 @@ export type { CopyButtonProps } from "./components/forms/CopyButton.js";
 export { DateTimePicker } from "./components/forms/DateTimePicker.js";
 export type { DateTimePickerProps } from "./components/forms/DateTimePicker.js";
 export {
-	DataTable,
-	DEFAULT_PAGE_SIZE,
-	MAX_PAGE_SIZE,
-	buildDefaultQuery,
-} from "./components/data/DataTable.js";
-export type {
-	DataTableColumn,
-	DataTableColumnFilter,
-	DataTableColumnMeta,
-	DataTableProps,
-	DataTableQuery,
-	DataTableRowSelection,
-	DataTableSort,
-} from "./components/data/DataTable.js";
-export { applyRowTransaction } from "./components/data/applyRowTransaction.js";
-export type { RowTransaction } from "./components/data/applyRowTransaction.js";
-export { useDataTableRows } from "./components/data/useDataTableRows.js";
-export {
 	DescriptionList,
 	descriptionListVariants,
 } from "./components/data/DescriptionList.js";
@@ -82,17 +64,6 @@ export type {
 	DescriptionListItem,
 	DescriptionListProps,
 } from "./components/data/DescriptionList.js";
-export { DiffView } from "./components/data/DiffView.js";
-export type {
-	DiffAttribute,
-	DiffChangeKind,
-	DiffLayout,
-	DiffLine,
-	DiffLineKind,
-	DiffResource,
-	DiffViewMode,
-	DiffViewProps,
-} from "./components/data/DiffView.js";
 export { Drawer, drawerPanelVariants } from "./components/overlays/Drawer.js";
 export type { DrawerProps, DrawerSide } from "./components/overlays/Drawer.js";
 export {
@@ -128,8 +99,6 @@ export { NumberInput } from "./components/forms/NumberInput.js";
 export type { NumberInputProps } from "./components/forms/NumberInput.js";
 export { Pagination } from "./components/navigation/Pagination.js";
 export type { PaginationProps } from "./components/navigation/Pagination.js";
-export { PlanSummary } from "./components/data/PlanSummary.js";
-export type { PlanSummaryProps } from "./components/data/PlanSummary.js";
 export { Portal } from "./components/overlays/Portal.js";
 export type { PortalProps } from "./components/overlays/Portal.js";
 export {
@@ -238,7 +207,5 @@ export type {
 	WorkflowTrackProps,
 } from "./components/navigation/Workflow.js";
 export { useDebounce } from "./hooks/useDebounce.js";
-export { buildDiffLines } from "./utils/buildDiffLines.js";
-export type { BuildDiffLinesOptions } from "./utils/buildDiffLines.js";
 export { cn, cva } from "./utils/index.js";
 export type { VariantProps } from "./utils/index.js";

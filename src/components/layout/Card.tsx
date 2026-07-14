@@ -23,8 +23,8 @@ interface CardProps
 	extends ComponentProps<"div">, VariantProps<typeof cardVariants> {}
 
 /**
- * Non-interactive panel chrome for grouping related content (settings,
- * summaries). Not a click target — compose Button / links inside.
+ * Non-interactive panel chrome for grouping related content
+ * (settings, summaries).
  */
 function Card({ size, className, ...rest }: CardProps) {
 	let resolvedSize: "sm" | "md" = "md";

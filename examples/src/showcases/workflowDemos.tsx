@@ -2,17 +2,15 @@ import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 
 import type {
-	DiffResource,
 	WorkflowOrientation,
 	WorkflowStepStatus,
 } from "@wahidgroup/veneer";
+import type { DiffResource } from "@wahidgroup/veneer/diff";
 import {
 	Button,
-	DiffView,
 	FieldError,
 	Input,
 	Label,
-	PlanSummary,
 	Select,
 	Workflow,
 	WorkflowActions,
@@ -20,6 +18,7 @@ import {
 	WorkflowStep,
 	WorkflowTrack,
 } from "@wahidgroup/veneer";
+import { DiffView, PlanSummary } from "@wahidgroup/veneer/diff";
 
 import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
 

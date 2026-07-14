@@ -384,27 +384,22 @@ function AppShell({
 		</main>
 	);
 
-	let mainColumn: ReactNode;
+	/**
+	 * Always the same wrapper element so toggling `railPosition` at runtime
+	 * does not remount `main` (preserves scroll position).
+	 */
+	let columnClass = "relative flex min-h-0 min-w-0 flex-1";
 	if (railAtBottom) {
-		mainColumn = (
-			<div
-				data-slot="app-shell-main-column"
-				className="relative flex min-h-0 min-w-0 flex-1 flex-col"
-			>
-				{mainNode}
-				{railNode}
-				{backdropNode}
-			</div>
-		);
-	} else {
-		mainColumn = (
-			<>
-				{mainNode}
-				{railNode}
-				{backdropNode}
-			</>
-		);
+		columnClass = cn(columnClass, "flex-col");
 	}
+
+	const mainColumn = (
+		<div data-slot="app-shell-main-column" className={columnClass}>
+			{mainNode}
+			{railNode}
+			{backdropNode}
+		</div>
+	);
 
 	return (
 		<div

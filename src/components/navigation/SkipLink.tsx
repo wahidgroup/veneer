@@ -9,9 +9,7 @@ interface SkipLinkProps extends ComponentProps<"a"> {
 
 /**
  * Bypass link to main content (WCAG 2.4.1 / technique G1). Place as the
- * first focusable control on the page. Hidden until focused. On activate,
- * moves focus to the hash target — pair with a landmark that has matching
- * `id` and `tabindex={-1}` (AppShell main defaults to `id="main"`).
+ * first focusable control on the page. Hidden until focused.
  */
 function SkipLink({
 	href,

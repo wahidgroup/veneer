@@ -11,6 +11,8 @@
 		"isolatedModules": true,
 		"paths": {
 			"@wahidgroup/veneer": ["../src/index.ts"],
+			"@wahidgroup/veneer/data-table": ["../src/data-table.ts"],
+			"@wahidgroup/veneer/diff": ["../src/diff.ts"],
 			"react": ["../node_modules/@types/react/index.d.ts"],
 			"react-dom": ["../node_modules/@types/react-dom/index.d.ts"],
 			"react/jsx-runtime": [

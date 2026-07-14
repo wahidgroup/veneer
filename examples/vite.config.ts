@@ -1,9 +1,8 @@
-import path from "node:path";
 import { fileURLToPath } from "node:url";
-
+import { defineConfig } from "vite";
+import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const packageRoot = path.resolve(rootDir, "..");
@@ -14,6 +13,11 @@ export default defineConfig({
 	resolve: {
 		dedupe: ["react", "react-dom"],
 		alias: {
+			"@wahidgroup/veneer/data-table": path.join(
+				packageRoot,
+				"src/data-table.ts",
+			),
+			"@wahidgroup/veneer/diff": path.join(packageRoot, "src/diff.ts"),
 			"@wahidgroup/veneer": path.join(packageRoot, "src/index.ts"),
 			react: path.join(rootModules, "react"),
 			"react-dom": path.join(rootModules, "react-dom"),

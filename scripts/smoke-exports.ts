@@ -37,6 +37,7 @@ async function collectJsFiles(dir: string): Promise<string[]> {
 			for (const nestedFile of nested) {
 				files.push(nestedFile);
 			}
+
 			continue;
 		}
 		if (entry.isFile() && entry.name.endsWith(".js")) {
@@ -92,11 +93,44 @@ for (const file of jsFiles) {
 	}
 
 	console.error(`Node-bound pattern in ${path.relative(root, file)}`);
+
 	failed = true;
 }
 
 if (!failed) {
 	console.log("ok isomorphic dist scan");
+}
+
+const rootEntry = path.join(distDir, "index.js");
+const rootSource = await readFile(rootEntry, "utf8");
+if (
+	rootSource.includes("@tanstack/react-table") ||
+	rootSource.includes('from "diff"') ||
+	rootSource.includes("from 'diff'")
+) {
+	console.error(
+		"root dist/index.js must not import @tanstack/react-table or diff",
+	);
+
+	failed = true;
+} else {
+	console.log("ok root entry free of optional peer imports");
+}
+
+const dataTableEntry = path.join(distDir, "data-table.js");
+const dataTableSource = await readFile(dataTableEntry, "utf8");
+if (!dataTableSource.includes("./components/data/DataTable.js")) {
+	console.error("dist/data-table.js missing DataTable re-export");
+
+	failed = true;
+}
+
+const diffEntry = path.join(distDir, "diff.js");
+const diffSource = await readFile(diffEntry, "utf8");
+if (!diffSource.includes("./components/data/DiffView.js")) {
+	console.error("dist/diff.js missing DiffView re-export");
+
+	failed = true;
 }
 
 for (const key of Object.keys(exportsField)) {
@@ -107,7 +141,9 @@ for (const key of Object.keys(exportsField)) {
 	const target = resolveExportTarget(Reflect.get(exportsField, key));
 	if (!target) {
 		console.error(`export ${key}: unresolvable target`);
+
 		failed = true;
+
 		continue;
 	}
 
@@ -115,19 +151,24 @@ for (const key of Object.keys(exportsField)) {
 		await access(target);
 	} catch {
 		console.error(`export ${key}: missing ${path.relative(root, target)}`);
+
 		failed = true;
+
 		continue;
 	}
 
 	if (!target.endsWith(".js")) {
 		console.log(`ok ${key} -> ${path.relative(root, target)}`);
+
 		continue;
 	}
 
 	const mod: unknown = await import(pathToFileURL(target).href);
 	if (typeof mod !== "object" || mod === null) {
 		console.error(`export ${key}: did not load a module`);
+
 		failed = true;
+
 		continue;
 	}
 

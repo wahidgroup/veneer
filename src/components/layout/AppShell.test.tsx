@@ -212,9 +212,48 @@ describe("AppShell", () => {
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(root).toHaveAttribute("data-rail-position", "bottom");
 		expect(column).not.toBeNull();
+		expect(column).toHaveClass("flex-col");
 		expect(rail).toHaveAttribute("data-position", "bottom");
 		expect(rail).toHaveClass("h-64", "border-t");
 		expect(rail).not.toHaveClass("border-l");
+	});
+
+	it("keeps the same main element when railPosition toggles", () => {
+		const { container, rerender } = render(
+			<AppShell
+				sidebar={<div>Nav</div>}
+				rail={<div>Knobs</div>}
+				railPosition="end"
+			>
+				Main
+			</AppShell>,
+		);
+
+		const main = container.querySelector("[data-slot='app-shell-main']");
+		const column = container.querySelector(
+			"[data-slot='app-shell-main-column']",
+		);
+		expect(main).not.toBeNull();
+		expect(column).not.toBeNull();
+		expect(column).not.toHaveClass("flex-col");
+
+		rerender(
+			<AppShell
+				sidebar={<div>Nav</div>}
+				rail={<div>Knobs</div>}
+				railPosition="bottom"
+			>
+				Main
+			</AppShell>,
+		);
+
+		expect(container.querySelector("[data-slot='app-shell-main']")).toBe(
+			main,
+		);
+		expect(
+			container.querySelector("[data-slot='app-shell-main-column']"),
+		).toBe(column);
+		expect(column).toHaveClass("flex-col");
 	});
 
 	it("collapses a bottom rail by height, not width", () => {

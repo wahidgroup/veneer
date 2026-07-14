@@ -41,6 +41,31 @@ npm install @wahidgroup/veneer
 
 Peers: `react` >= 19, `react-dom` >= 19. Consumer app needs Tailwind CSS v4.
 
+### Optional peers: DataTable and Diff
+
+`@tanstack/react-table` and `diff` are **optional peers**. They are not installed with a plain `npm install @wahidgroup/veneer`. The root entry (`@wahidgroup/veneer`) never imports them.
+
+Use a subpath only when you need that feature, and install the matching peer:
+
+| Subpath                         | What you get                                | Required peer                  |
+| ------------------------------- | ------------------------------------------- | ------------------------------ |
+| `@wahidgroup/veneer/data-table` | `DataTable`, row helpers                    | `@tanstack/react-table@8.21.3` |
+| `@wahidgroup/veneer/diff`       | `DiffView`, `PlanSummary`, `buildDiffLines` | `diff@9.0.0`                   |
+
+```bash
+# only if you import from /data-table
+npm install @tanstack/react-table@8.21.3
+
+# only if you import from /diff
+npm install diff@9.0.0
+```
+
+```ts
+import { Button } from "@wahidgroup/veneer";
+import { DataTable } from "@wahidgroup/veneer/data-table";
+import { DiffView, PlanSummary } from "@wahidgroup/veneer/diff";
+```
+
 ### Theme
 
 In the app CSS entry:

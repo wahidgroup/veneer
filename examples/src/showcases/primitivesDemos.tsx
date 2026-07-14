@@ -730,7 +730,7 @@ function CardKnobs() {
 	return (
 		<RailPanel
 			title="Card"
-			description="Non-interactive panel chrome. Compose actions inside with Button — Card itself is not a click target."
+			description="Non-interactive panel chrome. Compose actions inside with Button. Card itself is not a click target."
 		/>
 	);
 }

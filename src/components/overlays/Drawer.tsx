@@ -50,9 +50,7 @@ interface DrawerProps
 }
 
 /**
- * Edge sheet dialog (APG modal dialog pattern). Same focus trap, Esc,
- * scroll lock, and Portal as Modal — docks to `side` (`right` | `left` |
- * `top` | `bottom`) instead of centering. Not a complementary landmark.
+ * Edge sheet dialog (APG modal dialog pattern).
  */
 function Drawer({
 	open,

@@ -1,18 +1,23 @@
 import { useEffect, useMemo, useState } from "react";
 
-import type { DataTableColumn, DataTableQuery } from "@wahidgroup/veneer";
+import type {
+	DataTableColumn,
+	DataTableQuery,
+} from "@wahidgroup/veneer/data-table";
 import {
 	Badge,
 	Button,
 	CopyButton,
-	DataTable,
 	DescriptionList,
 	EmptyState,
 	Pagination,
 	StatusBadge,
+} from "@wahidgroup/veneer";
+import {
+	DataTable,
 	applyRowTransaction,
 	useDataTableRows,
-} from "@wahidgroup/veneer";
+} from "@wahidgroup/veneer/data-table";
 
 import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
 
