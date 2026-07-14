@@ -16,12 +16,7 @@ import {
 	removeInstanceOption,
 	resetInstanceOptions,
 } from "../api/client.js";
-import {
-	Canvas,
-	DemoRow,
-	DemoSectionHeader,
-	RailPanel,
-} from "./demoChrome.js";
+import { Canvas, DemoRow, DemoSectionHeader, RailPanel } from "./demoChrome.js";
 
 const AZ_OPTIONS = [
 	{ value: "a", label: "us-east-1a" },

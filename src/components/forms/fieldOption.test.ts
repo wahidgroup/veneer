@@ -28,15 +28,15 @@ describe("findOptionLabel", () => {
 
 describe("filterFieldOptions", () => {
 	it("returns all options when not searchable", () => {
-		expect(
-			filterFieldOptions(OPTIONS, "east", false, "local"),
-		).toEqual(OPTIONS);
+		expect(filterFieldOptions(OPTIONS, "east", false, "local")).toEqual(
+			OPTIONS,
+		);
 	});
 
 	it("returns all options for remote filter mode", () => {
-		expect(
-			filterFieldOptions(OPTIONS, "east", true, "remote"),
-		).toEqual(OPTIONS);
+		expect(filterFieldOptions(OPTIONS, "east", true, "remote")).toEqual(
+			OPTIONS,
+		);
 	});
 
 	it("filters labels locally when searchable", () => {

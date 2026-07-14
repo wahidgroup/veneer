@@ -189,7 +189,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "single",
 				label: "Single select",
 				description:
-					"Nest typeahead (`filterMode=\"remote\"` + `onSearchChange`) with add/remove/reset option mutations.",
+					'Nest typeahead (`filterMode="remote"` + `onSearchChange`) with add/remove/reset option mutations.',
 				apiDriven: true,
 			},
 			{
