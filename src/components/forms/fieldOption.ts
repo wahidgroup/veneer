@@ -50,7 +50,10 @@ function filterFieldOptions(
 	}
 
 	return options.filter((option) => {
-		return option.label.toLowerCase().includes(normalized);
+		return (
+			option.value.toLowerCase().includes(normalized) ||
+			option.label.toLowerCase().includes(normalized)
+		);
 	});
 }
 

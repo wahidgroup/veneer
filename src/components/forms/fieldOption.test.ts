@@ -45,6 +45,12 @@ describe("filterFieldOptions", () => {
 		]);
 	});
 
+	it("matches option values as well as labels", () => {
+		expect(filterFieldOptions(OPTIONS, "eu-west", true, "local")).toEqual([
+			{ value: "eu-west-1", label: "EU West" },
+		]);
+	});
+
 	it("returns all options for empty local query", () => {
 		expect(filterFieldOptions(OPTIONS, "  ", true, "local")).toEqual(
 			OPTIONS,
