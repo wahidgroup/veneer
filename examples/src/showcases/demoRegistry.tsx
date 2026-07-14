@@ -32,6 +32,9 @@ import {
 	StatDisplayCanvas,
 	StatDisplayDemoProvider,
 	StatDisplayKnobs,
+	TimelineCanvas,
+	TimelineDemoProvider,
+	TimelineKnobs,
 } from "./dataDemos.js";
 import {
 	ChoicesCanvas,
@@ -357,6 +360,11 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: ChipGroupDemoProvider,
 		Canvas: ChipGroupCanvas,
 		Knobs: ChipGroupKnobs,
+	},
+	timeline: {
+		Provider: TimelineDemoProvider,
+		Canvas: TimelineCanvas,
+		Knobs: TimelineKnobs,
 	},
 };
 

@@ -7,11 +7,11 @@ import {
 	type ReactNode,
 } from "react";
 
-import type { StatDisplayTone } from "@wahidgroup/veneer";
 import type {
 	DataTableColumn,
 	DataTableQuery,
 } from "@wahidgroup/veneer/data-table";
+import type { StatDisplayTone, StatusBadgeStatus } from "@wahidgroup/veneer";
 import {
 	Badge,
 	Button,
@@ -24,6 +24,7 @@ import {
 	Select,
 	StatDisplay,
 	StatusBadge,
+	Timeline,
 	Toggle,
 } from "@wahidgroup/veneer";
 import {
@@ -515,13 +516,17 @@ const PAGINATION_PAGE_SIZE_OPTIONS = [
 function PaginationCanvas() {
 	const demo = usePaginationDemo();
 	const [pageIndex, setPageIndex] = useState(0);
-	const pageCount = Math.max(1, Math.ceil(PAGE_ITEMS.length / demo.pageSize));
+	const [prevPageSize, setPrevPageSize] = useState(demo.pageSize);
 
-	useEffect(() => {
+	let activePageIndex = pageIndex;
+	if (demo.pageSize !== prevPageSize) {
+		setPrevPageSize(demo.pageSize);
 		setPageIndex(0);
-	}, [demo.pageSize]);
+		activePageIndex = 0;
+	}
 
-	const start = pageIndex * demo.pageSize;
+	const pageCount = Math.max(1, Math.ceil(PAGE_ITEMS.length / demo.pageSize));
+	const start = activePageIndex * demo.pageSize;
 	const visible = PAGE_ITEMS.slice(start, start + demo.pageSize);
 
 	let pageSizeProp: number | undefined;
@@ -539,7 +544,7 @@ function PaginationCanvas() {
 				})}
 			</ul>
 			<Pagination
-				pageIndex={pageIndex}
+				pageIndex={activePageIndex}
 				pageCount={pageCount}
 				pageSize={pageSizeProp}
 				itemCount={itemCountProp}
@@ -1247,6 +1252,153 @@ function ChipGroupKnobs() {
 	);
 }
 
+interface TimelineDemoValue {
+	showStatuses: boolean;
+	setShowStatuses: (value: boolean) => void;
+	showDescriptions: boolean;
+	setShowDescriptions: (value: boolean) => void;
+}
+
+const TimelineDemoContext = createContext<TimelineDemoValue | null>(null);
+
+function useTimelineDemo() {
+	const value = useContext(TimelineDemoContext);
+	if (value === null) {
+		throw new Error("TimelineDemoProvider required");
+	}
+
+	return value;
+}
+
+function TimelineDemoProvider({ children }: { children: ReactNode }) {
+	const [showStatuses, setShowStatuses] = useState(true);
+	const [showDescriptions, setShowDescriptions] = useState(true);
+
+	return (
+		<TimelineDemoContext.Provider
+			value={{
+				showStatuses,
+				setShowStatuses,
+				showDescriptions,
+				setShowDescriptions,
+			}}
+		>
+			{children}
+		</TimelineDemoContext.Provider>
+	);
+}
+
+interface DeployEvent {
+	id: string;
+	title: string;
+	timestamp: string;
+	description: string;
+	status: StatusBadgeStatus;
+}
+
+const DEPLOY_EVENTS: DeployEvent[] = [
+	{
+		id: "plan",
+		title: "Plan applied",
+		timestamp: "Today · 09:12 UTC",
+		description: "42 resources planned; 0 to destroy.",
+		status: "success",
+	},
+	{
+		id: "apply",
+		title: "Apply started",
+		timestamp: "Today · 09:13 UTC",
+		description: "Worker pool us-east-1a.",
+		status: "running",
+	},
+	{
+		id: "drift",
+		title: "Drift detected",
+		timestamp: "Today · 09:18 UTC",
+		description: "aws_security_group.web differs from state.",
+		status: "drifted",
+	},
+	{
+		id: "retry",
+		title: "Apply retried",
+		timestamp: "Today · 09:22 UTC",
+		description: "Retry after lock release.",
+		status: "pending",
+	},
+	{
+		id: "fail",
+		title: "Apply failed",
+		timestamp: "Today · 09:24 UTC",
+		description: "Timeout waiting for instance status checks.",
+		status: "danger",
+	},
+];
+
+function TimelineCanvas() {
+	const demo = useTimelineDemo();
+
+	const items = DEPLOY_EVENTS.map((event) => {
+		let description: string | undefined = event.description;
+		if (!demo.showDescriptions) {
+			description = undefined;
+		}
+
+		let status: StatusBadgeStatus | undefined = event.status;
+		if (!demo.showStatuses) {
+			status = undefined;
+		}
+
+		return {
+			id: event.id,
+			title: event.title,
+			timestamp: event.timestamp,
+			description,
+			status,
+		};
+	});
+
+	return (
+		<Canvas>
+			<div className="w-full max-w-md">
+				<p className="mb-4 text-sm text-muted-foreground">
+					Deploy history for workspace prod-east. Ordered list with
+					rail; StatusBadge when status is set.
+				</p>
+				<Timeline aria-label="Deploy history" items={items} />
+			</div>
+		</Canvas>
+	);
+}
+
+function TimelineKnobs() {
+	const demo = useTimelineDemo();
+
+	return (
+		<RailPanel title="Timeline" description="Chronological events.">
+			<DemoRow
+				label="Statuses"
+				description="Show StatusBadge on each event."
+			>
+				<Toggle
+					label="Show statuses"
+					checked={demo.showStatuses}
+					onCheckedChange={demo.setShowStatuses}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Descriptions"
+				description="Show secondary description under each timestamp."
+			>
+				<Toggle
+					label="Show descriptions"
+					checked={demo.showDescriptions}
+					onCheckedChange={demo.setShowDescriptions}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 export type { InventoryRow };
 export {
 	ServerPageDemoProvider,
@@ -1273,4 +1425,7 @@ export {
 	ChipGroupDemoProvider,
 	ChipGroupCanvas,
 	ChipGroupKnobs,
+	TimelineDemoProvider,
+	TimelineCanvas,
+	TimelineKnobs,
 };

@@ -333,6 +333,12 @@ const CATALOG: CatalogCategory[] = [
 				description:
 					"Multi-select filter chips with aria-pressed toggles and optional dismiss.",
 			},
+			{
+				id: "timeline",
+				label: "Timeline",
+				description:
+					"Ordered deploy/event history with rail and optional StatusBadge.",
+			},
 		],
 	},
 ];

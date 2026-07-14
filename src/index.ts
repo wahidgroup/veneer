@@ -185,6 +185,11 @@ export { TagInput } from "./components/forms/TagInput.js";
 export type { TagInputProps } from "./components/forms/TagInput.js";
 export { TextArea } from "./components/forms/TextArea.js";
 export type { TextAreaProps } from "./components/forms/TextArea.js";
+export { Timeline } from "./components/data/Timeline.js";
+export type {
+	TimelineItem,
+	TimelineProps,
+} from "./components/data/Timeline.js";
 export { Toggle } from "./components/forms/Toggle.js";
 export type { ToggleProps } from "./components/forms/Toggle.js";
 export {

@@ -78,6 +78,7 @@ const EXPECTED_EXPORTS = new Set([
 	"TabsTrigger",
 	"TagInput",
 	"TextArea",
+	"Timeline",
 	"Toast",
 	"ToastViewport",
 	"Toggle",
