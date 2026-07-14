@@ -211,6 +211,12 @@ export { Tooltip } from "./components/overlays/Tooltip.js";
 export type { TooltipProps } from "./components/overlays/Tooltip.js";
 export { TopNav } from "./components/navigation/TopNav.js";
 export type { TopNavProps } from "./components/navigation/TopNav.js";
+export { TreeView } from "./components/data/TreeView.js";
+export type {
+	TreeViewEndAlign,
+	TreeViewItem,
+	TreeViewProps,
+} from "./components/data/TreeView.js";
 export { ToolbarSelect } from "./components/navigation/ToolbarSelect.js";
 export type {
 	ToolbarSelectOption,

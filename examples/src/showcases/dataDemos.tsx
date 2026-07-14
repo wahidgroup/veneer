@@ -11,7 +11,12 @@ import type {
 	DataTableColumn,
 	DataTableQuery,
 } from "@wahidgroup/veneer/data-table";
-import type { StatDisplayTone, StatusBadgeStatus } from "@wahidgroup/veneer";
+import type {
+	StatDisplayTone,
+	StatusBadgeStatus,
+	TreeViewEndAlign,
+	TreeViewItem,
+} from "@wahidgroup/veneer";
 import {
 	Badge,
 	Button,
@@ -26,6 +31,7 @@ import {
 	StatusBadge,
 	Timeline,
 	Toggle,
+	TreeView,
 } from "@wahidgroup/veneer";
 import {
 	DataTable,
@@ -1399,6 +1405,204 @@ function TimelineKnobs() {
 	);
 }
 
+interface TreeViewDemoValue {
+	showDisabled: boolean;
+	setShowDisabled: (value: boolean) => void;
+	endAlign: TreeViewEndAlign;
+	setEndAlign: (value: TreeViewEndAlign) => void;
+}
+
+const TreeViewDemoContext = createContext<TreeViewDemoValue | null>(null);
+
+function useTreeViewDemo() {
+	const value = useContext(TreeViewDemoContext);
+	if (value === null) {
+		throw new Error("TreeViewDemoProvider required");
+	}
+
+	return value;
+}
+
+function TreeViewDemoProvider({ children }: { children: ReactNode }) {
+	const [showDisabled, setShowDisabled] = useState(true);
+	const [endAlign, setEndAlign] = useState<TreeViewEndAlign>("snug");
+
+	return (
+		<TreeViewDemoContext.Provider
+			value={{
+				showDisabled,
+				setShowDisabled,
+				endAlign,
+				setEndAlign,
+			}}
+		>
+			{children}
+		</TreeViewDemoContext.Provider>
+	);
+}
+
+const NETWORK_TREE: TreeViewItem[] = [
+	{
+		id: "vpc",
+		label: "vpc-prod",
+		end: (
+			<Badge size="sm" variant="info">
+				3 AZ
+			</Badge>
+		),
+		children: [
+			{
+				id: "subnet-public",
+				label: "subnet-public-a",
+				end: (
+					<StatusBadge status="success" size="sm">
+						Healthy
+					</StatusBadge>
+				),
+				children: [
+					{ id: "eni-web", label: "eni-web-1" },
+					{
+						id: "eni-lb",
+						label: "eni-lb-1",
+						end: (
+							<Badge size="sm" variant="primary">
+								alb
+							</Badge>
+						),
+					},
+				],
+			},
+			{
+				id: "subnet-private",
+				label: "subnet-private-a",
+				end: (
+					<StatusBadge status="warning" size="sm">
+						Drifted
+					</StatusBadge>
+				),
+				children: [
+					{ id: "eni-app", label: "eni-app-1" },
+					{ id: "eni-db", label: "eni-db-1", disabled: true },
+				],
+			},
+		],
+	},
+	{
+		id: "igw",
+		label: "igw-main",
+	},
+	{
+		id: "rtb",
+		label: "rtb-public",
+		children: [{ id: "route-default", label: "0.0.0.0/0 → igw-main" }],
+	},
+];
+
+function TreeViewCanvas() {
+	const demo = useTreeViewDemo();
+	const [expandedIds, setExpandedIds] = useState(["vpc", "subnet-public"]);
+	const [lastActivated, setLastActivated] = useState<string | null>(null);
+
+	const items = NETWORK_TREE.map((root) => {
+		if (root.id !== "vpc" || root.children === undefined) {
+			return root;
+		}
+
+		const children = root.children.map((subnet) => {
+			if (subnet.children === undefined) {
+				return subnet;
+			}
+
+			let kids = subnet.children;
+			if (!demo.showDisabled) {
+				kids = subnet.children.filter((child) => {
+					return child.disabled !== true;
+				});
+			}
+
+			return { ...subnet, children: kids };
+		});
+
+		return { ...root, children };
+	});
+
+	let activatedLine = "Activate an end node (Enter / click).";
+	if (lastActivated !== null) {
+		activatedLine = `Last activated: ${lastActivated}`;
+	}
+
+	return (
+		<Canvas>
+			<div className="w-full max-w-md">
+				<p className="mb-3 text-sm text-muted-foreground">
+					VPC inventory tree. Optional `end` slot (`endAlign`: snug |
+					justify) holds Badge / StatusBadge. Arrow keys navigate
+					while typeahead uses label only.
+				</p>
+				<p className="mb-3 text-xs text-muted-foreground">
+					{activatedLine}
+				</p>
+				<TreeView
+					aria-label="Network inventory"
+					items={items}
+					endAlign={demo.endAlign}
+					expandedIds={expandedIds}
+					onExpandedIdsChange={setExpandedIds}
+					onActivate={(id) => {
+						setLastActivated(id);
+					}}
+				/>
+			</div>
+		</Canvas>
+	);
+}
+
+const TREE_END_ALIGN_OPTIONS = [
+	{ value: "snug", label: "Snug" },
+	{ value: "justify", label: "Justify" },
+];
+
+function TreeViewKnobs() {
+	const demo = useTreeViewDemo();
+
+	return (
+		<RailPanel
+			title="TreeView"
+			description="APG tree. No multi-select / aria-selected in v1."
+		>
+			<DemoRow
+				label="End align"
+				description="Snug places pills after the label; justify pushes to the row edge."
+			>
+				<Select
+					id="tree-end-align"
+					options={TREE_END_ALIGN_OPTIONS}
+					value={demo.endAlign}
+					aria-label="End align"
+					onChange={(event) => {
+						if (event.target.value === "snug") {
+							demo.setEndAlign("snug");
+							return;
+						}
+
+						demo.setEndAlign("justify");
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Disabled node"
+				description="Include eni-db-1 as aria-disabled in the private subnet."
+			>
+				<Toggle
+					label="Show disabled"
+					checked={demo.showDisabled}
+					onCheckedChange={demo.setShowDisabled}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 export type { InventoryRow };
 export {
 	ServerPageDemoProvider,
@@ -1428,4 +1632,7 @@ export {
 	TimelineDemoProvider,
 	TimelineCanvas,
 	TimelineKnobs,
+	TreeViewDemoProvider,
+	TreeViewCanvas,
+	TreeViewKnobs,
 };

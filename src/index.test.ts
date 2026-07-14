@@ -85,6 +85,7 @@ const EXPECTED_EXPORTS = new Set([
 	"ToolbarSelect",
 	"Tooltip",
 	"TopNav",
+	"TreeView",
 	"Workflow",
 	"WorkflowActions",
 	"WorkflowPanel",

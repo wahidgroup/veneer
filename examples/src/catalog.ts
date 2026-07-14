@@ -339,6 +339,12 @@ const CATALOG: CatalogCategory[] = [
 				description:
 					"Ordered deploy/event history with rail and optional StatusBadge.",
 			},
+			{
+				id: "tree-view",
+				label: "TreeView",
+				description:
+					"Nested network/inventory tree with APG keyboard and expand.",
+			},
 		],
 	},
 ];

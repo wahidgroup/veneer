@@ -35,6 +35,9 @@ import {
 	TimelineCanvas,
 	TimelineDemoProvider,
 	TimelineKnobs,
+	TreeViewCanvas,
+	TreeViewDemoProvider,
+	TreeViewKnobs,
 } from "./dataDemos.js";
 import {
 	ChoicesCanvas,
@@ -365,6 +368,11 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: TimelineDemoProvider,
 		Canvas: TimelineCanvas,
 		Knobs: TimelineKnobs,
+	},
+	"tree-view": {
+		Provider: TreeViewDemoProvider,
+		Canvas: TreeViewCanvas,
+		Knobs: TreeViewKnobs,
 	},
 };
 
