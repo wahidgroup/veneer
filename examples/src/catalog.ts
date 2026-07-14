@@ -93,6 +93,12 @@ const CATALOG: CatalogCategory[] = [
 					"Dialog with backdrop, Esc, focus trap, and scroll lock.",
 			},
 			{
+				id: "drawer",
+				label: "Drawer",
+				description:
+					"Edge sheet dialog (APG modal). Open from a list row; side top|right|bottom|left.",
+			},
+			{
 				id: "confirm-dialog",
 				label: "ConfirmDialog",
 				description:

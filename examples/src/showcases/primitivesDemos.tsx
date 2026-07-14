@@ -21,6 +21,7 @@ import {
 	Card,
 	ConfirmDialog,
 	CopyButton,
+	Drawer,
 	EmptyState,
 	Loading,
 	Modal,
@@ -1343,6 +1344,204 @@ function ModalKnobs() {
 	);
 }
 
+interface DrawerDemoValue {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	side: "right" | "left" | "top" | "bottom";
+	setSide: (value: "right" | "left" | "top" | "bottom") => void;
+	closeOnBackdropClick: boolean;
+	setCloseOnBackdropClick: (value: boolean) => void;
+	showCloseButton: boolean;
+	setShowCloseButton: (value: boolean) => void;
+	selectedId: string | null;
+	setSelectedId: (value: string | null) => void;
+}
+
+const DrawerDemoContext = createContext<DrawerDemoValue | null>(null);
+
+function useDrawerDemo() {
+	const value = useContext(DrawerDemoContext);
+	if (value === null) {
+		throw new Error("DrawerDemoProvider required");
+	}
+
+	return value;
+}
+
+function DrawerDemoProvider({ children }: { children: ReactNode }) {
+	const [open, setOpen] = useState(false);
+	const [side, setSide] = useState<"right" | "left" | "top" | "bottom">(
+		"right",
+	);
+	const [closeOnBackdropClick, setCloseOnBackdropClick] = useState(true);
+	const [showCloseButton, setShowCloseButton] = useState(true);
+	const [selectedId, setSelectedId] = useState<string | null>(null);
+
+	return (
+		<DrawerDemoContext.Provider
+			value={{
+				open,
+				setOpen,
+				side,
+				setSide,
+				closeOnBackdropClick,
+				setCloseOnBackdropClick,
+				showCloseButton,
+				setShowCloseButton,
+				selectedId,
+				setSelectedId,
+			}}
+		>
+			{children}
+		</DrawerDemoContext.Provider>
+	);
+}
+
+const DRAWER_ROWS = [
+	{ id: "i-0a1b2c3d4e5f67890", label: "web-1 · running" },
+	{ id: "i-09f8e7d6c5b4a3210", label: "web-2 · stopped" },
+	{ id: "i-0123456789abcdef0", label: "worker-1 · running" },
+] as const;
+
+function DrawerCanvas() {
+	const demo = useDrawerDemo();
+
+	let drawerTitle = "Instance detail";
+	if (demo.selectedId !== null) {
+		drawerTitle = demo.selectedId;
+	}
+
+	let selectedDetail: ReactNode = null;
+	if (demo.selectedId !== null) {
+		selectedDetail = (
+			<p className="mt-3 font-mono text-xs">{demo.selectedId}</p>
+		);
+	}
+
+	return (
+		<Canvas>
+			<DemoRow label="Inventory">
+				<ul className="w-full max-w-md divide-y divide-border rounded-md border border-border">
+					{DRAWER_ROWS.map((row) => {
+						return (
+							<li key={row.id}>
+								<Button
+									type="button"
+									variant="ghost"
+									className="flex h-auto w-full justify-between gap-3 rounded-none px-3 py-2 text-left"
+									onClick={() => {
+										demo.setSelectedId(row.id);
+										demo.setOpen(true);
+									}}
+								>
+									<span className="font-medium text-foreground">
+										{row.label}
+									</span>
+									<span className="font-mono text-xs text-muted-foreground">
+										{row.id}
+									</span>
+								</Button>
+							</li>
+						);
+					})}
+				</ul>
+			</DemoRow>
+			<Drawer
+				open={demo.open}
+				title={drawerTitle}
+				side={demo.side}
+				onOpenChange={(next) => {
+					demo.setOpen(next);
+					if (!next) {
+						demo.setSelectedId(null);
+					}
+				}}
+				closeOnBackdropClick={demo.closeOnBackdropClick}
+				showCloseButton={demo.showCloseButton}
+			>
+				<p className="text-muted-foreground">
+					Side detail without leaving the list. Esc always dismisses;
+					backdrop and header X follow the knobs.
+				</p>
+				{selectedDetail}
+				<div className="mt-4 flex justify-end">
+					<Button
+						variant="outlined"
+						onClick={() => {
+							demo.setOpen(false);
+							demo.setSelectedId(null);
+						}}
+					>
+						Close
+					</Button>
+				</div>
+			</Drawer>
+		</Canvas>
+	);
+}
+
+function DrawerKnobs() {
+	const demo = useDrawerDemo();
+
+	return (
+		<RailPanel
+			title="Drawer"
+			description="Edge sheet dialog (APG modal). Esc always closes. Open from a list row; side top|right|bottom|left."
+		>
+			<DemoRow label="Side" description="Which edge the sheet docks to.">
+				<Select
+					aria-label="Drawer side"
+					value={demo.side}
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "left") {
+							demo.setSide("left");
+							return;
+						}
+						if (next === "right") {
+							demo.setSide("right");
+							return;
+						}
+						if (next === "top") {
+							demo.setSide("top");
+							return;
+						}
+						if (next === "bottom") {
+							demo.setSide("bottom");
+						}
+					}}
+					options={[
+						{ value: "right", label: "Right" },
+						{ value: "left", label: "Left" },
+						{ value: "top", label: "Top" },
+						{ value: "bottom", label: "Bottom" },
+					]}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Close on backdrop click"
+				description="When on, clicking the dimmed overlay dismisses the drawer. Esc and the in-body Close still work when off."
+			>
+				<Toggle
+					label="Enabled"
+					checked={demo.closeOnBackdropClick}
+					onCheckedChange={demo.setCloseOnBackdropClick}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Show close button"
+				description="Shows the X control in the drawer header. Esc and the in-body Close still work when off."
+			>
+				<Toggle
+					label="Enabled"
+					checked={demo.showCloseButton}
+					onCheckedChange={demo.setShowCloseButton}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 interface ConfirmDemoValue {
 	open: boolean;
 	setOpen: (open: boolean) => void;
@@ -1891,6 +2090,9 @@ export {
 	ModalCanvas,
 	ModalDemoProvider,
 	ModalKnobs,
+	DrawerCanvas,
+	DrawerDemoProvider,
+	DrawerKnobs,
 	TabsCanvas,
 	TabsKnobs,
 	ToastCanvas,

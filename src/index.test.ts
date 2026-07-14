@@ -33,6 +33,8 @@ const EXPECTED_EXPORTS = new Set([
 	"DescriptionList",
 	"descriptionListVariants",
 	"DiffView",
+	"Drawer",
+	"drawerPanelVariants",
 	"EmptyState",
 	"emptyStateVariants",
 	"FieldError",

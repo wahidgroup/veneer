@@ -19,6 +19,7 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `Badge`           | [`indicators/Badge.tsx`](../src/components/indicators/Badge.tsx)                 | Status / removable chips      |
 | `Loading`         | [`feedback/Loading.tsx`](../src/components/feedback/Loading.tsx)                 | Busy / skeleton               |
 | `Portal`          | [`overlays/Portal.tsx`](../src/components/overlays/Portal.tsx)                   | Portaled layers               |
+| `Drawer`          | [`overlays/Drawer.tsx`](../src/components/overlays/Drawer.tsx)                   | Edge sheet dialog (modal)     |
 | `Pagination`      | [`navigation/Pagination.tsx`](../src/components/navigation/Pagination.tsx)       | Prev/Next + item-range chrome |
 | `EmptyState`      | [`feedback/EmptyState.tsx`](../src/components/feedback/EmptyState.tsx)           | No-results / first-run CTA    |
 | `CopyButton`      | [`forms/CopyButton.tsx`](../src/components/forms/CopyButton.tsx)                 | Copy ARNs / IDs               |

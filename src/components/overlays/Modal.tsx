@@ -6,19 +6,12 @@ import { cn } from "../../utils/cn.js";
 import { lockBodyScroll } from "../../utils/lockBodyScroll.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
-
-const FOCUSABLE_SELECTOR = [
-	"a[href]",
-	"button:not([disabled])",
-	"textarea:not([disabled])",
-	"input:not([disabled])",
-	"select:not([disabled])",
-	'[tabindex]:not([tabindex="-1"])',
-].join(",");
-
-function listFocusable(root: HTMLElement): HTMLElement[] {
-	return Array.from(root.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
-}
+import {
+	captureFocusRestore,
+	focusInitial,
+	restoreFocus,
+	trapTabKey,
+} from "../../utils/focusScope.js";
 
 interface ModalProps extends Omit<ComponentProps<"div">, "title"> {
 	open: boolean;
@@ -58,33 +51,19 @@ function Modal({
 			return;
 		}
 
-		const active = document.activeElement;
-		if (active instanceof HTMLElement) {
-			restoreFocusRef.current = active;
-		}
+		restoreFocusRef.current = captureFocusRestore();
 
 		const unlockScroll = lockBodyScroll();
 
 		const dialog = dialogRef.current;
 		if (dialog !== null) {
-			const targets = listFocusable(dialog);
-			const first = targets[0];
-			if (first !== undefined) {
-				first.focus();
-			} else {
-				dialog.focus();
-			}
+			focusInitial(dialog);
 		}
 
 		function onKeyDown(event: KeyboardEvent) {
 			if (event.key === "Escape") {
 				event.preventDefault();
 				onOpenChange(false);
-
-				return;
-			}
-
-			if (event.key !== "Tab") {
 				return;
 			}
 
@@ -93,34 +72,7 @@ function Modal({
 				return;
 			}
 
-			const targets = listFocusable(node);
-			if (targets.length === 0) {
-				event.preventDefault();
-				node.focus();
-
-				return;
-			}
-
-			const first = targets[0];
-			const last = targets[targets.length - 1];
-			if (first === undefined || last === undefined) {
-				return;
-			}
-
-			const activeEl = document.activeElement;
-			if (event.shiftKey) {
-				if (activeEl === first || activeEl === node) {
-					event.preventDefault();
-					last.focus();
-				}
-
-				return;
-			}
-
-			if (activeEl === last) {
-				event.preventDefault();
-				first.focus();
-			}
+			trapTabKey(event, node);
 		}
 
 		document.addEventListener("keydown", onKeyDown);
@@ -128,11 +80,7 @@ function Modal({
 		return () => {
 			document.removeEventListener("keydown", onKeyDown);
 			unlockScroll();
-
-			const restore = restoreFocusRef.current;
-			if (restore !== null) {
-				restore.focus();
-			}
+			restoreFocus(restoreFocusRef.current);
 		};
 	}, [open, onOpenChange]);
 

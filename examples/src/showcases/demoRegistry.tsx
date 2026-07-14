@@ -59,6 +59,9 @@ import {
 	ConfirmCanvas,
 	ConfirmDemoProvider,
 	ConfirmKnobs,
+	DrawerCanvas,
+	DrawerDemoProvider,
+	DrawerKnobs,
 	EmptyStateCanvas,
 	EmptyStateKnobs,
 	CopyButtonCanvas,
@@ -166,6 +169,11 @@ const OVERLAYS: Record<string, DemoEntry> = {
 		Provider: ModalDemoProvider,
 		Canvas: ModalCanvas,
 		Knobs: ModalKnobs,
+	},
+	drawer: {
+		Provider: DrawerDemoProvider,
+		Canvas: DrawerCanvas,
+		Knobs: DrawerKnobs,
 	},
 	"confirm-dialog": {
 		Provider: ConfirmDemoProvider,

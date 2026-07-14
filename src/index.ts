@@ -119,6 +119,8 @@ export type {
 	LoadingProps,
 	LoadingVariant,
 } from "./components/feedback/Loading.js";
+export { Drawer, drawerPanelVariants } from "./components/overlays/Drawer.js";
+export type { DrawerProps, DrawerSide } from "./components/overlays/Drawer.js";
 export { Modal } from "./components/overlays/Modal.js";
 export type { ModalProps } from "./components/overlays/Modal.js";
 export { NumberInput } from "./components/forms/NumberInput.js";

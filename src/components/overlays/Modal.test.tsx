@@ -163,6 +163,63 @@ describe("Modal", () => {
 		expect(close).toHaveFocus();
 	});
 
+	it("restores focus to the invoker when closed", async () => {
+		const user = userEvent.setup();
+		let open = false;
+		const { rerender } = render(
+			<div>
+				<button type="button">Open modal</button>
+				<Modal
+					open={open}
+					title="Restore"
+					onOpenChange={(next) => {
+						open = next;
+					}}
+				>
+					Body
+				</Modal>
+			</div>,
+		);
+
+		const invoker = screen.getByRole("button", { name: "Open modal" });
+		await user.click(invoker);
+		open = true;
+		rerender(
+			<div>
+				<button type="button">Open modal</button>
+				<Modal
+					open={open}
+					title="Restore"
+					onOpenChange={(next) => {
+						open = next;
+					}}
+				>
+					Body
+				</Modal>
+			</div>,
+		);
+
+		expect(screen.getByRole("dialog")).toBeInTheDocument();
+		await user.keyboard("{Escape}");
+		expect(open).toBe(false);
+
+		rerender(
+			<div>
+				<button type="button">Open modal</button>
+				<Modal
+					open={open}
+					title="Restore"
+					onOpenChange={(next) => {
+						open = next;
+					}}
+				>
+					Body
+				</Modal>
+			</div>,
+		);
+		expect(invoker).toHaveFocus();
+	});
+
 	it("merges className onto the dialog panel", () => {
 		render(
 			<Modal
