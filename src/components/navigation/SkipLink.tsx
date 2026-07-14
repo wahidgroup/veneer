@@ -42,12 +42,15 @@ function SkipLink({
 			return;
 		}
 
+		// Own in-page skip handling: block hash navigation even when the
+		// landmark is missing (avoids URL hash + scroll-to-top).
+		event.preventDefault();
+
 		const target = document.getElementById(id);
 		if (!(target instanceof HTMLElement)) {
 			return;
 		}
 
-		event.preventDefault();
 		target.focus();
 	}
 

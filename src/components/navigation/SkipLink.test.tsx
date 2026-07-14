@@ -34,6 +34,18 @@ describe("SkipLink", () => {
 		expect(document.activeElement).toBe(screen.getByRole("main"));
 	});
 
+	it("blocks hash navigation when the target is missing", async () => {
+		const user = userEvent.setup();
+		const hashBefore = window.location.hash;
+
+		render(<SkipLink href="#missing-main" />);
+
+		await user.click(
+			screen.getByRole("link", { name: "Skip to main content" }),
+		);
+		expect(window.location.hash).toBe(hashBefore);
+	});
+
 	it("honors custom label children", () => {
 		render(<SkipLink>Skip to content</SkipLink>);
 		expect(
