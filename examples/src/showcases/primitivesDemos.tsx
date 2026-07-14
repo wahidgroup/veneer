@@ -18,6 +18,7 @@ import {
 	Alert,
 	Badge,
 	Button,
+	Card,
 	ConfirmDialog,
 	CopyButton,
 	EmptyState,
@@ -88,6 +89,7 @@ function useToastDemo(): ToastDemoValue {
 	if (value === null) {
 		throw new Error("ToastDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -305,6 +307,7 @@ function ToastKnobs() {
 						if (value !== undefined) {
 							next = value;
 						}
+
 						demo.setToastDuration(next);
 					}}
 				/>
@@ -346,6 +349,7 @@ function ToastKnobs() {
 						if (value !== undefined) {
 							next = value;
 						}
+
 						demo.setToastEnterMs(next);
 					}}
 				/>
@@ -361,6 +365,7 @@ function ToastKnobs() {
 						if (value !== undefined) {
 							next = value;
 						}
+
 						demo.setToastExitMs(next);
 					}}
 				/>
@@ -691,6 +696,40 @@ function ButtonKnobs() {
 				/>
 			</DemoRow>
 		</RailPanel>
+	);
+}
+
+function CardCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Medium">
+				<Card className="w-full max-w-md">
+					<div className="text-sm font-semibold text-foreground">
+						Stack settings
+					</div>
+					<p className="mt-1 text-sm text-muted-foreground">
+						Group related fields and summary content in a bordered
+						panel.
+					</p>
+				</Card>
+			</DemoRow>
+			<DemoRow label="Small">
+				<Card size="sm" className="w-full max-w-md">
+					<div className="text-sm text-foreground">
+						Compact panel for dense inventory chrome.
+					</div>
+				</Card>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function CardKnobs() {
+	return (
+		<RailPanel
+			title="Card"
+			description="Non-interactive panel chrome. Compose actions inside with Button — Card itself is not a click target."
+		/>
 	);
 }
 
@@ -1833,6 +1872,8 @@ export {
 	ButtonCanvas,
 	ButtonDemoProvider,
 	ButtonKnobs,
+	CardCanvas,
+	CardKnobs,
 	ConfirmCanvas,
 	ConfirmDemoProvider,
 	ConfirmKnobs,

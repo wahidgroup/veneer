@@ -54,6 +54,8 @@ import {
 	ButtonCanvas,
 	ButtonDemoProvider,
 	ButtonKnobs,
+	CardCanvas,
+	CardKnobs,
 	ConfirmCanvas,
 	ConfirmDemoProvider,
 	ConfirmKnobs,
@@ -119,6 +121,11 @@ const PRIMITIVES: Record<string, DemoEntry> = {
 		Provider: ButtonDemoProvider,
 		Canvas: ButtonCanvas,
 		Knobs: ButtonKnobs,
+	},
+	card: {
+		Provider: PassthroughProvider,
+		Canvas: CardCanvas,
+		Knobs: CardKnobs,
 	},
 	badge: {
 		Provider: BadgeDemoProvider,

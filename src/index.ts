@@ -38,6 +38,8 @@ export type {
 } from "./components/navigation/Breadcrumbs.js";
 export { Button, buttonVariants } from "./components/forms/Button.js";
 export type { ButtonProps } from "./components/forms/Button.js";
+export { Card, cardVariants } from "./components/layout/Card.js";
+export type { CardProps } from "./components/layout/Card.js";
 export { Checkbox } from "./components/forms/Checkbox.js";
 export type { CheckboxProps } from "./components/forms/Checkbox.js";
 export { Combobox } from "./components/forms/Combobox.js";

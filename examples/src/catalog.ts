@@ -39,6 +39,12 @@ const CATALOG: CatalogCategory[] = [
 					"Primary actions for consoles and forms. Prefer filled for the main CTA.",
 			},
 			{
+				id: "card",
+				label: "Card",
+				description:
+					"Non-interactive panel chrome for grouping related content.",
+			},
+			{
 				id: "badge",
 				label: "Badge",
 				description:

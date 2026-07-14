@@ -9,6 +9,7 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | Component         | Path                                                                             | Use for                       |
 | ----------------- | -------------------------------------------------------------------------------- | ----------------------------- |
 | `Button`          | [`forms/Button.tsx`](../src/components/forms/Button.tsx)                         | Actions, icon/ghost chrome    |
+| `Card`            | [`layout/Card.tsx`](../src/components/layout/Card.tsx)                           | Non-interactive panel chrome  |
 | `Input`           | [`forms/Input.tsx`](../src/components/forms/Input.tsx)                           | Text entry                    |
 | `Label`           | [`forms/Label.tsx`](../src/components/forms/Label.tsx)                           | Control labels                |
 | `FieldError`      | [`forms/FieldError.tsx`](../src/components/forms/FieldError.tsx)                 | Field-level errors            |

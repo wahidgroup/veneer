@@ -18,6 +18,8 @@ const EXPECTED_EXPORTS = new Set([
 	"Breadcrumbs",
 	"Button",
 	"buttonVariants",
+	"Card",
+	"cardVariants",
 	"Checkbox",
 	"cn",
 	"Combobox",
