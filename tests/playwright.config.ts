@@ -18,17 +18,24 @@ function allocatePort(envKey: string): string {
 	})
 		.toString()
 		.trim();
+
 	process.env[envKey] = port;
+
 	return port;
 }
 
 const API_PORT = allocatePort("E2E_API_PORT");
 const UI_PORT = allocatePort("E2E_UI_PORT");
 
+const webServerEnv = {
+	...process.env,
+	API_PORT,
+};
+
 export default defineConfig({
 	testDir: "./specs",
 	fullyParallel: true,
-	forbidOnly: !!process.env.CI,
+	forbidOnly: Boolean(process.env.CI),
 	retries: 0,
 	reporter: "list",
 	use: {
@@ -43,16 +50,24 @@ export default defineConfig({
 	],
 	webServer: [
 		{
-			command: `API_PORT=${API_PORT} npm run start --prefix ../examples/api`,
+			command: "npm run start --prefix examples/api",
+			cwd: ROOT,
+			env: webServerEnv,
 			url: `http://127.0.0.1:${API_PORT}/health`,
-			reuseExistingServer: false,
-			timeout: 120_000,
+			reuseExistingServer: !process.env.CI,
+			timeout: 180_000,
+			stdout: "pipe",
+			stderr: "pipe",
 		},
 		{
-			command: `API_PORT=${API_PORT} npm run dev --prefix ../examples -- --port ${UI_PORT} --strictPort`,
+			command: `npm run dev --prefix examples -- --host 127.0.0.1 --port ${UI_PORT} --strictPort`,
+			cwd: ROOT,
+			env: webServerEnv,
 			url: `http://127.0.0.1:${UI_PORT}`,
-			reuseExistingServer: false,
-			timeout: 120_000,
+			reuseExistingServer: !process.env.CI,
+			timeout: 180_000,
+			stdout: "pipe",
+			stderr: "pipe",
 		},
 	],
 });

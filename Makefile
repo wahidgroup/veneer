@@ -63,7 +63,7 @@ help-body:
 	@printf '    build          Build for production\n'
 	@printf '    smoke          Smoke-load built package exports\n'
 	@printf '    pack           Assert npm pack contents (minimal + sbom)\n'
-	@printf '    audit          Run security audit (fix mode via fix=1)\n'
+	@printf '    audit          Audit root + examples + API + tests (fix=1)\n'
 	@printf '    spellcheck     Run spell checker\n'
 	@printf '    sbom           Generate software bill of materials\n'
 	@printf '    ci             Lint + build + test + examples-build + smoke + pack\n'
@@ -148,12 +148,8 @@ smoke: build
 	npm run smoke
 
 audit: node_modules
-	@echo "Running security audit (mode: $(AUDIT_MODE))..."
-ifeq ($(AUDIT_MODE),fix)
-	npm audit fix
-else
-	npm audit --audit-level=high
-endif
+	@chmod +x scripts/audit.sh
+	@AUDIT_MODE=$(AUDIT_MODE) ./scripts/audit.sh
 
 spellcheck: node_modules
 	@echo "Checking spelling..."
@@ -183,15 +179,8 @@ generate-api:
 	npm run generate-openapi --prefix examples/api
 
 examples: generate-api-types
-	@echo "Starting examples API on $(API_PORT) and Vite..."
-	@API_PORT=$(API_PORT) npm run start --prefix examples/api & \
-		api_pid=$$!; \
-		trap 'kill $$api_pid 2>/dev/null || true' EXIT INT TERM; \
-		for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do \
-			if curl -sf "http://127.0.0.1:$(API_PORT)/health" >/dev/null; then break; fi; \
-			sleep 0.5; \
-		done; \
-		API_PORT=$(API_PORT) npm run dev --prefix examples
+	@chmod +x scripts/examples.sh
+	@API_PORT=$(API_PORT) ./scripts/examples.sh
 
 examples-build: generate-api-types
 	@echo "Building examples..."
