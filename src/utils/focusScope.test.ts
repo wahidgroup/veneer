@@ -24,15 +24,11 @@ describe("focusScope", () => {
 		`;
 		document.body.append(root);
 
-		const labels = listFocusable(root).map((node) => {
-			const text = node.textContent?.trim();
-			if (text !== undefined && text.length > 0) {
-				return text;
-			}
-
-			return node.tagName;
-		});
-		expect(labels).toEqual(["One", "Link", "INPUT"]);
+		const nodes = listFocusable(root);
+		expect(nodes).toHaveLength(3);
+		expect(nodes[0]).toHaveTextContent("One");
+		expect(nodes[1]).toHaveTextContent("Link");
+		expect(nodes[2]?.tagName).toBe("INPUT");
 	});
 
 	it("focusInitial prefers the first focusable, else the root", () => {

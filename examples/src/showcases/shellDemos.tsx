@@ -1,7 +1,8 @@
 import { useState } from "react";
 
-import { SkipLink, ToolbarSelect, TopNav } from "@wahidgroup/veneer";
+import { Select, SkipLink, ToolbarSelect, TopNav } from "@wahidgroup/veneer";
 
+import { useShellChrome } from "../shellChromeContext.js";
 import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
 
 function AppShellCanvas() {
@@ -11,18 +12,45 @@ function AppShellCanvas() {
 				This examples app is the live AppShell: TopNav header, sticky
 				SideNav and Controls rail, and page-level scroll for main.
 				Toggle the menu to collapse the left nav; use the panel control
-				to collapse the rail.
+				to collapse the rail. Rail position End|Bottom docks the knobs
+				pane (comfort pushes layout; compact still overlays).
 			</p>
 		</Canvas>
 	);
 }
 
 function AppShellKnobs() {
+	const shell = useShellChrome();
+
 	return (
 		<RailPanel
 			title="AppShell"
 			description="Live AppShell with sticky side panes and document scroll. Header, sidebar, main, and controls rail."
-		/>
+		>
+			<DemoRow
+				label="Rail position"
+				description="End docks beside main. Bottom docks under main and pushes content in comfort viewports."
+			>
+				<Select
+					aria-label="Rail position"
+					value={shell.railPosition}
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "end") {
+							shell.setRailPosition("end");
+							return;
+						}
+						if (next === "bottom") {
+							shell.setRailPosition("bottom");
+						}
+					}}
+					options={[
+						{ value: "end", label: "End" },
+						{ value: "bottom", label: "Bottom" },
+					]}
+				/>
+			</DemoRow>
+		</RailPanel>
 	);
 }
 

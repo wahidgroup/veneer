@@ -188,8 +188,67 @@ describe("AppShell", () => {
 		const root = container.querySelector("[data-slot='app-shell']");
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(root).toHaveAttribute("data-rail-collapsed", "true");
+		expect(root).toHaveAttribute("data-rail-position", "end");
 		expect(rail).toHaveAttribute("data-collapsed", "true");
+		expect(rail).toHaveAttribute("data-position", "end");
 		expect(rail).toHaveClass("w-0", "min-w-0", "overflow-hidden");
+	});
+
+	it("docks the controls rail under main when railPosition is bottom", () => {
+		const { container } = render(
+			<AppShell
+				sidebar={<div>Nav</div>}
+				rail={<div>Knobs</div>}
+				railPosition="bottom"
+			>
+				Main
+			</AppShell>,
+		);
+
+		const root = container.querySelector("[data-slot='app-shell']");
+		const column = container.querySelector(
+			"[data-slot='app-shell-main-column']",
+		);
+		const rail = container.querySelector("[data-slot='app-shell-rail']");
+		expect(root).toHaveAttribute("data-rail-position", "bottom");
+		expect(column).not.toBeNull();
+		expect(rail).toHaveAttribute("data-position", "bottom");
+		expect(rail).toHaveClass("h-64", "border-t");
+		expect(rail).not.toHaveClass("border-l");
+	});
+
+	it("collapses a bottom rail by height, not width", () => {
+		const { container } = render(
+			<AppShell
+				railCollapsed
+				railPosition="bottom"
+				rail={<div>Knobs</div>}
+			>
+				Main
+			</AppShell>,
+		);
+		const rail = container.querySelector("[data-slot='app-shell-rail']");
+		expect(rail).toHaveClass("h-0", "min-h-0", "overflow-hidden");
+		expect(rail).not.toHaveClass("w-0");
+	});
+
+	it("overlays a bottom rail from the bottom edge on tablet", () => {
+		media.set(APP_SHELL_COMPACT_QUERY, true);
+
+		const { container } = render(
+			<AppShell
+				sidebar={<div>Nav</div>}
+				rail={<div>Knobs</div>}
+				railCollapsed={false}
+				railPosition="bottom"
+			>
+				Main
+			</AppShell>,
+		);
+
+		const rail = container.querySelector("[data-slot='app-shell-rail']");
+		expect(rail).toHaveAttribute("data-overlay", "true");
+		expect(rail).toHaveClass("absolute", "bottom-0", "left-14", "right-0");
 	});
 
 	it("locks the shell and scrolls main as the primary pane", () => {

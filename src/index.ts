@@ -19,6 +19,7 @@ export type { AlertProps, AlertType } from "./components/feedback/Alert.js";
 export { AppShell } from "./components/layout/AppShell.js";
 export type {
 	AppShellProps,
+	AppShellRailPosition,
 	AppShellViewport,
 } from "./components/layout/AppShell.js";
 export {
@@ -92,6 +93,8 @@ export type {
 	DiffViewMode,
 	DiffViewProps,
 } from "./components/data/DiffView.js";
+export { Drawer, drawerPanelVariants } from "./components/overlays/Drawer.js";
+export type { DrawerProps, DrawerSide } from "./components/overlays/Drawer.js";
 export {
 	EmptyState,
 	emptyStateVariants,
@@ -119,8 +122,6 @@ export type {
 	LoadingProps,
 	LoadingVariant,
 } from "./components/feedback/Loading.js";
-export { Drawer, drawerPanelVariants } from "./components/overlays/Drawer.js";
-export type { DrawerProps, DrawerSide } from "./components/overlays/Drawer.js";
 export { Modal } from "./components/overlays/Modal.js";
 export type { ModalProps } from "./components/overlays/Modal.js";
 export { NumberInput } from "./components/forms/NumberInput.js";

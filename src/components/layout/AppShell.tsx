@@ -14,6 +14,11 @@ const APP_SHELL_COMPACT_QUERY = `(max-width: ${String(APP_SHELL_TABLET_MAX_PX)}p
 
 type AppShellViewport = "comfort" | "tablet" | "mobile";
 
+/**
+ * Controls rail dock. `end` = trailing edge (default). `bottom` = under main.
+ */
+type AppShellRailPosition = "end" | "bottom";
+
 interface AppShellProps extends Omit<ComponentProps<"div">, "children"> {
 	header?: ReactNode;
 	sidebar?: ReactNode;
@@ -23,6 +28,7 @@ interface AppShellProps extends Omit<ComponentProps<"div">, "children"> {
 	onSidebarCollapsedChange?: (collapsed: boolean) => void;
 	railCollapsed?: boolean;
 	onRailCollapsedChange?: (collapsed: boolean) => void;
+	railPosition?: AppShellRailPosition;
 }
 
 /** Side panes stay scrollable; chrome hidden so only main shows a bar. */
@@ -102,8 +108,10 @@ function useAppShellViewport(): AppShellViewport {
 /**
  * Console page frame locked to the viewport. Main is the primary scroll
  * container. Below `lg` (1024px): icon sidebar + rail overlay. Below `md`
- * (768px): sidebar drawer + full-width rail overlay. Crossing down auto-hides
- * the rail and collapses the sidebar.
+ * (768px): sidebar drawer + rail overlay. Crossing down auto-hides the rail
+ * and collapses the sidebar. `railPosition` docks the controls rail to the
+ * trailing edge (`end`) or under main (`bottom`); comfort mode pushes layout,
+ * compact still overlays.
  */
 function AppShell({
 	header,
@@ -114,6 +122,7 @@ function AppShell({
 	onSidebarCollapsedChange,
 	railCollapsed,
 	onRailCollapsedChange,
+	railPosition,
 	className,
 	...rest
 }: AppShellProps) {
@@ -123,6 +132,11 @@ function AppShell({
 	let railIsCollapsed = railCollapsed;
 	railIsCollapsed ??= false;
 
+	let resolvedRailPosition: AppShellRailPosition = "end";
+	if (railPosition === "bottom") {
+		resolvedRailPosition = "bottom";
+	}
+
 	const viewport = useAppShellViewport();
 	const previousViewport = useRef<AppShellViewport | null>(null);
 
@@ -131,6 +145,7 @@ function AppShell({
 	const isCompact = isMobile || isTablet;
 	const drawerOpen = isMobile && !collapsed;
 	const railOverlayOpen = isCompact && !railIsCollapsed;
+	const railAtBottom = resolvedRailPosition === "bottom";
 
 	useEffect(() => {
 		const previous = previousViewport.current;
@@ -267,26 +282,59 @@ function AppShell({
 
 	let railNode: ReactNode = null;
 	if (rail !== undefined) {
-		let railClass = cn(
-			"border-l border-border bg-card transition-[width] duration-200",
-		);
+		let railClass = "bg-card transition-[width,height] duration-200";
+
+		if (railAtBottom) {
+			railClass = cn(railClass, "border-t border-border");
+		} else {
+			railClass = cn(railClass, "border-l border-border");
+		}
 
 		if (railIsCollapsed) {
-			railClass = cn(
-				railClass,
-				"w-0 min-w-0 shrink overflow-hidden border-l-0",
-			);
+			if (railAtBottom) {
+				railClass = cn(
+					railClass,
+					"h-0 min-h-0 shrink overflow-hidden border-t-0",
+				);
+			} else {
+				railClass = cn(
+					railClass,
+					"w-0 min-w-0 shrink overflow-hidden border-l-0",
+				);
+			}
 		} else if (isMobile) {
-			railClass = cn(
-				railClass,
-				SIDE_PANE_SCROLL,
-				"absolute inset-0 z-40 shadow-lg",
-			);
+			if (railAtBottom) {
+				railClass = cn(
+					railClass,
+					SIDE_PANE_SCROLL,
+					"absolute inset-x-0 bottom-0 z-40 max-h-[min(24rem,70%)] shadow-lg",
+				);
+			} else {
+				railClass = cn(
+					railClass,
+					SIDE_PANE_SCROLL,
+					"absolute inset-0 z-40 shadow-lg",
+				);
+			}
 		} else if (isTablet) {
+			if (railAtBottom) {
+				railClass = cn(
+					railClass,
+					SIDE_PANE_SCROLL,
+					"absolute bottom-0 left-14 right-0 z-40 max-h-[min(24rem,70%)] shadow-lg",
+				);
+			} else {
+				railClass = cn(
+					railClass,
+					SIDE_PANE_SCROLL,
+					"absolute inset-y-0 left-14 right-0 z-40 shadow-lg",
+				);
+			}
+		} else if (railAtBottom) {
 			railClass = cn(
 				railClass,
 				SIDE_PANE_SCROLL,
-				"absolute inset-y-0 left-14 right-0 z-40 shadow-lg",
+				"relative z-10 h-64 shrink-0",
 			);
 		} else {
 			railClass = cn(
@@ -301,6 +349,7 @@ function AppShell({
 				data-slot="app-shell-rail"
 				data-collapsed={railIsCollapsed}
 				data-overlay={railOverlayOpen}
+				data-position={resolvedRailPosition}
 				aria-label="Controls"
 				aria-hidden={railIsCollapsed}
 				className={railClass}
@@ -324,11 +373,45 @@ function AppShell({
 		);
 	}
 
+	const mainNode = (
+		<main
+			id="main"
+			tabIndex={-1}
+			data-slot="app-shell-main"
+			className="min-h-0 min-w-0 flex-1 overflow-y-auto"
+		>
+			{children}
+		</main>
+	);
+
+	let mainColumn: ReactNode;
+	if (railAtBottom) {
+		mainColumn = (
+			<div
+				data-slot="app-shell-main-column"
+				className="relative flex min-h-0 min-w-0 flex-1 flex-col"
+			>
+				{mainNode}
+				{railNode}
+				{backdropNode}
+			</div>
+		);
+	} else {
+		mainColumn = (
+			<>
+				{mainNode}
+				{railNode}
+				{backdropNode}
+			</>
+		);
+	}
+
 	return (
 		<div
 			data-slot="app-shell"
 			data-collapsed={collapsed}
 			data-rail-collapsed={railIsCollapsed}
+			data-rail-position={resolvedRailPosition}
 			data-viewport={viewport}
 			className={cn(
 				"flex h-dvh flex-col overflow-hidden bg-background text-foreground",
@@ -342,22 +425,13 @@ function AppShell({
 				className="relative flex min-h-0 flex-1"
 			>
 				{sidebarNode}
-				<main
-					id="main"
-					tabIndex={-1}
-					data-slot="app-shell-main"
-					className="min-h-0 min-w-0 flex-1 overflow-y-auto"
-				>
-					{children}
-				</main>
-				{railNode}
-				{backdropNode}
+				{mainColumn}
 			</div>
 		</div>
 	);
 }
 
-export type { AppShellProps, AppShellViewport };
+export type { AppShellProps, AppShellRailPosition, AppShellViewport };
 export {
 	APP_SHELL_COMPACT_QUERY,
 	APP_SHELL_MOBILE_MAX_PX,

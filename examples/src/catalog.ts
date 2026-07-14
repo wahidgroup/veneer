@@ -205,7 +205,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "app-shell",
 				label: "AppShell",
 				description:
-					"Live AppShell with sticky side panes and document scroll. Collapsible sidebar and controls rail.",
+					"Live AppShell with sticky side panes and document scroll. Rail position End|Bottom; collapsible sidebar and controls rail.",
 			},
 			{
 				id: "top-nav",

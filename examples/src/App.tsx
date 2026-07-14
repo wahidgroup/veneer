@@ -28,6 +28,7 @@ import {
 } from "@wahidgroup/veneer";
 
 import { getDemo } from "./showcases/demoRegistry.js";
+import { ShellChromeProvider, useShellChrome } from "./shellChromeContext.js";
 import {
 	CATALOG,
 	firstComponentId,
@@ -107,10 +108,20 @@ function categoryShowsTabs(categoryId: CategoryId): boolean {
 	return true;
 }
 
+/** Demo chrome provider around the live AppShell host. */
+function App() {
+	return (
+		<ShellChromeProvider>
+			<AppFrame />
+		</ShellChromeProvider>
+	);
+}
+
 /**
  * Live AppShell host: category SideNav, optional component Tabs, knobs rail, theme toggle.
  */
-function App() {
+function AppFrame() {
+	const shell = useShellChrome();
 	const [category, setCategory] = useState<CategoryId>("primitives");
 	const [component, setComponent] = useState(() => {
 		return firstComponentId("primitives");
@@ -227,6 +238,7 @@ function App() {
 					onSidebarCollapsedChange={setSidebarCollapsed}
 					railCollapsed={railCollapsed}
 					onRailCollapsedChange={setRailCollapsed}
+					railPosition={shell.railPosition}
 					header={
 						<TopNav
 							brand="@wahidgroup/veneer"

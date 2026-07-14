@@ -8,6 +8,7 @@ import {
 
 import type {
 	AlertType,
+	DrawerSide,
 	ProgressTask,
 	ToastFade,
 	ToastPosition,
@@ -1347,8 +1348,8 @@ function ModalKnobs() {
 interface DrawerDemoValue {
 	open: boolean;
 	setOpen: (open: boolean) => void;
-	side: "right" | "left" | "top" | "bottom";
-	setSide: (value: "right" | "left" | "top" | "bottom") => void;
+	side: DrawerSide;
+	setSide: (value: DrawerSide) => void;
 	closeOnBackdropClick: boolean;
 	setCloseOnBackdropClick: (value: boolean) => void;
 	showCloseButton: boolean;
@@ -1370,9 +1371,7 @@ function useDrawerDemo() {
 
 function DrawerDemoProvider({ children }: { children: ReactNode }) {
 	const [open, setOpen] = useState(false);
-	const [side, setSide] = useState<"right" | "left" | "top" | "bottom">(
-		"right",
-	);
+	const [side, setSide] = useState<DrawerSide>("right");
 	const [closeOnBackdropClick, setCloseOnBackdropClick] = useState(true);
 	const [showCloseButton, setShowCloseButton] = useState(true);
 	const [selectedId, setSelectedId] = useState<string | null>(null);

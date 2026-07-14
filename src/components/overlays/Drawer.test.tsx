@@ -114,6 +114,29 @@ describe("Drawer", () => {
 		expect(open).toBe(false);
 	});
 
+	it("hides the header close control when showCloseButton is false", () => {
+		let open = true;
+		render(
+			<Drawer
+				open={open}
+				title="No header close"
+				showCloseButton={false}
+				onOpenChange={(next) => {
+					open = next;
+				}}
+			>
+				<button type="button">Body close</button>
+			</Drawer>,
+		);
+
+		expect(
+			screen.queryByRole("button", { name: "Close" }),
+		).not.toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Body close" }),
+		).toBeInTheDocument();
+	});
+
 	it("closes when the backdrop is clicked", async () => {
 		const user = userEvent.setup();
 		let open = true;
