@@ -18,6 +18,8 @@ import {
 	PaginationKnobs,
 	ServerPageCanvas,
 	ServerPageKnobs,
+	StatDisplayCanvas,
+	StatDisplayKnobs,
 } from "./dataDemos.js";
 import {
 	ChoicesCanvas,
@@ -321,6 +323,11 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: DescriptionListCanvas,
 		Knobs: DescriptionListKnobs,
+	},
+	"stat-display": {
+		Provider: PassthroughProvider,
+		Canvas: StatDisplayCanvas,
+		Knobs: StatDisplayKnobs,
 	},
 };
 

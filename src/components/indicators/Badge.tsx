@@ -1,6 +1,5 @@
 import type { VariantProps } from "class-variance-authority";
 import type { ComponentProps } from "react";
-
 import { cva } from "class-variance-authority";
 
 import { cn } from "../../utils/cn.js";
@@ -12,7 +11,7 @@ const badgeVariants = cva(
 			variant: {
 				default: "bg-muted text-muted-foreground",
 				primary: "bg-primary text-primary-foreground",
-				success: "bg-success text-success-foreground",
+				success: "bg-success-muted text-success-muted-foreground",
 				warning: "bg-warning text-warning-foreground",
 				danger: "bg-destructive-muted text-destructive-muted-foreground",
 				info: "bg-info text-info-foreground",

@@ -17,7 +17,7 @@ describe("Badge", () => {
 		{ variant: undefined, expectedClass: "bg-muted", label: "default" },
 		{
 			variant: "success" as const,
-			expectedClass: "bg-success",
+			expectedClass: "bg-success-muted",
 			label: "success",
 		},
 		{

@@ -11,6 +11,7 @@ import {
 	DescriptionList,
 	EmptyState,
 	Pagination,
+	StatDisplay,
 	StatusBadge,
 } from "@wahidgroup/veneer";
 import {
@@ -471,6 +472,47 @@ function DescriptionListKnobs() {
 	);
 }
 
+function StatDisplayCanvas() {
+	return (
+		<Canvas>
+			<div className="grid w-full max-w-3xl gap-3 sm:grid-cols-2">
+				<StatDisplay
+					label="Active stacks"
+					value="42"
+					hint="Across all regions"
+				/>
+				<StatDisplay
+					label="Deployments (24h)"
+					value="128"
+					tone="success"
+					badge={<Badge variant="success">+12%</Badge>}
+				/>
+				<StatDisplay
+					label="Drifted resources"
+					value="7"
+					tone="warning"
+					hint="Needs review"
+				/>
+				<StatDisplay
+					label="Failed runs"
+					value="3"
+					tone="danger"
+					badge={<Badge variant="danger">-2</Badge>}
+				/>
+			</div>
+		</Canvas>
+	);
+}
+
+function StatDisplayKnobs() {
+	return (
+		<RailPanel
+			title="StatDisplay"
+			description="Metric tiles on Card size sm. Tone styles value; pair with Badge or built-in caption (WCAG 1.4.1)."
+		/>
+	);
+}
+
 export type { InventoryRow };
 export {
 	ServerPageCanvas,
@@ -483,4 +525,6 @@ export {
 	EmptyTableKnobs,
 	DescriptionListCanvas,
 	DescriptionListKnobs,
+	StatDisplayCanvas,
+	StatDisplayKnobs,
 };

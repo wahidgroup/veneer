@@ -25,6 +25,7 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `CopyButton`      | [`forms/CopyButton.tsx`](../src/components/forms/CopyButton.tsx)                 | Copy ARNs / IDs                                        |
 | `StatusBadge`     | [`indicators/StatusBadge.tsx`](../src/components/indicators/StatusBadge.tsx)     | Inventory status chips                                 |
 | `DescriptionList` | [`data/DescriptionList.tsx`](../src/components/data/DescriptionList.tsx)         | Resource key/value pairs                               |
+| `StatDisplay`     | [`data/StatDisplay.tsx`](../src/components/data/StatDisplay.tsx)                 | Metric tile on Card (tone + text)                      |
 | `Skeleton`        | [`feedback/Skeleton.tsx`](../src/components/feedback/Skeleton.tsx)               | Placeholder bones                                      |
 | `ToolbarSelect`   | [`navigation/ToolbarSelect.tsx`](../src/components/navigation/ToolbarSelect.tsx) | Nav chrome value pickers                               |
 | `ProgressBar`     | [`feedback/ProgressBar.tsx`](../src/components/feedback/ProgressBar.tsx)         | Determinate / indeterminate                            |

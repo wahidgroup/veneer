@@ -64,6 +64,8 @@ const EXPECTED_EXPORTS = new Set([
 	"Skeleton",
 	"skeletonVariants",
 	"Slider",
+	"StatDisplay",
+	"statDisplayValueVariants",
 	"StatusBadge",
 	"variantForStatus",
 	"Tabs",

@@ -4,9 +4,9 @@ import { cva } from "class-variance-authority";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 
+import type { ButtonProps } from "../forms/Button.js";
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
-import type { ButtonProps } from "../forms/Button.js";
 import { Portal } from "../overlays/Portal.js";
 
 type ToastType = "success" | "error" | "warning" | "info";
@@ -60,7 +60,7 @@ const toastVariants = cva(
 		variants: {
 			type: {
 				success:
-					"border-success text-success-foreground [--toast-wash:var(--success)]",
+					"border-success text-success-muted-foreground [--toast-wash:var(--success-muted)]",
 				error: "border-destructive text-destructive-muted-foreground [--toast-wash:var(--destructive-muted)]",
 				warning:
 					"border-warning text-warning-foreground [--toast-wash:var(--warning)]",

@@ -17,7 +17,7 @@ const alertVariants = cva(
 			type: {
 				info: "border-info text-info-foreground [--alert-wash:var(--info)]",
 				success:
-					"border-success text-success-foreground [--alert-wash:var(--success)]",
+					"border-success text-success-muted-foreground [--alert-wash:var(--success-muted)]",
 				warning:
 					"border-warning text-warning-foreground [--alert-wash:var(--warning)]",
 				danger: "border-destructive text-destructive-muted-foreground [--alert-wash:var(--destructive-muted)]",
@@ -49,6 +49,7 @@ function defaultIcon(type: AlertType): ReactNode {
 	if (type === "danger") {
 		return <CircleAlert className={className} aria-hidden="true" />;
 	}
+
 	return <Info className={className} aria-hidden="true" />;
 }
 

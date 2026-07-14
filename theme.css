@@ -55,6 +55,8 @@
 	--color-destructive-muted-foreground: var(--destructive-muted-foreground);
 	--color-success: var(--success);
 	--color-success-foreground: var(--success-foreground);
+	--color-success-muted: var(--success-muted);
+	--color-success-muted-foreground: var(--success-muted-foreground);
 	--color-warning: var(--warning);
 	--color-warning-foreground: var(--warning-foreground);
 	--color-info: var(--info);
@@ -102,6 +104,8 @@
 
 		--success: #2e7d32;
 		--success-foreground: #ffffff;
+		--success-muted: #dcfce7;
+		--success-muted-foreground: #166534;
 
 		--warning: #fef9c3;
 		--warning-foreground: #854d0e;
@@ -145,8 +149,10 @@
 		--destructive-muted: rgb(127 29 29 / 0.35);
 		--destructive-muted-foreground: #fca5a5;
 
-		--success: rgb(20 83 45 / 0.35);
-		--success-foreground: #86efac;
+		--success: #86efac;
+		--success-foreground: #0f172a;
+		--success-muted: rgb(20 83 45 / 0.35);
+		--success-muted-foreground: #86efac;
 
 		--warning: rgb(113 63 18 / 0.35);
 		--warning-foreground: #fde68a;

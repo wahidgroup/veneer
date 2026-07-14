@@ -139,6 +139,14 @@ export type { SkeletonProps } from "./components/feedback/Skeleton.js";
 export { Slider } from "./components/forms/Slider.js";
 export type { SliderProps } from "./components/forms/Slider.js";
 export {
+	StatDisplay,
+	statDisplayValueVariants,
+} from "./components/data/StatDisplay.js";
+export type {
+	StatDisplayProps,
+	StatDisplayTone,
+} from "./components/data/StatDisplay.js";
+export {
 	StatusBadge,
 	variantForStatus,
 } from "./components/indicators/StatusBadge.js";

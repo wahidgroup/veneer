@@ -309,6 +309,12 @@ const CATALOG: CatalogCategory[] = [
 				description:
 					"Resource attribute key/value pairs for detail panels.",
 			},
+			{
+				id: "stat-display",
+				label: "StatDisplay",
+				description:
+					"Metric tiles on Card. Tone styles value text and pairs with Badge or caption.",
+			},
 		],
 	},
 ];
