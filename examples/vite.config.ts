@@ -1,5 +1,5 @@
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "vite";
+import { createLogger, defineConfig } from "vite";
 import path from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
@@ -8,7 +8,33 @@ const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const packageRoot = path.resolve(rootDir, "..");
 const rootModules = path.join(packageRoot, "node_modules");
 
+let apiPort = "8787";
+if (process.env.API_PORT !== undefined && process.env.API_PORT !== "") {
+	apiPort = process.env.API_PORT;
+}
+
+const apiTarget = `http://127.0.0.1:${apiPort}`;
+
+const logger = createLogger();
+const logError = logger.error.bind(logger);
+
+logger.error = (msg, options) => {
+	if (typeof msg === "string") {
+		const benignWsProxy =
+			msg.includes("ws proxy socket error:") ||
+			msg.includes("ws proxy error:");
+		if (benignWsProxy) {
+			if (msg.includes("EPIPE") || msg.includes("ECONNRESET")) {
+				return;
+			}
+		}
+	}
+
+	logError(msg, options);
+};
+
 export default defineConfig({
+	customLogger: logger,
 	plugins: [react(), tailwindcss()],
 	resolve: {
 		dedupe: ["react", "react-dom"],
@@ -33,16 +59,16 @@ export default defineConfig({
 		open: false,
 		proxy: {
 			"/health": {
-				target: `http://127.0.0.1:${process.env.API_PORT ?? "8787"}`,
+				target: apiTarget,
 				changeOrigin: true,
 			},
 			"/v1": {
-				target: `http://127.0.0.1:${process.env.API_PORT ?? "8787"}`,
+				target: apiTarget,
 				changeOrigin: true,
 				ws: true,
 			},
 			"/docs": {
-				target: `http://127.0.0.1:${process.env.API_PORT ?? "8787"}`,
+				target: apiTarget,
 				changeOrigin: true,
 			},
 		},

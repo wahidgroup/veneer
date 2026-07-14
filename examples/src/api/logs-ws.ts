@@ -101,10 +101,14 @@ function connectLogs(options: ConnectLogsOptions): {
 		scheme = "wss";
 	}
 
-	const url = options.url ?? `${scheme}://${window.location.host}/v1/logs`;
+	let url = `${scheme}://${window.location.host}/v1/logs`;
+	if (options.url !== undefined) {
+		url = options.url;
+	}
 
 	let socket: WebSocket | null = null;
 	let closedByUser = false;
+	let generation = 0;
 	let attempt = 0;
 	let reconnectTimer: ReturnType<typeof setTimeout> | null = null;
 	let lastSubscribe: Omit<LogSubscribeMessage, "type"> | null = null;
@@ -127,38 +131,88 @@ function connectLogs(options: ConnectLogsOptions): {
 
 		attempt += 1;
 		reconnectTimer = setTimeout(() => {
+			if (closedByUser) {
+				return;
+			}
+
 			open();
 		}, delayMs);
 	}
 
+	function discardSocket(ws: WebSocket, reason: string): void {
+		if (
+			ws.readyState === WebSocket.CONNECTING ||
+			ws.readyState === WebSocket.OPEN
+		) {
+			ws.close(1000, reason);
+		}
+	}
+
 	function open(): void {
+		if (closedByUser) {
+			return;
+		}
+
+		const current = generation + 1;
+		generation = current;
+
+		if (socket !== null) {
+			const previous = socket;
+			socket = null;
+			discardSocket(previous, "reconnect");
+		}
+
 		options.onState?.("connecting");
 
-		socket = new WebSocket(url);
-		socket.addEventListener("open", () => {
-			attempt = 0;
+		const ws = new WebSocket(url);
+		socket = ws;
 
+		ws.addEventListener("open", () => {
+			if (current !== generation || closedByUser) {
+				return;
+			}
+
+			attempt = 0;
 			options.onState?.("open");
 
-			if (lastSubscribe !== null && socket !== null) {
-				const payload: LogSubscribeMessage = {
-					type: "subscribe",
-					...lastSubscribe,
-				};
-				socket.send(JSON.stringify(payload));
+			if (lastSubscribe === null) {
+				return;
 			}
+
+			const payload: LogSubscribeMessage = {
+				type: "subscribe",
+				...lastSubscribe,
+			};
+
+			ws.send(JSON.stringify(payload));
 		});
 
-		socket.addEventListener("close", () => {
+		ws.addEventListener("close", () => {
+			if (current !== generation) {
+				return;
+			}
+
+			if (socket === ws) {
+				socket = null;
+			}
+
 			options.onState?.("closed");
 			scheduleReconnect();
 		});
 
-		socket.addEventListener("error", () => {
+		ws.addEventListener("error", () => {
+			if (current !== generation || closedByUser) {
+				return;
+			}
+
 			options.onState?.("error");
 		});
 
-		socket.addEventListener("message", (event) => {
+		ws.addEventListener("message", (event) => {
+			if (current !== generation || closedByUser) {
+				return;
+			}
+
 			let parsed: unknown;
 			try {
 				parsed = JSON.parse(String(event.data));
@@ -191,9 +245,15 @@ function connectLogs(options: ConnectLogsOptions): {
 		},
 		close() {
 			closedByUser = true;
+			generation += 1;
+
 			clearReconnect();
-			socket?.close();
+
+			const ws = socket;
 			socket = null;
+			if (ws !== null) {
+				discardSocket(ws, "client close");
+			}
 		},
 	};
 }
