@@ -1,4 +1,5 @@
 import type { ComponentProps, ReactNode } from "react";
+import { useLayoutEffect } from "react";
 import { AlertCircle, Check } from "lucide-react";
 
 import type { WorkflowStepStatus } from "./workflowShared.js";
@@ -26,7 +27,14 @@ function WorkflowStep({
 	className,
 	...rest
 }: WorkflowStepProps) {
-	const { value: active, setValue, orientation } = useWorkflowContext();
+	const {
+		value: active,
+		setValue,
+		orientation,
+		stepIds,
+		statusById,
+		reportStepStatus,
+	} = useWorkflowContext();
 
 	let resolvedStatus: WorkflowStepStatus = "pending";
 	if (status !== undefined) {
@@ -35,12 +43,33 @@ function WorkflowStep({
 		resolvedStatus = "current";
 	}
 
+	useLayoutEffect(() => {
+		reportStepStatus(value, resolvedStatus);
+	}, [value, resolvedStatus, reportStepStatus]);
+
 	const isActive = value === active;
 	const jumpable =
 		resolvedStatus === "complete" || resolvedStatus === "error";
 
+	const index = stepIds.indexOf(value);
+	let isFirst = true;
+	let isLast = true;
+	if (index >= 0) {
+		isFirst = index === 0;
+		isLast = index === stepIds.length - 1;
+	}
+
+	let previousComplete = false;
+	if (index > 0) {
+		const previousId = stepIds[index - 1];
+		if (previousId !== undefined && statusById[previousId] === "complete") {
+			previousComplete = true;
+		}
+	}
+
 	let marker: ReactNode = (
 		<span
+			data-slot="workflow-marker"
 			className="flex size-7 shrink-0 items-center justify-center rounded-full border border-border bg-secondary text-xs font-medium text-muted-foreground"
 			aria-hidden="true"
 		>
@@ -50,6 +79,7 @@ function WorkflowStep({
 	if (resolvedStatus === "complete") {
 		marker = (
 			<span
+				data-slot="workflow-marker"
 				className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground"
 				aria-hidden="true"
 			>
@@ -59,6 +89,7 @@ function WorkflowStep({
 	} else if (resolvedStatus === "error") {
 		marker = (
 			<span
+				data-slot="workflow-marker"
 				className="flex size-7 shrink-0 items-center justify-center rounded-full bg-destructive text-destructive-foreground"
 				aria-hidden="true"
 			>
@@ -68,6 +99,7 @@ function WorkflowStep({
 	} else if (isActive || resolvedStatus === "current") {
 		marker = (
 			<span
+				data-slot="workflow-marker"
 				className="flex size-7 shrink-0 items-center justify-center rounded-full border-2 border-primary bg-card text-xs font-medium text-primary"
 				aria-hidden="true"
 			>
@@ -75,15 +107,6 @@ function WorkflowStep({
 			</span>
 		);
 	}
-
-	let itemClass = "flex gap-2";
-	if (orientation === "horizontal") {
-		itemClass = cn(itemClass, "min-w-0 flex-col items-center text-center");
-	} else {
-		itemClass = cn(itemClass, "items-center");
-	}
-
-	itemClass = cn(itemClass, className);
 
 	let labelClass = "text-sm font-medium text-muted-foreground";
 	if (isActive || resolvedStatus === "current") {
@@ -96,37 +119,120 @@ function WorkflowStep({
 		labelClass = "text-sm font-medium text-destructive";
 	}
 
-	let body: ReactNode = (
-		<span className={cn("inline-flex items-center gap-2", labelClass)}>
-			{marker}
-			<span>{children}</span>
-		</span>
-	);
-
-	if (jumpable && !isActive) {
-		body = (
-			<Button
-				type="button"
-				variant="ghost"
-				size="sm"
-				className={cn(
-					"h-auto gap-2 px-0 py-0 hover:bg-transparent active:bg-transparent",
-					labelClass,
-					"hover:text-primary",
-				)}
-				onClick={() => {
-					setValue(value);
-				}}
-			>
-				{marker}
-				<span>{children}</span>
-			</Button>
-		);
+	let outgoingClass = "bg-border";
+	if (resolvedStatus === "complete") {
+		outgoingClass = "bg-primary";
 	}
 
 	let ariaCurrent: "step" | undefined;
 	if (isActive) {
 		ariaCurrent = "step";
+	}
+
+	function jump(): void {
+		setValue(value);
+	}
+
+	if (orientation === "vertical") {
+		let connector: ReactNode = null;
+		if (!isLast) {
+			connector = (
+				<div
+					data-slot="workflow-connector"
+					data-edge="out"
+					aria-hidden="true"
+					className={cn("mt-1 w-0.5 min-h-4 flex-1", outgoingClass)}
+				/>
+			);
+		}
+
+		let bodyPad = "min-w-0 flex-1 pb-6";
+		if (isLast) {
+			bodyPad = "min-w-0 flex-1 pb-0";
+		}
+
+		let text: ReactNode = <span className={labelClass}>{children}</span>;
+		if (jumpable && !isActive) {
+			text = (
+				<Button
+					type="button"
+					variant="ghost"
+					size="sm"
+					className={cn(
+						"h-auto justify-start px-0 py-0 hover:bg-transparent active:bg-transparent",
+						labelClass,
+						"hover:text-primary",
+					)}
+					onClick={jump}
+				>
+					{children}
+				</Button>
+			);
+		}
+
+		return (
+			<li
+				data-slot="workflow-step"
+				data-value={value}
+				data-status={resolvedStatus}
+				aria-current={ariaCurrent}
+				className={cn("flex gap-3", className)}
+				{...rest}
+			>
+				<div
+					className="flex flex-col items-center self-stretch"
+					aria-hidden="true"
+				>
+					{marker}
+					{connector}
+				</div>
+				<div className={bodyPad}>{text}</div>
+			</li>
+		);
+	}
+
+	let inClass = "h-0.5 min-w-0";
+	if (isFirst) {
+		inClass = cn(inClass, "bg-transparent");
+	} else if (previousComplete) {
+		inClass = cn(inClass, "bg-primary");
+	} else {
+		inClass = cn(inClass, "bg-border");
+	}
+
+	let outClass = "h-0.5 min-w-0";
+	if (isLast) {
+		outClass = cn(outClass, "bg-transparent");
+	} else {
+		outClass = cn(outClass, outgoingClass);
+	}
+
+	let text: ReactNode = (
+		<span
+			className={cn(
+				"mt-2 block px-1 text-center break-words",
+				labelClass,
+			)}
+		>
+			{children}
+		</span>
+	);
+	if (jumpable && !isActive) {
+		text = (
+			<Button
+				type="button"
+				variant="ghost"
+				size="sm"
+				className={cn(
+					"mt-2 h-auto w-full px-1 py-0 text-center break-words hover:bg-transparent active:bg-transparent",
+					labelClass,
+					"hover:text-primary",
+				)}
+				onClick={jump}
+			>
+				{children}
+			</Button>
+		);
 	}
 
 	return (
@@ -135,10 +241,28 @@ function WorkflowStep({
 			data-value={value}
 			data-status={resolvedStatus}
 			aria-current={ariaCurrent}
-			className={itemClass}
+			className={cn(
+				"flex min-w-0 flex-1 flex-col items-stretch",
+				className,
+			)}
 			{...rest}
 		>
-			{body}
+			<div className="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center">
+				<div
+					data-slot="workflow-connector"
+					data-edge="in"
+					aria-hidden="true"
+					className={inClass}
+				/>
+				{marker}
+				<div
+					data-slot="workflow-connector"
+					data-edge="out"
+					aria-hidden="true"
+					className={outClass}
+				/>
+			</div>
+			{text}
 		</li>
 	);
 }

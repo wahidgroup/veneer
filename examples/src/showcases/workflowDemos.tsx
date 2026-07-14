@@ -49,6 +49,29 @@ interface EdgeNode {
 	name: string;
 }
 
+type WorkflowDemoVariant = "linear" | "nodes";
+
+interface WorkflowDemoValue {
+	variant: WorkflowDemoVariant;
+	setVariant: (value: WorkflowDemoVariant) => void;
+	orientation: WorkflowOrientation;
+	setOrientation: (value: WorkflowOrientation) => void;
+	nodeCount: number;
+	addNode: () => void;
+	removeNode: () => void;
+}
+
+const WorkflowDemoContext = createContext<WorkflowDemoValue | null>(null);
+
+function useWorkflowDemo(): WorkflowDemoValue {
+	const value = useContext(WorkflowDemoContext);
+	if (value === null) {
+		throw new Error("WorkflowDemoProvider required");
+	}
+
+	return value;
+}
+
 function statusForStep(
 	id: string,
 	current: string,
@@ -67,167 +90,10 @@ function statusForStep(
 	return "pending";
 }
 
-function LinearDeployCanvas() {
-	const [step, setStep] = useState("region");
-	const [region, setRegion] = useState("us-east-1");
-	const [plan, setPlan] = useState("pro");
+function WorkflowDemoProvider({ children }: { children: ReactNode }) {
+	const [variant, setVariantState] = useState<WorkflowDemoVariant>("linear");
 	const [orientation, setOrientation] =
 		useState<WorkflowOrientation>("horizontal");
-
-	const order = ["region", "plan", "confirm"];
-
-	let regionValid = region.length > 0;
-	let planValid = plan.length > 0;
-
-	let canNext = true;
-	let nextHint = "";
-	if (step === "region") {
-		canNext = regionValid;
-		if (!regionValid) {
-			nextHint = "Choose a region to continue.";
-		}
-	} else if (step === "plan") {
-		canNext = planValid;
-		if (!planValid) {
-			nextHint = "Choose a plan to continue.";
-		}
-	}
-
-	let regionError: ReactNode = null;
-	if (step === "region" && nextHint.length > 0) {
-		regionError = <FieldError>{nextHint}</FieldError>;
-	}
-
-	let planError: ReactNode = null;
-	if (step === "plan" && nextHint.length > 0) {
-		planError = <FieldError>{nextHint}</FieldError>;
-	}
-
-	return (
-		<Canvas>
-			<div className="mb-4 flex flex-wrap gap-2">
-				<Button
-					type="button"
-					size="sm"
-					variant="outlined"
-					aria-pressed={orientation === "horizontal"}
-					onClick={() => {
-						setOrientation("horizontal");
-					}}
-				>
-					Horizontal
-				</Button>
-				<Button
-					type="button"
-					size="sm"
-					variant="outlined"
-					aria-pressed={orientation === "vertical"}
-					onClick={() => {
-						setOrientation("vertical");
-					}}
-				>
-					Vertical
-				</Button>
-			</div>
-			<Workflow
-				value={step}
-				onValueChange={setStep}
-				orientation={orientation}
-			>
-				<WorkflowTrack aria-label="Deploy progress">
-					<WorkflowStep
-						value="region"
-						status={statusForStep("region", step, order)}
-					>
-						Region
-					</WorkflowStep>
-					<WorkflowStep
-						value="plan"
-						status={statusForStep("plan", step, order)}
-					>
-						Plan
-					</WorkflowStep>
-					<WorkflowStep
-						value="confirm"
-						status={statusForStep("confirm", step, order)}
-					>
-						Confirm
-					</WorkflowStep>
-				</WorkflowTrack>
-				<WorkflowPanel value="region" title="Region">
-					<div className="flex max-w-sm flex-col gap-2">
-						<Label htmlFor="deploy-region">Region</Label>
-						<Select
-							id="deploy-region"
-							value={region}
-							options={[
-								{ value: "", label: "Select region" },
-								{ value: "us-east-1", label: "US East" },
-								{ value: "eu-west-1", label: "EU West" },
-								{
-									value: "ap-southeast-1",
-									label: "AP Southeast",
-								},
-							]}
-							onChange={(event) => {
-								setRegion(event.target.value);
-							}}
-						/>
-						{regionError}
-					</div>
-				</WorkflowPanel>
-				<WorkflowPanel value="plan" title="Plan">
-					<div className="flex max-w-sm flex-col gap-2">
-						<Label htmlFor="deploy-plan">Plan</Label>
-						<Select
-							id="deploy-plan"
-							value={plan}
-							options={[
-								{ value: "", label: "Select plan" },
-								{ value: "starter", label: "Starter" },
-								{ value: "pro", label: "Pro" },
-								{ value: "scale", label: "Scale" },
-							]}
-							onChange={(event) => {
-								setPlan(event.target.value);
-							}}
-						/>
-						{planError}
-					</div>
-				</WorkflowPanel>
-				<WorkflowPanel value="confirm" title="Confirm">
-					<p className="text-sm text-muted-foreground">
-						Deploy {plan} in {region}.
-					</p>
-				</WorkflowPanel>
-				<WorkflowActions
-					canNext={canNext}
-					finishLabel="Deploy"
-					onFinish={() => {
-						setStep("region");
-					}}
-				/>
-			</Workflow>
-		</Canvas>
-	);
-}
-
-function LinearDeployKnobs() {
-	return (
-		<RailPanel
-			title="Linear deploy"
-			description="Region -> plan -> confirm. Parent owns canNext + FieldError. Toggle track orientation on the canvas."
-		>
-			<DemoRow label="Model">
-				<span className="text-sm text-muted-foreground">
-					Controlled value + status per step
-				</span>
-			</DemoRow>
-		</RailPanel>
-	);
-}
-
-function MultiNodeCanvas() {
 	const [nodes, setNodes] = useState<EdgeNode[]>(() => {
 		return [
 			{ id: "edge-1", name: "edge-1" },
@@ -238,24 +104,261 @@ function MultiNodeCanvas() {
 		"edge-1": "edge-1",
 		"edge-2": "edge-2",
 	});
-	const [step, setStep] = useState("cluster");
+	const [step, setStep] = useState("region");
+	const [region, setRegion] = useState("us-east-1");
+	const [plan, setPlan] = useState("pro");
+
+	function setVariant(value: WorkflowDemoVariant): void {
+		setVariantState(value);
+		if (value === "linear") {
+			setStep("region");
+			return;
+		}
+
+		setStep("cluster");
+	}
+
+	function addNode(): void {
+		let id = "";
+		setNodes((prev) => {
+			id = `edge-${String(prev.length + 1)}`;
+			return [...prev, { id, name: id }];
+		});
+		setNames((prev) => {
+			return { ...prev, [id]: id };
+		});
+	}
+
+	function removeNode(): void {
+		let removedId = "";
+		setNodes((prev) => {
+			if (prev.length <= 1) {
+				return prev;
+			}
+
+			const next = prev.slice(0, -1);
+			const removed = prev[prev.length - 1];
+			if (removed !== undefined) {
+				removedId = removed.id;
+			}
+
+			return next;
+		});
+
+		if (removedId.length === 0) {
+			return;
+		}
+
+		setNames((prev) => {
+			const next = { ...prev };
+			delete next[removedId];
+			return next;
+		});
+
+		setStep((current) => {
+			if (current === `node:${removedId}`) {
+				return "cluster";
+			}
+
+			return current;
+		});
+	}
+
+	return (
+		<WorkflowDemoContext.Provider
+			value={{
+				variant,
+				setVariant,
+				orientation,
+				setOrientation,
+				nodeCount: nodes.length,
+				addNode,
+				removeNode,
+			}}
+		>
+			<WorkflowDemoStateContext.Provider
+				value={{
+					variant,
+					orientation,
+					nodes,
+					names,
+					setNames,
+					step,
+					setStep,
+					region,
+					setRegion,
+					plan,
+					setPlan,
+				}}
+			>
+				{children}
+			</WorkflowDemoStateContext.Provider>
+		</WorkflowDemoContext.Provider>
+	);
+}
+
+interface WorkflowDemoState {
+	variant: WorkflowDemoVariant;
+	orientation: WorkflowOrientation;
+	nodes: EdgeNode[];
+	names: Record<string, string>;
+	setNames: (
+		update:
+			| Record<string, string>
+			| ((prev: Record<string, string>) => Record<string, string>),
+	) => void;
+	step: string;
+	setStep: (value: string) => void;
+	region: string;
+	setRegion: (value: string) => void;
+	plan: string;
+	setPlan: (value: string) => void;
+}
+
+const WorkflowDemoStateContext = createContext<WorkflowDemoState | null>(null);
+
+function useWorkflowDemoState(): WorkflowDemoState {
+	const value = useContext(WorkflowDemoStateContext);
+	if (value === null) {
+		throw new Error("WorkflowDemoProvider required");
+	}
+
+	return value;
+}
+
+function LinearDeployFlow() {
+	const demo = useWorkflowDemoState();
+	const order = ["region", "plan", "confirm"];
+
+	let regionValid = demo.region.length > 0;
+	let planValid = demo.plan.length > 0;
+
+	let canNext = true;
+	let nextHint = "";
+	if (demo.step === "region") {
+		canNext = regionValid;
+		if (!regionValid) {
+			nextHint = "Choose a region to continue.";
+		}
+	} else if (demo.step === "plan") {
+		canNext = planValid;
+		if (!planValid) {
+			nextHint = "Choose a plan to continue.";
+		}
+	}
+
+	let regionError: ReactNode = null;
+	if (demo.step === "region" && nextHint.length > 0) {
+		regionError = <FieldError>{nextHint}</FieldError>;
+	}
+
+	let planError: ReactNode = null;
+	if (demo.step === "plan" && nextHint.length > 0) {
+		planError = <FieldError>{nextHint}</FieldError>;
+	}
+
+	return (
+		<Workflow
+			value={demo.step}
+			onValueChange={demo.setStep}
+			orientation={demo.orientation}
+		>
+			<WorkflowTrack aria-label="Deploy progress">
+				<WorkflowStep
+					value="region"
+					status={statusForStep("region", demo.step, order)}
+				>
+					Region
+				</WorkflowStep>
+				<WorkflowStep
+					value="plan"
+					status={statusForStep("plan", demo.step, order)}
+				>
+					Plan
+				</WorkflowStep>
+				<WorkflowStep
+					value="confirm"
+					status={statusForStep("confirm", demo.step, order)}
+				>
+					Confirm
+				</WorkflowStep>
+			</WorkflowTrack>
+			<WorkflowPanel value="region" title="Region">
+				<div className="flex max-w-sm flex-col gap-2">
+					<Label htmlFor="deploy-region">Region</Label>
+					<Select
+						id="deploy-region"
+						value={demo.region}
+						options={[
+							{ value: "", label: "Select region" },
+							{ value: "us-east-1", label: "US East" },
+							{ value: "eu-west-1", label: "EU West" },
+							{
+								value: "ap-southeast-1",
+								label: "AP Southeast",
+							},
+						]}
+						onChange={(event) => {
+							demo.setRegion(event.target.value);
+						}}
+					/>
+					{regionError}
+				</div>
+			</WorkflowPanel>
+			<WorkflowPanel value="plan" title="Plan">
+				<div className="flex max-w-sm flex-col gap-2">
+					<Label htmlFor="deploy-plan">Plan</Label>
+					<Select
+						id="deploy-plan"
+						value={demo.plan}
+						options={[
+							{ value: "", label: "Select plan" },
+							{ value: "starter", label: "Starter" },
+							{ value: "pro", label: "Pro" },
+							{ value: "scale", label: "Scale" },
+						]}
+						onChange={(event) => {
+							demo.setPlan(event.target.value);
+						}}
+					/>
+					{planError}
+				</div>
+			</WorkflowPanel>
+			<WorkflowPanel value="confirm" title="Confirm">
+				<p className="text-sm text-muted-foreground">
+					Deploy {demo.plan} in {demo.region}.
+				</p>
+			</WorkflowPanel>
+			<WorkflowActions
+				canNext={canNext}
+				finishLabel="Deploy"
+				onFinish={() => {
+					demo.setStep("region");
+				}}
+			/>
+		</Workflow>
+	);
+}
+
+function MultiNodeFlow() {
+	const demo = useWorkflowDemoState();
 
 	const stepIds = useMemo(() => {
 		const ids = ["cluster"];
-		for (const node of nodes) {
+		for (const node of demo.nodes) {
 			ids.push(`node:${node.id}`);
 		}
 
 		ids.push("review");
 
 		return ids;
-	}, [nodes]);
+	}, [demo.nodes]);
 
 	let canNext = true;
 	let nextHint = "";
-	if (step.startsWith("node:")) {
-		const nodeId = step.slice("node:".length);
-		const name = names[nodeId];
+	if (demo.step.startsWith("node:")) {
+		const nodeId = demo.step.slice("node:".length);
+		const name = demo.names[nodeId];
 		if (name === undefined || name.trim().length === 0) {
 			canNext = false;
 			nextHint = "Hostname is required.";
@@ -263,131 +366,189 @@ function MultiNodeCanvas() {
 	}
 
 	return (
-		<Canvas>
-			<div className="mb-4">
+		<Workflow
+			value={demo.step}
+			onValueChange={demo.setStep}
+			orientation={demo.orientation}
+		>
+			<WorkflowTrack aria-label="Cluster setup">
+				<WorkflowStep
+					value="cluster"
+					status={statusForStep("cluster", demo.step, stepIds)}
+				>
+					Cluster
+				</WorkflowStep>
+				{demo.nodes.map((node) => {
+					return (
+						<WorkflowStep
+							key={node.id}
+							value={`node:${node.id}`}
+							status={statusForStep(
+								`node:${node.id}`,
+								demo.step,
+								stepIds,
+							)}
+						>
+							Node - {node.name}
+						</WorkflowStep>
+					);
+				})}
+				<WorkflowStep
+					value="review"
+					status={statusForStep("review", demo.step, stepIds)}
+				>
+					Review
+				</WorkflowStep>
+			</WorkflowTrack>
+			<WorkflowPanel value="cluster" title="Cluster">
+				<p className="text-sm text-muted-foreground">
+					Choose a region and capacity profile for the cluster.
+				</p>
+			</WorkflowPanel>
+			{demo.nodes.map((node) => {
+				const stepId = `node:${node.id}`;
+				let nameValue = "";
+				if (demo.names[node.id] !== undefined) {
+					nameValue = demo.names[node.id];
+				}
+
+				let hostnameError: ReactNode = null;
+				if (demo.step === stepId && nextHint.length > 0) {
+					hostnameError = <FieldError>{nextHint}</FieldError>;
+				}
+
+				return (
+					<WorkflowPanel
+						key={node.id}
+						value={stepId}
+						title={`Node - ${node.name}`}
+					>
+						<div className="flex max-w-sm flex-col gap-2">
+							<Label htmlFor={`node-name-${node.id}`}>
+								Hostname
+							</Label>
+							<Input
+								id={`node-name-${node.id}`}
+								value={nameValue}
+								onChange={(event) => {
+									const next = event.target.value;
+									demo.setNames((prev) => {
+										return { ...prev, [node.id]: next };
+									});
+								}}
+							/>
+							{hostnameError}
+						</div>
+					</WorkflowPanel>
+				);
+			})}
+			<WorkflowPanel value="review" title="Review">
+				<ul className="list-inside list-disc text-sm text-muted-foreground">
+					{demo.nodes.map((node) => {
+						let label = node.id;
+						if (demo.names[node.id] !== undefined) {
+							label = demo.names[node.id];
+						}
+						return <li key={node.id}>{label}</li>;
+					})}
+				</ul>
+			</WorkflowPanel>
+			<WorkflowActions
+				canNext={canNext}
+				finishLabel="Provision"
+				onFinish={() => {
+					demo.setStep("cluster");
+				}}
+			/>
+		</Workflow>
+	);
+}
+
+function WorkflowCanvas() {
+	const demo = useWorkflowDemoState();
+
+	let flow: ReactNode = <LinearDeployFlow />;
+	if (demo.variant === "nodes") {
+		flow = <MultiNodeFlow />;
+	}
+
+	return <Canvas>{flow}</Canvas>;
+}
+
+function WorkflowKnobs() {
+	const demo = useWorkflowDemo();
+
+	let addNodeRow: ReactNode = null;
+	if (demo.variant === "nodes") {
+		let removeDisabled = false;
+		if (demo.nodeCount <= 1) {
+			removeDisabled = true;
+		}
+
+		addNodeRow = (
+			<DemoRow
+				label="Nodes"
+				description="Add or remove opaque node:* step ids. At least one node remains."
+			>
+				<Button type="button" size="sm" onClick={demo.addNode}>
+					Add node
+				</Button>
 				<Button
 					type="button"
 					size="sm"
 					variant="outlined"
-					onClick={() => {
-						const id = `edge-${String(nodes.length + 1)}`;
-						setNodes((prev) => {
-							return [...prev, { id, name: id }];
-						});
-						setNames((prev) => {
-							return { ...prev, [id]: id };
-						});
-					}}
+					disabled={removeDisabled}
+					onClick={demo.removeNode}
 				>
-					Add node
+					Remove node
 				</Button>
-			</div>
-			<Workflow value={step} onValueChange={setStep}>
-				<WorkflowTrack aria-label="Cluster setup">
-					<WorkflowStep
-						value="cluster"
-						status={statusForStep("cluster", step, stepIds)}
-					>
-						Cluster
-					</WorkflowStep>
-					{nodes.map((node) => {
-						return (
-							<WorkflowStep
-								key={node.id}
-								value={`node:${node.id}`}
-								status={statusForStep(
-									`node:${node.id}`,
-									step,
-									stepIds,
-								)}
-							>
-								Node - {node.name}
-							</WorkflowStep>
-						);
-					})}
-					<WorkflowStep
-						value="review"
-						status={statusForStep("review", step, stepIds)}
-					>
-						Review
-					</WorkflowStep>
-				</WorkflowTrack>
-				<WorkflowPanel value="cluster" title="Cluster">
-					<p className="text-sm text-muted-foreground">
-						Choose a region and capacity profile for the cluster.
-					</p>
-				</WorkflowPanel>
-				{nodes.map((node) => {
-					const stepId = `node:${node.id}`;
-					let nameValue = "";
-					if (names[node.id] !== undefined) {
-						nameValue = names[node.id];
-					}
+			</DemoRow>
+		);
+	}
 
-					let hostnameError: ReactNode = null;
-					if (step === stepId && nextHint.length > 0) {
-						hostnameError = <FieldError>{nextHint}</FieldError>;
-					}
-
-					return (
-						<WorkflowPanel
-							key={node.id}
-							value={stepId}
-							title={`Node - ${node.name}`}
-						>
-							<div className="flex max-w-sm flex-col gap-2">
-								<Label htmlFor={`node-name-${node.id}`}>
-									Hostname
-								</Label>
-								<Input
-									id={`node-name-${node.id}`}
-									value={nameValue}
-									onChange={(event) => {
-										const next = event.target.value;
-										setNames((prev) => {
-											return { ...prev, [node.id]: next };
-										});
-									}}
-								/>
-								{hostnameError}
-							</div>
-						</WorkflowPanel>
-					);
-				})}
-				<WorkflowPanel value="review" title="Review">
-					<ul className="list-inside list-disc text-sm text-muted-foreground">
-						{nodes.map((node) => {
-							let label = node.id;
-							if (names[node.id] !== undefined) {
-								label = names[node.id];
-							}
-							return <li key={node.id}>{label}</li>;
-						})}
-					</ul>
-				</WorkflowPanel>
-				<WorkflowActions
-					canNext={canNext}
-					finishLabel="Provision"
-					onFinish={() => {
-						setStep("cluster");
-					}}
-				/>
-			</Workflow>
-		</Canvas>
-	);
-}
-
-function MultiNodeKnobs() {
 	return (
 		<RailPanel
-			title="Multi-node setup"
-			description="Cluster + N unique node:* step ids + review. Add node inserts another instance; FieldError when hostname empty."
+			title="Workflow"
+			description="One deploy demo. Switch linear vs multi-node, track orientation, and add/remove node instances from the rail."
 		>
-			<DemoRow label="Identity">
-				<span className="text-sm text-muted-foreground">
-					Opaque ids - never step type
-				</span>
+			<DemoRow
+				label="Variant"
+				description="Linear = region/plan/confirm. Nodes = cluster + N hostnames + review."
+			>
+				<Select
+					id="workflow-variant"
+					aria-label="Workflow variant"
+					value={demo.variant}
+					options={[
+						{ value: "linear", label: "Linear deploy" },
+						{ value: "nodes", label: "Multi-node" },
+					]}
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "linear" || next === "nodes") {
+							demo.setVariant(next);
+						}
+					}}
+				/>
 			</DemoRow>
+			<DemoRow label="Orientation" description="WorkflowTrack layout.">
+				<Select
+					id="workflow-orientation"
+					aria-label="Workflow orientation"
+					value={demo.orientation}
+					options={[
+						{ value: "horizontal", label: "Horizontal" },
+						{ value: "vertical", label: "Vertical" },
+					]}
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "horizontal" || next === "vertical") {
+							demo.setOrientation(next);
+						}
+					}}
+				/>
+			</DemoRow>
+			{addNodeRow}
 		</RailPanel>
 	);
 }
@@ -770,13 +931,12 @@ function LogViewerKnobs() {
 export {
 	DiffViewCanvas,
 	DiffViewKnobs,
-	LinearDeployCanvas,
-	LinearDeployKnobs,
 	LogViewerCanvas,
 	LogViewerDemoProvider,
 	LogViewerKnobs,
-	MultiNodeCanvas,
-	MultiNodeKnobs,
 	PlanSummaryCanvas,
 	PlanSummaryKnobs,
+	WorkflowCanvas,
+	WorkflowDemoProvider,
+	WorkflowKnobs,
 };

@@ -556,4 +556,76 @@ describe("Workflow", () => {
 		expect(values).toEqual(["plan"]);
 		expect(screen.getByText("Plan body")).toBeVisible();
 	});
+
+	it("renders connectors between steps and stacks labels under markers", async () => {
+		const { container } = render(
+			<Workflow defaultValue="region">
+				<WorkflowTrack aria-label="Deploy">
+					<WorkflowStep value="region" status="complete">
+						Region
+					</WorkflowStep>
+					<WorkflowStep value="plan" status="current">
+						Plan
+					</WorkflowStep>
+					<WorkflowStep value="confirm" status="pending">
+						Confirm
+					</WorkflowStep>
+				</WorkflowTrack>
+				<WorkflowPanel value="region" title="Region">
+					Region body
+				</WorkflowPanel>
+				<WorkflowPanel value="plan" title="Plan">
+					Plan body
+				</WorkflowPanel>
+				<WorkflowPanel value="confirm" title="Confirm">
+					Confirm body
+				</WorkflowPanel>
+			</Workflow>,
+		);
+
+		await waitFor(() => {
+			expect(
+				container.querySelectorAll("[data-slot='workflow-connector']")
+					.length,
+			).toBeGreaterThan(0);
+		});
+
+		const regionStep = container.querySelector(
+			"[data-slot='workflow-step'][data-value='region']",
+		);
+		expect(regionStep?.className).toContain("flex-col");
+	});
+
+	it("uses a vertical rail with connectors when orientation is vertical", async () => {
+		const { container } = render(
+			<Workflow defaultValue="region" orientation="vertical">
+				<WorkflowTrack aria-label="Deploy">
+					<WorkflowStep value="region" status="current">
+						Region
+					</WorkflowStep>
+					<WorkflowStep value="plan" status="pending">
+						Plan
+					</WorkflowStep>
+				</WorkflowTrack>
+				<WorkflowPanel value="region" title="Region">
+					Region body
+				</WorkflowPanel>
+				<WorkflowPanel value="plan" title="Plan">
+					Plan body
+				</WorkflowPanel>
+			</Workflow>,
+		);
+
+		await waitFor(() => {
+			expect(
+				container.querySelectorAll("[data-slot='workflow-connector']")
+					.length,
+			).toBe(1);
+		});
+
+		const trackList = container.querySelector(
+			"[data-slot='workflow-track'] ol",
+		);
+		expect(trackList?.className).toContain("flex-col");
+	});
 });

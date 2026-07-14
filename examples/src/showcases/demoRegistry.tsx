@@ -118,15 +118,14 @@ import {
 import {
 	DiffViewCanvas,
 	DiffViewKnobs,
-	LinearDeployCanvas,
-	LinearDeployKnobs,
 	LogViewerCanvas,
 	LogViewerDemoProvider,
 	LogViewerKnobs,
-	MultiNodeCanvas,
-	MultiNodeKnobs,
 	PlanSummaryCanvas,
 	PlanSummaryKnobs,
+	WorkflowCanvas,
+	WorkflowDemoProvider,
+	WorkflowKnobs,
 } from "./workflowDemos.js";
 
 interface DemoEntry {
@@ -298,15 +297,10 @@ const SHELL: Record<string, DemoEntry> = {
 };
 
 const WORKFLOW: Record<string, DemoEntry> = {
-	linear: {
-		Provider: PassthroughProvider,
-		Canvas: LinearDeployCanvas,
-		Knobs: LinearDeployKnobs,
-	},
-	nodes: {
-		Provider: PassthroughProvider,
-		Canvas: MultiNodeCanvas,
-		Knobs: MultiNodeKnobs,
+	workflow: {
+		Provider: WorkflowDemoProvider,
+		Canvas: WorkflowCanvas,
+		Knobs: WorkflowKnobs,
 	},
 	"diff-view": {
 		Provider: PassthroughProvider,
@@ -414,7 +408,7 @@ function getDemo(category: CategoryId, component: string): DemoEntry {
 			return entry;
 		}
 
-		return WORKFLOW.linear;
+		return WORKFLOW.workflow;
 	}
 	if (category === "data") {
 		const entry = DATA[component];

@@ -65,6 +65,9 @@ function Workflow({
 		return "";
 	});
 	const [stepIds, setStepIds] = useState<string[]>([]);
+	const [statusById, setStatusById] = useState<
+		Record<string, WorkflowStepStatus>
+	>({});
 	const [focusEpoch, setFocusEpoch] = useState(0);
 
 	let current = uncontrolled;
@@ -99,6 +102,19 @@ function Workflow({
 		});
 	}, []);
 
+	const reportStepStatus = useCallback(
+		(id: string, status: WorkflowStepStatus) => {
+			setStatusById((prev) => {
+				if (prev[id] === status) {
+					return prev;
+				}
+
+				return { ...prev, [id]: status };
+			});
+		},
+		[],
+	);
+
 	return (
 		<WorkflowContext.Provider
 			value={{
@@ -108,6 +124,8 @@ function Workflow({
 				orientation: resolvedOrientation,
 				stepIds,
 				syncStepIds,
+				statusById,
+				reportStepStatus,
 				resolveNext,
 				resolveBack,
 				isFinish,
@@ -147,11 +165,14 @@ function WorkflowTrack({ children, className, ...rest }: WorkflowTrackProps) {
 		syncStepIds(readStepIdsFromList(list));
 	}, [children, syncStepIds]);
 
-	let listClass = "flex gap-4";
+	let listClass = "flex";
 	if (orientation === "vertical") {
-		listClass = cn(listClass, "flex-col");
+		listClass = cn(listClass, "flex-col gap-0");
 	} else {
-		listClass = cn(listClass, "flex-row flex-wrap items-start");
+		listClass = cn(
+			listClass,
+			"flex-row flex-nowrap items-start gap-0 overflow-x-auto",
+		);
 	}
 
 	return (

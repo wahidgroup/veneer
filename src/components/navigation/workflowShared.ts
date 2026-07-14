@@ -30,6 +30,8 @@ interface WorkflowContextValue {
 	orientation: WorkflowOrientation;
 	stepIds: string[];
 	syncStepIds: (ids: string[]) => void;
+	statusById: Readonly<Record<string, WorkflowStepStatus>>;
+	reportStepStatus: (id: string, status: WorkflowStepStatus) => void;
 	resolveNext: WorkflowResolveFn | undefined;
 	resolveBack: WorkflowResolveFn | undefined;
 	isFinish: WorkflowIsFinishFn | undefined;

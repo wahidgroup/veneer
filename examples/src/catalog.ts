@@ -256,16 +256,10 @@ const CATALOG: CatalogCategory[] = [
 		label: "Workflow",
 		components: [
 			{
-				id: "linear",
-				label: "Linear deploy",
+				id: "workflow",
+				label: "Workflow",
 				description:
-					"Region -> plan -> confirm with progress track, panels, and Back/Next.",
-			},
-			{
-				id: "nodes",
-				label: "Multi-node",
-				description:
-					"Cluster + node:* instance steps + review. Add node expands the track.",
+					"Deploy flow knobs: linear vs multi-node, orientation, add/remove node. Track uses markers, connectors, labels under.",
 			},
 			{
 				id: "diff-view",
