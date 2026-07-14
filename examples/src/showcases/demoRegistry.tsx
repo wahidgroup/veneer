@@ -89,6 +89,8 @@ import {
 	BreadcrumbsKnobs,
 	SideNavCanvas,
 	SideNavKnobs,
+	SkipLinkCanvas,
+	SkipLinkKnobs,
 	TopNavCanvas,
 	TopNavKnobs,
 	ToolbarSelectCanvas,
@@ -240,6 +242,11 @@ const SHELL: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: SideNavCanvas,
 		Knobs: SideNavKnobs,
+	},
+	"skip-link": {
+		Provider: PassthroughProvider,
+		Canvas: SkipLinkCanvas,
+		Knobs: SkipLinkKnobs,
 	},
 	breadcrumbs: {
 		Provider: PassthroughProvider,

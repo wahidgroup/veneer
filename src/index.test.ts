@@ -60,6 +60,7 @@ const EXPECTED_EXPORTS = new Set([
 	"SearchInput",
 	"Select",
 	"SideNav",
+	"SkipLink",
 	"Skeleton",
 	"skeletonVariants",
 	"Slider",

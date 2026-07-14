@@ -150,6 +150,8 @@ describe("AppShell", () => {
 		expect(screen.getByRole("banner")).toHaveTextContent("Brand");
 		expect(screen.getByRole("complementary")).toHaveTextContent("Nav");
 		expect(screen.getByRole("main")).toHaveTextContent("Content");
+		expect(screen.getByRole("main")).toHaveAttribute("id", "main");
+		expect(screen.getByRole("main")).toHaveAttribute("tabindex", "-1");
 	});
 
 	it("renders the controls rail when provided", () => {

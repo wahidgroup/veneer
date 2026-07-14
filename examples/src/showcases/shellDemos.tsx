@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { ToolbarSelect, TopNav } from "@wahidgroup/veneer";
+import { SkipLink, ToolbarSelect, TopNav } from "@wahidgroup/veneer";
 
 import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
 
@@ -63,6 +63,44 @@ function SideNavKnobs() {
 		<RailPanel
 			title="SideNav"
 			description="Left category list. Collapse via TopNav menu for icon rail."
+		/>
+	);
+}
+
+function SkipLinkCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Focus to reveal">
+				<div className="relative w-full max-w-md rounded-md border border-border p-4">
+					<SkipLink href="#skip-demo-main" />
+					<p className="mb-3 text-sm text-muted-foreground">
+						Tab into this panel. SkipLink appears on focus, then
+						activates focus on the main landmark below.
+					</p>
+					<a
+						href="#skip-demo-main"
+						className="mr-3 text-sm text-primary underline"
+					>
+						Nav link
+					</a>
+					<main
+						id="skip-demo-main"
+						tabIndex={-1}
+						className="mt-3 rounded-md border border-border bg-card p-3 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+					>
+						Main content receives focus after skip.
+					</main>
+				</div>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function SkipLinkKnobs() {
+	return (
+		<RailPanel
+			title="SkipLink"
+			description="Bypass link to main (G1). Place first in the page. AppShell main defaults to id=main and tabindex=-1."
 		/>
 	);
 }
@@ -164,6 +202,8 @@ export {
 	BreadcrumbsKnobs,
 	SideNavCanvas,
 	SideNavKnobs,
+	SkipLinkCanvas,
+	SkipLinkKnobs,
 	TopNavCanvas,
 	TopNavKnobs,
 	ToolbarSelectCanvas,

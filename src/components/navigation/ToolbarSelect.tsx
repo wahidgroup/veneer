@@ -217,7 +217,7 @@ function ToolbarSelect({
 						const optionDisabled = option.disabled === true;
 
 						let optionClass =
-							"h-auto w-full flex-col items-stretch gap-0.5 rounded-none px-3 py-2 text-left";
+							"flex h-auto w-full flex-col items-stretch gap-0.5 rounded-none px-3 py-2 text-left";
 						if (optionDisabled) {
 							optionClass = cn(optionClass, "opacity-50");
 						} else {

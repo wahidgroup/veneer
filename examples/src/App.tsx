@@ -19,6 +19,7 @@ import {
 	Breadcrumbs,
 	Button,
 	SideNav,
+	SkipLink,
 	Tabs,
 	TabsList,
 	TabsPanel,
@@ -218,98 +219,105 @@ function App() {
 	});
 
 	return (
-		<DemoProvider key={`${category}:${component}`}>
-			<AppShell
-				sidebarCollapsed={sidebarCollapsed}
-				onSidebarCollapsedChange={setSidebarCollapsed}
-				railCollapsed={railCollapsed}
-				onRailCollapsedChange={setRailCollapsed}
-				header={
-					<TopNav
-						brand="@wahidgroup/veneer"
-						menuExpanded={!sidebarCollapsed}
-						onMenuClick={() => {
-							setSidebarCollapsed(!sidebarCollapsed);
-						}}
-						end={
-							<div className="flex items-center gap-1">
-								<Button
-									variant="ghost"
-									size="icon"
-									aria-label={themeLabel}
-									onClick={() => {
-										setThemePinned(true);
-										if (theme === "dark") {
-											setTheme("light");
-											return;
-										}
-										setTheme("dark");
-									}}
-								>
-									{themeIcon}
-								</Button>
-								<Button
-									variant="ghost"
-									size="icon"
-									aria-label={railLabel}
-									aria-pressed={!railCollapsed}
-									aria-expanded={!railCollapsed}
-									onClick={() => {
-										setRailCollapsed(!railCollapsed);
-									}}
-								>
-									{railIcon}
-								</Button>
-							</div>
-						}
-					/>
-				}
-				sidebar={
-					<SideNav
-						collapsed={sidebarCollapsed}
-						items={sideItems}
-						renderLink={({
-							href,
-							children,
-							className,
-							...rest
-						}) => {
-							return (
-								<a
-									href={href}
-									className={className}
-									onClick={(event) => {
-										event.preventDefault();
-										const next = parseCategoryId(
-											href.replace("#", ""),
-										);
-										if (next === null) {
-											return;
-										}
-										setCategory(next);
-										setComponent(firstComponentId(next));
-									}}
-									{...rest}
-								>
-									{children}
-								</a>
-							);
-						}}
-					/>
-				}
-				rail={<DemoKnobs />}
-			>
-				<div className="flex min-h-full flex-col">
-					<div className="flex flex-1 flex-col gap-4 p-4">
-						<Breadcrumbs items={breadcrumbItems} />
-						{mainBody}
+		<>
+			<SkipLink />
+			<DemoProvider key={`${category}:${component}`}>
+				<AppShell
+					sidebarCollapsed={sidebarCollapsed}
+					onSidebarCollapsedChange={setSidebarCollapsed}
+					railCollapsed={railCollapsed}
+					onRailCollapsedChange={setRailCollapsed}
+					header={
+						<TopNav
+							brand="@wahidgroup/veneer"
+							menuExpanded={!sidebarCollapsed}
+							onMenuClick={() => {
+								setSidebarCollapsed(!sidebarCollapsed);
+							}}
+							end={
+								<div className="flex items-center gap-1">
+									<Button
+										variant="ghost"
+										size="icon"
+										aria-label={themeLabel}
+										onClick={() => {
+											setThemePinned(true);
+											if (theme === "dark") {
+												setTheme("light");
+												return;
+											}
+											setTheme("dark");
+										}}
+									>
+										{themeIcon}
+									</Button>
+									<Button
+										variant="ghost"
+										size="icon"
+										aria-label={railLabel}
+										aria-pressed={!railCollapsed}
+										aria-expanded={!railCollapsed}
+										onClick={() => {
+											setRailCollapsed(!railCollapsed);
+										}}
+									>
+										{railIcon}
+									</Button>
+								</div>
+							}
+						/>
+					}
+					sidebar={
+						<SideNav
+							collapsed={sidebarCollapsed}
+							items={sideItems}
+							renderLink={({
+								href,
+								children,
+								className,
+								...rest
+							}) => {
+								return (
+									<a
+										href={href}
+										className={className}
+										onClick={(event) => {
+											event.preventDefault();
+
+											const next = parseCategoryId(
+												href.replace("#", ""),
+											);
+											if (next === null) {
+												return;
+											}
+
+											setCategory(next);
+											setComponent(
+												firstComponentId(next),
+											);
+										}}
+										{...rest}
+									>
+										{children}
+									</a>
+								);
+							}}
+						/>
+					}
+					rail={<DemoKnobs />}
+				>
+					<div className="flex min-h-full flex-col">
+						<div className="flex flex-1 flex-col gap-4 p-4">
+							<Breadcrumbs items={breadcrumbItems} />
+							{mainBody}
+						</div>
+						<footer className="shrink-0 border-t border-border px-4 py-3 text-xs text-muted-foreground">
+							© 2026 Wahid Group, LLC.
+						</footer>
 					</div>
-					<footer className="shrink-0 border-t border-border px-4 py-3 text-xs text-muted-foreground">
-						© 2026 Wahid Group, LLC.
-					</footer>
-				</div>
-			</AppShell>
-		</DemoProvider>
+				</AppShell>
+			</DemoProvider>
+		</>
 	);
 }
 

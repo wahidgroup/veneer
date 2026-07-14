@@ -214,6 +214,12 @@ const CATALOG: CatalogCategory[] = [
 					"Left category list. Collapse via TopNav menu for icon rail.",
 			},
 			{
+				id: "skip-link",
+				label: "SkipLink",
+				description:
+					"Bypass link to main (G1). First Tab reveals the link; AppShell main is id=main.",
+			},
+			{
 				id: "breadcrumbs",
 				label: "Breadcrumbs",
 				description:

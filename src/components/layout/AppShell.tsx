@@ -343,6 +343,8 @@ function AppShell({
 			>
 				{sidebarNode}
 				<main
+					id="main"
+					tabIndex={-1}
 					data-slot="app-shell-main"
 					className="min-h-0 min-w-0 flex-1 overflow-y-auto"
 				>

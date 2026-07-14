@@ -160,6 +160,8 @@ export type {
 	SideNavLinkRenderProps,
 	SideNavProps,
 } from "./components/navigation/SideNav.js";
+export { SkipLink } from "./components/navigation/SkipLink.js";
+export type { SkipLinkProps } from "./components/navigation/SkipLink.js";
 export { Skeleton, skeletonVariants } from "./components/feedback/Skeleton.js";
 export type { SkeletonProps } from "./components/feedback/Skeleton.js";
 export { Slider } from "./components/forms/Slider.js";

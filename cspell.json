@@ -11,7 +11,8 @@
 		"twmerge",
 		"unhover",
 		"veneer",
-		"Adornment"
+		"Adornment",
+		"WCAG"
 	],
 	"ignorePaths": [
 		"node_modules",
