@@ -51,6 +51,12 @@ const CATALOG: CatalogCategory[] = [
 					"Spinner, stacked skeleton lines, and single-bone Skeleton shapes.",
 			},
 			{
+				id: "progress-bar",
+				label: "ProgressBar",
+				description:
+					"Leaf bar + ProgressGroup parallel lanes. Demo Start/Reset runs three tasks.",
+			},
+			{
 				id: "empty-state",
 				label: "EmptyState",
 				description:
@@ -236,6 +242,18 @@ const CATALOG: CatalogCategory[] = [
 				label: "Multi-node",
 				description:
 					"Cluster + node:* instance steps + review. Add node expands the track.",
+			},
+			{
+				id: "diff-view",
+				label: "DiffView",
+				description:
+					"Line diffs (code/docs) and tree diffs (IaC resources + attributes).",
+			},
+			{
+				id: "plan-summary",
+				label: "PlanSummary",
+				description:
+					"Create/update/destroy/replace counts with kind filters over DiffView tree.",
 			},
 		],
 	},

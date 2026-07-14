@@ -24,6 +24,10 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `DescriptionList` | [`data/DescriptionList.tsx`](../src/components/data/DescriptionList.tsx)         | Resource key/value pairs      |
 | `Skeleton`        | [`feedback/Skeleton.tsx`](../src/components/feedback/Skeleton.tsx)               | Placeholder bones             |
 | `ToolbarSelect`   | [`navigation/ToolbarSelect.tsx`](../src/components/navigation/ToolbarSelect.tsx) | Nav chrome value pickers      |
+| `ProgressBar`     | [`feedback/ProgressBar.tsx`](../src/components/feedback/ProgressBar.tsx)         | Determinate / indeterminate   |
+| `ProgressGroup`   | [`feedback/ProgressGroup.tsx`](../src/components/feedback/ProgressGroup.tsx)     | Parallel lanes + composite    |
+| `DiffView`        | [`data/DiffView.tsx`](../src/components/data/DiffView.tsx)                       | Line + tree diffs             |
+| `PlanSummary`     | [`data/PlanSummary.tsx`](../src/components/data/PlanSummary.tsx)                 | IaC counts + DiffView tree    |
 
 `Button.tsx` remains the stamp example for exports, `cva`/`cn`, `data-slot`, and tokens.
 

@@ -1,7 +1,14 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import {
+	createContext,
+	useContext,
+	useEffect,
+	useState,
+	type ReactNode,
+} from "react";
 
 import type {
 	AlertType,
+	ProgressTask,
 	ToastFade,
 	ToastPosition,
 	ToastType,
@@ -17,6 +24,8 @@ import {
 	Loading,
 	Modal,
 	NumberInput,
+	ProgressBar,
+	ProgressGroup,
 	Select,
 	Skeleton,
 	Slider,
@@ -1643,6 +1652,174 @@ function ActionMenuKnobs() {
 	);
 }
 
+const INITIAL_PROGRESS_TASKS: ProgressTask[] = [
+	{
+		id: "plan",
+		label: "terraform plan",
+		value: 0,
+		status: "pending",
+	},
+	{
+		id: "apply",
+		label: "terraform apply",
+		value: 0,
+		status: "pending",
+	},
+	{
+		id: "health",
+		label: "health checks",
+		value: 0,
+		status: "pending",
+	},
+];
+
+function ProgressBarCanvas() {
+	const [tasks, setTasks] = useState<ProgressTask[]>(INITIAL_PROGRESS_TASKS);
+	const [running, setRunning] = useState(false);
+
+	useEffect(() => {
+		if (!running) {
+			return;
+		}
+
+		const timer = window.setInterval(() => {
+			setTasks((prev) => {
+				return prev.map((task, index) => {
+					if (task.status === "complete" || task.status === "error") {
+						return task;
+					}
+
+					let value = task.value;
+					value ??= 0;
+					const step = 4 + index * 3;
+					value += step;
+					if (value >= 100) {
+						return {
+							...task,
+							value: 100,
+							status: "complete" as const,
+						};
+					}
+					return {
+						...task,
+						value,
+						status: "running" as const,
+					};
+				});
+			});
+		}, 200);
+
+		return () => {
+			window.clearInterval(timer);
+		};
+	}, [running]);
+
+	useEffect(() => {
+		if (!running) {
+			return;
+		}
+		const allDone = tasks.every((task) => {
+			return task.status === "complete" || task.status === "error";
+		});
+		if (allDone) {
+			setRunning(false);
+		}
+	}, [tasks, running]);
+
+	return (
+		<Canvas>
+			<DemoRow label="Determinate">
+				<div className="flex w-full max-w-md flex-col gap-4">
+					<ProgressBar
+						aria-label="Deploy progress"
+						value={35}
+						label="Applying stack… 35%"
+					/>
+					<ProgressBar
+						aria-label="Upload progress"
+						value={80}
+						size="sm"
+					/>
+					<ProgressBar
+						aria-label="Migration progress"
+						value={100}
+						size="lg"
+						label="Complete"
+					/>
+				</div>
+			</DemoRow>
+			<DemoRow label="Indeterminate">
+				<div className="w-full max-w-md">
+					<ProgressBar
+						aria-label="Syncing"
+						label="Waiting for plan…"
+					/>
+				</div>
+			</DemoRow>
+			<DemoRow label="Parallel group">
+				<div className="flex w-full max-w-md flex-col gap-3">
+					<ProgressGroup
+						aria-label="Stack deploy"
+						label="Overall deploy"
+						tasks={tasks}
+					/>
+					<div className="flex flex-wrap gap-2">
+						<Button
+							variant="filled"
+							size="sm"
+							disabled={running}
+							onClick={() => {
+								setTasks([
+									{
+										id: "plan",
+										label: "terraform plan",
+										value: 0,
+										status: "running",
+									},
+									{
+										id: "apply",
+										label: "terraform apply",
+										value: 0,
+										status: "running",
+									},
+									{
+										id: "health",
+										label: "health checks",
+										value: 0,
+										status: "running",
+									},
+								]);
+								setRunning(true);
+							}}
+						>
+							Start
+						</Button>
+						<Button
+							variant="outlined"
+							size="sm"
+							onClick={() => {
+								setRunning(false);
+								setTasks(INITIAL_PROGRESS_TASKS);
+							}}
+						>
+							Reset
+						</Button>
+					</div>
+				</div>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function ProgressBarKnobs() {
+	return (
+		<RailPanel
+			title="ProgressBar"
+			description="Leaf bar + ProgressGroup for parallel lanes. Start runs three staggered tasks; overall is the mean."
+		/>
+	);
+}
+
 export {
 	ActionMenuCanvas,
 	ActionMenuDemoProvider,
@@ -1668,6 +1845,8 @@ export {
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,
+	ProgressBarCanvas,
+	ProgressBarKnobs,
 	ModalCanvas,
 	ModalDemoProvider,
 	ModalKnobs,

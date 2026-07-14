@@ -2,6 +2,7 @@ import type { ComponentProps, KeyboardEvent, ReactNode } from "react";
 import { createContext, useContext, useId, useState } from "react";
 
 import { cn } from "../../utils/cn.js";
+import { Button } from "../forms/Button.js";
 
 interface TabsContextValue {
 	value: string;
@@ -126,7 +127,7 @@ function TabsTrigger({
 	}
 
 	let tabClass =
-		"relative -mb-px cursor-pointer border-b-2 px-1 pb-3 text-sm font-medium transition-colors";
+		"relative -mb-px h-auto rounded-none border-b-2 px-1 pb-3 text-sm font-medium hover:bg-transparent active:bg-transparent";
 	if (selected) {
 		tabClass = cn(tabClass, "border-primary text-foreground");
 	} else {
@@ -138,7 +139,7 @@ function TabsTrigger({
 	if (disabled === true) {
 		tabClass = cn(
 			tabClass,
-			"cursor-not-allowed opacity-50 hover:border-transparent hover:text-muted-foreground",
+			"opacity-50 hover:border-transparent hover:text-muted-foreground",
 		);
 	}
 
@@ -198,9 +199,11 @@ function TabsTrigger({
 	}
 
 	return (
-		<button
+		<Button
 			data-slot="tabs-trigger"
 			type="button"
+			variant="ghost"
+			size="sm"
 			role="tab"
 			id={triggerId}
 			aria-selected={selected}
@@ -218,7 +221,7 @@ function TabsTrigger({
 			{...rest}
 		>
 			{children}
-		</button>
+		</Button>
 	);
 }
 

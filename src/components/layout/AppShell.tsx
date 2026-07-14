@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "../../utils/cn.js";
+import { Button } from "../forms/Button.js";
 
 /** Tailwind `md` ceiling - below this is mobile drawer mode. */
 const APP_SHELL_MOBILE_MAX_PX = 767;
@@ -312,11 +313,12 @@ function AppShell({
 	let backdropNode: ReactNode = null;
 	if (drawerOpen || railOverlayOpen) {
 		backdropNode = (
-			<button
+			<Button
 				type="button"
+				variant="ghost"
 				data-slot="app-shell-backdrop"
 				aria-label="Dismiss panel"
-				className="absolute inset-0 z-30 bg-foreground/40"
+				className="absolute inset-0 z-30 h-auto w-auto rounded-none bg-foreground/40 p-0 hover:bg-foreground/40 active:bg-foreground/40"
 				onClick={dismissOverlays}
 			/>
 		);

@@ -152,7 +152,7 @@ function ToolbarSelectKnobs() {
 	return (
 		<RailPanel
 			title="ToolbarSelect"
-			description="Ghost chrome listbox. Compose two for account + region in TopNav start — not a domain AccountRegionSwitcher."
+			description="Ghost chrome listbox. Compose two for account + region in TopNav start, not a domain AccountRegionSwitcher."
 		/>
 	);
 }

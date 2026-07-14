@@ -2,14 +2,17 @@ import type { ReactNode } from "react";
 import { useMemo, useState } from "react";
 
 import type {
+	DiffResource,
 	WorkflowOrientation,
 	WorkflowStepStatus,
 } from "@wahidgroup/veneer";
 import {
 	Button,
+	DiffView,
 	FieldError,
 	Input,
 	Label,
+	PlanSummary,
 	Select,
 	Workflow,
 	WorkflowActions,
@@ -277,7 +280,7 @@ function MultiNodeCanvas() {
 									stepIds,
 								)}
 							>
-								Node — {node.name}
+								Node - {node.name}
 							</WorkflowStep>
 						);
 					})}
@@ -309,7 +312,7 @@ function MultiNodeCanvas() {
 						<WorkflowPanel
 							key={node.id}
 							value={stepId}
-							title={`Node — ${node.name}`}
+							title={`Node - ${node.name}`}
 						>
 							<div className="flex max-w-sm flex-col gap-2">
 								<Label htmlFor={`node-name-${node.id}`}>
@@ -361,16 +364,149 @@ function MultiNodeKnobs() {
 		>
 			<DemoRow label="Identity">
 				<span className="text-sm text-muted-foreground">
-					Opaque ids — never step type
+					Opaque ids - never step type
 				</span>
 			</DemoRow>
 		</RailPanel>
 	);
 }
 
+const DEMO_OLD = `resource "aws_s3_bucket" "logs" {
+  bucket = "app-logs-dev"
+}
+`;
+
+const DEMO_NEW = `resource "aws_s3_bucket" "logs" {
+  bucket = "app-logs-prod"
+  acl    = "private"
+}
+`;
+
+const DEMO_RESOURCES: DiffResource[] = [
+	{
+		id: "bucket",
+		kind: "create",
+		path: "aws_s3_bucket.logs",
+		summary: "New data bucket",
+	},
+	{
+		id: "sg",
+		kind: "update",
+		path: "aws_security_group.app",
+		attributes: [
+			{
+				path: "ingress.0.cidr_blocks",
+				before: '["10.0.0.0/8"]',
+				after: '["10.0.0.0/16"]',
+			},
+			{
+				path: "tags.Name",
+				before: "app-sg",
+				after: "app-sg-v2",
+			},
+		],
+	},
+	{
+		id: "role",
+		kind: "destroy",
+		path: "aws_iam_role.legacy",
+	},
+	{
+		id: "lb",
+		kind: "replace",
+		path: "aws_lb.public",
+		summary: "Name change forces replacement",
+		attributes: [
+			{
+				path: "name",
+				before: "public-alb",
+				after: "edge-alb",
+				forcesReplace: true,
+			},
+		],
+	},
+];
+
+function DiffViewCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Lines (unified)">
+				<div className="w-full max-w-2xl">
+					<DiffView
+						mode="lines"
+						path="main.tf"
+						oldText={DEMO_OLD}
+						newText={DEMO_NEW}
+						aria-label="Template diff"
+					/>
+				</div>
+			</DemoRow>
+			<DemoRow label="Lines (split)">
+				<div className="w-full max-w-3xl">
+					<DiffView
+						mode="lines"
+						layout="split"
+						path="README.md"
+						oldText={"# Docs\nOld paragraph.\n"}
+						newText={"# Docs\nNew paragraph.\n"}
+						aria-label="Doc diff"
+					/>
+				</div>
+			</DemoRow>
+			<DemoRow label="Tree (IaC)">
+				<div className="w-full max-w-2xl">
+					<DiffView
+						mode="tree"
+						resources={DEMO_RESOURCES}
+						defaultExpanded
+						aria-label="Resource changes"
+					/>
+				</div>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function DiffViewKnobs() {
+	return (
+		<RailPanel
+			title="DiffView"
+			description="Lines mode for code/docs; tree mode for IaC resources. App maps domain JSON onto DiffLine / DiffResource."
+		/>
+	);
+}
+
+function PlanSummaryCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Apply gate">
+				<div className="w-full max-w-2xl">
+					<PlanSummary
+						resources={DEMO_RESOURCES}
+						title="Stack plan"
+					/>
+				</div>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function PlanSummaryKnobs() {
+	return (
+		<RailPanel
+			title="PlanSummary"
+			description="Derived counts + kind filters over DiffView tree. One resources array."
+		/>
+	);
+}
+
 export {
+	DiffViewCanvas,
+	DiffViewKnobs,
 	LinearDeployCanvas,
 	LinearDeployKnobs,
 	MultiNodeCanvas,
 	MultiNodeKnobs,
+	PlanSummaryCanvas,
+	PlanSummaryKnobs,
 };

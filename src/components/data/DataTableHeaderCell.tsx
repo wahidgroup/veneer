@@ -1,8 +1,9 @@
+import type { ReactNode } from "react";
 import type { Header } from "@tanstack/react-table";
 import { flexRender } from "@tanstack/react-table";
-import type { ReactNode } from "react";
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 
+import { Button } from "../forms/Button.js";
 import { readColumnMeta, renderColumnFilter } from "./dataTableColumns.js";
 import { SORT_HEADER_CLASS } from "./DataTable.types.js";
 
@@ -49,14 +50,16 @@ function DataTableHeaderCell<TData>({
 	);
 	if (canSort) {
 		headerNode = (
-			<button
+			<Button
 				type="button"
+				variant="ghost"
+				size="sm"
 				className={SORT_HEADER_CLASS}
 				onClick={header.column.getToggleSortingHandler()}
 			>
 				{headerInner}
 				{sortIcon}
-			</button>
+			</Button>
 		);
 	}
 

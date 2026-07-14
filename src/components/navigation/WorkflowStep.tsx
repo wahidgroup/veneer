@@ -3,6 +3,7 @@ import { AlertCircle, Check } from "lucide-react";
 
 import type { WorkflowStepStatus } from "./workflowShared.js";
 import { cn } from "../../utils/cn.js";
+import { Button } from "../forms/Button.js";
 import { useWorkflowContext } from "./workflowShared.js";
 
 interface WorkflowStepProps extends Omit<
@@ -104,10 +105,12 @@ function WorkflowStep({
 
 	if (jumpable && !isActive) {
 		body = (
-			<button
+			<Button
 				type="button"
+				variant="ghost"
+				size="sm"
 				className={cn(
-					"inline-flex cursor-pointer items-center gap-2 rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+					"h-auto gap-2 px-0 py-0 hover:bg-transparent active:bg-transparent",
 					labelClass,
 					"hover:text-primary",
 				)}
@@ -117,7 +120,7 @@ function WorkflowStep({
 			>
 				{marker}
 				<span>{children}</span>
-			</button>
+			</Button>
 		);
 	}
 

@@ -79,6 +79,17 @@ export type {
 	DescriptionListItem,
 	DescriptionListProps,
 } from "./components/data/DescriptionList.js";
+export { DiffView } from "./components/data/DiffView.js";
+export type {
+	DiffAttribute,
+	DiffChangeKind,
+	DiffLayout,
+	DiffLine,
+	DiffLineKind,
+	DiffResource,
+	DiffViewMode,
+	DiffViewProps,
+} from "./components/data/DiffView.js";
 export {
 	EmptyState,
 	emptyStateVariants,
@@ -112,8 +123,26 @@ export { NumberInput } from "./components/forms/NumberInput.js";
 export type { NumberInputProps } from "./components/forms/NumberInput.js";
 export { Pagination } from "./components/navigation/Pagination.js";
 export type { PaginationProps } from "./components/navigation/Pagination.js";
+export { PlanSummary } from "./components/data/PlanSummary.js";
+export type { PlanSummaryProps } from "./components/data/PlanSummary.js";
 export { Portal } from "./components/overlays/Portal.js";
 export type { PortalProps } from "./components/overlays/Portal.js";
+export {
+	ProgressBar,
+	progressBarTrackVariants,
+} from "./components/feedback/ProgressBar.js";
+export type { ProgressBarProps } from "./components/feedback/ProgressBar.js";
+export {
+	ProgressGroup,
+	compositeProgress,
+	taskFraction,
+} from "./components/feedback/ProgressGroup.js";
+export type {
+	CompositeProgress,
+	ProgressGroupProps,
+	ProgressTask,
+	ProgressTaskStatus,
+} from "./components/feedback/ProgressGroup.js";
 export { RadioGroup } from "./components/forms/RadioGroup.js";
 export type {
 	RadioGroupProps,
@@ -202,5 +231,7 @@ export type {
 	WorkflowTrackProps,
 } from "./components/navigation/Workflow.js";
 export { useDebounce } from "./hooks/useDebounce.js";
+export { buildDiffLines } from "./utils/buildDiffLines.js";
+export type { BuildDiffLinesOptions } from "./utils/buildDiffLines.js";
 export { cn, cva } from "./utils/index.js";
 export type { VariantProps } from "./utils/index.js";

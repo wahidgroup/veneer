@@ -146,7 +146,7 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 						}
 
 						let itemClass =
-							"flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm outline-none";
+							"h-auto w-full justify-start rounded-none px-3 py-2 text-sm";
 						if (entry.variant === "danger") {
 							itemClass = cn(
 								itemClass,
@@ -161,14 +161,15 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 						if (entry.disabled === true) {
 							itemClass = cn(
 								itemClass,
-								"cursor-not-allowed opacity-50 hover:bg-transparent focus:bg-transparent",
+								"opacity-50 hover:bg-transparent focus:bg-transparent",
 							);
 						}
 
 						return (
-							<button
+							<Button
 								key={entry.key}
 								type="button"
+								variant="ghost"
 								role="menuitem"
 								tabIndex={-1}
 								disabled={entry.disabled === true}
@@ -183,10 +184,10 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 								}}
 							>
 								{entry.icon}
-								<span className="min-w-0 flex-1">
+								<span className="min-w-0 flex-1 text-left">
 									{entry.label}
 								</span>
-							</button>
+							</Button>
 						);
 					})}
 				</div>

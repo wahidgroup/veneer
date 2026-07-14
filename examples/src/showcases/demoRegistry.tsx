@@ -66,6 +66,8 @@ import {
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,
+	ProgressBarCanvas,
+	ProgressBarKnobs,
 	ModalCanvas,
 	ModalDemoProvider,
 	ModalKnobs,
@@ -95,6 +97,10 @@ import {
 	LinearDeployKnobs,
 	MultiNodeCanvas,
 	MultiNodeKnobs,
+	DiffViewCanvas,
+	DiffViewKnobs,
+	PlanSummaryCanvas,
+	PlanSummaryKnobs,
 } from "./workflowDemos.js";
 
 interface DemoEntry {
@@ -123,6 +129,11 @@ const PRIMITIVES: Record<string, DemoEntry> = {
 		Provider: LoadingDemoProvider,
 		Canvas: LoadingCanvas,
 		Knobs: LoadingKnobs,
+	},
+	"progress-bar": {
+		Provider: PassthroughProvider,
+		Canvas: ProgressBarCanvas,
+		Knobs: ProgressBarKnobs,
 	},
 	"empty-state": {
 		Provider: PassthroughProvider,
@@ -250,6 +261,16 @@ const WORKFLOW: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: MultiNodeCanvas,
 		Knobs: MultiNodeKnobs,
+	},
+	"diff-view": {
+		Provider: PassthroughProvider,
+		Canvas: DiffViewCanvas,
+		Knobs: DiffViewKnobs,
+	},
+	"plan-summary": {
+		Provider: PassthroughProvider,
+		Canvas: PlanSummaryCanvas,
+		Knobs: PlanSummaryKnobs,
 	},
 };
 

@@ -2,7 +2,7 @@
 
 .NOTPARALLEL: ci
 
-.DEFAULT_GOAL := help
+.DEFAULT_GOAL := all
 
 PROJECT := veneer
 PKG_VERSION := $(shell node -p "require('./package.json').version" 2>/dev/null)

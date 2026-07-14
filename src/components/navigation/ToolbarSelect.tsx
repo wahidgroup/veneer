@@ -217,12 +217,9 @@ function ToolbarSelect({
 						const optionDisabled = option.disabled === true;
 
 						let optionClass =
-							"flex w-full cursor-pointer flex-col gap-0.5 px-3 py-2 text-left outline-none";
+							"h-auto w-full flex-col items-stretch gap-0.5 rounded-none px-3 py-2 text-left";
 						if (optionDisabled) {
-							optionClass = cn(
-								optionClass,
-								"cursor-not-allowed opacity-50",
-							);
+							optionClass = cn(optionClass, "opacity-50");
 						} else {
 							optionClass = cn(
 								optionClass,
@@ -243,9 +240,10 @@ function ToolbarSelect({
 						}
 
 						return (
-							<button
+							<Button
 								key={option.value}
 								type="button"
+								variant="ghost"
 								role="option"
 								tabIndex={-1}
 								data-value={option.value}
@@ -264,7 +262,7 @@ function ToolbarSelect({
 									{option.label}
 								</span>
 								{descriptionNode}
-							</button>
+							</Button>
 						);
 					})}
 				</div>
