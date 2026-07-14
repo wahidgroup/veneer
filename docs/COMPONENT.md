@@ -31,7 +31,7 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `StatDisplay`     | [`data/StatDisplay.tsx`](../src/components/data/StatDisplay.tsx)                 | Metric tile on Card (tone + text)                      |
 | `Timeline`        | [`data/Timeline.tsx`](../src/components/data/Timeline.tsx)                       | Ordered event rail + optional StatusBadge              |
 | `TreeView`        | [`data/TreeView.tsx`](../src/components/data/TreeView.tsx)                       | APG tree + `end` slot (`snug` \| `justify`)            |
-| `LogViewer`       | [`data/LogViewer.tsx`](../src/components/data/LogViewer.tsx)                     | Live-tail + query chips + expandable `data` JSON       |
+| `LogViewer`       | [`data/LogViewer.tsx`](../src/components/data/LogViewer.tsx)                     | Live-tail chrome; parent filters/streams `lines`       |
 | `Skeleton`        | [`feedback/Skeleton.tsx`](../src/components/feedback/Skeleton.tsx)               | Placeholder bones                                      |
 | `ToolbarSelect`   | [`navigation/ToolbarSelect.tsx`](../src/components/navigation/ToolbarSelect.tsx) | Nav chrome value pickers                               |
 | `ProgressBar`     | [`feedback/ProgressBar.tsx`](../src/components/feedback/ProgressBar.tsx)         | Determinate / indeterminate                            |

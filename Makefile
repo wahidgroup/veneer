@@ -1,4 +1,4 @@
-.PHONY: all help help-body help-ref version setup lint test build audit spellcheck sbom smoke pack ci release clean clean-dist examples-setup examples examples-build
+.PHONY: all help help-body help-ref version setup lint test build audit spellcheck sbom smoke pack ci release clean clean-dist examples examples-build generate-api generate-api-types
 
 .NOTPARALLEL: ci
 
@@ -9,12 +9,10 @@ PKG_VERSION := $(shell node -p "require('./package.json').version" 2>/dev/null)
 GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null)
 GIT_DIRTY := $(shell test -n "$$(git status --porcelain 2>/dev/null)" && echo "+dirty")
 
-# Print wrapper (pager for long help)
 define PRINT_PAGER
 @{ $(1); } | less -FRX
 endef
 
-# lint / audit: enable fix mode with fix=1
 ifneq ($(strip $(fix)),)
 LINT_MODE := fix
 else
@@ -23,13 +21,10 @@ endif
 
 AUDIT_MODE := $(LINT_MODE)
 
-# test: enable debug logs with debug=1
 ifneq ($(filter 1,$(debug)),)
 export LOG_LEVEL = debug
 endif
 
-# release: make release VERSION=v0.1.0 dry-run=1 allow-staged=1
-#          make release yank=1
 RELEASE_FLAGS :=
 ifneq ($(filter 1,$(dry-run)),)
 RELEASE_FLAGS += --dry-run
@@ -41,12 +36,14 @@ ifneq ($(filter 1,$(yank)),)
 RELEASE_FLAGS += --yank
 endif
 
-# CI uses npm ci (lockfile-strict); local uses npm install
 ifdef CI
 NPM_INSTALL_CMD := npm ci
 else
 NPM_INSTALL_CMD := npm install
 endif
+
+API_PORT ?= 8787
+export API_PORT
 
 help:
 	$(call PRINT_PAGER,$(MAKE) help-body)
@@ -57,25 +54,25 @@ help-body:
 	@printf 'DESCRIPTION:\n'
 	@printf '    Build, test, lint, and release %s following POSIX/GNU CLI conventions.\n\n' '$(PROJECT)'
 	@printf 'TARGETS:\n'
-	@printf '    help         Show this help and exit\n'
-	@printf '    help-ref     Show reference documentation links\n'
-	@printf '    version      Show project version information\n'
-	@printf '    setup        Install dependencies\n'
-	@printf '    lint         Run linters + spellcheck (fix mode via fix=1)\n'
-	@printf '    test         Run tests (debug logs via debug=1)\n'
-	@printf '    build        Build for production\n'
-	@printf '    smoke        Smoke-load built package exports\n'
-	@printf '    pack         Assert npm pack contents (minimal + sbom)\n'
-	@printf '    audit        Run security audit (fix mode via fix=1)\n'
-	@printf '    spellcheck   Run spell checker\n'
-	@printf '    sbom         Generate software bill of materials\n'
-	@printf '    ci           Lint + build + test + smoke + pack\n'
-	@printf '    release      Release workflow (see OPTIONS)\n'
-	@printf '    examples-setup  Install examples/ deps\n'
-	@printf '    examples        Run Vite examples (http://localhost:5173)\n'
-	@printf '    examples-build  Production build of examples/\n'
-	@printf '    clean-dist   Remove dist and artifacts\n'
-	@printf '    clean        Remove dist, artifacts, and node_modules\n\n'
+	@printf '    help           Show this help and exit\n'
+	@printf '    help-ref       Show reference documentation links\n'
+	@printf '    version        Show project version information\n'
+	@printf '    setup          Install kit + examples + API + Playwright + API types\n'
+	@printf '    lint           Run linters + spellcheck (fix mode via fix=1)\n'
+	@printf '    test           Kit + API Vitest, generate API types, Playwright\n'
+	@printf '    build          Build for production\n'
+	@printf '    smoke          Smoke-load built package exports\n'
+	@printf '    pack           Assert npm pack contents (minimal + sbom)\n'
+	@printf '    audit          Run security audit (fix mode via fix=1)\n'
+	@printf '    spellcheck     Run spell checker\n'
+	@printf '    sbom           Generate software bill of materials\n'
+	@printf '    ci             Lint + build + test + smoke + pack\n'
+	@printf '    release        Release workflow (see OPTIONS)\n'
+	@printf '    generate-api   Refresh OpenAPI spec + examples client types\n'
+	@printf '    examples       Run Nest API + Vite examples\n'
+	@printf '    examples-build Production build of examples/\n'
+	@printf '    clean-dist     Remove dist and artifacts\n'
+	@printf '    clean          Remove dist, artifacts, and node_modules\n\n'
 	@printf 'OPTIONS / VARIABLES:\n'
 	@printf '    fix            If set (e.g., fix=1), apply lint/audit fixes\n'
 	@printf '    debug          If set (e.g., debug=1), enable debug logs for tests\n'
@@ -83,18 +80,17 @@ help-body:
 	@printf '    dry-run        If set (e.g., dry-run=1), preview release without changes\n'
 	@printf '    allow-staged   If set (e.g., allow-staged=1), include staged files in release\n'
 	@printf '    yank           If set (e.g., yank=1), yank a published version\n'
-	@printf '    NPM_INSTALL_FLAGS  Extra flags for npm install/ci (e.g. --ignore-scripts)\n\n'
+	@printf '    API_PORT       Examples API port (default 8787)\n'
+	@printf '    NPM_INSTALL_FLAGS  Extra flags for npm install/ci\n\n'
 	@printf 'EXAMPLES:\n'
 	@printf '    make setup\n'
-	@printf '    make examples-setup && make examples\n'
+	@printf '    make examples\n'
+	@printf '    make generate-api\n'
 	@printf '    make lint\n'
 	@printf '    make lint fix=1\n'
 	@printf '    make test debug=1\n'
 	@printf '    make audit fix=1\n'
-	@printf '    make release VERSION=v0.2.0\n'
-	@printf '    make release VERSION=v0.2.0 dry-run=1\n'
-	@printf '    make release VERSION=v0.2.0 allow-staged=1\n'
-	@printf '    make release yank=1\n\n'
+	@printf '    make release VERSION=v0.2.0\n\n'
 	@printf 'EXIT STATUS:\n'
 	@printf '    0    Success\n'
 	@printf '    >0   Error occurred\n\n'
@@ -113,7 +109,9 @@ node_modules: package.json package-lock.json
 	$(NPM_INSTALL_CMD) $(NPM_INSTALL_FLAGS)
 	@touch $@
 
-setup: node_modules
+setup:
+	@chmod +x scripts/setup.sh scripts/get-port.sh
+	@./scripts/setup.sh
 
 all: setup build
 
@@ -122,15 +120,23 @@ lint: node_modules
 ifeq ($(LINT_MODE),fix)
 	npm run format
 	npm run lint -- --fix
+	npm run lint --prefix examples/api -- --fix
 else
 	npm run format:check
 	npm run lint
+	npm run lint --prefix examples/api
 endif
 	npm run spellcheck
 
 test: node_modules
-	@echo "Running tests..."
+	@echo "Running kit tests..."
 	npm run test
+	@echo "Running examples API tests..."
+	npm run test --prefix examples/api
+	@echo "Generating examples API client types..."
+	npm run generate-types --prefix examples/api
+	@echo "Running Playwright smoke..."
+	npm run test --prefix tests
 
 build: node_modules
 	@echo "Building..."
@@ -171,22 +177,31 @@ ci:
 release: node_modules
 	@./scripts/release.sh "$(VERSION)" $(RELEASE_FLAGS)
 
-examples/node_modules: examples/package.json node_modules
-	npm install --prefix examples
-	@touch $@
+generate-api:
+	@echo "Refreshing OpenAPI spec + examples client types..."
+	npm run generate-openapi --prefix examples/api
 
-examples-setup: examples/node_modules
+examples: generate-api-types
+	@echo "Starting examples API on $(API_PORT) and Vite..."
+	@API_PORT=$(API_PORT) npm run start --prefix examples/api & \
+		api_pid=$$!; \
+		trap 'kill $$api_pid 2>/dev/null || true' EXIT INT TERM; \
+		for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do \
+			if curl -sf "http://127.0.0.1:$(API_PORT)/health" >/dev/null; then break; fi; \
+			sleep 0.5; \
+		done; \
+		API_PORT=$(API_PORT) npm run dev --prefix examples
 
-examples: examples/node_modules
-	@echo "Starting examples (Vite)..."
-	npm run dev --prefix examples
-
-examples-build: examples/node_modules
+examples-build: generate-api-types
 	@echo "Building examples..."
 	npm run build --prefix examples
 
+generate-api-types:
+	@echo "Generating examples API client types from openapi.json..."
+	npm run generate-types --prefix examples/api
+
 clean-dist:
-	rm -rf dist artifacts sbom.json examples/dist
+	rm -rf dist artifacts sbom.json examples/dist examples/api/dist
 
 clean: clean-dist
-	rm -rf node_modules examples/node_modules
+	rm -rf node_modules examples/node_modules examples/api/node_modules tests/node_modules .make

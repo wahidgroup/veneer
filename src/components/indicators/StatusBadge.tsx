@@ -47,7 +47,7 @@ function variantForStatus(
 
 /**
  * Inventory status chip. Maps console statuses onto Badge tone variants
- * (`running` → info, `drifted` → warning, `pending` → default, …).
+ * (`running` -> info, `drifted` -> warning, `pending` -> default, …).
  */
 function StatusBadge({
 	status,

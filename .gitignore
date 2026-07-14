@@ -13,9 +13,14 @@ target/
 # Test coverage
 coverage/
 
+# Playwright
+tests/test-results/
+tests/playwright-report/
+
 # Generated artifacts
 artifacts/
 sbom.json
+api.d.ts
 
 # Dev
 .dev/

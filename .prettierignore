@@ -1,1 +1,4 @@
 *.d.ts
+examples/api/openapi.json
+tests/test-results/
+tests/playwright-report/

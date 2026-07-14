@@ -2,8 +2,8 @@ import { act, fireEvent, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
-import { expectNoA11yViolations } from "../../test/component-harness.js";
 import type { LogViewerLine } from "./LogViewer.js";
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { LogViewer } from "./LogViewer.js";
 
 const SAMPLE_LINES: LogViewerLine[] = [
@@ -45,7 +45,7 @@ describe("LogViewer", () => {
 		expect(screen.getByText("apply failed")).toBeInTheDocument();
 	});
 
-	it("filters by level chips and keeps at least one pressed", async () => {
+	it("emits level chrome changes without filtering lines", async () => {
 		const user = userEvent.setup();
 		const seen: string[][] = [];
 
@@ -62,11 +62,8 @@ describe("LogViewer", () => {
 		await user.click(screen.getByRole("button", { name: "debug" }));
 		await user.click(screen.getByRole("button", { name: "info" }));
 		await user.click(screen.getByRole("button", { name: "warn" }));
-		expect(screen.queryByText("boot ok")).not.toBeInTheDocument();
-		expect(screen.queryByText("cache miss")).not.toBeInTheDocument();
-		expect(screen.getByText("apply failed")).toBeInTheDocument();
-
-		await user.click(screen.getByRole("button", { name: "error" }));
+		expect(screen.getByText("boot ok")).toBeInTheDocument();
+		expect(screen.getByText("cache miss")).toBeInTheDocument();
 		expect(screen.getByText("apply failed")).toBeInTheDocument();
 		expect(screen.getByRole("button", { name: "error" })).toHaveAttribute(
 			"aria-pressed",
@@ -75,7 +72,7 @@ describe("LogViewer", () => {
 		expect(seen.length).toBeGreaterThan(0);
 	});
 
-	it("commits a query chip from the search form", async () => {
+	it("commits a query chip from the search form without filtering lines", async () => {
 		const user = userEvent.setup();
 		const seen: string[][] = [];
 
@@ -92,9 +89,11 @@ describe("LogViewer", () => {
 		const search = screen.getByRole("searchbox", {
 			name: "Filter log text",
 		});
+
 		await user.click(search);
 		search.focus();
 		fireEvent.change(search, { target: { value: "failed" } });
+
 		const form = search.closest("form");
 		expect(form).not.toBeNull();
 		if (form === null) {
@@ -105,7 +104,7 @@ describe("LogViewer", () => {
 
 		expect(seen.at(-1)).toEqual(["failed"]);
 		expect(screen.getByText("apply failed")).toBeInTheDocument();
-		expect(screen.queryByText("boot ok")).not.toBeInTheDocument();
+		expect(screen.getByText("boot ok")).toBeInTheDocument();
 	});
 
 	it("dismisses query chips", async () => {
@@ -119,38 +118,15 @@ describe("LogViewer", () => {
 			/>,
 		);
 
-		expect(screen.getByText("apply failed")).toBeInTheDocument();
-		expect(screen.queryByText("boot ok")).not.toBeInTheDocument();
+		expect(
+			screen.getByRole("button", { name: "Remove failed" }),
+		).toBeInTheDocument();
 
 		await user.click(screen.getByRole("button", { name: "Remove failed" }));
+		expect(
+			screen.queryByRole("button", { name: "Remove failed" }),
+		).not.toBeInTheDocument();
 		expect(screen.getByText("boot ok")).toBeInTheDocument();
-	});
-
-	it("ORs multiple default query chips", () => {
-		render(
-			<LogViewer
-				aria-label="Deploy logs"
-				lines={SAMPLE_LINES}
-				defaultQueries={["boot", "failed"]}
-			/>,
-		);
-
-		expect(screen.getByText("boot ok")).toBeInTheDocument();
-		expect(screen.getByText("apply failed")).toBeInTheDocument();
-		expect(screen.queryByText("cache miss")).not.toBeInTheDocument();
-	});
-
-	it("matches query chips against line data JSON", () => {
-		render(
-			<LogViewer
-				aria-label="Deploy logs"
-				lines={SAMPLE_LINES}
-				defaultQueries={["req-9"]}
-			/>,
-		);
-
-		expect(screen.getByText("apply failed")).toBeInTheDocument();
-		expect(screen.queryByText("boot ok")).not.toBeInTheDocument();
 	});
 
 	it("expands and collapses JSON detail for lines with data", async () => {
@@ -169,6 +145,7 @@ describe("LogViewer", () => {
 			name: "Toggle details for line 1",
 		});
 		expect(toggle).toHaveAttribute("aria-expanded", "false");
+
 		await user.click(toggle);
 		expect(toggle).toHaveAttribute("aria-expanded", "true");
 		expect(
@@ -180,22 +157,6 @@ describe("LogViewer", () => {
 		expect(
 			container.querySelector("[data-slot='log-viewer-detail']"),
 		).toBeNull();
-	});
-
-	it("excludes lines without at when a time bound is set", () => {
-		render(
-			<LogViewer
-				aria-label="Deploy logs"
-				lines={[
-					...SAMPLE_LINES,
-					{ id: "4", text: "no timestamp", level: "info" },
-				]}
-				defaultFrom="2020-01-01T00:00"
-			/>,
-		);
-
-		expect(screen.getByText("boot ok")).toBeInTheDocument();
-		expect(screen.queryByText("no timestamp")).not.toBeInTheDocument();
 	});
 
 	it("truncates to maxLines and announces the window", () => {
@@ -218,6 +179,7 @@ describe("LogViewer", () => {
 		const { container } = render(
 			<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />,
 		);
+
 		const texts = Array.from(
 			container.querySelectorAll("[data-slot='log-viewer-text']"),
 		).map((node) => {
@@ -226,15 +188,8 @@ describe("LogViewer", () => {
 		expect(texts).toEqual(["boot ok", "cache miss", "apply failed"]);
 	});
 
-	it("shows EmptyState when nothing matches", () => {
-		render(
-			<LogViewer
-				aria-label="Deploy logs"
-				lines={SAMPLE_LINES}
-				defaultQueries={["zzzz-no-match"]}
-			/>,
-		);
-
+	it("shows EmptyState when lines are empty", () => {
+		render(<LogViewer aria-label="Deploy logs" lines={[]} />);
 		expect(screen.getByText("No log lines")).toBeInTheDocument();
 	});
 
@@ -343,7 +298,6 @@ describe("LogViewer", () => {
 				className="log-extra"
 			/>,
 		);
-
 		expect(container.querySelector("[data-slot='log-viewer']")).toHaveClass(
 			"log-extra",
 		);

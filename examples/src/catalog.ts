@@ -259,7 +259,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "linear",
 				label: "Linear deploy",
 				description:
-					"Region → plan → confirm with progress track, panels, and Back/Next.",
+					"Region -> plan -> confirm with progress track, panels, and Back/Next.",
 			},
 			{
 				id: "nodes",

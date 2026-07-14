@@ -32,6 +32,17 @@ import {
 import { DiffView, PlanSummary } from "@wahidgroup/veneer/diff";
 
 import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
+import {
+	getLogStreamStatus,
+	resetLogStream,
+	startLogStream,
+	stopLogStream,
+} from "../api/client.js";
+import {
+	connectLogs,
+	type LogLine,
+	type LogsConnectionState,
+} from "../api/logs-ws.js";
 
 interface EdgeNode {
 	id: string;
@@ -205,7 +216,7 @@ function LinearDeployKnobs() {
 	return (
 		<RailPanel
 			title="Linear deploy"
-			description="Region → plan → confirm. Parent owns canNext + FieldError. Toggle track orientation on the canvas."
+			description="Region -> plan -> confirm. Parent owns canNext + FieldError. Toggle track orientation on the canvas."
 		>
 			<DemoRow label="Model">
 				<span className="text-sm text-muted-foreground">
@@ -510,113 +521,22 @@ function PlanSummaryKnobs() {
 	);
 }
 
-const LOG_SEED: LogViewerLine[] = [
-	{
-		id: "seed-1",
-		text: "planner: loading stack state",
-		level: "info",
-		at: "2026-07-13T18:00:00.000Z",
-		data: {
-			component: "planner",
-			action: "load_state",
-			stack: "prod-edge",
-		},
-	},
-	{
-		id: "seed-2",
-		text: "planner: 12 resources in plan",
-		level: "debug",
-		at: "2026-07-13T18:00:01.000Z",
-		data: {
-			component: "planner",
-			resourceCount: 12,
-			requestId: "plan-a1",
-		},
-	},
-	{
-		id: "seed-3",
-		text: "apply: aws_vpc.main create complete",
-		level: "info",
-		at: "2026-07-13T18:00:02.000Z",
-		data: {
-			component: "apply",
-			resource: "aws_vpc.main",
-			status: "created",
-		},
-	},
-];
-
-const STREAM_LINES: Array<{
-	text: string;
-	level: LogViewerLevel;
-	data: Record<string, unknown>;
-}> = [
-	{
-		text: "apply: aws_subnet.public create",
-		level: "info",
-		data: { resource: "aws_subnet.public", status: "creating" },
-	},
-	{
-		text: "apply: waiting on dependency",
-		level: "debug",
-		data: { waitFor: "aws_vpc.main", elapsedMs: 1200 },
-	},
-	{
-		text: "apply: aws_instance.web create",
-		level: "info",
-		data: { resource: "aws_instance.web", instanceType: "t3.small" },
-	},
-	{
-		text: "health: probe timeout",
-		level: "warn",
-		data: { probe: "http", target: "web", timeoutMs: 5000 },
-	},
-	{
-		text: "apply: retrying instance create",
-		level: "warn",
-		data: { resource: "aws_instance.web", attempt: 2 },
-	},
-	{
-		text: "apply: aws_lb.app create complete",
-		level: "info",
-		data: { resource: "aws_lb.app", status: "created" },
-	},
-	{
-		text: "apply: error attaching target group",
-		level: "error",
-		data: {
-			resource: "aws_lb_target_group.app",
-			errorCode: "InvalidTarget",
-		},
-	},
-	{
-		text: "apply: stack complete with errors",
-		level: "error",
-		data: { status: "failed", errorCount: 1 },
-	},
-];
-
-const LOG_SEED_END_MS = Date.parse("2026-07-13T18:00:02.000Z");
-
-function cloneLogSeed(): LogViewerLine[] {
-	return LOG_SEED.map((line) => {
-		return {
-			id: line.id,
-			text: line.text,
-			level: line.level,
-			at: line.at,
-			data: line.data,
-		};
-	});
-}
-
 interface LogViewerDemoValue {
 	streaming: boolean;
 	setStreaming: (value: boolean) => void;
 	maxLines: number;
 	setMaxLines: (value: number) => void;
 	lines: LogViewerLine[];
-	reset: () => void;
+	connection: LogsConnectionState;
+	queries: string[];
+	setQueries: (value: string[]) => void;
+	levels: LogViewerLevel[];
+	setLevels: (value: LogViewerLevel[]) => void;
+	from: string;
+	setFrom: (value: string) => void;
+	to: string;
+	setTo: (value: string) => void;
+	reset: () => Promise<void>;
 }
 
 const LogViewerDemoContext = createContext<LogViewerDemoValue | null>(null);
@@ -630,62 +550,133 @@ function useLogViewerDemo() {
 	return value;
 }
 
-function LogViewerDemoProvider({ children }: { children: ReactNode }) {
-	const [streaming, setStreaming] = useState(false);
-	const [maxLines, setMaxLines] = useState(50);
-	const [lines, setLines] = useState<LogViewerLine[]>(cloneLogSeed);
-	const streamIndexRef = useRef(0);
-	const clockMsRef = useRef(LOG_SEED_END_MS);
+function toViewerLines(lines: LogLine[]): LogViewerLine[] {
+	return lines.map((line) => {
+		return {
+			id: line.id,
+			text: line.text,
+			level: line.level,
+			at: line.at,
+			data: line.data,
+		};
+	});
+}
 
-	function reset() {
-		setStreaming(false);
-		streamIndexRef.current = 0;
-		clockMsRef.current = LOG_SEED_END_MS;
-		setLines(cloneLogSeed());
-	}
+function LogViewerDemoProvider({ children }: { children: ReactNode }) {
+	const [streaming, setStreamingState] = useState(false);
+	const [maxLines, setMaxLines] = useState(50);
+	const [lines, setLines] = useState<LogViewerLine[]>([]);
+	const [connection, setConnection] =
+		useState<LogsConnectionState>("connecting");
+	const [queries, setQueries] = useState<string[]>([]);
+	const [levels, setLevels] = useState<LogViewerLevel[]>([
+		"debug",
+		"info",
+		"warn",
+		"error",
+	]);
+	const [from, setFrom] = useState("");
+	const [to, setTo] = useState("");
+	const sendSubscribeRef = useRef<
+		| ((message: {
+				levels?: LogViewerLevel[];
+				queries?: string[];
+				from?: string;
+				to?: string;
+		  }) => void)
+		| null
+	>(null);
 
 	useEffect(() => {
-		if (!streaming) {
+		const session = connectLogs({
+			onState: setConnection,
+			onMessage: (message) => {
+				if (message.type === "snapshot") {
+					setLines(toViewerLines(message.lines));
+					return;
+				}
+
+				if (message.type === "line") {
+					setLines((prev) => {
+						return [...prev, ...toViewerLines([message.line])];
+					});
+				}
+			},
+		});
+		sendSubscribeRef.current = session.sendSubscribe;
+		session.sendSubscribe({
+			levels,
+			queries,
+			from,
+			to,
+		});
+
+		void getLogStreamStatus()
+			.then((state) => {
+				setStreamingState(state.streaming);
+			})
+			.catch(() => {
+				setStreamingState(false);
+			});
+
+		return () => {
+			session.close();
+			sendSubscribeRef.current = null;
+		};
+		// Connect once; filters push via separate effect.
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only WS
+	}, []);
+
+	useEffect(() => {
+		sendSubscribeRef.current?.({
+			levels,
+			queries,
+			from,
+			to,
+		});
+	}, [levels, queries, from, to]);
+
+	async function setStreaming(value: boolean) {
+		if (value) {
+			const state = await startLogStream();
+			setStreamingState(state.streaming);
 			return;
 		}
 
-		const timer = window.setInterval(() => {
-			const template =
-				STREAM_LINES[streamIndexRef.current % STREAM_LINES.length];
-			const nextIndex = streamIndexRef.current;
+		const state = await stopLogStream();
+		setStreamingState(state.streaming);
+	}
 
-			streamIndexRef.current = nextIndex + 1;
-			clockMsRef.current += 1000;
-
-			const at = new Date(clockMsRef.current).toISOString();
-
-			setLines((prev) => {
-				return [
-					...prev,
-					{
-						id: `stream-${String(nextIndex)}`,
-						text: template.text,
-						level: template.level,
-						at,
-						data: template.data,
-					},
-				];
-			});
-		}, 900);
-
-		return () => {
-			window.clearInterval(timer);
-		};
-	}, [streaming]);
+	async function reset() {
+		const state = await resetLogStream();
+		setStreamingState(state.streaming);
+		sendSubscribeRef.current?.({
+			levels,
+			queries,
+			from,
+			to,
+		});
+	}
 
 	return (
 		<LogViewerDemoContext.Provider
 			value={{
 				streaming,
-				setStreaming,
+				setStreaming: (value) => {
+					void setStreaming(value);
+				},
 				maxLines,
 				setMaxLines,
 				lines,
+				connection,
+				queries,
+				setQueries,
+				levels,
+				setLevels,
+				from,
+				setFrom,
+				to,
+				setTo,
 				reset,
 			}}
 		>
@@ -700,15 +691,23 @@ function LogViewerCanvas() {
 	return (
 		<Canvas>
 			<p className="text-sm text-muted-foreground">
-				Deploy apply stream. Expand a row for JSON. Enter adds text
-				filter chips (OR). New lines append at the bottom while
-				Following; scroll up to pause. Stream and reset live in knobs.
+				Parent owns the WS buffer and filter subscribe. Knobs start the
+				Nest stream over HTTP. Expand rows for JSON. Connection:{" "}
+				{demo.connection}.
 			</p>
 			<div className="w-full max-w-3xl">
 				<LogViewer
 					aria-label="Apply logs"
 					lines={demo.lines}
 					maxLines={demo.maxLines}
+					queries={demo.queries}
+					onQueriesChange={demo.setQueries}
+					levels={demo.levels}
+					onLevelsChange={demo.setLevels}
+					from={demo.from}
+					onFromChange={demo.setFrom}
+					to={demo.to}
+					onToChange={demo.setTo}
 					className="shadow-sm"
 				/>
 			</div>
@@ -722,11 +721,11 @@ function LogViewerKnobs() {
 	return (
 		<RailPanel
 			title="LogViewer"
-			description="Live-tail chrome. Parent owns the buffer; panel owns filters and follow."
+			description="HTTP knobs control Nest stream. Filters resubscribe on WS."
 		>
 			<DemoRow
 				label="Stream"
-				description="Append lines on a 1s demo clock."
+				description="POST /v1/logs/stream/start|stop"
 			>
 				<Toggle
 					label="Streaming"
@@ -734,13 +733,13 @@ function LogViewerKnobs() {
 					onCheckedChange={demo.setStreaming}
 				/>
 			</DemoRow>
-			<DemoRow label="Reset" description="Clear buffer back to seed.">
+			<DemoRow label="Reset" description="POST /v1/logs/stream/reset">
 				<Button
 					type="button"
 					size="sm"
 					variant="secondary"
 					onClick={() => {
-						demo.reset();
+						void demo.reset();
 					}}
 				>
 					Reset
@@ -748,7 +747,7 @@ function LogViewerKnobs() {
 			</DemoRow>
 			<DemoRow
 				label="Max lines"
-				description="Client truncate after filters."
+				description="Display truncate of parent buffer."
 			>
 				<Select
 					id="log-max-lines"

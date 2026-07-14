@@ -14,6 +14,11 @@ import { SearchInput } from "../forms/SearchInput.js";
 import { Badge } from "../indicators/Badge.js";
 import { ChipGroup } from "../navigation/ChipGroup.js";
 import { CodeBlock } from "./CodeBlock.js";
+import {
+	filterLogViewerLines,
+	formatLineData,
+	parseInstant,
+} from "./filterLogViewerLines.js";
 
 type LogViewerLevel = "debug" | "info" | "warn" | "error";
 
@@ -71,19 +76,6 @@ function badgeVariantForLevel(
 	return "danger";
 }
 
-function parseInstant(value: string): number | null {
-	if (value === "") {
-		return null;
-	}
-
-	const ms = Date.parse(value);
-	if (Number.isNaN(ms)) {
-		return null;
-	}
-
-	return ms;
-}
-
 function formatAt(at: string): string {
 	const ms = parseInstant(at);
 	if (ms === null) {
@@ -96,85 +88,8 @@ function formatAt(at: string): string {
 		.replace(/\.\d{3}Z$/, "Z");
 }
 
-function formatLineData(data: unknown): string {
-	try {
-		return JSON.stringify(data, null, 2);
-	} catch {
-		return String(data);
-	}
-}
-
-function lineSearchHaystack(line: LogViewerLine): string {
-	let haystack = line.text;
-	if (line.data !== undefined) {
-		haystack = `${haystack}\n${formatLineData(line.data)}`;
-	}
-
-	return haystack.toLowerCase();
-}
-
-function filterLines(
-	lines: LogViewerLine[],
-	levels: LogViewerLevel[],
-	from: string,
-	to: string,
-	queries: string[],
-): LogViewerLine[] {
-	const levelSet = new Set(levels);
-	const fromMs = parseInstant(from);
-	const toMs = parseInstant(to);
-	const timeActive = fromMs !== null || toMs !== null;
-	const needles = queries
-		.map((query) => {
-			return query.trim().toLowerCase();
-		})
-		.filter((query) => {
-			return query.length > 0;
-		});
-
-	return lines.filter((line) => {
-		if (line.level !== undefined && !levelSet.has(line.level)) {
-			return false;
-		}
-
-		if (timeActive) {
-			if (line.at === undefined) {
-				return false;
-			}
-
-			const atMs = parseInstant(line.at);
-			if (atMs === null) {
-				return false;
-			}
-			if (fromMs !== null && atMs < fromMs) {
-				return false;
-			}
-			if (toMs !== null && atMs > toMs) {
-				return false;
-			}
-		}
-
-		if (needles.length > 0) {
-			const haystack = lineSearchHaystack(line);
-			let matched = false;
-			for (const needle of needles) {
-				if (haystack.includes(needle)) {
-					matched = true;
-					break;
-				}
-			}
-
-			if (!matched) {
-				return false;
-			}
-		}
-
-		return true;
-	});
-}
-
 /**
- * Keep the newest `maxLines` (buffer tail). Oldest → newest top → bottom
+ * Keep the newest `maxLines` (buffer tail). Oldest -> newest top -> bottom
  * (live-tail / `tail -f` convention).
  */
 function visibleLines(
@@ -203,11 +118,7 @@ function isLogViewerLevel(value: string): value is LogViewerLevel {
 }
 
 /**
- * Live-tail log panel. Oldest → newest (new lines at bottom). Browseable
- * `role="log"` with `aria-live="off"`; mode / filter summaries go to a polite
- * `role="status"`. Lines may carry optional `data` for expandable JSON.
- * Text filters are multi-query chips (OR). Composes ChipGroup, SearchInput,
- * DateTimePicker, Badge, CopyButton, and CodeBlock.
+ * Live-tail log panel.
  *
  * @see {@link https://www.w3.org/TR/wai-aria-1.2/#log WAI-ARIA 1.2 log}
  */
@@ -351,14 +262,7 @@ function LogViewer({
 		}
 	}
 
-	const filtered = filterLines(
-		lines,
-		currentLevels,
-		currentFrom,
-		currentTo,
-		currentQueries,
-	);
-	const visible = visibleLines(filtered, maxLines);
+	const visible = visibleLines(lines, maxLines);
 
 	useEffect(() => {
 		if (!isFollowing) {
@@ -568,10 +472,10 @@ function LogViewer({
 		statusParts = [...statusParts, `Range ${fromLabel} to ${toLabel}`];
 	}
 
-	if (maxLines !== undefined && filtered.length > maxLines) {
+	if (maxLines !== undefined && lines.length > maxLines) {
 		statusParts = [
 			...statusParts,
-			`Showing last ${String(maxLines)} of ${String(filtered.length)}`,
+			`Showing last ${String(maxLines)} of ${String(lines.length)}`,
 		];
 	}
 
@@ -869,4 +773,4 @@ function LogViewer({
 }
 
 export type { LogViewerLevel, LogViewerLine, LogViewerProps };
-export { LogViewer };
+export { filterLogViewerLines, LogViewer };

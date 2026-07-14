@@ -44,6 +44,7 @@ const EXPECTED_EXPORTS = new Set([
 	"FieldError",
 	"FieldHint",
 	"FileUpload",
+	"filterLogViewerLines",
 	"FormField",
 	"FormSection",
 	"Input",

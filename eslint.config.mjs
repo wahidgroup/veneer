@@ -12,7 +12,7 @@ const reactConfigs = react;
 
 export default defineConfig(
 	{
-		ignores: ["examples/**"],
+		ignores: ["examples/**", "tests/**"],
 	},
 	...base,
 	...reactConfigs,
