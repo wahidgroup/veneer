@@ -198,40 +198,71 @@ function queryInventory(
 	};
 }
 
-interface ServerPageDemoValue {
+interface DataTableDemoValue {
 	pageSize: number;
 	setPageSize: (value: number) => void;
+	empty: boolean;
+	setEmpty: (value: boolean) => void;
+	liveRows: boolean;
+	setLiveRows: (value: boolean) => void;
+	autoPatch: boolean;
+	setAutoPatch: (value: boolean) => void;
+	intervalMs: number;
+	setIntervalMs: (value: number) => void;
 }
 
-const ServerPageDemoContext = createContext<ServerPageDemoValue | null>(null);
+const DataTableDemoContext = createContext<DataTableDemoValue | null>(null);
 
-function useServerPageDemo() {
-	const value = useContext(ServerPageDemoContext);
+function useDataTableDemo() {
+	const value = useContext(DataTableDemoContext);
 	if (value === null) {
-		throw new Error("ServerPageDemoProvider required");
+		throw new Error("DataTableDemoProvider required");
 	}
 
 	return value;
 }
 
-function ServerPageDemoProvider({ children }: { children: ReactNode }) {
+function DataTableDemoProvider({ children }: { children: ReactNode }) {
 	const [pageSize, setPageSize] = useState(25);
+	const [empty, setEmpty] = useState(false);
+	const [liveRows, setLiveRows] = useState(false);
+	const [autoPatch, setAutoPatch] = useState(true);
+	const [intervalMs, setIntervalMs] = useState(1500);
 
 	return (
-		<ServerPageDemoContext.Provider value={{ pageSize, setPageSize }}>
+		<DataTableDemoContext.Provider
+			value={{
+				pageSize,
+				setPageSize,
+				empty,
+				setEmpty,
+				liveRows,
+				setLiveRows,
+				autoPatch,
+				setAutoPatch,
+				intervalMs,
+				setIntervalMs,
+			}}
+		>
 			{children}
-		</ServerPageDemoContext.Provider>
+		</DataTableDemoContext.Provider>
 	);
 }
 
-const SERVER_PAGE_SIZE_OPTIONS = [
+const DATA_TABLE_PAGE_SIZE_OPTIONS = [
 	{ value: "10", label: "10" },
 	{ value: "25", label: "25" },
 	{ value: "50", label: "50" },
 ];
 
-function ServerPageCanvas() {
-	const demo = useServerPageDemo();
+const DATA_TABLE_PATCH_INTERVAL_OPTIONS = [
+	{ value: "500", label: "500 ms" },
+	{ value: "1500", label: "1.5 s" },
+	{ value: "3000", label: "3 s" },
+];
+
+function DataTableServerCanvas() {
+	const demo = useDataTableDemo();
 	const [query, setQuery] = useState<DataTableQuery>({
 		pageIndex: 0,
 		pageSize: demo.pageSize,
@@ -267,86 +298,21 @@ function ServerPageCanvas() {
 	}, [query]);
 
 	return (
-		<Canvas>
-			<DataTable
-				columns={COLUMNS}
-				data={page.data}
-				rowCount={page.rowCount}
-				getRowId={getRowId}
-				query={query}
-				onQueryChange={setQuery}
-				enableRowSelection
-				loading={loading}
-			/>
-		</Canvas>
+		<DataTable
+			columns={COLUMNS}
+			data={page.data}
+			rowCount={page.rowCount}
+			getRowId={getRowId}
+			query={query}
+			onQueryChange={setQuery}
+			enableRowSelection
+			loading={loading}
+		/>
 	);
 }
 
-function ServerPageKnobs() {
-	const demo = useServerPageDemo();
-
-	return (
-		<RailPanel
-			title="Server page"
-			description="Mock API slices, sorts, and filters in memory. DataTable only receives the current page plus rowCount."
-		>
-			<DemoRow
-				label="Page size"
-				description="Resets to page 0 when changed. 87 source rows."
-			>
-				<Select
-					id="server-page-size"
-					options={SERVER_PAGE_SIZE_OPTIONS}
-					value={String(demo.pageSize)}
-					aria-label="Page size"
-					onChange={(event) => {
-						demo.setPageSize(Number(event.target.value));
-					}}
-				/>
-			</DemoRow>
-		</RailPanel>
-	);
-}
-
-interface LivePatchDemoValue {
-	autoPatch: boolean;
-	setAutoPatch: (value: boolean) => void;
-	intervalMs: number;
-	setIntervalMs: (value: number) => void;
-}
-
-const LivePatchDemoContext = createContext<LivePatchDemoValue | null>(null);
-
-function useLivePatchDemo() {
-	const value = useContext(LivePatchDemoContext);
-	if (value === null) {
-		throw new Error("LivePatchDemoProvider required");
-	}
-
-	return value;
-}
-
-function LivePatchDemoProvider({ children }: { children: ReactNode }) {
-	const [autoPatch, setAutoPatch] = useState(true);
-	const [intervalMs, setIntervalMs] = useState(1500);
-
-	return (
-		<LivePatchDemoContext.Provider
-			value={{ autoPatch, setAutoPatch, intervalMs, setIntervalMs }}
-		>
-			{children}
-		</LivePatchDemoContext.Provider>
-	);
-}
-
-const LIVE_PATCH_INTERVAL_OPTIONS = [
-	{ value: "500", label: "500 ms" },
-	{ value: "1500", label: "1.5 s" },
-	{ value: "3000", label: "3 s" },
-];
-
-function LivePatchCanvas() {
-	const demo = useLivePatchDemo();
+function DataTableLiveCanvas() {
+	const demo = useDataTableDemo();
 	const initial = useMemo(() => {
 		return ALL_ROWS.slice(0, 8);
 	}, []);
@@ -390,7 +356,7 @@ function LivePatchCanvas() {
 	}, [demo.autoPatch, demo.intervalMs, setRows]);
 
 	return (
-		<Canvas>
+		<>
 			<div className="flex flex-wrap gap-2">
 				<Button
 					type="button"
@@ -437,43 +403,134 @@ function LivePatchCanvas() {
 				enableRowSelection
 				defaultQuery={{ pageSize: 10 }}
 			/>
-		</Canvas>
+		</>
 	);
 }
 
-function LivePatchKnobs() {
-	const demo = useLivePatchDemo();
-
+function DataTableEmptyCanvas() {
 	return (
-		<RailPanel
-			title="Live patch"
-			description="useDataTableRows + applyRowTransaction patch the current result set. Selection stays stable when ids do."
-		>
+		<DataTable
+			columns={COLUMNS}
+			data={[]}
+			rowCount={0}
+			getRowId={getRowId}
+			defaultQuery={{ pageSize: 10 }}
+			empty={
+				<EmptyState
+					size="sm"
+					title="No stacks"
+					action={
+						<Button type="button" size="sm">
+							Create stack
+						</Button>
+					}
+				>
+					Create a stack to populate this inventory.
+				</EmptyState>
+			}
+		/>
+	);
+}
+
+function DataTableCanvas() {
+	const demo = useDataTableDemo();
+
+	let body: ReactNode;
+	if (demo.empty) {
+		body = <DataTableEmptyCanvas />;
+	} else if (demo.liveRows) {
+		body = <DataTableLiveCanvas />;
+	} else {
+		body = <DataTableServerCanvas />;
+	}
+
+	return <Canvas>{body}</Canvas>;
+}
+
+function DataTableKnobs() {
+	const demo = useDataTableDemo();
+
+	let pageSizeRow: ReactNode = null;
+	if (!demo.empty && !demo.liveRows) {
+		pageSizeRow = (
 			<DemoRow
-				label="Auto patch"
-				description="Rotate CPU updates on a timer."
-			>
-				<Toggle
-					label="Auto patch"
-					checked={demo.autoPatch}
-					onCheckedChange={demo.setAutoPatch}
-				/>
-			</DemoRow>
-			<DemoRow
-				label="Interval"
-				description="Tick rate when auto patch is on."
+				label="Page size"
+				description="Resets to page 0 when changed. 87 source rows."
 			>
 				<Select
-					id="live-patch-interval"
-					options={LIVE_PATCH_INTERVAL_OPTIONS}
-					value={String(demo.intervalMs)}
-					aria-label="Patch interval"
-					disabled={!demo.autoPatch}
+					id="data-table-page-size"
+					options={DATA_TABLE_PAGE_SIZE_OPTIONS}
+					value={String(demo.pageSize)}
+					aria-label="Page size"
 					onChange={(event) => {
-						demo.setIntervalMs(Number(event.target.value));
+						demo.setPageSize(Number(event.target.value));
 					}}
 				/>
 			</DemoRow>
+		);
+	}
+
+	let liveRowsRows: ReactNode = null;
+	if (!demo.empty && demo.liveRows) {
+		liveRowsRows = (
+			<>
+				<DemoRow
+					label="Auto patch"
+					description="Rotate CPU updates via useDataTableRows."
+				>
+					<Toggle
+						label="Auto patch"
+						checked={demo.autoPatch}
+						onCheckedChange={demo.setAutoPatch}
+					/>
+				</DemoRow>
+				<DemoRow
+					label="Interval"
+					description="Tick rate when auto patch is on."
+				>
+					<Select
+						id="data-table-patch-interval"
+						options={DATA_TABLE_PATCH_INTERVAL_OPTIONS}
+						value={String(demo.intervalMs)}
+						aria-label="Patch interval"
+						disabled={!demo.autoPatch}
+						onChange={(event) => {
+							demo.setIntervalMs(Number(event.target.value));
+						}}
+					/>
+				</DemoRow>
+			</>
+		);
+	}
+
+	return (
+		<RailPanel
+			title="DataTable"
+			description="Server page, live row patches (useDataTableRows), or empty slot."
+		>
+			<DemoRow
+				label="Empty"
+				description="Render EmptyState through the empty prop."
+			>
+				<Toggle
+					label="Empty"
+					checked={demo.empty}
+					onCheckedChange={demo.setEmpty}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Live rows"
+				description="Client buffer with useDataTableRows + applyRowTransaction."
+			>
+				<Toggle
+					label="Live rows"
+					checked={demo.liveRows}
+					disabled={demo.empty}
+					onCheckedChange={demo.setLiveRows}
+				/>
+			</DemoRow>
+			{pageSizeRow}
+			{liveRowsRows}
 		</RailPanel>
 	);
 }
@@ -591,112 +648,6 @@ function PaginationKnobs() {
 					label="Show range"
 					checked={demo.showRange}
 					onCheckedChange={demo.setShowRange}
-				/>
-			</DemoRow>
-		</RailPanel>
-	);
-}
-
-interface EmptyTableDemoValue {
-	emptySize: "sm" | "md";
-	setEmptySize: (value: "sm" | "md") => void;
-	showAction: boolean;
-	setShowAction: (value: boolean) => void;
-}
-
-const EmptyTableDemoContext = createContext<EmptyTableDemoValue | null>(null);
-
-function useEmptyTableDemo() {
-	const value = useContext(EmptyTableDemoContext);
-	if (value === null) {
-		throw new Error("EmptyTableDemoProvider required");
-	}
-
-	return value;
-}
-
-function EmptyTableDemoProvider({ children }: { children: ReactNode }) {
-	const [emptySize, setEmptySize] = useState<"sm" | "md">("sm");
-	const [showAction, setShowAction] = useState(true);
-
-	return (
-		<EmptyTableDemoContext.Provider
-			value={{ emptySize, setEmptySize, showAction, setShowAction }}
-		>
-			{children}
-		</EmptyTableDemoContext.Provider>
-	);
-}
-
-const EMPTY_SIZE_OPTIONS = [
-	{ value: "sm", label: "Small" },
-	{ value: "md", label: "Medium" },
-];
-
-function EmptyTableCanvas() {
-	const demo = useEmptyTableDemo();
-
-	let action: ReactNode = undefined;
-	if (demo.showAction) {
-		action = (
-			<Button type="button" size="sm">
-				Create stack
-			</Button>
-		);
-	}
-
-	return (
-		<Canvas>
-			<DataTable
-				columns={COLUMNS}
-				data={[]}
-				rowCount={0}
-				getRowId={getRowId}
-				defaultQuery={{ pageSize: 10 }}
-				empty={
-					<EmptyState
-						size={demo.emptySize}
-						title="No stacks"
-						action={action}
-					>
-						Create a stack to populate this inventory.
-					</EmptyState>
-				}
-			/>
-		</Canvas>
-	);
-}
-
-function EmptyTableKnobs() {
-	const demo = useEmptyTableDemo();
-
-	return (
-		<RailPanel
-			title="Empty table"
-			description="Pass EmptyState through DataTable empty. Loading still owns in-flight waits."
-		>
-			<DemoRow
-				label="Size"
-				description="EmptyState size inside the table."
-			>
-				<Select
-					id="empty-size"
-					options={EMPTY_SIZE_OPTIONS}
-					value={demo.emptySize}
-					aria-label="Empty state size"
-					onChange={(event) => {
-						const next = event.target.value;
-						if (next === "sm" || next === "md") {
-							demo.setEmptySize(next);
-						}
-					}}
-				/>
-			</DemoRow>
-			<DemoRow label="Action" description="Show the create CTA slot.">
-				<Toggle
-					label="Show action"
-					checked={demo.showAction}
-					onCheckedChange={demo.setShowAction}
 				/>
 			</DemoRow>
 		</RailPanel>
@@ -1605,18 +1556,12 @@ function TreeViewKnobs() {
 
 export type { InventoryRow };
 export {
-	ServerPageDemoProvider,
-	ServerPageCanvas,
-	ServerPageKnobs,
-	LivePatchDemoProvider,
-	LivePatchCanvas,
-	LivePatchKnobs,
+	DataTableDemoProvider,
+	DataTableCanvas,
+	DataTableKnobs,
 	PaginationDemoProvider,
 	PaginationCanvas,
 	PaginationKnobs,
-	EmptyTableDemoProvider,
-	EmptyTableCanvas,
-	EmptyTableKnobs,
 	DescriptionListDemoProvider,
 	DescriptionListCanvas,
 	DescriptionListKnobs,

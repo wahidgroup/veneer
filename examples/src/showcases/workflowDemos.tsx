@@ -1,7 +1,16 @@
-import type { ReactNode } from "react";
-import { useMemo, useState } from "react";
+import {
+	createContext,
+	useContext,
+	useEffect,
+	useMemo,
+	useRef,
+	useState,
+	type ReactNode,
+} from "react";
 
 import type {
+	LogViewerLevel,
+	LogViewerLine,
 	WorkflowOrientation,
 	WorkflowStepStatus,
 } from "@wahidgroup/veneer";
@@ -11,7 +20,9 @@ import {
 	FieldError,
 	Input,
 	Label,
+	LogViewer,
 	Select,
+	Toggle,
 	Workflow,
 	WorkflowActions,
 	WorkflowPanel,
@@ -499,11 +510,272 @@ function PlanSummaryKnobs() {
 	);
 }
 
+const LOG_SEED: LogViewerLine[] = [
+	{
+		id: "seed-1",
+		text: "planner: loading stack state",
+		level: "info",
+		at: "2026-07-13T18:00:00.000Z",
+		data: {
+			component: "planner",
+			action: "load_state",
+			stack: "prod-edge",
+		},
+	},
+	{
+		id: "seed-2",
+		text: "planner: 12 resources in plan",
+		level: "debug",
+		at: "2026-07-13T18:00:01.000Z",
+		data: {
+			component: "planner",
+			resourceCount: 12,
+			requestId: "plan-a1",
+		},
+	},
+	{
+		id: "seed-3",
+		text: "apply: aws_vpc.main create complete",
+		level: "info",
+		at: "2026-07-13T18:00:02.000Z",
+		data: {
+			component: "apply",
+			resource: "aws_vpc.main",
+			status: "created",
+		},
+	},
+];
+
+const STREAM_LINES: Array<{
+	text: string;
+	level: LogViewerLevel;
+	data: Record<string, unknown>;
+}> = [
+	{
+		text: "apply: aws_subnet.public create",
+		level: "info",
+		data: { resource: "aws_subnet.public", status: "creating" },
+	},
+	{
+		text: "apply: waiting on dependency",
+		level: "debug",
+		data: { waitFor: "aws_vpc.main", elapsedMs: 1200 },
+	},
+	{
+		text: "apply: aws_instance.web create",
+		level: "info",
+		data: { resource: "aws_instance.web", instanceType: "t3.small" },
+	},
+	{
+		text: "health: probe timeout",
+		level: "warn",
+		data: { probe: "http", target: "web", timeoutMs: 5000 },
+	},
+	{
+		text: "apply: retrying instance create",
+		level: "warn",
+		data: { resource: "aws_instance.web", attempt: 2 },
+	},
+	{
+		text: "apply: aws_lb.app create complete",
+		level: "info",
+		data: { resource: "aws_lb.app", status: "created" },
+	},
+	{
+		text: "apply: error attaching target group",
+		level: "error",
+		data: {
+			resource: "aws_lb_target_group.app",
+			errorCode: "InvalidTarget",
+		},
+	},
+	{
+		text: "apply: stack complete with errors",
+		level: "error",
+		data: { status: "failed", errorCount: 1 },
+	},
+];
+
+const LOG_SEED_END_MS = Date.parse("2026-07-13T18:00:02.000Z");
+
+function cloneLogSeed(): LogViewerLine[] {
+	return LOG_SEED.map((line) => {
+		return {
+			id: line.id,
+			text: line.text,
+			level: line.level,
+			at: line.at,
+			data: line.data,
+		};
+	});
+}
+
+interface LogViewerDemoValue {
+	streaming: boolean;
+	setStreaming: (value: boolean) => void;
+	maxLines: number;
+	setMaxLines: (value: number) => void;
+	lines: LogViewerLine[];
+	reset: () => void;
+}
+
+const LogViewerDemoContext = createContext<LogViewerDemoValue | null>(null);
+
+function useLogViewerDemo() {
+	const value = useContext(LogViewerDemoContext);
+	if (value === null) {
+		throw new Error("LogViewerDemoProvider required");
+	}
+
+	return value;
+}
+
+function LogViewerDemoProvider({ children }: { children: ReactNode }) {
+	const [streaming, setStreaming] = useState(false);
+	const [maxLines, setMaxLines] = useState(50);
+	const [lines, setLines] = useState<LogViewerLine[]>(cloneLogSeed);
+	const streamIndexRef = useRef(0);
+	const clockMsRef = useRef(LOG_SEED_END_MS);
+
+	function reset() {
+		setStreaming(false);
+		streamIndexRef.current = 0;
+		clockMsRef.current = LOG_SEED_END_MS;
+		setLines(cloneLogSeed());
+	}
+
+	useEffect(() => {
+		if (!streaming) {
+			return;
+		}
+
+		const timer = window.setInterval(() => {
+			const template =
+				STREAM_LINES[streamIndexRef.current % STREAM_LINES.length];
+			const nextIndex = streamIndexRef.current;
+
+			streamIndexRef.current = nextIndex + 1;
+			clockMsRef.current += 1000;
+
+			const at = new Date(clockMsRef.current).toISOString();
+
+			setLines((prev) => {
+				return [
+					...prev,
+					{
+						id: `stream-${String(nextIndex)}`,
+						text: template.text,
+						level: template.level,
+						at,
+						data: template.data,
+					},
+				];
+			});
+		}, 900);
+
+		return () => {
+			window.clearInterval(timer);
+		};
+	}, [streaming]);
+
+	return (
+		<LogViewerDemoContext.Provider
+			value={{
+				streaming,
+				setStreaming,
+				maxLines,
+				setMaxLines,
+				lines,
+				reset,
+			}}
+		>
+			{children}
+		</LogViewerDemoContext.Provider>
+	);
+}
+
+function LogViewerCanvas() {
+	const demo = useLogViewerDemo();
+
+	return (
+		<Canvas>
+			<p className="text-sm text-muted-foreground">
+				Deploy apply stream. Expand a row for JSON. Enter adds text
+				filter chips (OR). New lines append at the bottom while
+				Following; scroll up to pause. Stream and reset live in knobs.
+			</p>
+			<div className="w-full max-w-3xl">
+				<LogViewer
+					aria-label="Apply logs"
+					lines={demo.lines}
+					maxLines={demo.maxLines}
+					className="shadow-sm"
+				/>
+			</div>
+		</Canvas>
+	);
+}
+
+function LogViewerKnobs() {
+	const demo = useLogViewerDemo();
+
+	return (
+		<RailPanel
+			title="LogViewer"
+			description="Live-tail chrome. Parent owns the buffer; panel owns filters and follow."
+		>
+			<DemoRow
+				label="Stream"
+				description="Append lines on a 1s demo clock."
+			>
+				<Toggle
+					label="Streaming"
+					checked={demo.streaming}
+					onCheckedChange={demo.setStreaming}
+				/>
+			</DemoRow>
+			<DemoRow label="Reset" description="Clear buffer back to seed.">
+				<Button
+					type="button"
+					size="sm"
+					variant="secondary"
+					onClick={() => {
+						demo.reset();
+					}}
+				>
+					Reset
+				</Button>
+			</DemoRow>
+			<DemoRow
+				label="Max lines"
+				description="Client truncate after filters."
+			>
+				<Select
+					id="log-max-lines"
+					aria-label="Max lines"
+					options={[
+						{ value: "20", label: "20" },
+						{ value: "50", label: "50" },
+						{ value: "100", label: "100" },
+					]}
+					value={String(demo.maxLines)}
+					onChange={(event) => {
+						demo.setMaxLines(Number(event.target.value));
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 export {
 	DiffViewCanvas,
 	DiffViewKnobs,
 	LinearDeployCanvas,
 	LinearDeployKnobs,
+	LogViewerCanvas,
+	LogViewerDemoProvider,
+	LogViewerKnobs,
 	MultiNodeCanvas,
 	MultiNodeKnobs,
 	PlanSummaryCanvas,

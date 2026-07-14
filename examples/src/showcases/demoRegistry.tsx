@@ -14,21 +14,15 @@ import {
 	CodeBlockCanvas,
 	CodeBlockDemoProvider,
 	CodeBlockKnobs,
+	DataTableCanvas,
+	DataTableDemoProvider,
+	DataTableKnobs,
 	DescriptionListCanvas,
 	DescriptionListDemoProvider,
 	DescriptionListKnobs,
-	EmptyTableCanvas,
-	EmptyTableDemoProvider,
-	EmptyTableKnobs,
-	LivePatchCanvas,
-	LivePatchDemoProvider,
-	LivePatchKnobs,
 	PaginationCanvas,
 	PaginationDemoProvider,
 	PaginationKnobs,
-	ServerPageCanvas,
-	ServerPageDemoProvider,
-	ServerPageKnobs,
 	StatDisplayCanvas,
 	StatDisplayDemoProvider,
 	StatDisplayKnobs,
@@ -122,12 +116,15 @@ import {
 	ToolbarSelectKnobs,
 } from "./shellDemos.js";
 import {
-	LinearDeployCanvas,
-	LinearDeployKnobs,
-	MultiNodeCanvas,
-	MultiNodeKnobs,
 	DiffViewCanvas,
 	DiffViewKnobs,
+	LinearDeployCanvas,
+	LinearDeployKnobs,
+	LogViewerCanvas,
+	LogViewerDemoProvider,
+	LogViewerKnobs,
+	MultiNodeCanvas,
+	MultiNodeKnobs,
 	PlanSummaryCanvas,
 	PlanSummaryKnobs,
 } from "./workflowDemos.js";
@@ -321,28 +318,23 @@ const WORKFLOW: Record<string, DemoEntry> = {
 		Canvas: PlanSummaryCanvas,
 		Knobs: PlanSummaryKnobs,
 	},
+	"log-viewer": {
+		Provider: LogViewerDemoProvider,
+		Canvas: LogViewerCanvas,
+		Knobs: LogViewerKnobs,
+	},
 };
 
 const DATA: Record<string, DemoEntry> = {
-	"server-page": {
-		Provider: ServerPageDemoProvider,
-		Canvas: ServerPageCanvas,
-		Knobs: ServerPageKnobs,
-	},
-	"live-patch": {
-		Provider: LivePatchDemoProvider,
-		Canvas: LivePatchCanvas,
-		Knobs: LivePatchKnobs,
+	"data-table": {
+		Provider: DataTableDemoProvider,
+		Canvas: DataTableCanvas,
+		Knobs: DataTableKnobs,
 	},
 	pagination: {
 		Provider: PaginationDemoProvider,
 		Canvas: PaginationCanvas,
 		Knobs: PaginationKnobs,
-	},
-	empty: {
-		Provider: EmptyTableDemoProvider,
-		Canvas: EmptyTableCanvas,
-		Knobs: EmptyTableKnobs,
 	},
 	"description-list": {
 		Provider: DescriptionListDemoProvider,
@@ -430,7 +422,7 @@ function getDemo(category: CategoryId, component: string): DemoEntry {
 			return entry;
 		}
 
-		return DATA["server-page"];
+		return DATA["data-table"];
 	}
 
 	const _exhaustive: never = category;

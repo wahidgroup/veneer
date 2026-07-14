@@ -108,6 +108,12 @@ export type {
 	LoadingProps,
 	LoadingVariant,
 } from "./components/feedback/Loading.js";
+export { LogViewer } from "./components/data/LogViewer.js";
+export type {
+	LogViewerLevel,
+	LogViewerLine,
+	LogViewerProps,
+} from "./components/data/LogViewer.js";
 export { Modal } from "./components/overlays/Modal.js";
 export type { ModalProps } from "./components/overlays/Modal.js";
 export { NumberInput } from "./components/forms/NumberInput.js";

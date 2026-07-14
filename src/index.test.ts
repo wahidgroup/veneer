@@ -50,6 +50,7 @@ const EXPECTED_EXPORTS = new Set([
 	"Label",
 	"Loading",
 	"loadingVariants",
+	"LogViewer",
 	"Modal",
 	"NumberInput",
 	"Pagination",

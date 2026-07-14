@@ -279,6 +279,12 @@ const CATALOG: CatalogCategory[] = [
 				description:
 					"Create/update/destroy/replace counts with kind filters over DiffView tree.",
 			},
+			{
+				id: "log-viewer",
+				label: "LogViewer",
+				description:
+					"Live-tail panel: follow/pause, level chips, text + time filters, copy.",
+			},
 		],
 	},
 	{
@@ -286,28 +292,16 @@ const CATALOG: CatalogCategory[] = [
 		label: "Data",
 		components: [
 			{
-				id: "server-page",
-				label: "Server page",
+				id: "data-table",
+				label: "DataTable",
 				description:
-					"Server-driven paging, sort, search, and column filters. Mock API returns one page plus rowCount.",
-			},
-			{
-				id: "live-patch",
-				label: "Live patch",
-				description:
-					"applyRowTransaction / useDataTableRows patch the current result set by stable row id.",
+					"Paging, sort, search, filters; optional live rows and empty slot.",
 			},
 			{
 				id: "pagination",
 				label: "Pagination",
 				description:
 					"Standalone Prev/Next chrome with optional item range. DataTable reuses the same control.",
-			},
-			{
-				id: "empty",
-				label: "Empty table",
-				description:
-					"DataTable empty slot with EmptyState size sm and a create CTA.",
 			},
 			{
 				id: "description-list",
