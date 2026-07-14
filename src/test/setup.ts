@@ -17,6 +17,6 @@ Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
 const getComputedStyle = window.getComputedStyle.bind(window);
 window.getComputedStyle = ((element: Element) => {
 	return getComputedStyle(element);
-}) as typeof window.getComputedStyle;
+});
 
 afterEach(cleanup);
