@@ -103,6 +103,17 @@ describe("CodeBlock", () => {
 		expect(screen.getByText("beta")).toBeInTheDocument();
 	});
 
+	it("applies tabSize to the pre via CSS tab-size", () => {
+		const { container } = render(
+			<CodeBlock code={"a\tb"} tabSize={4} showCopy={false} />,
+		);
+		const root = container.querySelector("[data-slot='code-block']");
+		expect(root).toHaveAttribute("data-tab-size", "4");
+		expect(
+			container.querySelector("[data-slot='code-block-pre']"),
+		).toHaveStyle({ tabSize: "4" });
+	});
+
 	it("applies aria-label to the pre region", () => {
 		const { container } = render(
 			<CodeBlock

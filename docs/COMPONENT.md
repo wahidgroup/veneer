@@ -26,7 +26,7 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `CopyButton`      | [`forms/CopyButton.tsx`](../src/components/forms/CopyButton.tsx)                 | Copy ARNs / IDs                                        |
 | `StatusBadge`     | [`indicators/StatusBadge.tsx`](../src/components/indicators/StatusBadge.tsx)     | Inventory status chips                                 |
 | `ChipGroup`       | [`navigation/ChipGroup.tsx`](../src/components/navigation/ChipGroup.tsx)         | Multi-select filter chips (`aria-pressed`)             |
-| `CodeBlock`       | [`data/CodeBlock.tsx`](../src/components/data/CodeBlock.tsx)                     | Plain read-only code + CopyButton (+ line #)           |
+| `CodeBlock`       | [`data/CodeBlock.tsx`](../src/components/data/CodeBlock.tsx)                     | Plain read-only code + CopyButton (+ line #, tabSize)  |
 | `DescriptionList` | [`data/DescriptionList.tsx`](../src/components/data/DescriptionList.tsx)         | Resource key/value pairs                               |
 | `StatDisplay`     | [`data/StatDisplay.tsx`](../src/components/data/StatDisplay.tsx)                 | Metric tile on Card (tone + text)                      |
 | `Skeleton`        | [`feedback/Skeleton.tsx`](../src/components/feedback/Skeleton.tsx)               | Placeholder bones                                      |

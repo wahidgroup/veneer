@@ -1,5 +1,13 @@
-import { useEffect, useMemo, useState } from "react";
+import {
+	createContext,
+	useContext,
+	useEffect,
+	useMemo,
+	useState,
+	type ReactNode,
+} from "react";
 
+import type { StatDisplayTone } from "@wahidgroup/veneer";
 import type {
 	DataTableColumn,
 	DataTableQuery,
@@ -13,8 +21,10 @@ import {
 	DescriptionList,
 	EmptyState,
 	Pagination,
+	Select,
 	StatDisplay,
 	StatusBadge,
+	Toggle,
 } from "@wahidgroup/veneer";
 import {
 	DataTable,
@@ -181,10 +191,43 @@ function queryInventory(
 	};
 }
 
+interface ServerPageDemoValue {
+	pageSize: number;
+	setPageSize: (value: number) => void;
+}
+
+const ServerPageDemoContext = createContext<ServerPageDemoValue | null>(null);
+
+function useServerPageDemo() {
+	const value = useContext(ServerPageDemoContext);
+	if (value === null) {
+		throw new Error("ServerPageDemoProvider required");
+	}
+
+	return value;
+}
+
+function ServerPageDemoProvider({ children }: { children: ReactNode }) {
+	const [pageSize, setPageSize] = useState(25);
+
+	return (
+		<ServerPageDemoContext.Provider value={{ pageSize, setPageSize }}>
+			{children}
+		</ServerPageDemoContext.Provider>
+	);
+}
+
+const SERVER_PAGE_SIZE_OPTIONS = [
+	{ value: "10", label: "10" },
+	{ value: "25", label: "25" },
+	{ value: "50", label: "50" },
+];
+
 function ServerPageCanvas() {
+	const demo = useServerPageDemo();
 	const [query, setQuery] = useState<DataTableQuery>({
 		pageIndex: 0,
-		pageSize: 25,
+		pageSize: demo.pageSize,
 		sorting: [],
 		columnFilters: [],
 		globalFilter: "",
@@ -193,6 +236,16 @@ function ServerPageCanvas() {
 	const [page, setPage] = useState(() => {
 		return queryInventory(ALL_ROWS, query);
 	});
+
+	useEffect(() => {
+		setQuery((prev) => {
+			if (prev.pageSize === demo.pageSize) {
+				return prev;
+			}
+
+			return { ...prev, pageSize: demo.pageSize, pageIndex: 0 };
+		});
+	}, [demo.pageSize]);
 
 	useEffect(() => {
 		setLoading(true);
@@ -223,30 +276,80 @@ function ServerPageCanvas() {
 }
 
 function ServerPageKnobs() {
+	const demo = useServerPageDemo();
+
 	return (
 		<RailPanel
 			title="Server page"
 			description="Mock API slices, sorts, and filters in memory. DataTable only receives the current page plus rowCount."
 		>
 			<DemoRow
-				label="Model"
-				description="manualPagination / sorting / filtering default on. Change page, sort, or filters and watch the query drive a refetch."
+				label="Page size"
+				description="Resets to page 0 when changed. 87 source rows."
 			>
-				<span className="text-sm text-muted-foreground">
-					87 source rows · page size capped at 100
-				</span>
+				<Select
+					id="server-page-size"
+					options={SERVER_PAGE_SIZE_OPTIONS}
+					value={String(demo.pageSize)}
+					aria-label="Page size"
+					onChange={(event) => {
+						demo.setPageSize(Number(event.target.value));
+					}}
+				/>
 			</DemoRow>
 		</RailPanel>
 	);
 }
 
+interface LivePatchDemoValue {
+	autoPatch: boolean;
+	setAutoPatch: (value: boolean) => void;
+	intervalMs: number;
+	setIntervalMs: (value: number) => void;
+}
+
+const LivePatchDemoContext = createContext<LivePatchDemoValue | null>(null);
+
+function useLivePatchDemo() {
+	const value = useContext(LivePatchDemoContext);
+	if (value === null) {
+		throw new Error("LivePatchDemoProvider required");
+	}
+
+	return value;
+}
+
+function LivePatchDemoProvider({ children }: { children: ReactNode }) {
+	const [autoPatch, setAutoPatch] = useState(true);
+	const [intervalMs, setIntervalMs] = useState(1500);
+
+	return (
+		<LivePatchDemoContext.Provider
+			value={{ autoPatch, setAutoPatch, intervalMs, setIntervalMs }}
+		>
+			{children}
+		</LivePatchDemoContext.Provider>
+	);
+}
+
+const LIVE_PATCH_INTERVAL_OPTIONS = [
+	{ value: "500", label: "500 ms" },
+	{ value: "1500", label: "1.5 s" },
+	{ value: "3000", label: "3 s" },
+];
+
 function LivePatchCanvas() {
+	const demo = useLivePatchDemo();
 	const initial = useMemo(() => {
 		return ALL_ROWS.slice(0, 8);
 	}, []);
 	const { rows, apply, setRows } = useDataTableRows(initial, getRowId);
 
 	useEffect(() => {
+		if (!demo.autoPatch) {
+			return;
+		}
+
 		let step = 0;
 		const timer = window.setInterval(() => {
 			setRows((prev) => {
@@ -273,11 +376,11 @@ function LivePatchCanvas() {
 					getRowId,
 				);
 			});
-		}, 1500);
+		}, demo.intervalMs);
 		return () => {
 			window.clearInterval(timer);
 		};
-	}, [setRows]);
+	}, [demo.autoPatch, demo.intervalMs, setRows]);
 
 	return (
 		<Canvas>
@@ -332,30 +435,101 @@ function LivePatchCanvas() {
 }
 
 function LivePatchKnobs() {
+	const demo = useLivePatchDemo();
+
 	return (
 		<RailPanel
 			title="Live patch"
 			description="useDataTableRows + applyRowTransaction patch the current result set. Selection stays stable when ids do."
 		>
-			<DemoRow label="Stream">
-				<span className="text-sm text-muted-foreground">
-					CPU ticks every 1.5s on a rotating row
-				</span>
+			<DemoRow
+				label="Auto patch"
+				description="Rotate CPU updates on a timer."
+			>
+				<Toggle
+					label="Auto patch"
+					checked={demo.autoPatch}
+					onCheckedChange={demo.setAutoPatch}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Interval"
+				description="Tick rate when auto patch is on."
+			>
+				<Select
+					id="live-patch-interval"
+					options={LIVE_PATCH_INTERVAL_OPTIONS}
+					value={String(demo.intervalMs)}
+					aria-label="Patch interval"
+					disabled={!demo.autoPatch}
+					onChange={(event) => {
+						demo.setIntervalMs(Number(event.target.value));
+					}}
+				/>
 			</DemoRow>
 		</RailPanel>
 	);
 }
 
-const PAGE_SIZE = 5;
 const PAGE_ITEMS = ALL_ROWS.map((row) => {
 	return row.name;
 });
 
+interface PaginationDemoValue {
+	pageSize: number;
+	setPageSize: (value: number) => void;
+	showRange: boolean;
+	setShowRange: (value: boolean) => void;
+}
+
+const PaginationDemoContext = createContext<PaginationDemoValue | null>(null);
+
+function usePaginationDemo() {
+	const value = useContext(PaginationDemoContext);
+	if (value === null) {
+		throw new Error("PaginationDemoProvider required");
+	}
+
+	return value;
+}
+
+function PaginationDemoProvider({ children }: { children: ReactNode }) {
+	const [pageSize, setPageSize] = useState(5);
+	const [showRange, setShowRange] = useState(true);
+
+	return (
+		<PaginationDemoContext.Provider
+			value={{ pageSize, setPageSize, showRange, setShowRange }}
+		>
+			{children}
+		</PaginationDemoContext.Provider>
+	);
+}
+
+const PAGINATION_PAGE_SIZE_OPTIONS = [
+	{ value: "5", label: "5" },
+	{ value: "10", label: "10" },
+	{ value: "25", label: "25" },
+];
+
 function PaginationCanvas() {
+	const demo = usePaginationDemo();
 	const [pageIndex, setPageIndex] = useState(0);
-	const pageCount = Math.max(1, Math.ceil(PAGE_ITEMS.length / PAGE_SIZE));
-	const start = pageIndex * PAGE_SIZE;
-	const visible = PAGE_ITEMS.slice(start, start + PAGE_SIZE);
+	const pageCount = Math.max(1, Math.ceil(PAGE_ITEMS.length / demo.pageSize));
+
+	useEffect(() => {
+		setPageIndex(0);
+	}, [demo.pageSize]);
+
+	const start = pageIndex * demo.pageSize;
+	const visible = PAGE_ITEMS.slice(start, start + demo.pageSize);
+
+	let pageSizeProp: number | undefined;
+	let itemCountProp: number | undefined;
+	if (demo.showRange) {
+		pageSizeProp = demo.pageSize;
+		itemCountProp = PAGE_ITEMS.length;
+	}
 
 	return (
 		<Canvas>
@@ -367,8 +541,8 @@ function PaginationCanvas() {
 			<Pagination
 				pageIndex={pageIndex}
 				pageCount={pageCount}
-				pageSize={PAGE_SIZE}
-				itemCount={PAGE_ITEMS.length}
+				pageSize={pageSizeProp}
+				itemCount={itemCountProp}
 				aria-label="Inventory"
 				onPageChange={setPageIndex}
 			/>
@@ -377,22 +551,89 @@ function PaginationCanvas() {
 }
 
 function PaginationKnobs() {
+	const demo = usePaginationDemo();
+
 	return (
 		<RailPanel
 			title="Pagination"
-			description="Controlled Prev/Next with optional item range. DataTable footer uses the same component; page size stays in the table toolbar."
+			description="Controlled Prev/Next with optional item range. DataTable footer uses the same component."
 		>
-			<DemoRow label="Props">
-				<span className="text-sm text-muted-foreground">
-					pageIndex (0-based) · pageCount · itemCount + pageSize for
-					range
-				</span>
+			<DemoRow
+				label="Page size"
+				description="Items per page in the list."
+			>
+				<Select
+					id="pagination-page-size"
+					options={PAGINATION_PAGE_SIZE_OPTIONS}
+					value={String(demo.pageSize)}
+					aria-label="Pagination page size"
+					onChange={(event) => {
+						demo.setPageSize(Number(event.target.value));
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Range"
+				description="Pass itemCount + pageSize to show the item range label."
+			>
+				<Toggle
+					label="Show range"
+					checked={demo.showRange}
+					onCheckedChange={demo.setShowRange}
+				/>
 			</DemoRow>
 		</RailPanel>
 	);
 }
 
+interface EmptyTableDemoValue {
+	emptySize: "sm" | "md";
+	setEmptySize: (value: "sm" | "md") => void;
+	showAction: boolean;
+	setShowAction: (value: boolean) => void;
+}
+
+const EmptyTableDemoContext = createContext<EmptyTableDemoValue | null>(null);
+
+function useEmptyTableDemo() {
+	const value = useContext(EmptyTableDemoContext);
+	if (value === null) {
+		throw new Error("EmptyTableDemoProvider required");
+	}
+
+	return value;
+}
+
+function EmptyTableDemoProvider({ children }: { children: ReactNode }) {
+	const [emptySize, setEmptySize] = useState<"sm" | "md">("sm");
+	const [showAction, setShowAction] = useState(true);
+
+	return (
+		<EmptyTableDemoContext.Provider
+			value={{ emptySize, setEmptySize, showAction, setShowAction }}
+		>
+			{children}
+		</EmptyTableDemoContext.Provider>
+	);
+}
+
+const EMPTY_SIZE_OPTIONS = [
+	{ value: "sm", label: "Small" },
+	{ value: "md", label: "Medium" },
+];
+
 function EmptyTableCanvas() {
+	const demo = useEmptyTableDemo();
+
+	let action: ReactNode = undefined;
+	if (demo.showAction) {
+		action = (
+			<Button type="button" size="sm">
+				Create stack
+			</Button>
+		);
+	}
+
 	return (
 		<Canvas>
 			<DataTable
@@ -403,13 +644,9 @@ function EmptyTableCanvas() {
 				defaultQuery={{ pageSize: 10 }}
 				empty={
 					<EmptyState
-						size="sm"
+						size={demo.emptySize}
 						title="No stacks"
-						action={
-							<Button type="button" size="sm">
-								Create stack
-							</Button>
-						}
+						action={action}
 					>
 						Create a stack to populate this inventory.
 					</EmptyState>
@@ -420,25 +657,80 @@ function EmptyTableCanvas() {
 }
 
 function EmptyTableKnobs() {
+	const demo = useEmptyTableDemo();
+
 	return (
 		<RailPanel
 			title="Empty table"
-			description="Pass EmptyState size sm through DataTable empty. Loading still owns in-flight waits."
+			description="Pass EmptyState through DataTable empty. Loading still owns in-flight waits."
 		>
-			<DemoRow label="Contract">
-				<span className="text-sm text-muted-foreground">
-					empty ReactNode · default remains plain No results text
-				</span>
+			<DemoRow
+				label="Size"
+				description="EmptyState size inside the table."
+			>
+				<Select
+					id="empty-size"
+					options={EMPTY_SIZE_OPTIONS}
+					value={demo.emptySize}
+					aria-label="Empty state size"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (next === "sm" || next === "md") {
+							demo.setEmptySize(next);
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow label="Action" description="Show the create CTA slot.">
+				<Toggle
+					label="Show action"
+					checked={demo.showAction}
+					onCheckedChange={demo.setShowAction}
+				/>
 			</DemoRow>
 		</RailPanel>
 	);
 }
 
+interface DescriptionListDemoValue {
+	columns: 1 | 2;
+	setColumns: (value: 1 | 2) => void;
+}
+
+const DescriptionListDemoContext =
+	createContext<DescriptionListDemoValue | null>(null);
+
+function useDescriptionListDemo() {
+	const value = useContext(DescriptionListDemoContext);
+	if (value === null) {
+		throw new Error("DescriptionListDemoProvider required");
+	}
+
+	return value;
+}
+
+function DescriptionListDemoProvider({ children }: { children: ReactNode }) {
+	const [columns, setColumns] = useState<1 | 2>(2);
+
+	return (
+		<DescriptionListDemoContext.Provider value={{ columns, setColumns }}>
+			{children}
+		</DescriptionListDemoContext.Provider>
+	);
+}
+
+const DESCRIPTION_COLUMNS_OPTIONS = [
+	{ value: "1", label: "1 column" },
+	{ value: "2", label: "2 columns" },
+];
+
 function DescriptionListCanvas() {
+	const demo = useDescriptionListDemo();
+
 	return (
 		<Canvas>
 			<DescriptionList
-				columns={2}
+				columns={demo.columns}
 				className="w-full max-w-2xl"
 				items={[
 					{ term: "Name", description: "prod-api" },
@@ -467,111 +759,432 @@ function DescriptionListCanvas() {
 }
 
 function DescriptionListKnobs() {
+	const demo = useDescriptionListDemo();
+
 	return (
 		<RailPanel
 			title="DescriptionList"
 			description="dl/dt/dd resource attributes. Compose CopyButton and StatusBadge in descriptions."
-		/>
+		>
+			<DemoRow label="Columns" description="Grid columns for the list.">
+				<Select
+					id="description-columns"
+					options={DESCRIPTION_COLUMNS_OPTIONS}
+					value={String(demo.columns)}
+					aria-label="Description list columns"
+					onChange={(event) => {
+						if (event.target.value === "2") {
+							demo.setColumns(2);
+							return;
+						}
+						demo.setColumns(1);
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
 	);
 }
 
+interface StatDisplayDemoValue {
+	tone: StatDisplayTone;
+	setTone: (value: StatDisplayTone) => void;
+	showBadge: boolean;
+	setShowBadge: (value: boolean) => void;
+	showHint: boolean;
+	setShowHint: (value: boolean) => void;
+}
+
+const StatDisplayDemoContext = createContext<StatDisplayDemoValue | null>(null);
+
+function useStatDisplayDemo() {
+	const value = useContext(StatDisplayDemoContext);
+	if (value === null) {
+		throw new Error("StatDisplayDemoProvider required");
+	}
+
+	return value;
+}
+
+function StatDisplayDemoProvider({ children }: { children: ReactNode }) {
+	const [tone, setTone] = useState<StatDisplayTone>("success");
+	const [showBadge, setShowBadge] = useState(true);
+	const [showHint, setShowHint] = useState(false);
+
+	return (
+		<StatDisplayDemoContext.Provider
+			value={{
+				tone,
+				setTone,
+				showBadge,
+				setShowBadge,
+				showHint,
+				setShowHint,
+			}}
+		>
+			{children}
+		</StatDisplayDemoContext.Provider>
+	);
+}
+
+const STAT_TONE_OPTIONS = [
+	{ value: "default", label: "Default" },
+	{ value: "success", label: "Success" },
+	{ value: "warning", label: "Warning" },
+	{ value: "danger", label: "Danger" },
+];
+
 function StatDisplayCanvas() {
+	const demo = useStatDisplayDemo();
+
+	let badge: ReactNode = undefined;
+	if (demo.showBadge) {
+		let badgeVariant: "success" | "warning" | "danger" | "default" =
+			"default";
+		if (demo.tone === "success") {
+			badgeVariant = "success";
+		} else if (demo.tone === "warning") {
+			badgeVariant = "warning";
+		} else if (demo.tone === "danger") {
+			badgeVariant = "danger";
+		}
+		badge = <Badge variant={badgeVariant}>+12%</Badge>;
+	}
+
+	let hint: ReactNode = undefined;
+	if (demo.showHint) {
+		hint = "Across all regions";
+	}
+
 	return (
 		<Canvas>
-			<div className="grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-				<StatDisplay
-					label="Active stacks"
-					value="42"
-					hint="Across all regions"
-				/>
-				<StatDisplay
-					label="Deployments (24h)"
-					value="128"
-					tone="success"
-					badge={<Badge variant="success">+12%</Badge>}
-				/>
-				<StatDisplay
-					label="Drifted resources"
-					value="7"
-					tone="warning"
-					hint="Needs review"
-				/>
-				<StatDisplay
-					label="Failed runs"
-					value="3"
-					tone="danger"
-					badge={<Badge variant="danger">-2</Badge>}
-				/>
-			</div>
+			<DemoRow label="Playground">
+				<div className="w-full max-w-xs">
+					<StatDisplay
+						label="Deployments (24h)"
+						value="128"
+						tone={demo.tone}
+						badge={badge}
+						hint={hint}
+					/>
+				</div>
+			</DemoRow>
+			<DemoRow label="Tone reference">
+				<div className="grid w-full max-w-3xl gap-3 sm:grid-cols-2">
+					<StatDisplay
+						label="Active stacks"
+						value="42"
+						hint="Across all regions"
+					/>
+					<StatDisplay
+						label="Deployments (24h)"
+						value="128"
+						tone="success"
+						badge={<Badge variant="success">+12%</Badge>}
+					/>
+					<StatDisplay
+						label="Drifted resources"
+						value="7"
+						tone="warning"
+						hint="Needs review"
+					/>
+					<StatDisplay
+						label="Failed runs"
+						value="3"
+						tone="danger"
+						badge={<Badge variant="danger">-2</Badge>}
+					/>
+				</div>
+			</DemoRow>
 		</Canvas>
 	);
 }
 
 function StatDisplayKnobs() {
+	const demo = useStatDisplayDemo();
+
 	return (
 		<RailPanel
 			title="StatDisplay"
 			description="Metric tiles on Card size sm. Tone styles value; pair with Badge or built-in caption (WCAG 1.4.1)."
-		/>
+		>
+			<DemoRow label="Tone" description="Playground tile tone.">
+				<Select
+					id="stat-tone"
+					options={STAT_TONE_OPTIONS}
+					value={demo.tone}
+					aria-label="Stat tone"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (
+							next === "default" ||
+							next === "success" ||
+							next === "warning" ||
+							next === "danger"
+						) {
+							demo.setTone(next);
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Badge"
+				description="Compose a Badge in the badge slot."
+			>
+				<Toggle
+					label="Show badge"
+					checked={demo.showBadge}
+					onCheckedChange={demo.setShowBadge}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Hint"
+				description="Supporting hint under the value."
+			>
+				<Toggle
+					label="Show hint"
+					checked={demo.showHint}
+					onCheckedChange={demo.setShowHint}
+				/>
+			</DemoRow>
+		</RailPanel>
 	);
 }
 
-const SAMPLE_HCL = `resource "aws_s3_bucket" "logs" {
-  bucket = "prod-api-logs"
-  tags = {
-    Environment = "prod"
-  }
-}`;
+const SAMPLE_HCL = `resource "aws_s3_bucket" "logs" {\n\tbucket = "prod-api-logs"\n\ttags = {\n\t\tEnvironment = "prod"\n\t}\n}`;
+
+const SAMPLE_BASH = "echo deploy\n\t./scripts/rollout.sh";
+
+const SAMPLE_JSON = `{\n\t"stack": "prod-api",\n\t"region": "us-east-1"\n}`;
+
+type CodeBlockLanguage = "hcl" | "bash" | "json" | "none";
+
+interface CodeBlockDemoValue {
+	language: CodeBlockLanguage;
+	setLanguage: (value: CodeBlockLanguage) => void;
+	showCopy: boolean;
+	setShowCopy: (value: boolean) => void;
+	showLineNumbers: boolean;
+	setShowLineNumbers: (value: boolean) => void;
+	tabSize: number;
+	setTabSize: (value: number) => void;
+}
+
+const CodeBlockDemoContext = createContext<CodeBlockDemoValue | null>(null);
+
+function useCodeBlockDemo() {
+	const value = useContext(CodeBlockDemoContext);
+	if (value === null) {
+		throw new Error("CodeBlockDemoProvider required");
+	}
+
+	return value;
+}
+
+function CodeBlockDemoProvider({ children }: { children: ReactNode }) {
+	const [language, setLanguage] = useState<CodeBlockLanguage>("hcl");
+	const [showCopy, setShowCopy] = useState(true);
+	const [showLineNumbers, setShowLineNumbers] = useState(true);
+	const [tabSize, setTabSize] = useState(2);
+
+	return (
+		<CodeBlockDemoContext.Provider
+			value={{
+				language,
+				setLanguage,
+				showCopy,
+				setShowCopy,
+				showLineNumbers,
+				setShowLineNumbers,
+				tabSize,
+				setTabSize,
+			}}
+		>
+			{children}
+		</CodeBlockDemoContext.Provider>
+	);
+}
+
+const CODE_LANGUAGE_OPTIONS = [
+	{ value: "hcl", label: "hcl" },
+	{ value: "bash", label: "bash" },
+	{ value: "json", label: "json" },
+	{ value: "none", label: "(none)" },
+];
+
+const CODE_TAB_SIZE_OPTIONS = [
+	{ value: "2", label: "2" },
+	{ value: "4", label: "4" },
+	{ value: "8", label: "8" },
+];
 
 function CodeBlockCanvas() {
+	const demo = useCodeBlockDemo();
+
+	let code = SAMPLE_HCL;
+	if (demo.language === "bash") {
+		code = SAMPLE_BASH;
+	} else if (demo.language === "json") {
+		code = SAMPLE_JSON;
+	} else if (demo.language === "none") {
+		code = SAMPLE_HCL;
+	}
+
+	let language: string | undefined;
+	if (demo.language !== "none") {
+		language = demo.language;
+	}
+
 	return (
 		<Canvas>
-			<div className="flex w-full max-w-2xl flex-col gap-4">
+			<div className="w-full max-w-2xl">
 				<CodeBlock
-					language="hcl"
-					code={SAMPLE_HCL}
-					showLineNumbers
-					aria-label="S3 bucket resource"
+					language={language}
+					code={code}
+					showCopy={demo.showCopy}
+					showLineNumbers={demo.showLineNumbers}
+					tabSize={demo.tabSize}
+					aria-label="Code sample"
 				/>
-				<DemoRow label="Copy hidden">
-					<CodeBlock
-						code="echo deploy"
-						language="bash"
-						showCopy={false}
-						className="w-full"
-					/>
-				</DemoRow>
 			</div>
 		</Canvas>
 	);
 }
 
 function CodeBlockKnobs() {
+	const demo = useCodeBlockDemo();
+
 	return (
 		<RailPanel
 			title="CodeBlock"
-			description="Plain pre/code chrome. language is a toolbar label only; CopyButton when showCopy; optional showLineNumbers."
-		/>
+			description="Plain pre/code chrome. language is a toolbar label only; CopyButton when showCopy; optional showLineNumbers; tabSize is CSS tab-size."
+		>
+			<DemoRow
+				label="Language"
+				description="Toolbar label; picks sample code."
+			>
+				<Select
+					id="code-language"
+					options={CODE_LANGUAGE_OPTIONS}
+					value={demo.language}
+					aria-label="Code language"
+					onChange={(event) => {
+						const next = event.target.value;
+						if (
+							next === "hcl" ||
+							next === "bash" ||
+							next === "json" ||
+							next === "none"
+						) {
+							demo.setLanguage(next);
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow label="Copy" description="Show CopyButton in the toolbar.">
+				<Toggle
+					label="Show copy"
+					checked={demo.showCopy}
+					onCheckedChange={demo.setShowCopy}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Line numbers"
+				description="Aria-hidden gutter beside each line."
+			>
+				<Toggle
+					label="Show line numbers"
+					checked={demo.showLineNumbers}
+					onCheckedChange={demo.setShowLineNumbers}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Tab size"
+				description="CSS tab-size for literal tab characters in the sample."
+			>
+				<Select
+					id="code-tab-size"
+					options={CODE_TAB_SIZE_OPTIONS}
+					value={String(demo.tabSize)}
+					aria-label="Tab size"
+					onChange={(event) => {
+						demo.setTabSize(Number(event.target.value));
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+interface ChipGroupDemoValue {
+	showClearAll: boolean;
+	setShowClearAll: (value: boolean) => void;
+	dismissible: boolean;
+	setDismissible: (value: boolean) => void;
+}
+
+const ChipGroupDemoContext = createContext<ChipGroupDemoValue | null>(null);
+
+function useChipGroupDemo() {
+	const value = useContext(ChipGroupDemoContext);
+	if (value === null) {
+		throw new Error("ChipGroupDemoProvider required");
+	}
+
+	return value;
+}
+
+function ChipGroupDemoProvider({ children }: { children: ReactNode }) {
+	const [showClearAll, setShowClearAll] = useState(true);
+	const [dismissible, setDismissible] = useState(true);
+
+	return (
+		<ChipGroupDemoContext.Provider
+			value={{
+				showClearAll,
+				setShowClearAll,
+				dismissible,
+				setDismissible,
+			}}
+		>
+			{children}
+		</ChipGroupDemoContext.Provider>
 	);
 }
 
 function ChipGroupCanvas() {
+	const demo = useChipGroupDemo();
 	const [items, setItems] = useState([
 		{ id: "us-east-1", label: "us-east-1", pressed: true },
 		{ id: "eu-west-1", label: "eu-west-1", pressed: false },
-		{
-			id: "ap-south-1",
-			label: "ap-south-1",
-			pressed: true,
-			dismissible: true,
-		},
-		{
-			id: "sa-east-1",
-			label: "sa-east-1",
-			pressed: false,
-			dismissible: true,
-		},
+		{ id: "ap-south-1", label: "ap-south-1", pressed: true },
+		{ id: "sa-east-1", label: "sa-east-1", pressed: false },
 	]);
+
+	const chipItems = items.map((item) => {
+		return { ...item, dismissible: demo.dismissible };
+	});
+
+	let onClearAll: (() => void) | undefined;
+	if (demo.showClearAll) {
+		onClearAll = () => {
+			setItems((prev) => {
+				return prev.map((item) => {
+					return { ...item, pressed: false };
+				});
+			});
+		};
+	}
+
+	let onDismiss: ((id: string) => void) | undefined;
+	if (demo.dismissible) {
+		onDismiss = (id) => {
+			setItems((prev) => {
+				return prev.filter((item) => {
+					return item.id !== id;
+				});
+			});
+		};
+	}
 
 	return (
 		<Canvas>
@@ -582,7 +1195,7 @@ function ChipGroupCanvas() {
 				</p>
 				<ChipGroup
 					aria-label="Region filters"
-					items={items}
+					items={chipItems}
 					onPressedChange={(id, pressed) => {
 						setItems((prev) => {
 							return prev.map((item) => {
@@ -594,20 +1207,8 @@ function ChipGroupCanvas() {
 							});
 						});
 					}}
-					onDismiss={(id) => {
-						setItems((prev) => {
-							return prev.filter((item) => {
-								return item.id !== id;
-							});
-						});
-					}}
-					onClearAll={() => {
-						setItems((prev) => {
-							return prev.map((item) => {
-								return { ...item, pressed: false };
-							});
-						});
-					}}
+					onDismiss={onDismiss}
+					onClearAll={onClearAll}
 				/>
 			</div>
 		</Canvas>
@@ -615,30 +1216,61 @@ function ChipGroupCanvas() {
 }
 
 function ChipGroupKnobs() {
+	const demo = useChipGroupDemo();
+
 	return (
 		<RailPanel
 			title="ChipGroup"
 			description="Multi-select filter chips. aria-pressed toggles; optional dismiss and Clear all."
-		/>
+		>
+			<DemoRow
+				label="Clear all"
+				description="Show the Clear all control (clears pressed flags)."
+			>
+				<Toggle
+					label="Show clear all"
+					checked={demo.showClearAll}
+					onCheckedChange={demo.setShowClearAll}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Dismissible"
+				description="Mark all chips dismissible and wire onDismiss."
+			>
+				<Toggle
+					label="Dismissible"
+					checked={demo.dismissible}
+					onCheckedChange={demo.setDismissible}
+				/>
+			</DemoRow>
+		</RailPanel>
 	);
 }
 
 export type { InventoryRow };
 export {
+	ServerPageDemoProvider,
 	ServerPageCanvas,
 	ServerPageKnobs,
+	LivePatchDemoProvider,
 	LivePatchCanvas,
 	LivePatchKnobs,
+	PaginationDemoProvider,
 	PaginationCanvas,
 	PaginationKnobs,
+	EmptyTableDemoProvider,
 	EmptyTableCanvas,
 	EmptyTableKnobs,
+	DescriptionListDemoProvider,
 	DescriptionListCanvas,
 	DescriptionListKnobs,
+	StatDisplayDemoProvider,
 	StatDisplayCanvas,
 	StatDisplayKnobs,
+	CodeBlockDemoProvider,
 	CodeBlockCanvas,
 	CodeBlockKnobs,
+	ChipGroupDemoProvider,
 	ChipGroupCanvas,
 	ChipGroupKnobs,
 };

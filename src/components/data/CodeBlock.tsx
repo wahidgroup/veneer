@@ -8,18 +8,20 @@ interface CodeBlockProps extends Omit<ComponentProps<"div">, "children"> {
 	language?: string;
 	showCopy?: boolean;
 	showLineNumbers?: boolean;
+	tabSize?: number;
 }
 
 /**
  * Read-only plain-text code chrome. Toolbar may show a language label and
  * CopyButton. Optional line gutter is aria-hidden so SR hears code only.
- * No syntax highlighting in v1 (token spans need aria-hidden).
+ * `tabSize` maps to CSS tab-size on the pre. No syntax highlighting in v1.
  */
 function CodeBlock({
 	code,
 	language,
 	showCopy = true,
 	showLineNumbers = false,
+	tabSize = 2,
 	className,
 	"aria-label": ariaLabel,
 	...rest
@@ -99,6 +101,7 @@ function CodeBlock({
 		<div
 			data-slot="code-block"
 			data-line-numbers={lineNumbersAttr}
+			data-tab-size={String(tabSize)}
 			className={cn(
 				"overflow-hidden rounded-md border border-border bg-card text-card-foreground",
 				className,
@@ -110,6 +113,7 @@ function CodeBlock({
 				data-slot="code-block-pre"
 				aria-label={ariaLabel}
 				className="m-0 overflow-auto p-3 text-xs leading-relaxed"
+				style={{ tabSize }}
 			>
 				<code data-slot="code-block-code" className={codeClass}>
 					{codeBody}

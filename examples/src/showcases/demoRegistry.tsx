@@ -9,20 +9,28 @@ import {
 } from "./comboboxDemos.js";
 import {
 	ChipGroupCanvas,
+	ChipGroupDemoProvider,
 	ChipGroupKnobs,
 	CodeBlockCanvas,
+	CodeBlockDemoProvider,
 	CodeBlockKnobs,
 	DescriptionListCanvas,
+	DescriptionListDemoProvider,
 	DescriptionListKnobs,
 	EmptyTableCanvas,
+	EmptyTableDemoProvider,
 	EmptyTableKnobs,
 	LivePatchCanvas,
+	LivePatchDemoProvider,
 	LivePatchKnobs,
 	PaginationCanvas,
+	PaginationDemoProvider,
 	PaginationKnobs,
 	ServerPageCanvas,
+	ServerPageDemoProvider,
 	ServerPageKnobs,
 	StatDisplayCanvas,
+	StatDisplayDemoProvider,
 	StatDisplayKnobs,
 } from "./dataDemos.js";
 import {
@@ -311,42 +319,42 @@ const WORKFLOW: Record<string, DemoEntry> = {
 
 const DATA: Record<string, DemoEntry> = {
 	"server-page": {
-		Provider: PassthroughProvider,
+		Provider: ServerPageDemoProvider,
 		Canvas: ServerPageCanvas,
 		Knobs: ServerPageKnobs,
 	},
 	"live-patch": {
-		Provider: PassthroughProvider,
+		Provider: LivePatchDemoProvider,
 		Canvas: LivePatchCanvas,
 		Knobs: LivePatchKnobs,
 	},
 	pagination: {
-		Provider: PassthroughProvider,
+		Provider: PaginationDemoProvider,
 		Canvas: PaginationCanvas,
 		Knobs: PaginationKnobs,
 	},
 	empty: {
-		Provider: PassthroughProvider,
+		Provider: EmptyTableDemoProvider,
 		Canvas: EmptyTableCanvas,
 		Knobs: EmptyTableKnobs,
 	},
 	"description-list": {
-		Provider: PassthroughProvider,
+		Provider: DescriptionListDemoProvider,
 		Canvas: DescriptionListCanvas,
 		Knobs: DescriptionListKnobs,
 	},
 	"stat-display": {
-		Provider: PassthroughProvider,
+		Provider: StatDisplayDemoProvider,
 		Canvas: StatDisplayCanvas,
 		Knobs: StatDisplayKnobs,
 	},
 	"code-block": {
-		Provider: PassthroughProvider,
+		Provider: CodeBlockDemoProvider,
 		Canvas: CodeBlockCanvas,
 		Knobs: CodeBlockKnobs,
 	},
 	"chip-group": {
-		Provider: PassthroughProvider,
+		Provider: ChipGroupDemoProvider,
 		Canvas: ChipGroupCanvas,
 		Knobs: ChipGroupKnobs,
 	},
