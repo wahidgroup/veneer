@@ -1,4 +1,8 @@
-import { Canvas, RailPanel } from "./demoChrome.js";
+import { useState } from "react";
+
+import { ToolbarSelect, TopNav } from "@wahidgroup/veneer";
+
+import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
 
 function AppShellCanvas() {
 	return (
@@ -83,6 +87,76 @@ function BreadcrumbsKnobs() {
 	);
 }
 
+function ToolbarSelectCanvas() {
+	const [account, setAccount] = useState("acct-prod");
+	const [region, setRegion] = useState("us-east-1");
+
+	return (
+		<Canvas>
+			<DemoRow label="TopNav start compose">
+				<TopNav
+					brand={
+						<span className="text-sm font-semibold">console</span>
+					}
+					start={
+						<div className="flex items-center gap-1">
+							<ToolbarSelect
+								aria-label="Account"
+								value={account}
+								onChange={setAccount}
+								options={[
+									{
+										value: "acct-prod",
+										label: "Prod",
+										description: "111122223333",
+									},
+									{
+										value: "acct-stage",
+										label: "Staging",
+										description: "444455556666",
+									},
+								]}
+							/>
+							<ToolbarSelect
+								aria-label="Region"
+								value={region}
+								onChange={setRegion}
+								options={[
+									{
+										value: "us-east-1",
+										label: "N. Virginia",
+										description: "us-east-1",
+									},
+									{
+										value: "eu-west-1",
+										label: "Ireland",
+										description: "eu-west-1",
+									},
+									{
+										value: "ap-southeast-1",
+										label: "Singapore",
+										description: "ap-southeast-1",
+									},
+								]}
+							/>
+						</div>
+					}
+					className="w-full max-w-2xl rounded-md border border-border"
+				/>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function ToolbarSelectKnobs() {
+	return (
+		<RailPanel
+			title="ToolbarSelect"
+			description="Ghost chrome listbox. Compose two for account + region in TopNav start — not a domain AccountRegionSwitcher."
+		/>
+	);
+}
+
 export {
 	AppShellCanvas,
 	AppShellKnobs,
@@ -92,4 +166,6 @@ export {
 	SideNavKnobs,
 	TopNavCanvas,
 	TopNavKnobs,
+	ToolbarSelectCanvas,
+	ToolbarSelectKnobs,
 };

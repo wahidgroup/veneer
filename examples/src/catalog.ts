@@ -48,7 +48,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "loading",
 				label: "Loading",
 				description:
-					"Spinner or skeleton bones for busy page sections.",
+					"Spinner, stacked skeleton lines, and single-bone Skeleton shapes.",
 			},
 			{
 				id: "empty-state",
@@ -67,12 +67,6 @@ const CATALOG: CatalogCategory[] = [
 				label: "StatusBadge",
 				description:
 					"Running / Failed / Drifted chips mapped onto Badge tones.",
-			},
-			{
-				id: "skeleton",
-				label: "Skeleton",
-				description:
-					"Single placeholder bone. Compose for table/detail loading.",
 			},
 		],
 	},
@@ -218,6 +212,12 @@ const CATALOG: CatalogCategory[] = [
 				label: "Tabs",
 				description:
 					"Underline tablist + panels. Arrow keys move selection.",
+			},
+			{
+				id: "toolbar-select",
+				label: "ToolbarSelect",
+				description:
+					"Ghost chrome single-select for TopNav (account / region compose).",
 			},
 		],
 	},

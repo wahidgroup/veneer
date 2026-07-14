@@ -920,7 +920,7 @@ function LoadingCanvas() {
 				<Loading size="md" text="Deploying stack…" />
 				<Loading size="lg" aria-label="Loading large" />
 			</DemoRow>
-			<DemoRow label="Skeleton">
+			<DemoRow label="Skeleton lines">
 				<Loading variant="skeleton" size="sm" lines={2} />
 				<Loading
 					variant="skeleton"
@@ -928,6 +928,21 @@ function LoadingCanvas() {
 					lines={3}
 					className="w-full max-w-sm"
 				/>
+			</DemoRow>
+			<DemoRow label="Skeleton shapes">
+				<div className="flex w-full max-w-md flex-col gap-3">
+					<Skeleton shape="title" />
+					<Skeleton />
+					<Skeleton className="w-1/2" />
+					<div className="flex items-center gap-3">
+						<Skeleton shape="avatar" />
+						<div className="flex flex-1 flex-col gap-2">
+							<Skeleton />
+							<Skeleton className="w-2/3" />
+						</div>
+					</div>
+					<Skeleton shape="block" />
+				</div>
 			</DemoRow>
 		</Canvas>
 	);
@@ -939,7 +954,7 @@ function LoadingKnobs() {
 	return (
 		<RailPanel
 			title="Loading"
-			description="Spinner or skeleton bones for busy page sections."
+			description="Spinner, stacked skeleton lines, and single-bone Skeleton shapes for custom layouts."
 		>
 			<DemoRow
 				label="Variant"
@@ -1114,37 +1129,6 @@ function StatusBadgeKnobs() {
 		<RailPanel
 			title="StatusBadge"
 			description="Maps inventory statuses onto Badge tone variants."
-		/>
-	);
-}
-
-function SkeletonCanvas() {
-	return (
-		<Canvas>
-			<DemoRow label="Shapes">
-				<div className="flex w-full max-w-md flex-col gap-3">
-					<Skeleton shape="title" />
-					<Skeleton />
-					<Skeleton className="w-1/2" />
-					<div className="flex items-center gap-3">
-						<Skeleton shape="avatar" />
-						<div className="flex flex-1 flex-col gap-2">
-							<Skeleton />
-							<Skeleton className="w-2/3" />
-						</div>
-					</div>
-					<Skeleton shape="block" />
-				</div>
-			</DemoRow>
-		</Canvas>
-	);
-}
-
-function SkeletonKnobs() {
-	return (
-		<RailPanel
-			title="Skeleton"
-			description="Single bone for custom layouts. Loading variant=skeleton covers captioned stacks."
 		/>
 	);
 }
@@ -1681,8 +1665,6 @@ export {
 	CopyButtonKnobs,
 	StatusBadgeCanvas,
 	StatusBadgeKnobs,
-	SkeletonCanvas,
-	SkeletonKnobs,
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,

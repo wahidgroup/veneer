@@ -65,6 +65,7 @@ const EXPECTED_EXPORTS = new Set([
 	"Toast",
 	"ToastViewport",
 	"Toggle",
+	"ToolbarSelect",
 	"Tooltip",
 	"TopNav",
 	"Workflow",

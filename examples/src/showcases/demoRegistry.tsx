@@ -63,8 +63,6 @@ import {
 	CopyButtonKnobs,
 	StatusBadgeCanvas,
 	StatusBadgeKnobs,
-	SkeletonCanvas,
-	SkeletonKnobs,
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,
@@ -89,6 +87,8 @@ import {
 	SideNavKnobs,
 	TopNavCanvas,
 	TopNavKnobs,
+	ToolbarSelectCanvas,
+	ToolbarSelectKnobs,
 } from "./shellDemos.js";
 import {
 	LinearDeployCanvas,
@@ -138,11 +138,6 @@ const PRIMITIVES: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: StatusBadgeCanvas,
 		Knobs: StatusBadgeKnobs,
-	},
-	skeleton: {
-		Provider: PassthroughProvider,
-		Canvas: SkeletonCanvas,
-		Knobs: SkeletonKnobs,
 	},
 };
 
@@ -237,6 +232,11 @@ const SHELL: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: TabsCanvas,
 		Knobs: TabsKnobs,
+	},
+	"toolbar-select": {
+		Provider: PassthroughProvider,
+		Canvas: ToolbarSelectCanvas,
+		Knobs: ToolbarSelectKnobs,
 	},
 };
 

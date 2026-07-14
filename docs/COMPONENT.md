@@ -6,23 +6,24 @@ The key words "MUST", "MUST NOT", "SHOULD", and "MAY" are interpreted as in [RFC
 
 Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 
-| Component         | Path                                                                         | Use for                       |
-| ----------------- | ---------------------------------------------------------------------------- | ----------------------------- |
-| `Button`          | [`forms/Button.tsx`](../src/components/forms/Button.tsx)                     | Actions, icon/ghost chrome    |
-| `Input`           | [`forms/Input.tsx`](../src/components/forms/Input.tsx)                       | Text entry                    |
-| `Label`           | [`forms/Label.tsx`](../src/components/forms/Label.tsx)                       | Control labels                |
-| `FieldError`      | [`forms/FieldError.tsx`](../src/components/forms/FieldError.tsx)             | Field-level errors            |
-| `FieldHint`       | [`forms/FieldHint.tsx`](../src/components/forms/FieldHint.tsx)               | Field-level hints             |
-| `FormField`       | [`forms/FormField.tsx`](../src/components/forms/FormField.tsx)               | Label + control + hint/error  |
-| `Badge`           | [`indicators/Badge.tsx`](../src/components/indicators/Badge.tsx)             | Status / removable chips      |
-| `Loading`         | [`feedback/Loading.tsx`](../src/components/feedback/Loading.tsx)             | Busy / skeleton               |
-| `Portal`          | [`overlays/Portal.tsx`](../src/components/overlays/Portal.tsx)               | Portaled layers               |
-| `Pagination`      | [`navigation/Pagination.tsx`](../src/components/navigation/Pagination.tsx)   | Prev/Next + item-range chrome |
-| `EmptyState`      | [`feedback/EmptyState.tsx`](../src/components/feedback/EmptyState.tsx)       | No-results / first-run CTA    |
-| `CopyButton`      | [`forms/CopyButton.tsx`](../src/components/forms/CopyButton.tsx)             | Copy ARNs / IDs               |
-| `StatusBadge`     | [`indicators/StatusBadge.tsx`](../src/components/indicators/StatusBadge.tsx) | Inventory status chips        |
-| `DescriptionList` | [`data/DescriptionList.tsx`](../src/components/data/DescriptionList.tsx)     | Resource key/value pairs      |
-| `Skeleton`        | [`feedback/Skeleton.tsx`](../src/components/feedback/Skeleton.tsx)           | Placeholder bones             |
+| Component         | Path                                                                             | Use for                       |
+| ----------------- | -------------------------------------------------------------------------------- | ----------------------------- |
+| `Button`          | [`forms/Button.tsx`](../src/components/forms/Button.tsx)                         | Actions, icon/ghost chrome    |
+| `Input`           | [`forms/Input.tsx`](../src/components/forms/Input.tsx)                           | Text entry                    |
+| `Label`           | [`forms/Label.tsx`](../src/components/forms/Label.tsx)                           | Control labels                |
+| `FieldError`      | [`forms/FieldError.tsx`](../src/components/forms/FieldError.tsx)                 | Field-level errors            |
+| `FieldHint`       | [`forms/FieldHint.tsx`](../src/components/forms/FieldHint.tsx)                   | Field-level hints             |
+| `FormField`       | [`forms/FormField.tsx`](../src/components/forms/FormField.tsx)                   | Label + control + hint/error  |
+| `Badge`           | [`indicators/Badge.tsx`](../src/components/indicators/Badge.tsx)                 | Status / removable chips      |
+| `Loading`         | [`feedback/Loading.tsx`](../src/components/feedback/Loading.tsx)                 | Busy / skeleton               |
+| `Portal`          | [`overlays/Portal.tsx`](../src/components/overlays/Portal.tsx)                   | Portaled layers               |
+| `Pagination`      | [`navigation/Pagination.tsx`](../src/components/navigation/Pagination.tsx)       | Prev/Next + item-range chrome |
+| `EmptyState`      | [`feedback/EmptyState.tsx`](../src/components/feedback/EmptyState.tsx)           | No-results / first-run CTA    |
+| `CopyButton`      | [`forms/CopyButton.tsx`](../src/components/forms/CopyButton.tsx)                 | Copy ARNs / IDs               |
+| `StatusBadge`     | [`indicators/StatusBadge.tsx`](../src/components/indicators/StatusBadge.tsx)     | Inventory status chips        |
+| `DescriptionList` | [`data/DescriptionList.tsx`](../src/components/data/DescriptionList.tsx)         | Resource key/value pairs      |
+| `Skeleton`        | [`feedback/Skeleton.tsx`](../src/components/feedback/Skeleton.tsx)               | Placeholder bones             |
+| `ToolbarSelect`   | [`navigation/ToolbarSelect.tsx`](../src/components/navigation/ToolbarSelect.tsx) | Nav chrome value pickers      |
 
 `Button.tsx` remains the stamp example for exports, `cva`/`cn`, `data-slot`, and tokens.
 
