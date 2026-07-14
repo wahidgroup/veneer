@@ -1,17 +1,26 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
+import type {
+	AlertType,
+	ToastFade,
+	ToastPosition,
+	ToastType,
+} from "@wahidgroup/veneer";
 import {
 	ActionMenu,
 	Alert,
 	Badge,
 	Button,
 	ConfirmDialog,
+	CopyButton,
 	EmptyState,
 	Loading,
 	Modal,
 	NumberInput,
 	Select,
+	Skeleton,
 	Slider,
+	StatusBadge,
 	Tabs,
 	TabsList,
 	TabsPanel,
@@ -20,12 +29,6 @@ import {
 	ToastViewport,
 	Toggle,
 	Tooltip,
-} from "@wahidgroup/veneer";
-import type {
-	AlertType,
-	ToastFade,
-	ToastPosition,
-	ToastType,
 } from "@wahidgroup/veneer";
 
 import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
@@ -383,6 +386,7 @@ function useAlertDemo() {
 	if (value === null) {
 		throw new Error("AlertDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -557,6 +561,7 @@ function useButtonDemo() {
 	if (value === null) {
 		throw new Error("ButtonDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -703,6 +708,7 @@ function useBadgeDemo() {
 	if (value === null) {
 		throw new Error("BadgeDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -850,6 +856,7 @@ function useLoadingDemo() {
 	if (value === null) {
 		throw new Error("LoadingDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -1056,6 +1063,92 @@ function EmptyStateKnobs() {
 	);
 }
 
+function CopyButtonCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Icon">
+				<CopyButton value="arn:aws:cloudformation:us-east-1:123:stack/prod" />
+				<span className="font-mono text-xs text-muted-foreground">
+					arn:aws:cloudformation:us-east-1:123:stack/prod
+				</span>
+			</DemoRow>
+			<DemoRow label="Labeled">
+				<CopyButton
+					value="stack-abc"
+					size="sm"
+					variant="outlined"
+					label="Copy ID"
+					copiedLabel="Copied"
+				/>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function CopyButtonKnobs() {
+	return (
+		<RailPanel
+			title="CopyButton"
+			description="Clipboard write with brief copied state. Defaults to ghost icon Button."
+		/>
+	);
+}
+
+function StatusBadgeCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Statuses">
+				<StatusBadge status="running">Running</StatusBadge>
+				<StatusBadge status="pending">Pending</StatusBadge>
+				<StatusBadge status="success">Healthy</StatusBadge>
+				<StatusBadge status="warning">Degraded</StatusBadge>
+				<StatusBadge status="danger">Failed</StatusBadge>
+				<StatusBadge status="drifted">Drifted</StatusBadge>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function StatusBadgeKnobs() {
+	return (
+		<RailPanel
+			title="StatusBadge"
+			description="Maps inventory statuses onto Badge tone variants."
+		/>
+	);
+}
+
+function SkeletonCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Shapes">
+				<div className="flex w-full max-w-md flex-col gap-3">
+					<Skeleton shape="title" />
+					<Skeleton />
+					<Skeleton className="w-1/2" />
+					<div className="flex items-center gap-3">
+						<Skeleton shape="avatar" />
+						<div className="flex flex-1 flex-col gap-2">
+							<Skeleton />
+							<Skeleton className="w-2/3" />
+						</div>
+					</div>
+					<Skeleton shape="block" />
+				</div>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function SkeletonKnobs() {
+	return (
+		<RailPanel
+			title="Skeleton"
+			description="Single bone for custom layouts. Loading variant=skeleton covers captioned stacks."
+		/>
+	);
+}
+
 function TabsCanvas() {
 	return (
 		<Canvas>
@@ -1115,6 +1208,7 @@ function useModalDemo() {
 	if (value === null) {
 		throw new Error("ModalDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -1235,6 +1329,7 @@ function useConfirmDemo() {
 	if (value === null) {
 		throw new Error("ConfirmDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -1373,6 +1468,7 @@ function useTooltipDemo() {
 	if (value === null) {
 		throw new Error("TooltipDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -1498,6 +1594,7 @@ function useActionMenuDemo() {
 	if (value === null) {
 		throw new Error("ActionMenuDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -1580,6 +1677,12 @@ export {
 	ConfirmKnobs,
 	EmptyStateCanvas,
 	EmptyStateKnobs,
+	CopyButtonCanvas,
+	CopyButtonKnobs,
+	StatusBadgeCanvas,
+	StatusBadgeKnobs,
+	SkeletonCanvas,
+	SkeletonKnobs,
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,

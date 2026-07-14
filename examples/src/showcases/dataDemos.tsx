@@ -4,9 +4,12 @@ import type { DataTableColumn, DataTableQuery } from "@wahidgroup/veneer";
 import {
 	Badge,
 	Button,
+	CopyButton,
 	DataTable,
+	DescriptionList,
 	EmptyState,
 	Pagination,
+	StatusBadge,
 	applyRowTransaction,
 	useDataTableRows,
 } from "@wahidgroup/veneer";
@@ -422,6 +425,47 @@ function EmptyTableKnobs() {
 	);
 }
 
+function DescriptionListCanvas() {
+	return (
+		<Canvas>
+			<DescriptionList
+				columns={2}
+				className="w-full max-w-2xl"
+				items={[
+					{ term: "Name", description: "prod-api" },
+					{ term: "Region", description: "us-east-1" },
+					{
+						term: "ARN",
+						description: (
+							<span className="inline-flex items-center gap-2">
+								<span className="font-mono text-xs">
+									arn:aws:cloudformation:us-east-1:123:stack/prod-api
+								</span>
+								<CopyButton value="arn:aws:cloudformation:us-east-1:123:stack/prod-api" />
+							</span>
+						),
+					},
+					{
+						term: "Status",
+						description: (
+							<StatusBadge status="running">Running</StatusBadge>
+						),
+					},
+				]}
+			/>
+		</Canvas>
+	);
+}
+
+function DescriptionListKnobs() {
+	return (
+		<RailPanel
+			title="DescriptionList"
+			description="dl/dt/dd resource attributes. Compose CopyButton and StatusBadge in descriptions."
+		/>
+	);
+}
+
 export type { InventoryRow };
 export {
 	ServerPageCanvas,
@@ -432,4 +476,6 @@ export {
 	PaginationKnobs,
 	EmptyTableCanvas,
 	EmptyTableKnobs,
+	DescriptionListCanvas,
+	DescriptionListKnobs,
 };

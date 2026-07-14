@@ -8,6 +8,8 @@ import {
 	ComboboxCategoryProvider,
 } from "./comboboxDemos.js";
 import {
+	DescriptionListCanvas,
+	DescriptionListKnobs,
 	EmptyTableCanvas,
 	EmptyTableKnobs,
 	LivePatchCanvas,
@@ -57,6 +59,12 @@ import {
 	ConfirmKnobs,
 	EmptyStateCanvas,
 	EmptyStateKnobs,
+	CopyButtonCanvas,
+	CopyButtonKnobs,
+	StatusBadgeCanvas,
+	StatusBadgeKnobs,
+	SkeletonCanvas,
+	SkeletonKnobs,
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,
@@ -120,6 +128,21 @@ const PRIMITIVES: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: EmptyStateCanvas,
 		Knobs: EmptyStateKnobs,
+	},
+	"copy-button": {
+		Provider: PassthroughProvider,
+		Canvas: CopyButtonCanvas,
+		Knobs: CopyButtonKnobs,
+	},
+	"status-badge": {
+		Provider: PassthroughProvider,
+		Canvas: StatusBadgeCanvas,
+		Knobs: StatusBadgeKnobs,
+	},
+	skeleton: {
+		Provider: PassthroughProvider,
+		Canvas: SkeletonCanvas,
+		Knobs: SkeletonKnobs,
 	},
 };
 
@@ -251,6 +274,11 @@ const DATA: Record<string, DemoEntry> = {
 		Canvas: EmptyTableCanvas,
 		Knobs: EmptyTableKnobs,
 	},
+	"description-list": {
+		Provider: PassthroughProvider,
+		Canvas: DescriptionListCanvas,
+		Knobs: DescriptionListKnobs,
+	},
 };
 
 function getDemo(category: CategoryId, component: string): DemoEntry {
@@ -285,6 +313,14 @@ function getDemo(category: CategoryId, component: string): DemoEntry {
 			Knobs: ComboboxCategoryKnobs,
 		};
 	}
+	if (category === "shell") {
+		const entry = SHELL[component];
+		if (entry !== undefined) {
+			return entry;
+		}
+
+		return SHELL["app-shell"];
+	}
 	if (category === "workflow") {
 		const entry = WORKFLOW[component];
 		if (entry !== undefined) {
@@ -302,12 +338,8 @@ function getDemo(category: CategoryId, component: string): DemoEntry {
 		return DATA["server-page"];
 	}
 
-	const entry = SHELL[component];
-	if (entry !== undefined) {
-		return entry;
-	}
-
-	return SHELL["app-shell"];
+	const _exhaustive: never = category;
+	return _exhaustive;
 }
 
 export type { DemoEntry };

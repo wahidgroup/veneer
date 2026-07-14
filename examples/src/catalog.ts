@@ -56,6 +56,24 @@ const CATALOG: CatalogCategory[] = [
 				description:
 					"No-results / first-run CTA. Use size sm inside DataTable empty.",
 			},
+			{
+				id: "copy-button",
+				label: "CopyButton",
+				description:
+					"Copy ARN/ID to clipboard with brief copied affordance.",
+			},
+			{
+				id: "status-badge",
+				label: "StatusBadge",
+				description:
+					"Running / Failed / Drifted chips mapped onto Badge tones.",
+			},
+			{
+				id: "skeleton",
+				label: "Skeleton",
+				description:
+					"Single placeholder bone. Compose for table/detail loading.",
+			},
 		],
 	},
 	{
@@ -248,6 +266,12 @@ const CATALOG: CatalogCategory[] = [
 				label: "Empty table",
 				description:
 					"DataTable empty slot with EmptyState size sm and a create CTA.",
+			},
+			{
+				id: "description-list",
+				label: "DescriptionList",
+				description:
+					"Resource attribute key/value pairs for detail panels.",
 			},
 		],
 	},

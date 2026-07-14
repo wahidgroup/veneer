@@ -49,6 +49,8 @@ export type {
 } from "./components/forms/Combobox.js";
 export { ConfirmDialog } from "./components/overlays/ConfirmDialog.js";
 export type { ConfirmDialogProps } from "./components/overlays/ConfirmDialog.js";
+export { CopyButton } from "./components/forms/CopyButton.js";
+export type { CopyButtonProps } from "./components/forms/CopyButton.js";
 export { DateTimePicker } from "./components/forms/DateTimePicker.js";
 export type { DateTimePickerProps } from "./components/forms/DateTimePicker.js";
 export {
@@ -69,6 +71,14 @@ export type {
 export { applyRowTransaction } from "./components/data/applyRowTransaction.js";
 export type { RowTransaction } from "./components/data/applyRowTransaction.js";
 export { useDataTableRows } from "./components/data/useDataTableRows.js";
+export {
+	DescriptionList,
+	descriptionListVariants,
+} from "./components/data/DescriptionList.js";
+export type {
+	DescriptionListItem,
+	DescriptionListProps,
+} from "./components/data/DescriptionList.js";
 export {
 	EmptyState,
 	emptyStateVariants,
@@ -119,8 +129,18 @@ export type {
 	SideNavLinkRenderProps,
 	SideNavProps,
 } from "./components/navigation/SideNav.js";
+export { Skeleton, skeletonVariants } from "./components/feedback/Skeleton.js";
+export type { SkeletonProps } from "./components/feedback/Skeleton.js";
 export { Slider } from "./components/forms/Slider.js";
 export type { SliderProps } from "./components/forms/Slider.js";
+export {
+	StatusBadge,
+	variantForStatus,
+} from "./components/indicators/StatusBadge.js";
+export type {
+	StatusBadgeProps,
+	StatusBadgeStatus,
+} from "./components/indicators/StatusBadge.js";
 export {
 	Tabs,
 	TabsList,
