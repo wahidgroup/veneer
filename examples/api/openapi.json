@@ -1,6 +1,116 @@
 {
 	"openapi": "3.0.0",
 	"paths": {
+		"/v1/commands": {
+			"get": {
+				"operationId": "CommandsController_list",
+				"parameters": [
+					{
+						"name": "q",
+						"required": false,
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommandItemListDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"commands"
+				]
+			},
+			"post": {
+				"operationId": "CommandsController_add",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CommandItemDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommandItemDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"commands"
+				]
+			}
+		},
+		"/v1/commands/reset": {
+			"post": {
+				"operationId": "CommandsController_reset",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommandCountDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"commands"
+				]
+			}
+		},
+		"/v1/commands/{id}": {
+			"delete": {
+				"operationId": "CommandsController_remove",
+				"parameters": [
+					{
+						"name": "id",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/CommandCountDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"commands"
+				]
+			}
+		},
 		"/health": {
 			"get": {
 				"operationId": "HealthController_getHealth",
@@ -103,6 +213,194 @@
 				},
 				"tags": [
 					"logs"
+				]
+			}
+		},
+		"/v1/metrics/progress": {
+			"get": {
+				"operationId": "MetricsController_getProgress",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProgressJobDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"metrics"
+				]
+			}
+		},
+		"/v1/metrics/progress/start": {
+			"post": {
+				"operationId": "MetricsController_startProgress",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProgressJobDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"metrics"
+				]
+			}
+		},
+		"/v1/metrics/progress/stop": {
+			"post": {
+				"operationId": "MetricsController_stopProgress",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProgressJobDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"metrics"
+				]
+			}
+		},
+		"/v1/metrics/progress/reset": {
+			"post": {
+				"operationId": "MetricsController_resetProgress",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/ProgressJobDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"metrics"
+				]
+			}
+		},
+		"/v1/metrics/quota": {
+			"get": {
+				"operationId": "MetricsController_getQuota",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/QuotaDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"metrics"
+				]
+			}
+		},
+		"/v1/metrics/quota/consume": {
+			"post": {
+				"operationId": "MetricsController_consumeQuota",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/QuotaAmountDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/QuotaDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"metrics"
+				]
+			}
+		},
+		"/v1/metrics/quota/release": {
+			"post": {
+				"operationId": "MetricsController_releaseQuota",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/QuotaAmountDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/QuotaDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"metrics"
+				]
+			}
+		},
+		"/v1/metrics/quota/reset": {
+			"post": {
+				"operationId": "MetricsController_resetQuota",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/QuotaDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"metrics"
 				]
 			}
 		},
@@ -535,6 +833,58 @@
 	"servers": [],
 	"components": {
 		"schemas": {
+			"CommandItemDto": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					},
+					"group": {
+						"type": "string"
+					},
+					"keywords": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					},
+					"disabled": {
+						"type": "boolean"
+					}
+				},
+				"required": [
+					"id",
+					"label"
+				]
+			},
+			"CommandItemListDto": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/CommandItemDto"
+						}
+					}
+				},
+				"required": [
+					"items"
+				]
+			},
+			"CommandCountDto": {
+				"type": "object",
+				"properties": {
+					"count": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"count"
+				]
+			},
 			"HealthStatusDto": {
 				"type": "object",
 				"properties": {
@@ -573,6 +923,59 @@
 				"required": [
 					"streaming",
 					"count"
+				]
+			},
+			"ProgressJobDto": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "number"
+					},
+					"max": {
+						"type": "number"
+					},
+					"streaming": {
+						"type": "boolean"
+					},
+					"label": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"value",
+					"max",
+					"streaming",
+					"label"
+				]
+			},
+			"QuotaDto": {
+				"type": "object",
+				"properties": {
+					"used": {
+						"type": "number"
+					},
+					"max": {
+						"type": "number"
+					},
+					"label": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"used",
+					"max",
+					"label"
+				]
+			},
+			"QuotaAmountDto": {
+				"type": "object",
+				"properties": {
+					"amount": {
+						"type": "number"
+					}
+				},
+				"required": [
+					"amount"
 				]
 			},
 			"InstanceOptionDto": {

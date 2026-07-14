@@ -28,12 +28,13 @@ import {
 	Timeline,
 	Toggle,
 	TreeView,
+	ResourceGraph,
 } from "@wahidgroup/veneer";
 
 import type { TableListParams, TableRow } from "../api/client.js";
 import type { TableServerMessage } from "../api/tables-ws.js";
 import { connectTables } from "../api/tables-ws.js";
-import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
+import { Canvas, DemoRow, DemoSectionHeader, RailPanel } from "./demoChrome.js";
 import {
 	addTableRows,
 	listTableRows,
@@ -440,7 +441,28 @@ function DataTableCanvas() {
 		body = <DataTableServerCanvas />;
 	}
 
-	return <Canvas>{body}</Canvas>;
+	let description =
+		"Nest inventory list with full server query. Knobs switch empty / live-patch modes.";
+	if (demo.empty) {
+		description =
+			"Empty slot uses EmptyState. Toggle Empty off to restore Nest rows.";
+	} else if (demo.liveRows) {
+		description =
+			"Client-side rows + Nest WS patches. Add / Remove / Reset mutate inventory.";
+	}
+
+	return (
+		<div className="flex flex-col gap-2">
+			<section className="flex flex-col">
+				<DemoSectionHeader
+					title="API playground"
+					description={description}
+					apiDriven
+				/>
+				<Canvas>{body}</Canvas>
+			</section>
+		</div>
+	);
 }
 
 function DataTableKnobs() {
@@ -1534,6 +1556,49 @@ function TreeViewKnobs() {
 	);
 }
 
+const GRAPH_NODES = [
+	{ id: "vpc", label: "VPC" },
+	{ id: "subnet", label: "Subnet" },
+	{ id: "sg", label: "SG" },
+	{ id: "eni", label: "ENI" },
+];
+
+const GRAPH_EDGES = [
+	{ from: "vpc", to: "subnet", label: "contains" },
+	{ from: "subnet", to: "sg", label: "assoc" },
+	{ from: "sg", to: "eni", label: "attach" },
+];
+
+function ResourceGraphCanvas() {
+	const [selectedId, setSelectedId] = useState("subnet");
+
+	return (
+		<Canvas>
+			<div className="w-full max-w-2xl">
+				<ResourceGraph
+					aria-label="Network dependencies"
+					nodes={GRAPH_NODES}
+					edges={GRAPH_EDGES}
+					selectedId={selectedId}
+					onNodeSelect={setSelectedId}
+				/>
+			</div>
+			<p className="text-sm text-muted-foreground">
+				Selected: {selectedId}
+			</p>
+		</Canvas>
+	);
+}
+
+function ResourceGraphKnobs() {
+	return (
+		<RailPanel
+			title="ResourceGraph"
+			description="SVG map + DescriptionList of edges. Click or arrow+Enter to select."
+		/>
+	);
+}
+
 export type { InventoryRow };
 export {
 	DataTableDemoProvider,
@@ -1560,4 +1625,6 @@ export {
 	TreeViewDemoProvider,
 	TreeViewCanvas,
 	TreeViewKnobs,
+	ResourceGraphCanvas,
+	ResourceGraphKnobs,
 };

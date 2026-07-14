@@ -31,7 +31,7 @@ import {
 } from "@wahidgroup/veneer";
 import { DiffView, PlanSummary } from "@wahidgroup/veneer/diff";
 
-import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
+import { Canvas, DemoRow, DemoSectionHeader, RailPanel } from "./demoChrome.js";
 import {
 	getLogStreamStatus,
 	resetLogStream,
@@ -843,29 +843,36 @@ function LogViewerCanvas() {
 	const demo = useLogViewerDemo();
 
 	return (
-		<Canvas>
-			<p className="text-sm text-muted-foreground">
-				Parent owns the WS buffer and filter subscribe. Knobs start the
-				Nest stream over HTTP. Expand rows for JSON. Connection:{" "}
-				{demo.connection}.
-			</p>
-			<div className="w-full max-w-3xl">
-				<LogViewer
-					aria-label="Apply logs"
-					lines={demo.lines}
-					maxLines={demo.maxLines}
-					queries={demo.queries}
-					onQueriesChange={demo.setQueries}
-					levels={demo.levels}
-					onLevelsChange={demo.setLevels}
-					from={demo.from}
-					onFromChange={demo.setFrom}
-					to={demo.to}
-					onToChange={demo.setTo}
-					className="shadow-sm"
+		<div className="flex flex-col gap-2">
+			<section className="flex flex-col">
+				<DemoSectionHeader
+					title="API playground"
+					description="Parent owns the WS buffer and filter subscribe. Knobs start the Nest stream over HTTP. Expand rows for JSON."
+					apiDriven
 				/>
-			</div>
-		</Canvas>
+				<Canvas>
+					<p className="text-sm text-muted-foreground">
+						Connection: {demo.connection}.
+					</p>
+					<div className="w-full max-w-3xl">
+						<LogViewer
+							aria-label="Apply logs"
+							lines={demo.lines}
+							maxLines={demo.maxLines}
+							queries={demo.queries}
+							onQueriesChange={demo.setQueries}
+							levels={demo.levels}
+							onLevelsChange={demo.setLevels}
+							from={demo.from}
+							onFromChange={demo.setFrom}
+							to={demo.to}
+							onToChange={demo.setTo}
+							className="shadow-sm"
+						/>
+					</div>
+				</Canvas>
+			</section>
+		</div>
 	);
 }
 

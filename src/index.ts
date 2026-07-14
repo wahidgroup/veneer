@@ -48,6 +48,11 @@ export type {
 	ChipGroupItem,
 	ChipGroupProps,
 } from "./components/navigation/ChipGroup.js";
+export {
+	CircularProgress,
+	circularProgressVariants,
+} from "./components/feedback/CircularProgress.js";
+export type { CircularProgressProps } from "./components/feedback/CircularProgress.js";
 export { CodeBlock } from "./components/data/CodeBlock.js";
 export type { CodeBlockProps } from "./components/data/CodeBlock.js";
 export { Combobox } from "./components/forms/Combobox.js";
@@ -57,6 +62,14 @@ export type {
 	ComboboxProps,
 	ComboboxSingleProps,
 } from "./components/forms/Combobox.js";
+export {
+	CommandPalette,
+	filterPaletteItems,
+} from "./components/overlays/CommandPalette.js";
+export type {
+	CommandPaletteItem,
+	CommandPaletteProps,
+} from "./components/overlays/CommandPalette.js";
 export { ConfirmDialog } from "./components/overlays/ConfirmDialog.js";
 export type { ConfirmDialogProps } from "./components/overlays/ConfirmDialog.js";
 export { CopyButton } from "./components/forms/CopyButton.js";
@@ -126,6 +139,8 @@ export { Pagination } from "./components/navigation/Pagination.js";
 export type { PaginationProps } from "./components/navigation/Pagination.js";
 export { Portal } from "./components/overlays/Portal.js";
 export type { PortalProps } from "./components/overlays/Portal.js";
+export { Popover } from "./components/overlays/Popover.js";
+export type { PopoverProps } from "./components/overlays/Popover.js";
 export {
 	ProgressBar,
 	progressBarTrackVariants,
@@ -142,11 +157,22 @@ export type {
 	ProgressTask,
 	ProgressTaskStatus,
 } from "./components/feedback/ProgressGroup.js";
+export {
+	QuotaMeter,
+	quotaMeterTrackVariants,
+} from "./components/indicators/QuotaMeter.js";
+export type { QuotaMeterProps } from "./components/indicators/QuotaMeter.js";
 export { RadioGroup } from "./components/forms/RadioGroup.js";
 export type {
 	RadioGroupProps,
 	RadioOption,
 } from "./components/forms/RadioGroup.js";
+export { ResourceGraph } from "./components/data/ResourceGraph.js";
+export type {
+	ResourceGraphEdge,
+	ResourceGraphNode,
+	ResourceGraphProps,
+} from "./components/data/ResourceGraph.js";
 export { SearchInput } from "./components/forms/SearchInput.js";
 export type { SearchInputProps } from "./components/forms/SearchInput.js";
 export { Select } from "./components/forms/Select.js";
@@ -240,6 +266,8 @@ export type {
 	ToolbarSelectOption,
 	ToolbarSelectProps,
 } from "./components/navigation/ToolbarSelect.js";
+export { VisuallyHidden } from "./components/a11y/VisuallyHidden.js";
+export type { VisuallyHiddenProps } from "./components/a11y/VisuallyHidden.js";
 export {
 	Workflow,
 	WorkflowActions,
@@ -258,6 +286,7 @@ export type {
 	WorkflowStepStatus,
 	WorkflowTrackProps,
 } from "./components/navigation/Workflow.js";
+export { useControllableState } from "./hooks/useControllableState.js";
 export { useDebounce } from "./hooks/useDebounce.js";
 export { cn, cva } from "./utils/index.js";
 export type { VariantProps } from "./utils/index.js";

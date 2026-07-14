@@ -2,34 +2,32 @@ import {
 	createContext,
 	useContext,
 	useEffect,
+	useRef,
 	useState,
 	type ReactNode,
 } from "react";
 
-import type {
-	AlertType,
-	DrawerSide,
-	ProgressTask,
-	ToastFade,
-	ToastPosition,
-	ToastType,
-} from "@wahidgroup/veneer";
 import {
 	ActionMenu,
 	Alert,
 	Badge,
 	Button,
 	Card,
+	CircularProgress,
+	CommandPalette,
 	ConfirmDialog,
 	CopyButton,
 	Drawer,
 	EmptyState,
 	ErrorState,
+	Input,
 	Loading,
 	Modal,
 	NumberInput,
+	Popover,
 	ProgressBar,
 	ProgressGroup,
+	QuotaMeter,
 	Select,
 	Skeleton,
 	Slider,
@@ -42,9 +40,50 @@ import {
 	ToastViewport,
 	Toggle,
 	Tooltip,
+	VisuallyHidden,
+	type AlertType,
+	type CommandPaletteItem,
+	type DrawerSide,
+	type ProgressTask,
+	type ToastFade,
+	type ToastPosition,
+	type ToastType,
 } from "@wahidgroup/veneer";
 
-import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
+import type { CommandItem, ProgressJob, QuotaSnapshot } from "../api/client.js";
+import {
+	addCommand,
+	consumeQuota,
+	getProgressJob,
+	getQuota,
+	listCommands,
+	releaseQuota,
+	removeCommand,
+	resetCommands,
+	resetProgressJob,
+	resetQuota,
+	startProgressJob,
+	stopProgressJob,
+} from "../api/client.js";
+import { Canvas, DemoRow, DemoSectionHeader, RailPanel } from "./demoChrome.js";
+
+const METER_SIZE_OPTIONS = [
+	{ value: "sm", label: "sm" },
+	{ value: "md", label: "md" },
+	{ value: "lg", label: "lg" },
+];
+
+type MeterSize = "sm" | "md" | "lg";
+
+function parseMeterSize(value: string): MeterSize {
+	if (value === "sm") {
+		return "sm";
+	}
+	if (value === "lg") {
+		return "lg";
+	}
+	return "md";
+}
 
 interface DemoToast {
 	id: number;
@@ -1959,7 +1998,228 @@ const INITIAL_PROGRESS_TASKS: ProgressTask[] = [
 	},
 ];
 
+interface ProgressJobDemoValue {
+	job: ProgressJob;
+	size: MeterSize;
+	setSize: (value: MeterSize) => void;
+	indeterminate: boolean;
+	setIndeterminate: (value: boolean) => void;
+	showLabel: boolean;
+	setShowLabel: (value: boolean) => void;
+	busy: boolean;
+	startJob: () => Promise<void>;
+	stopJob: () => Promise<void>;
+	resetJob: () => Promise<void>;
+}
+
+const ProgressJobDemoContext = createContext<ProgressJobDemoValue | null>(null);
+
+function useProgressJobDemo() {
+	const value = useContext(ProgressJobDemoContext);
+	if (value === null) {
+		throw new Error("ProgressJobDemoProvider required");
+	}
+
+	return value;
+}
+
+function ProgressJobDemoProvider({ children }: { children: ReactNode }) {
+	const [job, setJob] = useState<ProgressJob>({
+		value: 0,
+		max: 100,
+		streaming: false,
+		label: "Deploy job",
+	});
+	const [size, setSize] = useState<MeterSize>("md");
+	const [indeterminate, setIndeterminate] = useState(false);
+	const [showLabel, setShowLabel] = useState(true);
+	const [busy, setBusy] = useState(false);
+
+	useEffect(() => {
+		void resetProgressJob()
+			.then((next) => {
+				setJob(next);
+			})
+			.catch(() => {
+				void getProgressJob()
+					.then((next) => {
+						setJob(next);
+					})
+					.catch(() => {
+						/* keep seed */
+					});
+			});
+	}, []);
+
+	useEffect(() => {
+		if (!job.streaming) {
+			return;
+		}
+
+		const timer = window.setInterval(() => {
+			void getProgressJob()
+				.then((next) => {
+					setJob(next);
+				})
+				.catch(() => {
+					/* ignore poll errors */
+				});
+		}, 300);
+
+		return () => {
+			window.clearInterval(timer);
+		};
+	}, [job.streaming]);
+
+	const startJob = async () => {
+		setBusy(true);
+		try {
+			const next = await startProgressJob();
+			setJob(next);
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	const stopJob = async () => {
+		setBusy(true);
+		try {
+			const next = await stopProgressJob();
+			setJob(next);
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	const resetJob = async () => {
+		setBusy(true);
+		try {
+			const next = await resetProgressJob();
+			setJob(next);
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	return (
+		<ProgressJobDemoContext.Provider
+			value={{
+				job,
+				size,
+				setSize,
+				indeterminate,
+				setIndeterminate,
+				showLabel,
+				setShowLabel,
+				busy,
+				startJob,
+				stopJob,
+				resetJob,
+			}}
+		>
+			{children}
+		</ProgressJobDemoContext.Provider>
+	);
+}
+
+function ProgressJobControls() {
+	const demo = useProgressJobDemo();
+
+	return (
+		<div className="flex flex-wrap gap-2">
+			<Button
+				type="button"
+				variant="filled"
+				size="sm"
+				disabled={demo.busy || demo.job.streaming}
+				onClick={() => {
+					void demo.startJob();
+				}}
+			>
+				Start
+			</Button>
+			<Button
+				type="button"
+				variant="outlined"
+				size="sm"
+				disabled={demo.busy || !demo.job.streaming}
+				onClick={() => {
+					void demo.stopJob();
+				}}
+			>
+				Stop
+			</Button>
+			<Button
+				type="button"
+				variant="outlined"
+				size="sm"
+				disabled={demo.busy}
+				onClick={() => {
+					void demo.resetJob();
+				}}
+			>
+				Reset
+			</Button>
+		</div>
+	);
+}
+
+function ProgressJobKnobsFields({
+	includeLabel = false,
+}: {
+	includeLabel?: boolean;
+}) {
+	const demo = useProgressJobDemo();
+
+	let labelRow: ReactNode = null;
+	if (includeLabel) {
+		labelRow = (
+			<DemoRow
+				label="Label"
+				description="Optional visible label above ProgressBar."
+			>
+				<Toggle
+					checked={demo.showLabel}
+					label="Show label"
+					onCheckedChange={demo.setShowLabel}
+				/>
+			</DemoRow>
+		);
+	}
+
+	return (
+		<>
+			<DemoRow
+				label="Size"
+				description="Track / ring size variant (sm | md | lg)."
+			>
+				<Select
+					id="progress-job-size"
+					options={METER_SIZE_OPTIONS}
+					value={demo.size}
+					onChange={(value) => {
+						demo.setSize(parseMeterSize(value));
+					}}
+					aria-label="Size"
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Indeterminate"
+				description="Omit value so the control shows busy / unknown fraction."
+			>
+				<Toggle
+					checked={demo.indeterminate}
+					label="Force indeterminate"
+					onCheckedChange={demo.setIndeterminate}
+				/>
+			</DemoRow>
+			{labelRow}
+		</>
+	);
+}
+
 function ProgressBarCanvas() {
+	const demo = useProgressJobDemo();
 	const [tasks, setTasks] = useState<ProgressTask[]>(INITIAL_PROGRESS_TASKS);
 	const [running, setRunning] = useState(false);
 
@@ -2012,88 +2272,140 @@ function ProgressBarCanvas() {
 		}
 	}, [tasks, running]);
 
+	let apiValue: number | undefined = demo.job.value;
+	if (demo.indeterminate) {
+		apiValue = undefined;
+	}
+
+	let apiLabel: ReactNode = undefined;
+	if (demo.showLabel) {
+		if (demo.indeterminate) {
+			apiLabel = `${demo.job.label}…`;
+		} else {
+			apiLabel = `${demo.job.label}… ${String(demo.job.value)}%`;
+		}
+	}
+
 	return (
-		<Canvas>
-			<DemoRow label="Determinate">
-				<div className="flex w-full max-w-md flex-col gap-4">
-					<ProgressBar
-						aria-label="Deploy progress"
-						value={35}
-						label="Applying stack… 35%"
-					/>
-					<ProgressBar
-						aria-label="Upload progress"
-						value={80}
-						size="sm"
-					/>
-					<ProgressBar
-						aria-label="Migration progress"
-						value={100}
-						size="lg"
-						label="Complete"
-					/>
-				</div>
-			</DemoRow>
-			<DemoRow label="Indeterminate">
-				<div className="w-full max-w-md">
-					<ProgressBar
-						aria-label="Syncing"
-						label="Waiting for plan…"
-					/>
-				</div>
-			</DemoRow>
-			<DemoRow label="Parallel group">
-				<div className="flex w-full max-w-md flex-col gap-3">
-					<ProgressGroup
-						aria-label="Stack deploy"
-						label="Overall deploy"
-						tasks={tasks}
-					/>
-					<div className="flex flex-wrap gap-2">
-						<Button
-							variant="filled"
-							size="sm"
-							disabled={running}
-							onClick={() => {
-								setTasks([
-									{
-										id: "plan",
-										label: "terraform plan",
-										value: 0,
-										status: "running",
-									},
-									{
-										id: "apply",
-										label: "terraform apply",
-										value: 0,
-										status: "running",
-									},
-									{
-										id: "health",
-										label: "health checks",
-										value: 0,
-										status: "running",
-									},
-								]);
-								setRunning(true);
-							}}
-						>
-							Start
-						</Button>
-						<Button
-							variant="outlined"
-							size="sm"
-							onClick={() => {
-								setRunning(false);
-								setTasks(INITIAL_PROGRESS_TASKS);
-							}}
-						>
-							Reset
-						</Button>
+		<div className="flex flex-col gap-2">
+			<section className="flex flex-col border-b border-border pb-2">
+				<DemoSectionHeader
+					title="API playground"
+					description="Nest deploy job drives value. Knobs set size / indeterminate / label."
+					apiDriven
+				/>
+				<Canvas>
+					<div className="flex w-full max-w-md flex-col gap-3">
+						<ProgressBar
+							aria-label={demo.job.label}
+							value={apiValue}
+							max={demo.job.max}
+							size={demo.size}
+							label={apiLabel}
+						/>
+						<ProgressJobControls />
+						<p className="text-sm text-muted-foreground">
+							value={String(demo.job.value)} /{" "}
+							{String(demo.job.max)} · streaming=
+							{String(demo.job.streaming)}
+						</p>
 					</div>
-				</div>
-			</DemoRow>
-		</Canvas>
+				</Canvas>
+			</section>
+			<section className="flex flex-col border-b border-border pb-2">
+				<DemoSectionHeader
+					title="Static samples"
+					description="Fixed determinate / indeterminate bars for visual reference."
+				/>
+				<Canvas>
+					<DemoRow label="Determinate">
+						<div className="flex w-full max-w-md flex-col gap-4">
+							<ProgressBar
+								aria-label="Deploy progress"
+								value={35}
+								label="Applying stack… 35%"
+							/>
+							<ProgressBar
+								aria-label="Upload progress"
+								value={80}
+								size="sm"
+							/>
+							<ProgressBar
+								aria-label="Migration progress"
+								value={100}
+								size="lg"
+								label="Complete"
+							/>
+						</div>
+					</DemoRow>
+					<DemoRow label="Indeterminate">
+						<div className="w-full max-w-md">
+							<ProgressBar
+								aria-label="Syncing"
+								label="Waiting for plan…"
+							/>
+						</div>
+					</DemoRow>
+				</Canvas>
+			</section>
+			<section className="flex flex-col">
+				<DemoSectionHeader
+					title="ProgressGroup"
+					description="Local staggered lanes. Overall fraction is the mean of task values."
+				/>
+				<Canvas>
+					<div className="flex w-full max-w-md flex-col gap-3">
+						<ProgressGroup
+							aria-label="Stack deploy"
+							label="Overall deploy"
+							tasks={tasks}
+						/>
+						<div className="flex flex-wrap gap-2">
+							<Button
+								variant="filled"
+								size="sm"
+								disabled={running}
+								onClick={() => {
+									setTasks([
+										{
+											id: "plan",
+											label: "terraform plan",
+											value: 0,
+											status: "running",
+										},
+										{
+											id: "apply",
+											label: "terraform apply",
+											value: 0,
+											status: "running",
+										},
+										{
+											id: "health",
+											label: "health checks",
+											value: 0,
+											status: "running",
+										},
+									]);
+									setRunning(true);
+								}}
+							>
+								Start group
+							</Button>
+							<Button
+								variant="outlined"
+								size="sm"
+								onClick={() => {
+									setRunning(false);
+									setTasks(INITIAL_PROGRESS_TASKS);
+								}}
+							>
+								Reset group
+							</Button>
+						</div>
+					</div>
+				</Canvas>
+			</section>
+		</div>
 	);
 }
 
@@ -2101,8 +2413,749 @@ function ProgressBarKnobs() {
 	return (
 		<RailPanel
 			title="ProgressBar"
-			description="Leaf bar + ProgressGroup for parallel lanes. Start runs three staggered tasks; overall is the mean."
+			description="Leaf bar + Nest job playground. ProgressGroup Start/Reset stays on canvas."
+		>
+			<ProgressJobKnobsFields includeLabel />
+		</RailPanel>
+	);
+}
+
+function CircularProgressCanvas() {
+	const demo = useProgressJobDemo();
+
+	let apiValue: number | undefined = demo.job.value;
+	if (demo.indeterminate) {
+		apiValue = undefined;
+	}
+
+	return (
+		<div className="flex flex-col gap-2">
+			<section className="flex flex-col border-b border-border pb-2">
+				<DemoSectionHeader
+					title="API playground"
+					description="Same Nest progress job as ProgressBar. Ring animates on value ticks."
+					apiDriven
+				/>
+				<Canvas>
+					<div className="flex flex-col items-start gap-3">
+						<CircularProgress
+							aria-label={demo.job.label}
+							value={apiValue}
+							max={demo.job.max}
+							size={demo.size}
+						/>
+						<ProgressJobControls />
+						<p className="text-sm text-muted-foreground">
+							value={String(demo.job.value)} /{" "}
+							{String(demo.job.max)} · streaming=
+							{String(demo.job.streaming)}
+						</p>
+					</div>
+				</Canvas>
+			</section>
+			<section className="flex flex-col">
+				<DemoSectionHeader
+					title="Static samples"
+					description="Fixed size ladder + indeterminate pulse."
+				/>
+				<Canvas>
+					<DemoRow label="Determinate">
+						<div className="flex flex-wrap items-center gap-6">
+							<CircularProgress
+								aria-label="Upload"
+								value={35}
+								size="sm"
+							/>
+							<CircularProgress aria-label="Sync" value={70} />
+							<CircularProgress
+								aria-label="Apply"
+								value={100}
+								size="lg"
+							/>
+						</div>
+					</DemoRow>
+					<DemoRow label="Indeterminate">
+						<CircularProgress aria-label="Working" />
+					</DemoRow>
+				</Canvas>
+			</section>
+		</div>
+	);
+}
+
+function CircularProgressKnobs() {
+	return (
+		<RailPanel
+			title="CircularProgress"
+			description="Compact progressbar ring. Knobs drive API playground; omit value = indeterminate."
+		>
+			<ProgressJobKnobsFields />
+		</RailPanel>
+	);
+}
+
+interface QuotaMeterDemoValue {
+	quota: QuotaSnapshot;
+	size: MeterSize;
+	setSize: (value: MeterSize) => void;
+	showLabel: boolean;
+	setShowLabel: (value: boolean) => void;
+	showValueText: boolean;
+	setShowValueText: (value: boolean) => void;
+	busy: boolean;
+	consume: (amount: number) => Promise<void>;
+	release: (amount: number) => Promise<void>;
+	reset: () => Promise<void>;
+}
+
+const QuotaMeterDemoContext = createContext<QuotaMeterDemoValue | null>(null);
+
+function useQuotaMeterDemo() {
+	const value = useContext(QuotaMeterDemoContext);
+	if (value === null) {
+		throw new Error("QuotaMeterDemoProvider required");
+	}
+
+	return value;
+}
+
+function QuotaMeterDemoProvider({ children }: { children: ReactNode }) {
+	const [quota, setQuota] = useState<QuotaSnapshot>({
+		used: 42,
+		max: 100,
+		label: "Stacks",
+	});
+	const [size, setSize] = useState<MeterSize>("md");
+	const [showLabel, setShowLabel] = useState(true);
+	const [showValueText, setShowValueText] = useState(true);
+	const [busy, setBusy] = useState(false);
+
+	useEffect(() => {
+		void getQuota()
+			.then((next) => {
+				setQuota(next);
+			})
+			.catch(() => {
+				/* keep seed */
+			});
+	}, []);
+
+	const consume = async (amount: number) => {
+		setBusy(true);
+		try {
+			const next = await consumeQuota(amount);
+			setQuota(next);
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	const release = async (amount: number) => {
+		setBusy(true);
+		try {
+			const next = await releaseQuota(amount);
+			setQuota(next);
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	const reset = async () => {
+		setBusy(true);
+		try {
+			const next = await resetQuota();
+			setQuota(next);
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	return (
+		<QuotaMeterDemoContext.Provider
+			value={{
+				quota,
+				size,
+				setSize,
+				showLabel,
+				setShowLabel,
+				showValueText,
+				setShowValueText,
+				busy,
+				consume,
+				release,
+				reset,
+			}}
+		>
+			{children}
+		</QuotaMeterDemoContext.Provider>
+	);
+}
+
+function QuotaMeterControls() {
+	const demo = useQuotaMeterDemo();
+
+	return (
+		<div className="flex flex-wrap gap-2">
+			<Button
+				type="button"
+				variant="filled"
+				size="sm"
+				disabled={demo.busy}
+				onClick={() => {
+					void demo.consume(10);
+				}}
+			>
+				+10
+			</Button>
+			<Button
+				type="button"
+				variant="outlined"
+				size="sm"
+				disabled={demo.busy}
+				onClick={() => {
+					void demo.release(10);
+				}}
+			>
+				−10
+			</Button>
+			<Button
+				type="button"
+				variant="outlined"
+				size="sm"
+				disabled={demo.busy}
+				onClick={() => {
+					void demo.reset();
+				}}
+			>
+				Reset
+			</Button>
+		</div>
+	);
+}
+
+function QuotaMeterCanvas() {
+	const demo = useQuotaMeterDemo();
+
+	let label: ReactNode = undefined;
+	if (demo.showLabel) {
+		label = demo.quota.label;
+	}
+
+	let valueText: string | undefined;
+	if (demo.showValueText) {
+		valueText = `${String(demo.quota.used)} / ${String(demo.quota.max)}`;
+	}
+
+	return (
+		<div className="flex flex-col gap-2">
+			<section className="flex flex-col border-b border-border pb-2">
+				<DemoSectionHeader
+					title="API playground"
+					description="Nest soft-limit quota. Consume / release / reset mutate used."
+					apiDriven
+				/>
+				<Canvas>
+					<div className="flex w-full max-w-md flex-col gap-3">
+						<QuotaMeter
+							aria-label={demo.quota.label}
+							value={demo.quota.used}
+							max={demo.quota.max}
+							size={demo.size}
+							label={label}
+							valueText={valueText}
+						/>
+						<QuotaMeterControls />
+						<p className="text-sm text-muted-foreground">
+							used={String(demo.quota.used)} /{" "}
+							{String(demo.quota.max)}
+						</p>
+					</div>
+				</Canvas>
+			</section>
+			<section className="flex flex-col">
+				<DemoSectionHeader
+					title="Static samples"
+					description="Fixed soft-limit gauges for visual reference."
+				/>
+				<Canvas>
+					<div className="flex w-full max-w-md flex-col gap-6">
+						<QuotaMeter
+							aria-label="Stack quota"
+							value={42}
+							max={100}
+							label="Stacks"
+							valueText="42 / 100"
+						/>
+						<QuotaMeter
+							aria-label="API quota"
+							value={90}
+							max={100}
+							size="sm"
+							label="API calls"
+							valueText="90%"
+						/>
+					</div>
+				</Canvas>
+			</section>
+		</div>
+	);
+}
+
+function QuotaMeterKnobs() {
+	const demo = useQuotaMeterDemo();
+
+	return (
+		<RailPanel
+			title="QuotaMeter"
+			description="role=meter soft limits. Use ProgressBar / CircularProgress for tasks."
+		>
+			<DemoRow label="Size" description="Track thickness (sm | md | lg).">
+				<Select
+					id="quota-meter-size"
+					options={METER_SIZE_OPTIONS}
+					value={demo.size}
+					onChange={(value) => {
+						demo.setSize(parseMeterSize(value));
+					}}
+					aria-label="Size"
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Label"
+				description="Optional caption above the meter track."
+			>
+				<Toggle
+					checked={demo.showLabel}
+					label="Show label"
+					onCheckedChange={demo.setShowLabel}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="valueText"
+				description="Visible fraction + aria-valuetext when set."
+			>
+				<Toggle
+					checked={demo.showValueText}
+					label="Show valueText"
+					onCheckedChange={demo.setShowValueText}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+function VisuallyHiddenCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Accessible name enrichment">
+				<Button type="button">
+					Destroy
+					<VisuallyHidden> stack prod-api</VisuallyHidden>
+				</Button>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function VisuallyHiddenKnobs() {
+	return (
+		<RailPanel
+			title="VisuallyHidden"
+			description="Clip-path hide. Keeps text in the accessibility tree."
 		/>
+	);
+}
+
+function PopoverCanvas() {
+	const demo = usePopoverDemo();
+
+	let title: string | undefined;
+	if (demo.showTitle) {
+		title = demo.title;
+	}
+
+	return (
+		<Canvas>
+			<DemoRow label="Interactive panel">
+				<Popover
+					trigger="Region help"
+					title={title}
+					open={demo.open}
+					onOpenChange={demo.setOpen}
+				>
+					<p className="text-muted-foreground">
+						Pick the region closest to your users. Changing region
+						does not move existing stacks.
+					</p>
+					<div className="mt-3">
+						<Button type="button" size="sm" variant="secondary">
+							Open docs
+						</Button>
+					</div>
+				</Popover>
+			</DemoRow>
+			<p className="text-sm text-muted-foreground">
+				open={String(demo.open)}
+			</p>
+		</Canvas>
+	);
+}
+
+function PopoverKnobs() {
+	const demo = usePopoverDemo();
+
+	return (
+		<RailPanel
+			title="Popover"
+			description="Non-modal dialog. Esc and outside press dismiss. No focus trap."
+		>
+			<DemoRow
+				label="Open"
+				description="Controlled open. Trigger / Esc / outside also toggle."
+			>
+				<Toggle
+					checked={demo.open}
+					label="Open"
+					onCheckedChange={demo.setOpen}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Title"
+				description="Optional dialog heading (aria-labelledby)."
+			>
+				<Toggle
+					checked={demo.showTitle}
+					label="Show title"
+					onCheckedChange={demo.setShowTitle}
+				/>
+				<Input
+					id="popover-title"
+					value={demo.title}
+					disabled={!demo.showTitle}
+					aria-label="Popover title"
+					onChange={(event) => {
+						demo.setTitle(event.target.value);
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+interface PopoverDemoValue {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	title: string;
+	setTitle: (value: string) => void;
+	showTitle: boolean;
+	setShowTitle: (value: boolean) => void;
+}
+
+const PopoverDemoContext = createContext<PopoverDemoValue | null>(null);
+
+function usePopoverDemo() {
+	const value = useContext(PopoverDemoContext);
+	if (value === null) {
+		throw new Error("PopoverDemoProvider required");
+	}
+
+	return value;
+}
+
+function PopoverDemoProvider({ children }: { children: ReactNode }) {
+	const [open, setOpen] = useState(false);
+	const [title, setTitle] = useState("Regions");
+	const [showTitle, setShowTitle] = useState(true);
+
+	return (
+		<PopoverDemoContext.Provider
+			value={{
+				open,
+				setOpen,
+				title,
+				setTitle,
+				showTitle,
+				setShowTitle,
+			}}
+		>
+			{children}
+		</PopoverDemoContext.Provider>
+	);
+}
+
+interface CommandPaletteDemoValue {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+	items: CommandItem[];
+	lastId: string;
+	setLastId: (id: string) => void;
+	placeholder: string;
+	setPlaceholder: (value: string) => void;
+	title: string;
+	setTitle: (value: string) => void;
+	emptyText: string;
+	setEmptyText: (value: string) => void;
+	busy: boolean;
+	addItem: () => Promise<void>;
+	removeSelected: () => Promise<void>;
+	resetItems: () => Promise<void>;
+}
+
+const CommandPaletteDemoContext = createContext<CommandPaletteDemoValue | null>(
+	null,
+);
+
+function useCommandPaletteDemo() {
+	const value = useContext(CommandPaletteDemoContext);
+	if (value === null) {
+		throw new Error("CommandPaletteDemoProvider required");
+	}
+
+	return value;
+}
+
+function CommandPaletteDemoProvider({ children }: { children: ReactNode }) {
+	const [open, setOpen] = useState(false);
+	const [items, setItems] = useState<CommandItem[]>([]);
+	const [lastId, setLastId] = useState("");
+	const [placeholder, setPlaceholder] = useState("Type a command...");
+	const [title, setTitle] = useState("Command palette");
+	const [emptyText, setEmptyText] = useState("No matching commands");
+	const [busy, setBusy] = useState(false);
+	const customSeqRef = useRef(1);
+
+	async function refreshItems() {
+		const result = await listCommands();
+		setItems(result.items);
+	}
+
+	useEffect(() => {
+		void refreshItems().catch(() => {
+			/* keep empty until API ready */
+		});
+	}, []);
+
+	const addItem = async () => {
+		setBusy(true);
+		const seq = customSeqRef.current;
+		customSeqRef.current = seq + 1;
+		const id = `custom-${String(seq)}`;
+		try {
+			await addCommand({
+				id,
+				label: `Custom command ${String(seq)}`,
+				group: "Actions",
+				keywords: ["demo"],
+			});
+			await refreshItems();
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	const removeSelected = async () => {
+		if (lastId.length === 0) {
+			return;
+		}
+
+		setBusy(true);
+		try {
+			await removeCommand(lastId);
+			setLastId("");
+			await refreshItems();
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	const resetItems = async () => {
+		setBusy(true);
+		try {
+			await resetCommands();
+			setLastId("");
+			customSeqRef.current = 1;
+			await refreshItems();
+		} finally {
+			setBusy(false);
+		}
+	};
+
+	return (
+		<CommandPaletteDemoContext.Provider
+			value={{
+				open,
+				setOpen,
+				items,
+				lastId,
+				setLastId,
+				placeholder,
+				setPlaceholder,
+				title,
+				setTitle,
+				emptyText,
+				setEmptyText,
+				busy,
+				addItem,
+				removeSelected,
+				resetItems,
+			}}
+		>
+			{children}
+		</CommandPaletteDemoContext.Provider>
+	);
+}
+
+function CommandPaletteCanvas() {
+	const demo = useCommandPaletteDemo();
+
+	let lastLabel = "None yet";
+	if (demo.lastId.length > 0) {
+		lastLabel = demo.lastId;
+	}
+
+	const paletteItems: CommandPaletteItem[] = demo.items.map((item) => {
+		const next: CommandPaletteItem = {
+			id: item.id,
+			label: item.label,
+		};
+		if (item.group !== undefined) {
+			next.group = item.group;
+		}
+		if (item.keywords !== undefined) {
+			next.keywords = item.keywords;
+		}
+		if (item.disabled !== undefined) {
+			next.disabled = item.disabled;
+		}
+
+		return next;
+	});
+
+	return (
+		<div className="flex flex-col gap-2">
+			<section className="flex flex-col">
+				<DemoSectionHeader
+					title="API playground"
+					description="Nest /v1/commands catalog. Palette filters locally; Add / Remove / Reset mutate the list."
+					apiDriven
+				/>
+				<Canvas>
+					<DemoRow label="Open palette">
+						<Button
+							type="button"
+							onClick={() => {
+								demo.setOpen(true);
+							}}
+						>
+							Open command palette
+						</Button>
+					</DemoRow>
+					<DemoRow label="Catalog">
+						<div className="flex flex-wrap gap-2">
+							<Button
+								type="button"
+								variant="filled"
+								size="sm"
+								disabled={demo.busy}
+								onClick={() => {
+									void demo.addItem();
+								}}
+							>
+								Add
+							</Button>
+							<Button
+								type="button"
+								variant="outlined"
+								size="sm"
+								disabled={demo.busy || demo.lastId.length === 0}
+								onClick={() => {
+									void demo.removeSelected();
+								}}
+							>
+								Remove last
+							</Button>
+							<Button
+								type="button"
+								variant="outlined"
+								size="sm"
+								disabled={demo.busy}
+								onClick={() => {
+									void demo.resetItems();
+								}}
+							>
+								Reset
+							</Button>
+						</div>
+					</DemoRow>
+					<DemoRow label="Last selection">{lastLabel}</DemoRow>
+					<p className="text-sm text-muted-foreground">
+						{String(demo.items.length)} commands loaded
+					</p>
+					<CommandPalette
+						open={demo.open}
+						onOpenChange={demo.setOpen}
+						items={paletteItems}
+						placeholder={demo.placeholder}
+						title={demo.title}
+						emptyText={demo.emptyText}
+						onSelect={(item) => {
+							demo.setLastId(item.id);
+						}}
+					/>
+				</Canvas>
+			</section>
+		</div>
+	);
+}
+
+function CommandPaletteKnobs() {
+	const demo = useCommandPaletteDemo();
+
+	return (
+		<RailPanel
+			title="CommandPalette"
+			description="App should bind Cmd/K to open. Knobs set chrome strings; Nest owns the item catalog."
+		>
+			<DemoRow
+				label="Title"
+				description="Modal dialog title (aria-labelledby)."
+			>
+				<Input
+					id="palette-title"
+					value={demo.title}
+					aria-label="Palette title"
+					onChange={(event) => {
+						demo.setTitle(event.target.value);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Placeholder"
+				description="Search field placeholder text."
+			>
+				<Input
+					id="palette-placeholder"
+					value={demo.placeholder}
+					aria-label="Palette placeholder"
+					onChange={(event) => {
+						demo.setPlaceholder(event.target.value);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="emptyText"
+				description="Shown when the local filter matches nothing."
+			>
+				<Input
+					id="palette-empty"
+					value={demo.emptyText}
+					aria-label="Palette empty text"
+					onChange={(event) => {
+						demo.setEmptyText(event.target.value);
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
 	);
 }
 
@@ -2121,6 +3174,12 @@ export {
 	ButtonKnobs,
 	CardCanvas,
 	CardKnobs,
+	CircularProgressCanvas,
+	CircularProgressKnobs,
+	ProgressJobDemoProvider,
+	CommandPaletteCanvas,
+	CommandPaletteDemoProvider,
+	CommandPaletteKnobs,
 	ConfirmCanvas,
 	ConfirmDemoProvider,
 	ConfirmKnobs,
@@ -2137,12 +3196,18 @@ export {
 	LoadingKnobs,
 	ProgressBarCanvas,
 	ProgressBarKnobs,
+	QuotaMeterCanvas,
+	QuotaMeterDemoProvider,
+	QuotaMeterKnobs,
 	ModalCanvas,
 	ModalDemoProvider,
 	ModalKnobs,
 	DrawerCanvas,
 	DrawerDemoProvider,
 	DrawerKnobs,
+	PopoverCanvas,
+	PopoverDemoProvider,
+	PopoverKnobs,
 	TabsCanvas,
 	TabsKnobs,
 	ToastCanvas,
@@ -2151,4 +3216,6 @@ export {
 	TooltipCanvas,
 	TooltipDemoProvider,
 	TooltipKnobs,
+	VisuallyHiddenCanvas,
+	VisuallyHiddenKnobs,
 };

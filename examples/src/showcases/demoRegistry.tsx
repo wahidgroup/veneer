@@ -32,6 +32,8 @@ import {
 	TreeViewCanvas,
 	TreeViewDemoProvider,
 	TreeViewKnobs,
+	ResourceGraphCanvas,
+	ResourceGraphKnobs,
 } from "./dataDemos.js";
 import {
 	ChoicesCanvas,
@@ -89,9 +91,23 @@ import {
 	LoadingKnobs,
 	ProgressBarCanvas,
 	ProgressBarKnobs,
+	ProgressJobDemoProvider,
+	QuotaMeterDemoProvider,
+	CircularProgressCanvas,
+	CircularProgressKnobs,
+	QuotaMeterCanvas,
+	QuotaMeterKnobs,
+	VisuallyHiddenCanvas,
+	VisuallyHiddenKnobs,
 	ModalCanvas,
 	ModalDemoProvider,
 	ModalKnobs,
+	PopoverCanvas,
+	PopoverDemoProvider,
+	PopoverKnobs,
+	CommandPaletteCanvas,
+	CommandPaletteDemoProvider,
+	CommandPaletteKnobs,
 	TabsCanvas,
 	TabsKnobs,
 	ToastCanvas,
@@ -161,9 +177,24 @@ const PRIMITIVES: Record<string, DemoEntry> = {
 		Knobs: LoadingKnobs,
 	},
 	"progress-bar": {
-		Provider: PassthroughProvider,
+		Provider: ProgressJobDemoProvider,
 		Canvas: ProgressBarCanvas,
 		Knobs: ProgressBarKnobs,
+	},
+	"circular-progress": {
+		Provider: ProgressJobDemoProvider,
+		Canvas: CircularProgressCanvas,
+		Knobs: CircularProgressKnobs,
+	},
+	"quota-meter": {
+		Provider: QuotaMeterDemoProvider,
+		Canvas: QuotaMeterCanvas,
+		Knobs: QuotaMeterKnobs,
+	},
+	"visually-hidden": {
+		Provider: PassthroughProvider,
+		Canvas: VisuallyHiddenCanvas,
+		Knobs: VisuallyHiddenKnobs,
 	},
 	"empty-state": {
 		Provider: PassthroughProvider,
@@ -207,6 +238,16 @@ const OVERLAYS: Record<string, DemoEntry> = {
 		Provider: TooltipDemoProvider,
 		Canvas: TooltipCanvas,
 		Knobs: TooltipKnobs,
+	},
+	popover: {
+		Provider: PopoverDemoProvider,
+		Canvas: PopoverCanvas,
+		Knobs: PopoverKnobs,
+	},
+	"command-palette": {
+		Provider: CommandPaletteDemoProvider,
+		Canvas: CommandPaletteCanvas,
+		Knobs: CommandPaletteKnobs,
 	},
 	"action-menu": {
 		Provider: ActionMenuDemoProvider,
@@ -359,6 +400,11 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: TreeViewDemoProvider,
 		Canvas: TreeViewCanvas,
 		Knobs: TreeViewKnobs,
+	},
+	"resource-graph": {
+		Provider: PassthroughProvider,
+		Canvas: ResourceGraphCanvas,
+		Knobs: ResourceGraphKnobs,
 	},
 };
 

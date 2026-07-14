@@ -62,7 +62,28 @@ const CATALOG: CatalogCategory[] = [
 				id: "progress-bar",
 				label: "ProgressBar",
 				description:
-					"Leaf bar + ProgressGroup parallel lanes. Demo Start/Reset runs three tasks.",
+					"Leaf bar + ProgressGroup. Nest job Start/Stop/Reset + size/indeterminate knobs.",
+				apiDriven: true,
+			},
+			{
+				id: "circular-progress",
+				label: "CircularProgress",
+				description:
+					"Compact progress ring. Nest job animation + size/indeterminate knobs.",
+				apiDriven: true,
+			},
+			{
+				id: "quota-meter",
+				label: "QuotaMeter",
+				description:
+					"Soft-limit gauge (role=meter). Nest consume/release + size/label knobs.",
+				apiDriven: true,
+			},
+			{
+				id: "visually-hidden",
+				label: "VisuallyHidden",
+				description:
+					"Clip-path hide for screen-reader-only context text.",
 			},
 			{
 				id: "empty-state",
@@ -117,6 +138,19 @@ const CATALOG: CatalogCategory[] = [
 				label: "Tooltip",
 				description:
 					"Hover or focus to reveal truncated IDs and hints.",
+			},
+			{
+				id: "popover",
+				label: "Popover",
+				description:
+					"Non-modal floating panel for interactive extras. Esc / outside dismiss.",
+			},
+			{
+				id: "command-palette",
+				label: "CommandPalette",
+				description:
+					"Modal jump/command list. Nest catalog + title/placeholder/empty knobs.",
+				apiDriven: true,
 			},
 			{
 				id: "action-menu",
@@ -337,6 +371,12 @@ const CATALOG: CatalogCategory[] = [
 				label: "TreeView",
 				description:
 					"Nested network/inventory tree with APG keyboard and expand.",
+			},
+			{
+				id: "resource-graph",
+				label: "ResourceGraph",
+				description:
+					"SVG dependency map with accessible edge list. No canvas/pan-zoom in v1.",
 			},
 		],
 	},

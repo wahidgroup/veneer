@@ -473,4 +473,223 @@ describe("examples api", () => {
 			},
 		});
 	});
+
+	it("runs progress job and quota mutations", async () => {
+		let response = await fetch(`${baseUrl}/v1/metrics/progress`);
+		expect(response.status).toBe(200);
+		expect(await readBody(response)).toEqual({
+			data: {
+				value: 0,
+				max: 100,
+				streaming: false,
+				label: "Deploy job",
+			},
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/metrics/progress/start`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+		expect(await readBody(response)).toEqual({
+			data: {
+				value: 0,
+				max: 100,
+				streaming: true,
+				label: "Deploy job",
+			},
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		await new Promise((resolve) => {
+			setTimeout(resolve, 500);
+		});
+
+		response = await fetch(`${baseUrl}/v1/metrics/progress`);
+		const mid = await readBody(response);
+		expect(mid).toEqual({
+			data: {
+				value: expect.any(Number),
+				max: 100,
+				streaming: expect.any(Boolean),
+				label: "Deploy job",
+			},
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+		if (
+			typeof mid === "object" &&
+			mid !== null &&
+			"data" in mid &&
+			typeof mid.data === "object" &&
+			mid.data !== null &&
+			"value" in mid.data
+		) {
+			expect(mid.data.value).toBeGreaterThan(0);
+		}
+
+		response = await fetch(`${baseUrl}/v1/metrics/progress/stop`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(`${baseUrl}/v1/metrics/progress/reset`, {
+			method: "POST",
+		});
+		expect(await readBody(response)).toEqual({
+			data: {
+				value: 0,
+				max: 100,
+				streaming: false,
+				label: "Deploy job",
+			},
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/metrics/quota`);
+		expect(await readBody(response)).toEqual({
+			data: { used: 42, max: 100, label: "Stacks" },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/metrics/quota/consume`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ amount: 10 }),
+		});
+		expect(await readBody(response)).toEqual({
+			data: { used: 52, max: 100, label: "Stacks" },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/metrics/quota/release`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ amount: 5 }),
+		});
+		expect(await readBody(response)).toEqual({
+			data: { used: 47, max: 100, label: "Stacks" },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/metrics/quota/reset`, {
+			method: "POST",
+		});
+		expect(await readBody(response)).toEqual({
+			data: { used: 42, max: 100, label: "Stacks" },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+	});
+
+	it("lists filters adds removes and resets commands", async () => {
+		let response = await fetch(`${baseUrl}/v1/commands/reset`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+		expect(await readBody(response)).toEqual({
+			data: { count: 6 },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/commands`);
+		expect(response.status).toBe(200);
+
+		const listed = await readBody(response);
+		expect(listed).toEqual({
+			data: {
+				items: expect.arrayContaining([
+					expect.objectContaining({
+						id: "stacks",
+						label: "Go to stacks",
+					}),
+				]),
+			},
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/commands?q=inventory`);
+		expect(await readBody(response)).toEqual({
+			data: {
+				items: [
+					{
+						id: "stacks",
+						label: "Go to stacks",
+						group: "Navigate",
+						keywords: ["inventory"],
+					},
+				],
+			},
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/commands`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({
+				id: "custom-cmd",
+				label: "Custom command",
+				group: "Actions",
+			}),
+		});
+		expect(response.status).toBe(201);
+		expect(await readBody(response)).toEqual({
+			data: {
+				id: "custom-cmd",
+				label: "Custom command",
+				group: "Actions",
+			},
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(
+			`${baseUrl}/v1/commands/${encodeURIComponent("custom-cmd")}`,
+			{ method: "DELETE" },
+		);
+		expect(response.status).toBe(200);
+		expect(await readBody(response)).toEqual({
+			data: { count: 6 },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(
+			`${baseUrl}/v1/commands/${encodeURIComponent("missing")}`,
+			{ method: "DELETE" },
+		);
+		expect(response.status).toBe(404);
+
+		response = await fetch(`${baseUrl}/v1/commands/reset`, {
+			method: "POST",
+		});
+		expect(await readBody(response)).toEqual({
+			data: { count: 6 },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+	});
 });
