@@ -69,6 +69,11 @@ export type {
 export { applyRowTransaction } from "./components/data/applyRowTransaction.js";
 export type { RowTransaction } from "./components/data/applyRowTransaction.js";
 export { useDataTableRows } from "./components/data/useDataTableRows.js";
+export {
+	EmptyState,
+	emptyStateVariants,
+} from "./components/feedback/EmptyState.js";
+export type { EmptyStateProps } from "./components/feedback/EmptyState.js";
 export { FieldError } from "./components/forms/FieldError.js";
 export type { FieldErrorProps } from "./components/forms/FieldError.js";
 export { FieldHint } from "./components/forms/FieldHint.js";

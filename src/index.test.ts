@@ -27,6 +27,8 @@ const EXPECTED_EXPORTS = new Set([
 	"DataTable",
 	"DateTimePicker",
 	"DEFAULT_PAGE_SIZE",
+	"EmptyState",
+	"emptyStateVariants",
 	"FieldError",
 	"FieldHint",
 	"FileUpload",

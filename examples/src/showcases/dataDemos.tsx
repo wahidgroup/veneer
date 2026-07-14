@@ -5,6 +5,7 @@ import {
 	Badge,
 	Button,
 	DataTable,
+	EmptyState,
 	Pagination,
 	applyRowTransaction,
 	useDataTableRows,
@@ -379,6 +380,48 @@ function PaginationKnobs() {
 	);
 }
 
+function EmptyTableCanvas() {
+	return (
+		<Canvas>
+			<DataTable
+				columns={COLUMNS}
+				data={[]}
+				rowCount={0}
+				getRowId={getRowId}
+				defaultQuery={{ pageSize: 10 }}
+				empty={
+					<EmptyState
+						size="sm"
+						title="No stacks"
+						action={
+							<Button type="button" size="sm">
+								Create stack
+							</Button>
+						}
+					>
+						Create a stack to populate this inventory.
+					</EmptyState>
+				}
+			/>
+		</Canvas>
+	);
+}
+
+function EmptyTableKnobs() {
+	return (
+		<RailPanel
+			title="Empty table"
+			description="Pass EmptyState size sm through DataTable empty. Loading still owns in-flight waits."
+		>
+			<DemoRow label="Contract">
+				<span className="text-sm text-muted-foreground">
+					empty ReactNode · default remains plain No results text
+				</span>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 export type { InventoryRow };
 export {
 	ServerPageCanvas,
@@ -387,4 +430,6 @@ export {
 	LivePatchKnobs,
 	PaginationCanvas,
 	PaginationKnobs,
+	EmptyTableCanvas,
+	EmptyTableKnobs,
 };

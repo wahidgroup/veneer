@@ -8,6 +8,8 @@ import {
 	ComboboxCategoryProvider,
 } from "./comboboxDemos.js";
 import {
+	EmptyTableCanvas,
+	EmptyTableKnobs,
 	LivePatchCanvas,
 	LivePatchKnobs,
 	PaginationCanvas,
@@ -53,6 +55,8 @@ import {
 	ConfirmCanvas,
 	ConfirmDemoProvider,
 	ConfirmKnobs,
+	EmptyStateCanvas,
+	EmptyStateKnobs,
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,
@@ -112,11 +116,14 @@ const PRIMITIVES: Record<string, DemoEntry> = {
 		Canvas: LoadingCanvas,
 		Knobs: LoadingKnobs,
 	},
-	tabs: {
+	"empty-state": {
 		Provider: PassthroughProvider,
-		Canvas: TabsCanvas,
-		Knobs: TabsKnobs,
+		Canvas: EmptyStateCanvas,
+		Knobs: EmptyStateKnobs,
 	},
+};
+
+const OVERLAYS: Record<string, DemoEntry> = {
 	modal: {
 		Provider: ModalDemoProvider,
 		Canvas: ModalCanvas,
@@ -203,6 +210,11 @@ const SHELL: Record<string, DemoEntry> = {
 		Canvas: BreadcrumbsCanvas,
 		Knobs: BreadcrumbsKnobs,
 	},
+	tabs: {
+		Provider: PassthroughProvider,
+		Canvas: TabsCanvas,
+		Knobs: TabsKnobs,
+	},
 };
 
 const WORKFLOW: Record<string, DemoEntry> = {
@@ -234,6 +246,11 @@ const DATA: Record<string, DemoEntry> = {
 		Canvas: PaginationCanvas,
 		Knobs: PaginationKnobs,
 	},
+	empty: {
+		Provider: PassthroughProvider,
+		Canvas: EmptyTableCanvas,
+		Knobs: EmptyTableKnobs,
+	},
 };
 
 function getDemo(category: CategoryId, component: string): DemoEntry {
@@ -244,6 +261,14 @@ function getDemo(category: CategoryId, component: string): DemoEntry {
 		}
 
 		return PRIMITIVES.alert;
+	}
+	if (category === "overlays") {
+		const entry = OVERLAYS[component];
+		if (entry !== undefined) {
+			return entry;
+		}
+
+		return OVERLAYS.modal;
 	}
 	if (category === "forms") {
 		const entry = FORMS[component];

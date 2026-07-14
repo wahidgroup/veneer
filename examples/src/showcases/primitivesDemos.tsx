@@ -6,6 +6,7 @@ import {
 	Badge,
 	Button,
 	ConfirmDialog,
+	EmptyState,
 	Loading,
 	Modal,
 	NumberInput,
@@ -1013,6 +1014,48 @@ function LoadingKnobs() {
 	);
 }
 
+function EmptyStateCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Page / first-run">
+				<EmptyState
+					title="No stacks yet"
+					action={<Button type="button">Create stack</Button>}
+					className="w-full max-w-lg rounded-md border border-border"
+				>
+					Deploy your first stack to this environment.
+				</EmptyState>
+			</DemoRow>
+			<DemoRow label="Compact (table cell)">
+				<EmptyState
+					size="sm"
+					title="No results"
+					icon={null}
+					className="w-full max-w-lg rounded-md border border-border"
+				>
+					Try clearing filters or widening the search.
+				</EmptyState>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function EmptyStateKnobs() {
+	return (
+		<RailPanel
+			title="EmptyState"
+			description="Settled empty / first-run chrome. Busy waits use Loading; wire size sm into DataTable empty."
+		>
+			<DemoRow label="Slots">
+				<span className="text-sm text-muted-foreground">
+					title · children · icon (null hides) · action (compose
+					Button)
+				</span>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 function TabsCanvas() {
 	return (
 		<Canvas>
@@ -1535,6 +1578,8 @@ export {
 	ConfirmCanvas,
 	ConfirmDemoProvider,
 	ConfirmKnobs,
+	EmptyStateCanvas,
+	EmptyStateKnobs,
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,

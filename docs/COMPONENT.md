@@ -18,6 +18,7 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `Loading`    | [`feedback/Loading.tsx`](../src/components/feedback/Loading.tsx)           | Busy / skeleton               |
 | `Portal`     | [`overlays/Portal.tsx`](../src/components/overlays/Portal.tsx)             | Portaled layers               |
 | `Pagination` | [`navigation/Pagination.tsx`](../src/components/navigation/Pagination.tsx) | Prev/Next + item-range chrome |
+| `EmptyState` | [`feedback/EmptyState.tsx`](../src/components/feedback/EmptyState.tsx)     | No-results / first-run CTA    |
 
 `Button.tsx` remains the stamp example for exports, `cva`/`cn`, `data-slot`, and tokens.
 

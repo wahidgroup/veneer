@@ -1,5 +1,6 @@
 type CategoryId =
 	| "primitives"
+	| "overlays"
 	| "forms"
 	| "combobox"
 	| "shell"
@@ -50,11 +51,17 @@ const CATALOG: CatalogCategory[] = [
 					"Spinner or skeleton bones for busy page sections.",
 			},
 			{
-				id: "tabs",
-				label: "Tabs",
+				id: "empty-state",
+				label: "EmptyState",
 				description:
-					"Underline tablist + panels. Arrow keys move selection.",
+					"No-results / first-run CTA. Use size sm inside DataTable empty.",
 			},
+		],
+	},
+	{
+		id: "overlays",
+		label: "Overlays",
+		components: [
 			{
 				id: "modal",
 				label: "Modal",
@@ -188,6 +195,12 @@ const CATALOG: CatalogCategory[] = [
 				description:
 					"Trail above the canvas: Examples > category (> component when tabs are used).",
 			},
+			{
+				id: "tabs",
+				label: "Tabs",
+				description:
+					"Underline tablist + panels. Arrow keys move selection.",
+			},
 		],
 	},
 	{
@@ -229,6 +242,12 @@ const CATALOG: CatalogCategory[] = [
 				label: "Pagination",
 				description:
 					"Standalone Prev/Next chrome with optional item range. DataTable reuses the same control.",
+			},
+			{
+				id: "empty",
+				label: "Empty table",
+				description:
+					"DataTable empty slot with EmptyState size sm and a create CTA.",
 			},
 		],
 	},

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
 	Boxes,
 	FormInput,
+	Layers,
 	LayoutTemplate,
 	ListOrdered,
 	ListTree,
@@ -51,6 +52,9 @@ function categoryIcon(id: CategoryId): ReactNode {
 	if (id === "primitives") {
 		return <Boxes className="size-4 shrink-0" aria-hidden="true" />;
 	}
+	if (id === "overlays") {
+		return <Layers className="size-4 shrink-0" aria-hidden="true" />;
+	}
 	if (id === "forms") {
 		return <FormInput className="size-4 shrink-0" aria-hidden="true" />;
 	}
@@ -70,6 +74,9 @@ function categoryIcon(id: CategoryId): ReactNode {
 function parseCategoryId(value: string): CategoryId | null {
 	if (value === "primitives") {
 		return "primitives";
+	}
+	if (value === "overlays") {
+		return "overlays";
 	}
 	if (value === "forms") {
 		return "forms";
