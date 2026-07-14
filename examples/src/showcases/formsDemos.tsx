@@ -189,8 +189,8 @@ function TextSelectCanvas() {
 						id="region"
 						options={REGION_OPTIONS}
 						value={demo.region}
-						onChange={(event) => {
-							demo.setRegion(event.target.value);
+						onChange={(value) => {
+							demo.setRegion(value);
 						}}
 					/>
 				</FormField>
@@ -203,7 +203,7 @@ function TextSelectKnobs() {
 	return (
 		<RailPanel
 			title="TextArea + Select"
-			description="Multi-line notes and native region select for deploy wizards."
+			description="Multi-line notes and region listbox for deploy wizards."
 		/>
 	);
 }

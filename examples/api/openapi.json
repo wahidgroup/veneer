@@ -106,6 +106,116 @@
 				]
 			}
 		},
+		"/v1/options/instances": {
+			"get": {
+				"operationId": "OptionsController_list",
+				"parameters": [
+					{
+						"name": "q",
+						"required": false,
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InstanceOptionListDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"options"
+				]
+			},
+			"post": {
+				"operationId": "OptionsController_add",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/InstanceOptionDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/InstanceOptionDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"options"
+				]
+			}
+		},
+		"/v1/options/instances/reset": {
+			"post": {
+				"operationId": "OptionsController_reset",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OptionCountDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"options"
+				]
+			}
+		},
+		"/v1/options/instances/{value}": {
+			"delete": {
+				"operationId": "OptionsController_remove",
+				"parameters": [
+					{
+						"name": "value",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/OptionCountDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"options"
+				]
+			}
+		},
 		"/v1/tables/{id}": {
 			"get": {
 				"operationId": "TablesController_list",
@@ -462,6 +572,46 @@
 				},
 				"required": [
 					"streaming",
+					"count"
+				]
+			},
+			"InstanceOptionDto": {
+				"type": "object",
+				"properties": {
+					"value": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"value",
+					"label"
+				]
+			},
+			"InstanceOptionListDto": {
+				"type": "object",
+				"properties": {
+					"items": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/InstanceOptionDto"
+						}
+					}
+				},
+				"required": [
+					"items"
+				]
+			},
+			"OptionCountDto": {
+				"type": "object",
+				"properties": {
+					"count": {
+						"type": "number"
+					}
+				},
+				"required": [
 					"count"
 				]
 			},

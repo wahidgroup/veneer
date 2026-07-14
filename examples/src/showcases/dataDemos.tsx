@@ -458,8 +458,8 @@ function DataTableKnobs() {
 					options={DATA_TABLE_PAGE_SIZE_OPTIONS}
 					value={String(demo.pageSize)}
 					aria-label="Page size"
-					onChange={(event) => {
-						demo.setPageSize(Number(event.target.value));
+					onChange={(value) => {
+						demo.setPageSize(Number(value));
 					}}
 				/>
 			</DemoRow>
@@ -615,8 +615,8 @@ function PaginationKnobs() {
 					options={PAGINATION_PAGE_SIZE_OPTIONS}
 					value={String(demo.pageSize)}
 					aria-label="Pagination page size"
-					onChange={(event) => {
-						demo.setPageSize(Number(event.target.value));
+					onChange={(value) => {
+						demo.setPageSize(Number(value));
 					}}
 				/>
 			</DemoRow>
@@ -714,8 +714,8 @@ function DescriptionListKnobs() {
 					options={DESCRIPTION_COLUMNS_OPTIONS}
 					value={String(demo.columns)}
 					aria-label="Description list columns"
-					onChange={(event) => {
-						if (event.target.value === "2") {
+					onChange={(value) => {
+						if (value === "2") {
 							demo.setColumns(2);
 							return;
 						}
@@ -855,8 +855,8 @@ function StatDisplayKnobs() {
 					options={STAT_TONE_OPTIONS}
 					value={demo.tone}
 					aria-label="Stat tone"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (
 							next === "default" ||
 							next === "success" ||
@@ -1009,8 +1009,8 @@ function CodeBlockKnobs() {
 					options={CODE_LANGUAGE_OPTIONS}
 					value={demo.language}
 					aria-label="Code language"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (
 							next === "hcl" ||
 							next === "bash" ||
@@ -1048,8 +1048,8 @@ function CodeBlockKnobs() {
 					options={CODE_TAB_SIZE_OPTIONS}
 					value={String(demo.tabSize)}
 					aria-label="Tab size"
-					onChange={(event) => {
-						demo.setTabSize(Number(event.target.value));
+					onChange={(value) => {
+						demo.setTabSize(Number(value));
 					}}
 				/>
 			</DemoRow>
@@ -1510,8 +1510,8 @@ function TreeViewKnobs() {
 					options={TREE_END_ALIGN_OPTIONS}
 					value={demo.endAlign}
 					aria-label="End align"
-					onChange={(event) => {
-						if (event.target.value === "snug") {
+					onChange={(value) => {
+						if (value === "snug") {
 							demo.setEndAlign("snug");
 							return;
 						}

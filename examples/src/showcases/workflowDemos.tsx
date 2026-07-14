@@ -291,8 +291,8 @@ function LinearDeployFlow() {
 								label: "AP Southeast",
 							},
 						]}
-						onChange={(event) => {
-							demo.setRegion(event.target.value);
+						onChange={(value) => {
+							demo.setRegion(value);
 						}}
 					/>
 					{regionError}
@@ -310,8 +310,8 @@ function LinearDeployFlow() {
 							{ value: "pro", label: "Pro" },
 							{ value: "scale", label: "Scale" },
 						]}
-						onChange={(event) => {
-							demo.setPlan(event.target.value);
+						onChange={(value) => {
+							demo.setPlan(value);
 						}}
 					/>
 					{planError}
@@ -516,8 +516,8 @@ function WorkflowKnobs() {
 						{ value: "linear", label: "Linear deploy" },
 						{ value: "nodes", label: "Multi-node" },
 					]}
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "linear" || next === "nodes") {
 							demo.setVariant(next);
 						}
@@ -533,8 +533,8 @@ function WorkflowKnobs() {
 						{ value: "horizontal", label: "Horizontal" },
 						{ value: "vertical", label: "Vertical" },
 					]}
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "horizontal" || next === "vertical") {
 							demo.setOrientation(next);
 						}
@@ -912,8 +912,8 @@ function LogViewerKnobs() {
 						{ value: "100", label: "100" },
 					]}
 					value={String(demo.maxLines)}
-					onChange={(event) => {
-						demo.setMaxLines(Number(event.target.value));
+					onChange={(value) => {
+						demo.setMaxLines(Number(value));
 					}}
 				/>
 			</DemoRow>

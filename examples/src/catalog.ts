@@ -11,6 +11,8 @@ interface CatalogComponent {
 	id: string;
 	label: string;
 	description: string;
+	/** When true, examples UI shows an API badge on the section/tab title. */
+	apiDriven?: boolean;
 }
 
 interface CatalogCategory {
@@ -144,7 +146,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "text-select",
 				label: "TextArea + Select",
 				description:
-					"Multi-line notes and native region select for deploy wizards.",
+					"Multi-line notes and region listbox for deploy wizards.",
 			},
 			{
 				id: "combobox",
@@ -187,7 +189,8 @@ const CATALOG: CatalogCategory[] = [
 				id: "single",
 				label: "Single select",
 				description:
-					"Searchable listbox. Type to filter; Arrow / Enter to pick; Esc closes.",
+					"Nest typeahead (`filterMode=\"remote\"` + `onSearchChange`) with add/remove/reset option mutations.",
+				apiDriven: true,
 			},
 			{
 				id: "multi",
@@ -277,7 +280,8 @@ const CATALOG: CatalogCategory[] = [
 				id: "log-viewer",
 				label: "LogViewer",
 				description:
-					"Live-tail panel: follow/pause, level chips, text + time filters, copy.",
+					"Live-tail panel: Nest stream + WS filters; follow/pause, level chips, copy.",
+				apiDriven: true,
 			},
 		],
 	},
@@ -290,6 +294,7 @@ const CATALOG: CatalogCategory[] = [
 				label: "DataTable",
 				description:
 					"Nest list with full server query; live WS patches; empty slot.",
+				apiDriven: true,
 			},
 			{
 				id: "pagination",

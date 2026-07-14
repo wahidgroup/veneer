@@ -107,8 +107,8 @@ function DataTableToolbar<TData>({
 							label: `${String(size)} / page`,
 						};
 					})}
-					onChange={(event) => {
-						const size = Number(event.target.value);
+					onChange={(value) => {
+						const size = Number(value);
 						table.setPageSize(clampPageSize(size));
 					}}
 				/>

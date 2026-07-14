@@ -270,15 +270,101 @@ async function stopTableStream(id: string): Promise<{ streaming: boolean }> {
 	return requireStreaming(unwrap(result.data));
 }
 
+type InstanceOption = components["schemas"]["InstanceOptionDto"];
+
+function requireInstanceOptions(data: unknown): { items: InstanceOption[] } {
+	if (!isRecord(data) || !Array.isArray(data.items)) {
+		throw new Error("options list payload invalid");
+	}
+
+	const items: InstanceOption[] = [];
+	for (const item of data.items) {
+		if (
+			!isRecord(item) ||
+			typeof item.value !== "string" ||
+			typeof item.label !== "string"
+		) {
+			throw new Error("option item payload invalid");
+		}
+
+		items.push({ value: item.value, label: item.label });
+	}
+
+	return { items };
+}
+
+function requireInstanceOption(data: unknown): InstanceOption {
+	if (
+		!isRecord(data) ||
+		typeof data.value !== "string" ||
+		typeof data.label !== "string"
+	) {
+		throw new Error("option payload invalid");
+	}
+
+	return { value: data.value, label: data.label };
+}
+
+async function listInstanceOptions(
+	q?: string,
+): Promise<{ items: InstanceOption[] }> {
+	const result = await client.GET("/v1/options/instances", {
+		params: { query: { q } },
+	});
+	if (result.error !== undefined) {
+		throw new Error("list instance options failed");
+	}
+
+	return requireInstanceOptions(unwrap(result.data));
+}
+
+async function addInstanceOption(
+	option: InstanceOption,
+): Promise<InstanceOption> {
+	const result = await client.POST("/v1/options/instances", {
+		body: option,
+	});
+	if (result.error !== undefined) {
+		throw new Error("add instance option failed");
+	}
+
+	return requireInstanceOption(unwrap(result.data));
+}
+
+async function removeInstanceOption(value: string): Promise<{ count: number }> {
+	const result = await client.DELETE("/v1/options/instances/{value}", {
+		params: { path: { value } },
+	});
+	if (result.error !== undefined) {
+		throw new Error("remove instance option failed");
+	}
+
+	return requireCount(unwrap(result.data));
+}
+
+async function resetInstanceOptions(): Promise<{ count: number }> {
+	const result = await client.POST("/v1/options/instances/reset");
+	if (result.error !== undefined) {
+		throw new Error("reset instance options failed");
+	}
+
+	return requireCount(unwrap(result.data));
+}
+
+export type { InstanceOption };
 export {
+	addInstanceOption,
 	addTableRows,
 	client,
 	createExamplesApiClient,
 	getHealth,
 	getLogStreamStatus,
 	getTableStreamStatus,
+	listInstanceOptions,
 	listTableRows,
+	removeInstanceOption,
 	removeTableRows,
+	resetInstanceOptions,
 	resetLogStream,
 	resetTable,
 	startLogStream,

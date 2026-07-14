@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-import { Alert, FieldHint, cn } from "@wahidgroup/veneer";
+import { Alert, Badge, FieldHint, cn } from "@wahidgroup/veneer";
 
 interface RailPanelProps {
 	title: string;
@@ -75,8 +75,58 @@ function Canvas({ children, className }: CanvasProps) {
 	);
 }
 
+/**
+ * Marks Nest/API-backed example sections.
+ */
+function ApiDemoBadge() {
+	return (
+		<Badge variant="info" size="sm" aria-hidden="true">
+			API
+		</Badge>
+	);
+}
+
+interface DemoSectionHeaderProps {
+	title: string;
+	description: string;
+	apiDriven?: boolean;
+}
+
+/**
+ * Stacked-category section title with optional API badge.
+ */
+function DemoSectionHeader({
+	title,
+	description,
+	apiDriven,
+}: DemoSectionHeaderProps) {
+	let badge: ReactNode = null;
+	if (apiDriven === true) {
+		badge = <ApiDemoBadge />;
+	}
+
+	return (
+		<div className="px-6 pt-6">
+			<div className="flex flex-wrap items-center gap-1.5">
+				<h3 className="text-lg font-semibold text-foreground">
+					{title}
+				</h3>
+				{badge}
+			</div>
+			<p className="text-sm text-muted-foreground">{description}</p>
+		</div>
+	);
+}
+
 function PassthroughProvider({ children }: { children: ReactNode }) {
 	return children;
 }
 
-export { Canvas, DemoRow, PassthroughProvider, RailPanel };
+export {
+	ApiDemoBadge,
+	Canvas,
+	DemoRow,
+	DemoSectionHeader,
+	PassthroughProvider,
+	RailPanel,
+};

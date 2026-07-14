@@ -67,6 +67,57 @@ describe("Combobox", () => {
 		).toEqual(["EU West (Ireland)"]);
 	});
 
+	it("skips local filter when filterMode is remote", async () => {
+		const user = userEvent.setup();
+		const queries: string[] = [];
+
+		render(
+			<Combobox
+				options={OPTIONS}
+				value=""
+				filterMode="remote"
+				onChange={ignoreSingle}
+				onSearchChange={(query) => {
+					queries.push(query);
+				}}
+			/>,
+		);
+
+		const input = screen.getByRole("combobox");
+		await user.click(input);
+		await user.type(input, "zzz");
+
+		const listbox = screen.getByRole("listbox");
+		expect(within(listbox).getAllByRole("option")).toHaveLength(3);
+		expect(queries.at(-1)).toBe("zzz");
+	});
+
+	it("clears onSearchChange when the list closes with a query", async () => {
+		const user = userEvent.setup();
+		const queries: string[] = [];
+
+		render(
+			<Combobox
+				aria-label="Fruit"
+				options={OPTIONS}
+				value=""
+				filterMode="remote"
+				onChange={ignoreSingle}
+				onSearchChange={(query) => {
+					queries.push(query);
+				}}
+			/>,
+		);
+
+		const input = screen.getByRole("combobox");
+		await user.click(input);
+		await user.type(input, "ap");
+		await user.keyboard("{Escape}");
+
+		expect(screen.queryByRole("listbox")).toBeNull();
+		expect(queries.at(-1)).toBe("");
+	});
+
 	it("toggles multi-select values and chips", async () => {
 		const user = userEvent.setup();
 		const batches: string[][] = [];
@@ -142,18 +193,17 @@ describe("Combobox", () => {
 		expect(option).toHaveClass("bg-primary/10");
 		expect(option).toHaveClass("text-primary");
 	});
-	it("merges className onto the root", () => {
-		const { container } = render(
+	it("applies className to the combobox input", () => {
+		render(
 			<Combobox
+				aria-label="Fruit"
 				className="extra-class"
 				options={OPTIONS}
 				value=""
 				onChange={ignoreSingle}
 			/>,
 		);
-		expect(container.querySelector('[data-slot="combobox"]')).toHaveClass(
-			"extra-class",
-		);
+		expect(screen.getByRole("combobox")).toHaveClass("extra-class");
 	});
 
 	it.each([

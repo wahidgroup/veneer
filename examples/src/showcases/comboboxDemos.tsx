@@ -1,8 +1,27 @@
-import { createContext, useContext, useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState } from "react";
 
-import { Combobox, FormField, Toggle } from "@wahidgroup/veneer";
+import {
+	Button,
+	Combobox,
+	FormField,
+	Toggle,
+	useDebounce,
+} from "@wahidgroup/veneer";
 
-import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
+import type { InstanceOption } from "../api/client.js";
+import {
+	addInstanceOption,
+	listInstanceOptions,
+	removeInstanceOption,
+	resetInstanceOptions,
+} from "../api/client.js";
+import {
+	Canvas,
+	DemoRow,
+	DemoSectionHeader,
+	RailPanel,
+} from "./demoChrome.js";
 
 const AZ_OPTIONS = [
 	{ value: "a", label: "us-east-1a" },
@@ -20,12 +39,19 @@ const INSTANCE_OPTIONS = [
 ];
 
 interface SingleDemoValue {
-	primaryAz: string;
-	setPrimaryAz: (value: string) => void;
+	instance: string;
+	setInstance: (value: string) => void;
 	showError: boolean;
 	setShowError: (value: boolean) => void;
-	azInvalid: boolean;
-	azError: string | undefined;
+	instanceInvalid: boolean;
+	instanceError: string | undefined;
+	options: InstanceOption[];
+	loading: boolean;
+	searchQuery: string;
+	setSearchQuery: (value: string) => void;
+	addOption: () => Promise<void>;
+	removeOption: () => Promise<void>;
+	resetOptions: () => Promise<void>;
 }
 
 const SingleDemoContext = createContext<SingleDemoValue | null>(null);
@@ -39,28 +65,152 @@ function useSingleDemo() {
 }
 
 function SingleDemoProvider({ children }: { children: ReactNode }) {
-	const [primaryAz, setPrimaryAz] = useState("");
+	const [instance, setInstance] = useState("");
 	const [showError, setShowError] = useState(false);
+	const [options, setOptions] = useState<InstanceOption[]>([]);
+	const [loading, setLoading] = useState(false);
+	const [searchQuery, setSearchQuery] = useState("");
+	const customSeqRef = useRef(1);
+	const debouncedQuery = useDebounce(searchQuery, 200);
+	const requestId = useRef(0);
 
-	let azInvalid = false;
-	if (showError && primaryAz.length === 0) {
-		azInvalid = true;
+	let instanceInvalid = false;
+	if (showError && instance.length === 0) {
+		instanceInvalid = true;
 	}
 
-	let azError: string | undefined;
-	if (azInvalid) {
-		azError = "Primary AZ is required";
+	let instanceError: string | undefined;
+	if (instanceInvalid) {
+		instanceError = "Instance type is required";
+	}
+
+	useEffect(() => {
+		const id = requestId.current + 1;
+		requestId.current = id;
+		setLoading(true);
+
+		void listInstanceOptions(debouncedQuery)
+			.then((result) => {
+				if (requestId.current !== id) {
+					return;
+				}
+
+				setOptions(result.items);
+				setLoading(false);
+			})
+			.catch(() => {
+				if (requestId.current !== id) {
+					return;
+				}
+
+				setOptions([]);
+				setLoading(false);
+			});
+	}, [debouncedQuery]);
+
+	async function refreshOptions() {
+		const id = requestId.current + 1;
+		requestId.current = id;
+		setLoading(true);
+
+		try {
+			const result = await listInstanceOptions(debouncedQuery);
+			if (requestId.current !== id) {
+				return;
+			}
+
+			setOptions(result.items);
+		} catch {
+			if (requestId.current !== id) {
+				return;
+			}
+
+			setOptions([]);
+		} finally {
+			if (requestId.current === id) {
+				setLoading(false);
+			}
+		}
+	}
+
+	async function addOption() {
+		const seq = customSeqRef.current;
+		customSeqRef.current = seq + 1;
+		const value = `custom-${seq}`;
+
+		try {
+			await addInstanceOption({
+				value,
+				label: `${value} - demo`,
+			});
+			await refreshOptions();
+		} catch {
+			/* ignore */
+		}
+	}
+
+	async function removeOption() {
+		let target = instance;
+		if (target.length === 0) {
+			if (options[0] === undefined) {
+				return;
+			}
+
+			target = options[0].value;
+		}
+
+		try {
+			await removeInstanceOption(target);
+			if (instance === target) {
+				setInstance("");
+			}
+
+			await refreshOptions();
+		} catch {
+			/* ignore */
+		}
+	}
+
+	async function resetOptions() {
+		try {
+			await resetInstanceOptions();
+			customSeqRef.current = 1;
+			if (instance.length > 0) {
+				const listed = await listInstanceOptions("");
+				let stillPresent = false;
+				for (const option of listed.items) {
+					if (option.value === instance) {
+						stillPresent = true;
+						break;
+					}
+				}
+
+				if (!stillPresent) {
+					setInstance("");
+				}
+			}
+			await refreshOptions();
+		} catch {
+			/* ignore */
+		}
 	}
 
 	return (
 		<SingleDemoContext.Provider
 			value={{
-				primaryAz,
-				setPrimaryAz,
+				instance,
+				setInstance,
 				showError,
 				setShowError,
-				azInvalid,
-				azError,
+				instanceInvalid,
+				instanceError,
+				options,
+				loading,
+				searchQuery,
+				setSearchQuery,
+				addOption,
+				removeOption,
+				resetOptions,
 			}}
 		>
 			{children}
@@ -73,21 +223,55 @@ function SingleCanvas() {
 
 	return (
 		<Canvas>
+			<div className="flex flex-wrap gap-2">
+				<Button
+					type="button"
+					size="sm"
+					onClick={() => {
+						void demo.addOption();
+					}}
+				>
+					Add option
+				</Button>
+				<Button
+					type="button"
+					size="sm"
+					variant="outlined"
+					onClick={() => {
+						void demo.removeOption();
+					}}
+				>
+					Remove
+				</Button>
+				<Button
+					type="button"
+					size="sm"
+					variant="outlined"
+					onClick={() => {
+						void demo.resetOptions();
+					}}
+				>
+					Reset
+				</Button>
+			</div>
 			<div className="max-w-md">
 				<FormField
-					label="Primary AZ"
-					htmlFor="demo-primary-az"
-					hint="Compose with FormField via matching id / htmlFor"
-					error={demo.azError}
+					label="Instance type"
+					htmlFor="demo-instance-remote"
+					hint="Nest GET /v1/options/instances?q= with filterMode=remote"
+					error={demo.instanceError}
 					required
 				>
 					<Combobox
-						id="demo-primary-az"
-						options={AZ_OPTIONS}
-						value={demo.primaryAz}
-						invalid={demo.azInvalid}
-						placeholder="Choose AZ"
-						onChange={demo.setPrimaryAz}
+						id="demo-instance-remote"
+						options={demo.options}
+						value={demo.instance}
+						invalid={demo.instanceInvalid}
+						loading={demo.loading}
+						filterMode="remote"
+						placeholder="Search instance types"
+						onSearchChange={demo.setSearchQuery}
+						onChange={demo.setInstance}
 					/>
 				</FormField>
 			</div>
@@ -101,10 +285,10 @@ function SingleKnobs() {
 	return (
 		<RailPanel
 			title="Single select"
-			description="Searchable listbox. Type to filter; Arrow / Enter to pick; Esc closes."
+			description="Nest typeahead. Add / remove / reset mutate the shared options list."
 		>
 			<DemoRow
-				label="Require primary AZ"
+				label="Require instance type"
 				description="When on, an empty selection shows the required-field error."
 			>
 				<Toggle
@@ -289,39 +473,25 @@ function ComboboxCategoryCanvas() {
 	return (
 		<div className="flex flex-col gap-2">
 			<section className="flex flex-col border-b border-border pb-2">
-				<div className="px-6 pt-6">
-					<h3 className="text-lg font-semibold text-foreground">
-						Single select
-					</h3>
-					<p className="text-sm text-muted-foreground">
-						Searchable listbox. Type to filter; Arrow / Enter to
-						pick; Esc closes.
-					</p>
-				</div>
+				<DemoSectionHeader
+					title="Single select"
+					description="Nest typeahead (filterMode=remote). Add / remove / reset mutate /v1/options/instances."
+					apiDriven
+				/>
 				<SingleCanvas />
 			</section>
 			<section className="flex flex-col border-b border-border pb-2">
-				<div className="px-6 pt-6">
-					<h3 className="text-lg font-semibold text-foreground">
-						Multi select
-					</h3>
-					<p className="text-sm text-muted-foreground">
-						Same component with multiple. Selected values render as
-						removable chips.
-					</p>
-				</div>
+				<DemoSectionHeader
+					title="Multi select"
+					description="Same component with multiple. Selected values render as removable chips."
+				/>
 				<MultiCanvas />
 			</section>
 			<section className="flex flex-col">
-				<div className="px-6 pt-6">
-					<h3 className="text-lg font-semibold text-foreground">
-						States
-					</h3>
-					<p className="text-sm text-muted-foreground">
-						Loading panel, non-searchable list, and disabled
-						control.
-					</p>
-				</div>
+				<DemoSectionHeader
+					title="States"
+					description="Loading panel, non-searchable list, and disabled control."
+				/>
 				<StatesCanvas />
 			</section>
 		</div>
@@ -335,10 +505,10 @@ function ComboboxCategoryKnobs() {
 	return (
 		<RailPanel
 			title="Combobox"
-			description="Single, multi, and state demos on one page. No component tabs."
+			description="Single select is Nest-backed typeahead with add/remove/reset. Multi and States stay local."
 		>
 			<DemoRow
-				label="Require primary AZ"
+				label="Require instance type"
 				description="When on, an empty single-select shows the required-field error."
 			>
 				<Toggle
@@ -349,7 +519,7 @@ function ComboboxCategoryKnobs() {
 			</DemoRow>
 			<DemoRow
 				label="Show loading"
-				description="Shows the loading state on the instance type combobox."
+				description="Shows the loading state on the local instance type combobox."
 			>
 				<Toggle
 					label="Enabled"

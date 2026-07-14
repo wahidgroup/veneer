@@ -34,8 +34,8 @@ function AppShellKnobs() {
 				<Select
 					aria-label="Rail position"
 					value={shell.railPosition}
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "end") {
 							shell.setRailPosition("end");
 							return;

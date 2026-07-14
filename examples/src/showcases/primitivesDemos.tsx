@@ -274,8 +274,8 @@ function ToastKnobs() {
 					id="toast-position"
 					options={TOAST_POSITIONS}
 					value={demo.toastPosition}
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "top-right") {
 							demo.setToastPosition("top-right");
 							return;
@@ -483,8 +483,8 @@ function AlertKnobs() {
 					options={ALERT_TYPE_OPTIONS}
 					value={demo.type}
 					aria-label="Alert type"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "info") {
 							demo.setType("info");
 							return;
@@ -635,8 +635,8 @@ function ButtonKnobs() {
 					options={BUTTON_VARIANT_OPTIONS}
 					value={demo.variant}
 					aria-label="Button variant"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "filled") {
 							demo.setVariant("filled");
 							return;
@@ -672,8 +672,8 @@ function ButtonKnobs() {
 					options={BUTTON_SIZE_OPTIONS}
 					value={demo.size}
 					aria-label="Button size"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "sm") {
 							demo.setSize("sm");
 							return;
@@ -833,8 +833,8 @@ function BadgeKnobs() {
 					options={BADGE_VARIANT_OPTIONS}
 					value={demo.variant}
 					aria-label="Badge variant"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "default") {
 							demo.setVariant("default");
 							return;
@@ -870,8 +870,8 @@ function BadgeKnobs() {
 					options={BADGE_SIZE_OPTIONS}
 					value={demo.size}
 					aria-label="Badge size"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "sm") {
 							demo.setSize("sm");
 							return;
@@ -1016,8 +1016,8 @@ function LoadingKnobs() {
 					options={LOADING_VARIANT_OPTIONS}
 					value={demo.variant}
 					aria-label="Loading variant"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "spinner") {
 							demo.setVariant("spinner");
 							return;
@@ -1037,8 +1037,8 @@ function LoadingKnobs() {
 					options={LOADING_SIZE_OPTIONS}
 					value={demo.size}
 					aria-label="Loading size"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "sm") {
 							demo.setSize("sm");
 							return;
@@ -1540,8 +1540,8 @@ function DrawerKnobs() {
 				<Select
 					aria-label="Drawer side"
 					value={demo.side}
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "left") {
 							demo.setSide("left");
 							return;
@@ -1693,8 +1693,8 @@ function ConfirmKnobs() {
 					options={CONFIRM_VARIANT_OPTIONS}
 					value={demo.variant}
 					aria-label="Confirm tone"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "danger") {
 							demo.setVariant("danger");
 							return;
@@ -1818,8 +1818,8 @@ function TooltipKnobs() {
 					options={TOOLTIP_SIDE_OPTIONS}
 					value={demo.side}
 					aria-label="Tooltip side"
-					onChange={(event) => {
-						const next = event.target.value;
+					onChange={(value) => {
+						const next = value;
 						if (next === "top") {
 							demo.setSide("top");
 							return;

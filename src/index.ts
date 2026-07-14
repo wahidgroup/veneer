@@ -151,6 +151,14 @@ export { SearchInput } from "./components/forms/SearchInput.js";
 export type { SearchInputProps } from "./components/forms/SearchInput.js";
 export { Select } from "./components/forms/Select.js";
 export type { SelectOption, SelectProps } from "./components/forms/Select.js";
+export type {
+	FieldOption,
+	OptionFilterMode,
+} from "./components/forms/fieldOption.js";
+export {
+	filterFieldOptions,
+	findOptionLabel,
+} from "./components/forms/fieldOption.js";
 export { SideNav } from "./components/navigation/SideNav.js";
 export type {
 	SideNavItem,

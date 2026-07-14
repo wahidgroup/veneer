@@ -28,6 +28,7 @@ import {
 } from "@wahidgroup/veneer";
 
 import { getDemo } from "./showcases/demoRegistry.js";
+import { ApiDemoBadge } from "./showcases/demoChrome.js";
 import { ShellChromeProvider, useShellChrome } from "./shellChromeContext.js";
 import {
 	CATALOG,
@@ -194,9 +195,20 @@ function AppFrame() {
 			>
 				<TabsList aria-label="Components">
 					{activeCategory.components.map((item) => {
+						let badge: ReactNode = null;
+						if (item.apiDriven === true) {
+							badge = <ApiDemoBadge />;
+						}
+
 						return (
-							<TabsTrigger key={item.id} value={item.id}>
+							<TabsTrigger
+								key={item.id}
+								value={item.id}
+								aria-label={item.label}
+								className="inline-flex items-center gap-1.5"
+							>
 								{item.label}
+								{badge}
 							</TabsTrigger>
 						);
 					})}

@@ -353,4 +353,124 @@ describe("examples api", () => {
 		});
 		await fetch(`${baseUrl}/v1/tables/inventory/reset`, { method: "POST" });
 	});
+
+	it("lists filters adds removes and resets instance options", async () => {
+		let response = await fetch(`${baseUrl}/v1/options/instances/reset`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+		expect(await readBody(response)).toEqual({
+			data: { count: 8 },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/options/instances`);
+		expect(response.status).toBe(200);
+
+		const listed = await readBody(response);
+		expect(listed).toEqual({
+			data: {
+				items: expect.arrayContaining([
+					expect.objectContaining({ value: "t3.micro" }),
+				]),
+			},
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		if (
+			listed === null ||
+			typeof listed !== "object" ||
+			!("data" in listed) ||
+			listed.data === null ||
+			typeof listed.data !== "object" ||
+			!("items" in listed.data) ||
+			!Array.isArray(listed.data.items)
+		) {
+			throw new Error("expected options list");
+		}
+		expect(listed.data.items).toHaveLength(8);
+
+		response = await fetch(`${baseUrl}/v1/options/instances?q=c6i`);
+		const filtered = await readBody(response);
+		if (
+			filtered === null ||
+			typeof filtered !== "object" ||
+			!("data" in filtered) ||
+			filtered.data === null ||
+			typeof filtered.data !== "object" ||
+			!("items" in filtered.data) ||
+			!Array.isArray(filtered.data.items)
+		) {
+			throw new Error("expected filtered options");
+		}
+		expect(filtered.data.items).toHaveLength(2);
+
+		response = await fetch(`${baseUrl}/v1/options/instances`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({
+				value: "custom-1",
+				label: "custom-1 - demo",
+			}),
+		});
+		expect(response.status).toBe(201);
+		expect(await readBody(response)).toEqual({
+			data: { value: "custom-1", label: "custom-1 - demo" },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(`${baseUrl}/v1/options/instances`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({
+				value: "custom-1",
+				label: "custom-1 - demo",
+			}),
+		});
+		expect(response.status).toBe(409);
+
+		response = await fetch(
+			`${baseUrl}/v1/options/instances/${encodeURIComponent("custom-1")}`,
+			{ method: "DELETE" },
+		);
+		expect(response.status).toBe(200);
+		expect(await readBody(response)).toEqual({
+			data: { count: 8 },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+
+		response = await fetch(
+			`${baseUrl}/v1/options/instances/${encodeURIComponent("missing")}`,
+			{ method: "DELETE" },
+		);
+		expect(response.status).toBe(404);
+
+		response = await fetch(`${baseUrl}/v1/options/instances`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({
+				value: "custom-2",
+				label: "custom-2 - demo",
+			}),
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(`${baseUrl}/v1/options/instances/reset`, {
+			method: "POST",
+		});
+		expect(await readBody(response)).toEqual({
+			data: { count: 8 },
+			meta: {
+				timestamp: expect.any(String),
+			},
+		});
+	});
 });
