@@ -289,7 +289,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "data-table",
 				label: "DataTable",
 				description:
-					"Paging, sort, search, filters; optional live rows and empty slot.",
+					"Nest list with full server query; live WS patches; empty slot.",
 			},
 			{
 				id: "pagination",

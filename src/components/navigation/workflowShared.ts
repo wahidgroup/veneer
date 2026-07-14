@@ -97,6 +97,24 @@ function stepIdsEqual(left: string[], right: string[]): boolean {
 }
 
 /**
+ * First/last for connector chrome. Unknown id MUST NOT count as both ends.
+ */
+function stepEdgeFlags(
+	stepIds: string[],
+	value: string,
+): { isFirst: boolean; isLast: boolean } {
+	const index = stepIds.indexOf(value);
+	if (index < 0) {
+		return { isFirst: false, isLast: false };
+	}
+
+	return {
+		isFirst: index === 0,
+		isLast: index === stepIds.length - 1,
+	};
+}
+
+/**
  * Reads direct-track step ids in document order.
  * WorkflowStep children must live under WorkflowTrack's `ol`.
  */
@@ -130,6 +148,7 @@ export {
 	nextInOrder,
 	prevInOrder,
 	readStepIdsFromList,
+	stepEdgeFlags,
 	stepIdsEqual,
 	useWorkflowContext,
 	WorkflowContext,

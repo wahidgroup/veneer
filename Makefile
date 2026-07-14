@@ -42,9 +42,6 @@ else
 NPM_INSTALL_CMD := npm install
 endif
 
-API_PORT ?= 8787
-export API_PORT
-
 help:
 	$(call PRINT_PAGER,$(MAKE) help-body)
 
@@ -80,7 +77,8 @@ help-body:
 	@printf '    dry-run        If set (e.g., dry-run=1), preview release without changes\n'
 	@printf '    allow-staged   If set (e.g., allow-staged=1), include staged files in release\n'
 	@printf '    yank           If set (e.g., yank=1), yank a published version\n'
-	@printf '    API_PORT       Examples API port (default 8787)\n'
+	@printf '    API_PORT       Override examples API port (default: free port)\n'
+	@printf '    UI_PORT        Override examples Vite port (default: free port)\n'
 	@printf '    NPM_INSTALL_FLAGS  Extra flags for npm install/ci\n\n'
 	@printf 'EXAMPLES:\n'
 	@printf '    make setup\n'
@@ -179,8 +177,7 @@ generate-api:
 	npm run generate-openapi --prefix examples/api
 
 examples: generate-api-types
-	@chmod +x scripts/examples.sh
-	@API_PORT=$(API_PORT) ./scripts/examples.sh
+	@./scripts/examples.sh
 
 examples-build: generate-api-types
 	@echo "Building examples..."

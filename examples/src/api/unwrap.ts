@@ -30,17 +30,43 @@ function isEnvelope(value: unknown): value is ApiEnvelope<unknown> {
 	return "data" in value;
 }
 
-function isPaginationMeta(value: unknown): value is PaginationMeta {
-	if (!isRecord(value)) {
-		return false;
+function toPositiveInt(value: unknown): number | undefined {
+	if (typeof value === "number" && Number.isFinite(value)) {
+		return value;
+	}
+	if (typeof value === "string" && value.trim() !== "") {
+		const parsed = Number(value);
+		if (Number.isFinite(parsed)) {
+			return parsed;
+		}
 	}
 
-	return (
-		typeof value.page === "number" &&
-		typeof value.limit === "number" &&
-		typeof value.total === "number" &&
-		typeof value.totalPages === "number"
-	);
+	return undefined;
+}
+
+function readPaginationMeta(value: unknown): PaginationMeta | undefined {
+	if (!isRecord(value)) {
+		return undefined;
+	}
+
+	const page = toPositiveInt(value.page);
+	const limit = toPositiveInt(value.limit);
+	const total = toPositiveInt(value.total);
+	const totalPages = toPositiveInt(value.totalPages);
+	if (
+		page === undefined ||
+		limit === undefined ||
+		total === undefined ||
+		totalPages === undefined
+	) {
+		return undefined;
+	}
+
+	return { page, limit, total, totalPages };
+}
+
+function isPaginationMeta(value: unknown): value is PaginationMeta {
+	return readPaginationMeta(value) !== undefined;
 }
 
 function unwrap(body: unknown): unknown {
@@ -65,8 +91,8 @@ function unwrapPaginated(body: unknown): {
 		throw new Error("expected paginated data array");
 	}
 
-	const pagination = body.meta?.pagination;
-	if (!isPaginationMeta(pagination)) {
+	const pagination = readPaginationMeta(body.meta?.pagination);
+	if (pagination === undefined) {
 		throw new Error("expected pagination meta");
 	}
 
@@ -77,4 +103,10 @@ function unwrapPaginated(body: unknown): {
 	return result;
 }
 
-export { isEnvelope, isPaginationMeta, unwrap, unwrapPaginated };
+export {
+	isEnvelope,
+	isPaginationMeta,
+	readPaginationMeta,
+	unwrap,
+	unwrapPaginated,
+};

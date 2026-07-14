@@ -5,7 +5,7 @@ import { AlertCircle, Check } from "lucide-react";
 import type { WorkflowStepStatus } from "./workflowShared.js";
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
-import { useWorkflowContext } from "./workflowShared.js";
+import { stepEdgeFlags, useWorkflowContext } from "./workflowShared.js";
 
 interface WorkflowStepProps extends Omit<
 	ComponentProps<"li">,
@@ -52,12 +52,7 @@ function WorkflowStep({
 		resolvedStatus === "complete" || resolvedStatus === "error";
 
 	const index = stepIds.indexOf(value);
-	let isFirst = true;
-	let isLast = true;
-	if (index >= 0) {
-		isFirst = index === 0;
-		isLast = index === stepIds.length - 1;
-	}
+	const { isFirst, isLast } = stepEdgeFlags(stepIds, value);
 
 	let previousComplete = false;
 	if (index > 0) {

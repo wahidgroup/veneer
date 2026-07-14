@@ -1,7 +1,23 @@
 import createClient from "openapi-fetch";
 
-import type { paths } from "./types/api.js";
+import type { components, paths } from "./types/api.js";
 import { unwrap, unwrapPaginated } from "./unwrap.js";
+
+type TableRowDto = components["schemas"]["TableRowDto"];
+
+export type TableRow = TableRowDto;
+
+export interface TableListParams {
+	page?: number;
+	limit?: number;
+	queries?: string[];
+	search?: string;
+	sortBy?: string;
+	sortDesc?: boolean;
+	filterName?: string;
+	filterRegion?: string;
+	filterStatus?: string;
+}
 
 function createExamplesApiClient(baseUrl = "") {
 	return createClient<paths>({ baseUrl });
@@ -44,6 +60,19 @@ function requireReset(data: unknown): { streaming: boolean; count: number } {
 	return result;
 }
 
+function requireCount(data: unknown): { count: number } {
+	if (!isRecord(data) || typeof data.count !== "number") {
+		throw new Error("count payload missing count");
+	}
+
+	const result = { count: data.count };
+	return result;
+}
+
+function isTableStatus(value: unknown): value is TableRow["status"] {
+	return value === "healthy" || value === "degraded" || value === "down";
+}
+
 function requireTableRows(data: {
 	items: unknown[];
 	pagination: {
@@ -53,7 +82,7 @@ function requireTableRows(data: {
 		totalPages: number;
 	};
 }): {
-	items: Array<{ id: string; name: string; status: string }>;
+	items: TableRow[];
 	pagination: {
 		page: number;
 		limit: number;
@@ -61,13 +90,15 @@ function requireTableRows(data: {
 		totalPages: number;
 	};
 } {
-	const items: Array<{ id: string; name: string; status: string }> = [];
+	const items: TableRow[] = [];
 	for (const item of data.items) {
 		if (
 			!isRecord(item) ||
 			typeof item.id !== "string" ||
 			typeof item.name !== "string" ||
-			typeof item.status !== "string"
+			typeof item.region !== "string" ||
+			!isTableStatus(item.status) ||
+			typeof item.cpu !== "number"
 		) {
 			throw new Error("table row payload invalid");
 		}
@@ -75,7 +106,9 @@ function requireTableRows(data: {
 		items.push({
 			id: item.id,
 			name: item.name,
+			region: item.region,
 			status: item.status,
+			cpu: item.cpu,
 		});
 	}
 
@@ -136,9 +169,9 @@ async function resetLogStream(): Promise<{
 
 async function listTableRows(
 	id: string,
-	query?: { page?: number; limit?: number; search?: string },
+	query?: TableListParams,
 ): Promise<{
-	items: Array<{ id: string; name: string; status: string }>;
+	items: TableRow[];
 	pagination: {
 		page: number;
 		limit: number;
@@ -159,13 +192,97 @@ async function listTableRows(
 	return requireTableRows(unwrapPaginated(result.data));
 }
 
+async function addTableRows(
+	id: string,
+	rows: TableRow[],
+): Promise<{ count: number }> {
+	const result = await client.POST("/v1/tables/{id}/rows", {
+		params: { path: { id } },
+		body: { rows },
+	});
+	if (result.error !== undefined) {
+		throw new Error("add table rows failed");
+	}
+
+	return requireCount(unwrap(result.data));
+}
+
+async function removeTableRows(
+	id: string,
+	ids: string[],
+): Promise<{ count: number }> {
+	const result = await client.POST("/v1/tables/{id}/rows/remove", {
+		params: { path: { id } },
+		body: { ids },
+	});
+	if (result.error !== undefined) {
+		throw new Error("remove table rows failed");
+	}
+
+	return requireCount(unwrap(result.data));
+}
+
+async function resetTable(
+	id: string,
+): Promise<{ streaming: boolean; count: number }> {
+	const result = await client.POST("/v1/tables/{id}/reset", {
+		params: { path: { id } },
+	});
+	if (result.error !== undefined) {
+		throw new Error("reset table failed");
+	}
+
+	return requireReset(unwrap(result.data));
+}
+
+async function getTableStreamStatus(
+	id: string,
+): Promise<{ streaming: boolean }> {
+	const result = await client.GET("/v1/tables/{id}/stream", {
+		params: { path: { id } },
+	});
+	if (result.error !== undefined) {
+		throw new Error("table stream status failed");
+	}
+
+	return requireStreaming(unwrap(result.data));
+}
+
+async function startTableStream(id: string): Promise<{ streaming: boolean }> {
+	const result = await client.POST("/v1/tables/{id}/stream/start", {
+		params: { path: { id } },
+	});
+	if (result.error !== undefined) {
+		throw new Error("start table stream failed");
+	}
+
+	return requireStreaming(unwrap(result.data));
+}
+
+async function stopTableStream(id: string): Promise<{ streaming: boolean }> {
+	const result = await client.POST("/v1/tables/{id}/stream/stop", {
+		params: { path: { id } },
+	});
+	if (result.error !== undefined) {
+		throw new Error("stop table stream failed");
+	}
+
+	return requireStreaming(unwrap(result.data));
+}
+
 export {
+	addTableRows,
 	client,
 	createExamplesApiClient,
 	getHealth,
 	getLogStreamStatus,
+	getTableStreamStatus,
 	listTableRows,
+	removeTableRows,
 	resetLogStream,
+	resetTable,
 	startLogStream,
+	startTableStream,
 	stopLogStream,
+	stopTableStream,
 };

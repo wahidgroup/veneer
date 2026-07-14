@@ -111,11 +111,62 @@
 				"operationId": "TablesController_list",
 				"parameters": [
 					{
+						"name": "filterStatus",
+						"required": false,
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "filterRegion",
+						"required": false,
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "filterName",
+						"required": false,
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
+						"name": "sortDesc",
+						"required": false,
+						"in": "query",
+						"schema": {
+							"type": "boolean"
+						}
+					},
+					{
+						"name": "sortBy",
+						"required": false,
+						"in": "query",
+						"schema": {
+							"type": "string"
+						}
+					},
+					{
 						"name": "search",
 						"required": false,
 						"in": "query",
 						"schema": {
 							"type": "string"
+						}
+					},
+					{
+						"name": "queries",
+						"required": false,
+						"in": "query",
+						"schema": {
+							"type": "array",
+							"items": {
+								"type": "string"
+							}
 						}
 					},
 					{
@@ -203,6 +254,46 @@
 				]
 			}
 		},
+		"/v1/tables/{id}/rows/remove": {
+			"post": {
+				"operationId": "TablesController_removeRows",
+				"parameters": [
+					{
+						"name": "id",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/RemoveRowsDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/TableCountDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"tables"
+				]
+			}
+		},
 		"/v1/tables/{id}/reset": {
 			"post": {
 				"operationId": "TablesController_reset",
@@ -222,7 +313,97 @@
 						"content": {
 							"application/json": {
 								"schema": {
-									"$ref": "#/components/schemas/TableCountDto"
+									"$ref": "#/components/schemas/ResetStateDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"tables"
+				]
+			}
+		},
+		"/v1/tables/{id}/stream": {
+			"get": {
+				"operationId": "TablesController_streamStatus",
+				"parameters": [
+					{
+						"name": "id",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamStateDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"tables"
+				]
+			}
+		},
+		"/v1/tables/{id}/stream/start": {
+			"post": {
+				"operationId": "TablesController_startStream",
+				"parameters": [
+					{
+						"name": "id",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamStateDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"tables"
+				]
+			}
+		},
+		"/v1/tables/{id}/stream/stop": {
+			"post": {
+				"operationId": "TablesController_stopStream",
+				"parameters": [
+					{
+						"name": "id",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/StreamStateDto"
 								}
 							}
 						}
@@ -284,6 +465,14 @@
 					"count"
 				]
 			},
+			"TableRowStatusEnum": {
+				"type": "string",
+				"enum": [
+					"healthy",
+					"degraded",
+					"down"
+				]
+			},
 			"TableRowDto": {
 				"type": "object",
 				"properties": {
@@ -293,14 +482,26 @@
 					"name": {
 						"type": "string"
 					},
-					"status": {
+					"region": {
 						"type": "string"
+					},
+					"status": {
+						"allOf": [
+							{
+								"$ref": "#/components/schemas/TableRowStatusEnum"
+							}
+						]
+					},
+					"cpu": {
+						"type": "number"
 					}
 				},
 				"required": [
 					"id",
 					"name",
-					"status"
+					"region",
+					"status",
+					"cpu"
 				]
 			},
 			"AddRowsDto": {
@@ -326,6 +527,20 @@
 				},
 				"required": [
 					"count"
+				]
+			},
+			"RemoveRowsDto": {
+				"type": "object",
+				"properties": {
+					"ids": {
+						"type": "array",
+						"items": {
+							"type": "string"
+						}
+					}
+				},
+				"required": [
+					"ids"
 				]
 			}
 		}

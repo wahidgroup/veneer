@@ -1,22 +1,17 @@
-import {
-	createContext,
-	useContext,
-	useEffect,
-	useMemo,
-	useState,
-	type ReactNode,
-} from "react";
+import type { ReactNode } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
-import type {
-	DataTableColumn,
-	DataTableQuery,
-} from "@wahidgroup/veneer/data-table";
 import type {
 	StatDisplayTone,
 	StatusBadgeStatus,
 	TreeViewEndAlign,
 	TreeViewItem,
 } from "@wahidgroup/veneer";
+import type {
+	DataTableColumn,
+	DataTableQuery,
+} from "@wahidgroup/veneer/data-table";
+import { DataTable, useDataTableRows } from "@wahidgroup/veneer/data-table";
 import {
 	Badge,
 	Button,
@@ -26,6 +21,7 @@ import {
 	DescriptionList,
 	EmptyState,
 	Pagination,
+	SearchInput,
 	Select,
 	StatDisplay,
 	StatusBadge,
@@ -33,37 +29,23 @@ import {
 	Toggle,
 	TreeView,
 } from "@wahidgroup/veneer";
-import {
-	DataTable,
-	applyRowTransaction,
-	useDataTableRows,
-} from "@wahidgroup/veneer/data-table";
 
+import type { TableListParams, TableRow } from "../api/client.js";
+import type { TableServerMessage } from "../api/tables-ws.js";
+import { connectTables } from "../api/tables-ws.js";
 import { Canvas, DemoRow, RailPanel } from "./demoChrome.js";
+import {
+	addTableRows,
+	listTableRows,
+	removeTableRows,
+	resetTable,
+	startTableStream,
+	stopTableStream,
+} from "../api/client.js";
 
-interface InventoryRow {
-	id: string;
-	name: string;
-	region: string;
-	status: "healthy" | "degraded" | "down";
-	cpu: number;
-}
+type InventoryRow = TableRow;
 
-const ALL_ROWS: InventoryRow[] = Array.from({ length: 87 }, (_, index) => {
-	const id = String(index + 1);
-	const regions = ["us-east-1", "eu-west-1", "ap-southeast-1"] as const;
-	const statuses = ["healthy", "degraded", "down"] as const;
-	const region = regions[index % regions.length] ?? "us-east-1";
-	const status = statuses[index % statuses.length] ?? "healthy";
-
-	return {
-		id,
-		name: `node-${id.padStart(3, "0")}`,
-		region,
-		status,
-		cpu: (index * 7) % 100,
-	};
-});
+const INVENTORY_TABLE_ID = "inventory";
 
 const COLUMNS: DataTableColumn<InventoryRow>[] = [
 	{
@@ -123,24 +105,20 @@ function getRowId(row: InventoryRow): string {
 	return row.id;
 }
 
-/**
- * In-memory stand-in for a paged inventory API.
- */
-function queryInventory(
-	source: InventoryRow[],
-	query: DataTableQuery,
-): { data: InventoryRow[]; rowCount: number } {
-	let filtered = source;
+function toListParams(query: DataTableQuery): TableListParams {
+	const params: TableListParams = {
+		page: query.pageIndex + 1,
+		limit: query.pageSize,
+	};
 
-	if (query.globalFilter.length > 0) {
-		const needle = query.globalFilter.toLowerCase();
-		filtered = filtered.filter((row) => {
-			return (
-				row.name.toLowerCase().includes(needle) ||
-				row.region.toLowerCase().includes(needle) ||
-				row.status.toLowerCase().includes(needle)
-			);
-		});
+	if (query.globalFilter.trim().length > 0) {
+		params.search = query.globalFilter.trim();
+	}
+
+	const sort = query.sorting[0];
+	if (sort !== undefined) {
+		params.sortBy = sort.id;
+		params.sortDesc = sort.desc;
 	}
 
 	for (const filter of query.columnFilters) {
@@ -150,52 +128,16 @@ function queryInventory(
 		if (filter.value.length === 0) {
 			continue;
 		}
-
-		const value = filter.value.toLowerCase();
-		filtered = filtered.filter((row) => {
-			if (filter.id === "name") {
-				return row.name.toLowerCase().includes(value);
-			}
-			if (filter.id === "region") {
-				return row.region.toLowerCase() === value;
-			}
-			if (filter.id === "status") {
-				return row.status.toLowerCase() === value;
-			}
-
-			return true;
-		});
-	}
-
-	const sorted = [...filtered];
-	if (query.sorting.length > 0) {
-		const sort = query.sorting[0];
-		if (sort !== undefined) {
-			sorted.sort((left, right) => {
-				let cmp = 0;
-				if (sort.id === "name") {
-					cmp = left.name.localeCompare(right.name);
-				} else if (sort.id === "region") {
-					cmp = left.region.localeCompare(right.region);
-				} else if (sort.id === "status") {
-					cmp = left.status.localeCompare(right.status);
-				} else if (sort.id === "cpu") {
-					cmp = left.cpu - right.cpu;
-				}
-				if (sort.desc) {
-					cmp = -cmp;
-				}
-
-				return cmp;
-			});
+		if (filter.id === "name") {
+			params.filterName = filter.value;
+		} else if (filter.id === "region") {
+			params.filterRegion = filter.value;
+		} else if (filter.id === "status") {
+			params.filterStatus = filter.value;
 		}
 	}
 
-	const start = query.pageIndex * query.pageSize;
-	return {
-		data: sorted.slice(start, start + query.pageSize),
-		rowCount: sorted.length,
-	};
+	return params;
 }
 
 interface DataTableDemoValue {
@@ -207,8 +149,6 @@ interface DataTableDemoValue {
 	setLiveRows: (value: boolean) => void;
 	autoPatch: boolean;
 	setAutoPatch: (value: boolean) => void;
-	intervalMs: number;
-	setIntervalMs: (value: number) => void;
 }
 
 const DataTableDemoContext = createContext<DataTableDemoValue | null>(null);
@@ -227,7 +167,6 @@ function DataTableDemoProvider({ children }: { children: ReactNode }) {
 	const [empty, setEmpty] = useState(false);
 	const [liveRows, setLiveRows] = useState(false);
 	const [autoPatch, setAutoPatch] = useState(true);
-	const [intervalMs, setIntervalMs] = useState(1500);
 
 	return (
 		<DataTableDemoContext.Provider
@@ -240,8 +179,6 @@ function DataTableDemoProvider({ children }: { children: ReactNode }) {
 				setLiveRows,
 				autoPatch,
 				setAutoPatch,
-				intervalMs,
-				setIntervalMs,
 			}}
 		>
 			{children}
@@ -255,12 +192,6 @@ const DATA_TABLE_PAGE_SIZE_OPTIONS = [
 	{ value: "50", label: "50" },
 ];
 
-const DATA_TABLE_PATCH_INTERVAL_OPTIONS = [
-	{ value: "500", label: "500 ms" },
-	{ value: "1500", label: "1.5 s" },
-	{ value: "3000", label: "3 s" },
-];
-
 function DataTableServerCanvas() {
 	const demo = useDataTableDemo();
 	const [query, setQuery] = useState<DataTableQuery>({
@@ -271,8 +202,12 @@ function DataTableServerCanvas() {
 		globalFilter: "",
 	});
 	const [loading, setLoading] = useState(false);
-	const [page, setPage] = useState(() => {
-		return queryInventory(ALL_ROWS, query);
+	const [error, setError] = useState<string | null>(null);
+	const [page, setPage] = useState<{
+		data: InventoryRow[];
+		rowCount: number;
+	}>(() => {
+		return { data: [], rowCount: 0 };
 	});
 
 	useEffect(() => {
@@ -286,94 +221,138 @@ function DataTableServerCanvas() {
 	}, [demo.pageSize]);
 
 	useEffect(() => {
+		let cancelled = false;
+
 		setLoading(true);
-		const timer = window.setTimeout(() => {
-			setPage(queryInventory(ALL_ROWS, query));
-			setLoading(false);
-		}, 180);
+		setError(null);
+
+		void listTableRows(INVENTORY_TABLE_ID, toListParams(query))
+			.then((result) => {
+				if (cancelled) {
+					return;
+				}
+
+				setPage({
+					data: result.items,
+					rowCount: result.pagination.total,
+				});
+				setLoading(false);
+			})
+			.catch((cause: unknown) => {
+				if (cancelled) {
+					return;
+				}
+
+				let message = "Failed to load table";
+				if (cause instanceof Error) {
+					message = cause.message;
+				}
+
+				setError(message);
+				setLoading(false);
+			});
 
 		return () => {
-			window.clearTimeout(timer);
+			cancelled = true;
 		};
 	}, [query]);
 
+	let errorNode: ReactNode = null;
+	if (error !== null) {
+		errorNode = (
+			<p className="mb-2 text-sm text-destructive" role="alert">
+				{error}
+			</p>
+		);
+	}
+
 	return (
-		<DataTable
-			columns={COLUMNS}
-			data={page.data}
-			rowCount={page.rowCount}
-			getRowId={getRowId}
-			query={query}
-			onQueryChange={setQuery}
-			enableRowSelection
-			loading={loading}
-		/>
+		<>
+			{errorNode}
+			<DataTable
+				columns={COLUMNS}
+				data={page.data}
+				rowCount={page.rowCount}
+				getRowId={getRowId}
+				query={query}
+				onQueryChange={setQuery}
+				manualPagination
+				manualSorting
+				manualFiltering
+				enableRowSelection
+				loading={loading}
+			/>
+		</>
 	);
 }
 
 function DataTableLiveCanvas() {
 	const demo = useDataTableDemo();
-	const initial = useMemo(() => {
-		return ALL_ROWS.slice(0, 8);
-	}, []);
-	const { rows, apply, setRows } = useDataTableRows(initial, getRowId);
+	const { rows, apply, setRows } = useDataTableRows<InventoryRow>(
+		[],
+		getRowId,
+	);
+
+	useEffect(() => {
+		const session = connectTables({
+			onMessage(message: TableServerMessage) {
+				if (message.type === "snapshot") {
+					setRows(message.rows);
+					return;
+				}
+
+				apply(message.transaction);
+			},
+		});
+
+		session.sendSubscribe({ tableId: INVENTORY_TABLE_ID });
+
+		return () => {
+			session.close();
+			void stopTableStream(INVENTORY_TABLE_ID).catch(() => {
+				/* ignore unmount stop errors */
+			});
+		};
+	}, [apply, setRows]);
 
 	useEffect(() => {
 		if (!demo.autoPatch) {
+			void stopTableStream(INVENTORY_TABLE_ID).catch(() => {
+				/* ignore */
+			});
 			return;
 		}
 
-		let step = 0;
-		const timer = window.setInterval(() => {
-			setRows((prev) => {
-				if (prev.length === 0) {
-					return prev;
-				}
+		void startTableStream(INVENTORY_TABLE_ID).catch(() => {
+			/* ignore */
+		});
 
-				const target = prev[step % prev.length];
-				step += 1;
-				if (target === undefined) {
-					return prev;
-				}
-
-				return applyRowTransaction(
-					prev,
-					{
-						update: [
-							{
-								...target,
-								cpu: (target.cpu + 11) % 100,
-							},
-						],
-					},
-					getRowId,
-				);
-			});
-		}, demo.intervalMs);
 		return () => {
-			window.clearInterval(timer);
+			void stopTableStream(INVENTORY_TABLE_ID).catch(() => {
+				/* ignore */
+			});
 		};
-	}, [demo.autoPatch, demo.intervalMs, setRows]);
+	}, [demo.autoPatch]);
 
 	return (
 		<>
-			<div className="flex flex-wrap gap-2">
+			<div className="mb-3 flex flex-wrap gap-2">
 				<Button
 					type="button"
 					size="sm"
 					variant="outlined"
 					onClick={() => {
 						const id = `live-${String(Date.now())}`;
-						apply({
-							add: [
-								{
-									id,
-									name: `node-${id.slice(-4)}`,
-									region: "us-east-1",
-									status: "healthy",
-									cpu: 12,
-								},
-							],
+						void addTableRows(INVENTORY_TABLE_ID, [
+							{
+								id,
+								name: `node-${id.slice(-4)}`,
+								region: "us-east-1",
+								status: "healthy",
+								cpu: 12,
+							},
+						]).catch(() => {
+							/* ignore */
 						});
 					}}
 				>
@@ -387,10 +366,27 @@ function DataTableLiveCanvas() {
 						if (rows[0] === undefined) {
 							return;
 						}
-						apply({ remove: [rows[0].id] });
+
+						void removeTableRows(INVENTORY_TABLE_ID, [
+							rows[0].id,
+						]).catch(() => {
+							/* ignore */
+						});
 					}}
 				>
 					Remove first
+				</Button>
+				<Button
+					type="button"
+					size="sm"
+					variant="outlined"
+					onClick={() => {
+						void resetTable(INVENTORY_TABLE_ID).catch(() => {
+							/* ignore */
+						});
+					}}
+				>
+					Reset
 				</Button>
 			</div>
 			<DataTable
@@ -455,7 +451,7 @@ function DataTableKnobs() {
 		pageSizeRow = (
 			<DemoRow
 				label="Page size"
-				description="Resets to page 0 when changed. 87 source rows."
+				description="Resets to page 0 when changed. 87 Nest inventory rows."
 			>
 				<Select
 					id="data-table-page-size"
@@ -473,40 +469,23 @@ function DataTableKnobs() {
 	let liveRowsRows: ReactNode = null;
 	if (!demo.empty && demo.liveRows) {
 		liveRowsRows = (
-			<>
-				<DemoRow
+			<DemoRow
+				label="Auto patch"
+				description="POST /v1/tables/inventory/stream/start|stop. Server ticks ~1.5s."
+			>
+				<Toggle
 					label="Auto patch"
-					description="Rotate CPU updates via useDataTableRows."
-				>
-					<Toggle
-						label="Auto patch"
-						checked={demo.autoPatch}
-						onCheckedChange={demo.setAutoPatch}
-					/>
-				</DemoRow>
-				<DemoRow
-					label="Interval"
-					description="Tick rate when auto patch is on."
-				>
-					<Select
-						id="data-table-patch-interval"
-						options={DATA_TABLE_PATCH_INTERVAL_OPTIONS}
-						value={String(demo.intervalMs)}
-						aria-label="Patch interval"
-						disabled={!demo.autoPatch}
-						onChange={(event) => {
-							demo.setIntervalMs(Number(event.target.value));
-						}}
-					/>
-				</DemoRow>
-			</>
+					checked={demo.autoPatch}
+					onCheckedChange={demo.setAutoPatch}
+				/>
+			</DemoRow>
 		);
 	}
 
 	return (
 		<RailPanel
 			title="DataTable"
-			description="Server page, live row patches (useDataTableRows), or empty slot."
+			description="Server mode: Nest list with full query + chip search. Live: WS snapshot/patch."
 		>
 			<DemoRow
 				label="Empty"
@@ -520,7 +499,7 @@ function DataTableKnobs() {
 			</DemoRow>
 			<DemoRow
 				label="Live rows"
-				description="Client buffer with useDataTableRows + applyRowTransaction."
+				description="WS /v1/tables + HTTP add/remove/reset/stream."
 			>
 				<Toggle
 					label="Live rows"
@@ -535,8 +514,9 @@ function DataTableKnobs() {
 	);
 }
 
-const PAGE_ITEMS = ALL_ROWS.map((row) => {
-	return row.name;
+const PAGE_ITEMS = Array.from({ length: 87 }, (_, index) => {
+	const id = String(index + 1);
+	return `node-${id.padStart(3, "0")}`;
 });
 
 interface PaginationDemoValue {
