@@ -66,7 +66,7 @@ help-body:
 	@printf '    audit          Run security audit (fix mode via fix=1)\n'
 	@printf '    spellcheck     Run spell checker\n'
 	@printf '    sbom           Generate software bill of materials\n'
-	@printf '    ci             Lint + build + test + smoke + pack\n'
+	@printf '    ci             Lint + build + test + examples-build + smoke + pack\n'
 	@printf '    release        Release workflow (see OPTIONS)\n'
 	@printf '    generate-api   Refresh OpenAPI spec + examples client types\n'
 	@printf '    examples       Run Nest API + Vite examples\n'
@@ -171,6 +171,7 @@ ci:
 	$(MAKE) lint
 	$(MAKE) build
 	$(MAKE) test
+	$(MAKE) examples-build
 	$(MAKE) smoke
 	$(MAKE) pack
 

@@ -28,7 +28,10 @@ jobs:
           package-manager-cache: false
 
       - name: Configure GitHub Packages Auth
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> .npmrc
+        run: |
+          for f in .npmrc examples/api/.npmrc; do
+            echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> "$f"
+          done
 
       - name: Install dependencies
         run: make setup
