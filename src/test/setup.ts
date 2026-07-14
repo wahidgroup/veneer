@@ -15,8 +15,8 @@ Object.defineProperty(HTMLCanvasElement.prototype, "getContext", {
 // jsdom does not implement getComputedStyle(). axe asks for
 // ::before/::after and floods the run with "Not implemented" errors.
 const getComputedStyle = window.getComputedStyle.bind(window);
-window.getComputedStyle = ((element: Element) => {
+window.getComputedStyle = (element: Element) => {
 	return getComputedStyle(element);
-});
+};
 
 afterEach(cleanup);
