@@ -8,6 +8,7 @@ import {
 	Badge,
 	Button,
 	ChipGroup,
+	CodeBlock,
 	CopyButton,
 	DescriptionList,
 	EmptyState,
@@ -515,6 +516,45 @@ function StatDisplayKnobs() {
 	);
 }
 
+const SAMPLE_HCL = `resource "aws_s3_bucket" "logs" {
+  bucket = "prod-api-logs"
+  tags = {
+    Environment = "prod"
+  }
+}`;
+
+function CodeBlockCanvas() {
+	return (
+		<Canvas>
+			<div className="flex w-full max-w-2xl flex-col gap-4">
+				<CodeBlock
+					language="hcl"
+					code={SAMPLE_HCL}
+					showLineNumbers
+					aria-label="S3 bucket resource"
+				/>
+				<DemoRow label="Copy hidden">
+					<CodeBlock
+						code="echo deploy"
+						language="bash"
+						showCopy={false}
+						className="w-full"
+					/>
+				</DemoRow>
+			</div>
+		</Canvas>
+	);
+}
+
+function CodeBlockKnobs() {
+	return (
+		<RailPanel
+			title="CodeBlock"
+			description="Plain pre/code chrome. language is a toolbar label only; CopyButton when showCopy; optional showLineNumbers."
+		/>
+	);
+}
+
 function ChipGroupCanvas() {
 	const [items, setItems] = useState([
 		{ id: "us-east-1", label: "us-east-1", pressed: true },
@@ -597,6 +637,8 @@ export {
 	DescriptionListKnobs,
 	StatDisplayCanvas,
 	StatDisplayKnobs,
+	CodeBlockCanvas,
+	CodeBlockKnobs,
 	ChipGroupCanvas,
 	ChipGroupKnobs,
 };

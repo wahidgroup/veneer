@@ -48,6 +48,8 @@ export type {
 	ChipGroupItem,
 	ChipGroupProps,
 } from "./components/navigation/ChipGroup.js";
+export { CodeBlock } from "./components/data/CodeBlock.js";
+export type { CodeBlockProps } from "./components/data/CodeBlock.js";
 export { Combobox } from "./components/forms/Combobox.js";
 export type {
 	ComboboxMultiProps,

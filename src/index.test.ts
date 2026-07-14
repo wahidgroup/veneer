@@ -26,6 +26,7 @@ const EXPECTED_EXPORTS = new Set([
 	"Checkbox",
 	"ChipGroup",
 	"cn",
+	"CodeBlock",
 	"Combobox",
 	"ConfirmDialog",
 	"controlVariants",

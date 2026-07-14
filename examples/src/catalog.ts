@@ -322,6 +322,12 @@ const CATALOG: CatalogCategory[] = [
 					"Metric tiles on Card. Tone styles value text and pairs with Badge or caption.",
 			},
 			{
+				id: "code-block",
+				label: "CodeBlock",
+				description:
+					"Read-only plain code with optional language, line numbers, and CopyButton.",
+			},
+			{
 				id: "chip-group",
 				label: "ChipGroup",
 				description:

@@ -10,6 +10,8 @@ import {
 import {
 	ChipGroupCanvas,
 	ChipGroupKnobs,
+	CodeBlockCanvas,
+	CodeBlockKnobs,
 	DescriptionListCanvas,
 	DescriptionListKnobs,
 	EmptyTableCanvas,
@@ -337,6 +339,11 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: StatDisplayCanvas,
 		Knobs: StatDisplayKnobs,
+	},
+	"code-block": {
+		Provider: PassthroughProvider,
+		Canvas: CodeBlockCanvas,
+		Knobs: CodeBlockKnobs,
 	},
 	"chip-group": {
 		Provider: PassthroughProvider,
