@@ -7,6 +7,7 @@ import type {
 import {
 	Badge,
 	Button,
+	ChipGroup,
 	CopyButton,
 	DescriptionList,
 	EmptyState,
@@ -89,6 +90,7 @@ const COLUMNS: DataTableColumn<InventoryRow>[] = [
 			} else if (status === "down") {
 				variant = "danger";
 			}
+
 			return <Badge variant={variant}>{status}</Badge>;
 		},
 	},
@@ -513,6 +515,74 @@ function StatDisplayKnobs() {
 	);
 }
 
+function ChipGroupCanvas() {
+	const [items, setItems] = useState([
+		{ id: "us-east-1", label: "us-east-1", pressed: true },
+		{ id: "eu-west-1", label: "eu-west-1", pressed: false },
+		{
+			id: "ap-south-1",
+			label: "ap-south-1",
+			pressed: true,
+			dismissible: true,
+		},
+		{
+			id: "sa-east-1",
+			label: "sa-east-1",
+			pressed: false,
+			dismissible: true,
+		},
+	]);
+
+	return (
+		<Canvas>
+			<div className="flex w-full max-w-2xl flex-col gap-3">
+				<p className="text-sm text-muted-foreground">
+					Region filters for the inventory table. Press to toggle;
+					dismissible chips can be removed.
+				</p>
+				<ChipGroup
+					aria-label="Region filters"
+					items={items}
+					onPressedChange={(id, pressed) => {
+						setItems((prev) => {
+							return prev.map((item) => {
+								if (item.id !== id) {
+									return item;
+								}
+
+								return { ...item, pressed };
+							});
+						});
+					}}
+					onDismiss={(id) => {
+						setItems((prev) => {
+							return prev.filter((item) => {
+								return item.id !== id;
+							});
+						});
+					}}
+					onClearAll={() => {
+						setItems((prev) => {
+							return prev.map((item) => {
+								return { ...item, pressed: false };
+							});
+						});
+					}}
+				/>
+			</div>
+		</Canvas>
+	);
+}
+
+function ChipGroupKnobs() {
+	return (
+		<RailPanel
+			title="ChipGroup"
+			description="Multi-select filter chips. aria-pressed toggles; optional dismiss and Clear all."
+		/>
+	);
+}
+
 export type { InventoryRow };
 export {
 	ServerPageCanvas,
@@ -527,4 +597,6 @@ export {
 	DescriptionListKnobs,
 	StatDisplayCanvas,
 	StatDisplayKnobs,
+	ChipGroupCanvas,
+	ChipGroupKnobs,
 };

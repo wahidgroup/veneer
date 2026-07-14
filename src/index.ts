@@ -43,6 +43,11 @@ export { Card, cardVariants } from "./components/layout/Card.js";
 export type { CardProps } from "./components/layout/Card.js";
 export { Checkbox } from "./components/forms/Checkbox.js";
 export type { CheckboxProps } from "./components/forms/Checkbox.js";
+export { ChipGroup } from "./components/navigation/ChipGroup.js";
+export type {
+	ChipGroupItem,
+	ChipGroupProps,
+} from "./components/navigation/ChipGroup.js";
 export { Combobox } from "./components/forms/Combobox.js";
 export type {
 	ComboboxMultiProps,
@@ -71,6 +76,14 @@ export {
 	emptyStateVariants,
 } from "./components/feedback/EmptyState.js";
 export type { EmptyStateProps } from "./components/feedback/EmptyState.js";
+export {
+	ErrorState,
+	errorStateVariants,
+} from "./components/feedback/ErrorState.js";
+export type {
+	ErrorStateKind,
+	ErrorStateProps,
+} from "./components/feedback/ErrorState.js";
 export { FieldError } from "./components/forms/FieldError.js";
 export type { FieldErrorProps } from "./components/forms/FieldError.js";
 export { FieldHint } from "./components/forms/FieldHint.js";

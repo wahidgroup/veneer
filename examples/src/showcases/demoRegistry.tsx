@@ -8,6 +8,8 @@ import {
 	ComboboxCategoryProvider,
 } from "./comboboxDemos.js";
 import {
+	ChipGroupCanvas,
+	ChipGroupKnobs,
 	DescriptionListCanvas,
 	DescriptionListKnobs,
 	EmptyTableCanvas,
@@ -66,6 +68,8 @@ import {
 	DrawerKnobs,
 	EmptyStateCanvas,
 	EmptyStateKnobs,
+	ErrorStateCanvas,
+	ErrorStateKnobs,
 	CopyButtonCanvas,
 	CopyButtonKnobs,
 	StatusBadgeCanvas,
@@ -153,6 +157,11 @@ const PRIMITIVES: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: EmptyStateCanvas,
 		Knobs: EmptyStateKnobs,
+	},
+	"error-state": {
+		Provider: PassthroughProvider,
+		Canvas: ErrorStateCanvas,
+		Knobs: ErrorStateKnobs,
 	},
 	"copy-button": {
 		Provider: PassthroughProvider,
@@ -328,6 +337,11 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: StatDisplayCanvas,
 		Knobs: StatDisplayKnobs,
+	},
+	"chip-group": {
+		Provider: PassthroughProvider,
+		Canvas: ChipGroupCanvas,
+		Knobs: ChipGroupKnobs,
 	},
 };
 

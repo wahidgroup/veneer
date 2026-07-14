@@ -24,6 +24,7 @@ import {
 	CopyButton,
 	Drawer,
 	EmptyState,
+	ErrorState,
 	Loading,
 	Modal,
 	NumberInput,
@@ -1128,6 +1129,54 @@ function EmptyStateKnobs() {
 	);
 }
 
+function ErrorStateCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Empty vs error">
+				<div className="grid w-full max-w-3xl gap-4 md:grid-cols-2">
+					<EmptyState
+						title="No stacks yet"
+						action={<Button type="button">Create stack</Button>}
+						className="rounded-md border border-border"
+					>
+						Deploy your first stack to this environment.
+					</EmptyState>
+					<ErrorState
+						action={<Button type="button">Retry</Button>}
+						className="rounded-md border border-border"
+					>
+						The inventory request failed. Try again.
+					</ErrorState>
+				</div>
+			</DemoRow>
+			<DemoRow label="Forbidden">
+				<ErrorState
+					kind="forbidden"
+					action={<Button type="button">Request access</Button>}
+					className="w-full max-w-lg rounded-md border border-border"
+				>
+					You need permission to view this stack.
+				</ErrorState>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function ErrorStateKnobs() {
+	return (
+		<RailPanel
+			title="ErrorState"
+			description="Failure / forbidden chrome. Soft titles by kind. Not EmptyState."
+		>
+			<DemoRow label="kind">
+				<span className="text-sm text-muted-foreground">
+					error (Unable to load) · forbidden (Access denied)
+				</span>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 function CopyButtonCanvas() {
 	return (
 		<Canvas>
@@ -2077,6 +2126,8 @@ export {
 	ConfirmKnobs,
 	EmptyStateCanvas,
 	EmptyStateKnobs,
+	ErrorStateCanvas,
+	ErrorStateKnobs,
 	CopyButtonCanvas,
 	CopyButtonKnobs,
 	StatusBadgeCanvas,

@@ -22,8 +22,10 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `Drawer`          | [`overlays/Drawer.tsx`](../src/components/overlays/Drawer.tsx)                   | Edge sheet dialog (modal)                              |
 | `Pagination`      | [`navigation/Pagination.tsx`](../src/components/navigation/Pagination.tsx)       | Prev/Next + item-range chrome                          |
 | `EmptyState`      | [`feedback/EmptyState.tsx`](../src/components/feedback/EmptyState.tsx)           | No-results / first-run CTA                             |
+| `ErrorState`      | [`feedback/ErrorState.tsx`](../src/components/feedback/ErrorState.tsx)           | Failure / forbidden chrome (`role="alert"`)            |
 | `CopyButton`      | [`forms/CopyButton.tsx`](../src/components/forms/CopyButton.tsx)                 | Copy ARNs / IDs                                        |
 | `StatusBadge`     | [`indicators/StatusBadge.tsx`](../src/components/indicators/StatusBadge.tsx)     | Inventory status chips                                 |
+| `ChipGroup`       | [`navigation/ChipGroup.tsx`](../src/components/navigation/ChipGroup.tsx)         | Multi-select filter chips (`aria-pressed`)             |
 | `DescriptionList` | [`data/DescriptionList.tsx`](../src/components/data/DescriptionList.tsx)         | Resource key/value pairs                               |
 | `StatDisplay`     | [`data/StatDisplay.tsx`](../src/components/data/StatDisplay.tsx)                 | Metric tile on Card (tone + text)                      |
 | `Skeleton`        | [`feedback/Skeleton.tsx`](../src/components/feedback/Skeleton.tsx)               | Placeholder bones                                      |

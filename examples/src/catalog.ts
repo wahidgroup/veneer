@@ -69,6 +69,12 @@ const CATALOG: CatalogCategory[] = [
 					"No-results / first-run CTA. Use size sm inside DataTable empty.",
 			},
 			{
+				id: "error-state",
+				label: "ErrorState",
+				description:
+					"Failure vs forbidden chrome. Distinct from EmptyState; Retry / Request access.",
+			},
+			{
 				id: "copy-button",
 				label: "CopyButton",
 				description:
@@ -314,6 +320,12 @@ const CATALOG: CatalogCategory[] = [
 				label: "StatDisplay",
 				description:
 					"Metric tiles on Card. Tone styles value text and pairs with Badge or caption.",
+			},
+			{
+				id: "chip-group",
+				label: "ChipGroup",
+				description:
+					"Multi-select filter chips with aria-pressed toggles and optional dismiss.",
 			},
 		],
 	},
