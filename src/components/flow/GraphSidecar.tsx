@@ -28,21 +28,11 @@ function GraphSidecar({
 			if (edge.label !== undefined && edge.label.length > 0) {
 				description = `${description} (${edge.label})`;
 			}
-
-			let sourcePort = "*";
-			if (edge.sourcePort !== undefined) {
-				sourcePort = edge.sourcePort;
-			}
-
-			let targetPort = "*";
-			if (edge.targetPort !== undefined) {
-				targetPort = edge.targetPort;
-			}
 			if (
-				edge.sourcePort !== undefined ||
+				edge.sourcePort !== undefined &&
 				edge.targetPort !== undefined
 			) {
-				description = `${description} [${sourcePort}→${targetPort}]`;
+				description = `${description} [${edge.sourcePort}→${edge.targetPort}]`;
 			}
 
 			return {
