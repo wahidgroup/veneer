@@ -24,6 +24,7 @@ api.d.ts
 
 # Dev
 .dev/
+.make/
 
 # Logs
 *.log
