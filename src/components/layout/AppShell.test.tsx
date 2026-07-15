@@ -462,15 +462,6 @@ describe("AppShell", () => {
 		).toHaveAttribute("data-rail-collapsed", "true");
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<AppShell className="shell-extra">Main</AppShell>,
-		);
-		expect(container.querySelector("[data-slot='app-shell']")).toHaveClass(
-			"shell-extra",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<AppShell

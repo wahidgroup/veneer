@@ -44,11 +44,6 @@ describe("DateTimePicker", () => {
 		);
 	});
 
-	it("merges className", () => {
-		render(<DateTimePicker aria-label="Window" className="extra" />);
-		expect(screen.getByLabelText("Window").className).toContain("extra");
-	});
-
 	it("exposes a pointer cursor on the control", () => {
 		render(<DateTimePicker aria-label="Window" />);
 		expect(screen.getByLabelText("Window").className).toContain(

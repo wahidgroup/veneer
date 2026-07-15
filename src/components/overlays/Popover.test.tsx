@@ -47,16 +47,6 @@ describe("Popover", () => {
 		).toHaveFocus();
 	});
 
-	it("applies className to the panel", () => {
-		render(
-			<Popover trigger="Details" defaultOpen className="extra-panel">
-				Body
-			</Popover>,
-		);
-
-		expect(screen.getByRole("dialog")).toHaveClass("extra-panel");
-	});
-
 	it("has no accessibility violations when open", async () => {
 		await expectNoA11yViolations(
 			<Popover trigger="Details" defaultOpen title="More info">

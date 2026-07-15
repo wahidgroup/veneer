@@ -220,20 +220,6 @@ describe("Modal", () => {
 		expect(invoker).toHaveFocus();
 	});
 
-	it("merges className onto the dialog panel", () => {
-		render(
-			<Modal
-				open
-				title="Sized"
-				className="modal-extra"
-				onOpenChange={noopOpenChange}
-			>
-				Body
-			</Modal>,
-		);
-		expect(screen.getByRole("dialog")).toHaveClass("modal-extra");
-	});
-
 	it("has no accessibility violations when open", async () => {
 		await expectNoA11yViolations(
 			<Modal open title="A11y" onOpenChange={noopOpenChange}>

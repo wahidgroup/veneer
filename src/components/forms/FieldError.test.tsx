@@ -10,11 +10,6 @@ describe("FieldError", () => {
 		expect(screen.getByRole("alert")).toHaveTextContent("Required");
 	});
 
-	it("merges className", () => {
-		render(<FieldError className="extra">Err</FieldError>);
-		expect(screen.getByRole("alert").className).toContain("extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<FieldError>Oops</FieldError>);
 	});

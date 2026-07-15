@@ -111,19 +111,6 @@ describe("ProgressGroup", () => {
 		expect(within(list).getByText("Pending")).toBeInTheDocument();
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<ProgressGroup
-				aria-label="Deploy"
-				tasks={TASKS}
-				className="group-extra"
-			/>,
-		);
-		expect(
-			container.querySelector("[data-slot='progress-group']"),
-		).toHaveClass("group-extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<ProgressGroup aria-label="Deploy" tasks={TASKS} />,

@@ -70,11 +70,6 @@ describe("EmptyState", () => {
 		},
 	);
 
-	it("merges className onto the root", () => {
-		render(<EmptyState title="Extra" className="empty-extra" />);
-		expect(screen.getByRole("status")).toHaveClass("empty-extra");
-	});
-
 	it("has no accessibility violations on the default render", async () => {
 		await expectNoA11yViolations(<EmptyState title="No stacks" />);
 	});

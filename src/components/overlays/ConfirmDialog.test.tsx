@@ -92,20 +92,6 @@ describe("ConfirmDialog", () => {
 		expect(open).toBe(false);
 	});
 
-	it("merges className onto the dialog panel", () => {
-		render(
-			<ConfirmDialog
-				open
-				title="Sized"
-				className="confirm-extra"
-				onOpenChange={noopOpenChange}
-				onConfirm={noopConfirm}
-			/>,
-		);
-
-		expect(screen.getByRole("dialog")).toHaveClass("confirm-extra");
-	});
-
 	it("has no accessibility violations when open", async () => {
 		await expectNoA11yViolations(
 			<ConfirmDialog

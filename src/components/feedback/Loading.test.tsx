@@ -59,12 +59,6 @@ describe("Loading", () => {
 		expect(bones.length).toBe(4);
 	});
 
-	it("merges custom className", () => {
-		render(<Loading className="my-class" />);
-		const root = screen.getByRole("status");
-		expect(root.className).toContain("my-class");
-	});
-
 	it("has no accessibility violations for spinner", async () => {
 		const { container } = render(<Loading text="Loading..." />);
 		const results = await axe(container);

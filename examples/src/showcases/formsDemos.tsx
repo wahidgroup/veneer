@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 import {
-	CRYPTO_CURRENCY_UI,
+	BtcInput,
 	Checkbox,
 	Combobox,
 	DateTimePicker,
@@ -671,17 +671,31 @@ function MoneyInputCanvas() {
 				<FormField
 					label="Payment amount"
 					htmlFor="money-demo"
-					hint="Integer minor units. Pass currencies catalog for crypto."
+					hint="Integer minor units. BTC built in; currency change clears."
 				>
 					<MoneyInput
 						id="money-demo"
 						currency={demo.currency}
 						locale="en-US"
 						defaultAmountMinor={1999}
-						currencies={CRYPTO_CURRENCY_UI}
 						onAmountMinorChange={demo.setAmountMinor}
 					/>
 				</FormField>
+			</DemoRow>
+			<DemoRow label="BtcInput (BTC major)">
+				<BtcInput
+					aria-label="Bitcoin amount"
+					defaultAmountSats={15000}
+					locale="en-US"
+				/>
+			</DemoRow>
+			<DemoRow label="BtcInput (sats)">
+				<BtcInput
+					aria-label="Satoshi amount"
+					unit="sats"
+					defaultAmountSats={15000}
+					locale="en-US"
+				/>
 			</DemoRow>
 			<DemoRow label="Committed minor units">
 				<span className="font-mono text-sm tabular-nums text-muted-foreground">
@@ -698,7 +712,7 @@ function MoneyInputKnobs() {
 	return (
 		<RailPanel
 			title="MoneyInput"
-			description="FormField + amount entry (fiat + BTC sats). Commits on blur/Enter."
+			description="FormField + fiat/BTC amount entry. Currency change clears. Commits on blur/Enter."
 		>
 			<DemoRow label="Currency">
 				<Select

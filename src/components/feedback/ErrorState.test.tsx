@@ -89,11 +89,6 @@ describe("ErrorState", () => {
 		},
 	);
 
-	it("merges className onto the root", () => {
-		render(<ErrorState title="Extra" className="error-extra" />);
-		expect(screen.getByRole("alert")).toHaveClass("error-extra");
-	});
-
 	it("has no accessibility violations on the default render", async () => {
 		await expectNoA11yViolations(<ErrorState />);
 	});

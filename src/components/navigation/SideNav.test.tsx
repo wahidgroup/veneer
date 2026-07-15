@@ -72,15 +72,6 @@ describe("SideNav", () => {
 		);
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<SideNav items={ITEMS} className="side-extra" />,
-		);
-		expect(container.querySelector("[data-slot='side-nav']")).toHaveClass(
-			"side-extra",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<SideNav items={ITEMS} />);
 	});

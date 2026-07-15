@@ -156,6 +156,8 @@ export { MoneyAmount } from "./components/data/MoneyAmount.js";
 export type { MoneyAmountProps } from "./components/data/MoneyAmount.js";
 export { MoneyInput } from "./components/forms/MoneyInput.js";
 export type { MoneyInputProps } from "./components/forms/MoneyInput.js";
+export { BtcInput } from "./components/forms/BtcInput.js";
+export type { BtcInputProps } from "./components/forms/BtcInput.js";
 export { NumberInput } from "./components/forms/NumberInput.js";
 export type { NumberInputProps } from "./components/forms/NumberInput.js";
 export { Pagination } from "./components/navigation/Pagination.js";
@@ -339,6 +341,7 @@ export {
 	currencyAdornmentText,
 	formatMajorDraft,
 	formatMoneyMinor,
+	majorAsciiToMinor,
 	majorNumberToMinor,
 	minorToMajorNumber,
 	parseMajorInput,

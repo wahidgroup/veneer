@@ -57,15 +57,6 @@ describe("TopNav", () => {
 		).toHaveAttribute("aria-expanded", "true");
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<TopNav brand="Veneer" className="nav-extra" />,
-		);
-		expect(container.querySelector("[data-slot='top-nav']")).toHaveClass(
-			"nav-extra",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<TopNav

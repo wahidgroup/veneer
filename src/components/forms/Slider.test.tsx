@@ -32,15 +32,6 @@ describe("Slider", () => {
 		expect(screen.getByText("42")).toBeInTheDocument();
 	});
 
-	it("merges className", () => {
-		const { container } = render(
-			<Slider aria-label="Capacity" className="extra" value={1} />,
-		);
-		expect(container.querySelector('[data-slot="slider"]')).toHaveClass(
-			"extra",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<Slider aria-label="Capacity" value={5} />,

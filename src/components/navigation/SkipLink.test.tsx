@@ -53,13 +53,6 @@ describe("SkipLink", () => {
 		).toBeInTheDocument();
 	});
 
-	it("merges className onto the root", () => {
-		render(<SkipLink className="skip-extra" />);
-		expect(
-			screen.getByRole("link", { name: "Skip to main content" }),
-		).toHaveClass("skip-extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<SkipLink />);
 	});

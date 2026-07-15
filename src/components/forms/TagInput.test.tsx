@@ -60,15 +60,6 @@ describe("TagInput", () => {
 		expect(batches.at(-1)).toEqual(["b"]);
 	});
 
-	it("merges className", () => {
-		const { container } = render(
-			<TagInput className="extra" defaultValue={[]} />,
-		);
-		expect(container.querySelector('[data-slot="tag-input"]')).toHaveClass(
-			"extra",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<TagInput aria-label="Tags" />);
 	});

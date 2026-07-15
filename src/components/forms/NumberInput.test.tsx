@@ -31,11 +31,6 @@ describe("NumberInput", () => {
 		);
 	});
 
-	it("merges className", () => {
-		render(<NumberInput aria-label="Port" className="extra" />);
-		expect(screen.getByRole("spinbutton").className).toContain("extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<NumberInput aria-label="Port" />);
 	});

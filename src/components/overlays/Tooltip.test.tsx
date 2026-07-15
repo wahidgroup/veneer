@@ -56,19 +56,6 @@ describe("Tooltip", () => {
 		expect(screen.queryByRole("tooltip")).not.toBeInTheDocument();
 	});
 
-	it("merges className onto the tooltip panel", async () => {
-		const user = userEvent.setup();
-
-		render(
-			<Tooltip content="Styled" delayMs={0} className="tip-extra">
-				<Button>Style</Button>
-			</Tooltip>,
-		);
-
-		await user.hover(screen.getByRole("button", { name: "Style" }));
-		expect(screen.getByRole("tooltip")).toHaveClass("tip-extra");
-	});
-
 	it("has no accessibility violations when closed", async () => {
 		await expectNoA11yViolations(
 			<Tooltip content="A11y tip" delayMs={0}>

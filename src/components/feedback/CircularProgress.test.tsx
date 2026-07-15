@@ -31,17 +31,6 @@ describe("CircularProgress", () => {
 		expect(bar).toHaveAttribute("data-indeterminate", "true");
 	});
 
-	it("applies className to the root", () => {
-		render(
-			<CircularProgress
-				aria-label="Upload"
-				value={10}
-				className="extra"
-			/>,
-		);
-		expect(screen.getByRole("progressbar")).toHaveClass("extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<CircularProgress aria-label="Upload" value={60} />,

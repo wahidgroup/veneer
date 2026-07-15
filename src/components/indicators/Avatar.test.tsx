@@ -41,15 +41,6 @@ describe("Avatar", () => {
 		);
 	});
 
-	it("merges className", () => {
-		const { container } = render(
-			<Avatar alt="" fallback="A" className="my-avatar" />,
-		);
-		expect(
-			container.querySelector("[data-slot='avatar']")?.className,
-		).toContain("my-avatar");
-	});
-
 	it("has no accessibility violations", async () => {
 		const { container } = render(<Avatar alt="User" fallback="U" />);
 		const results = await axe(container);

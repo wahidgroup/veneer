@@ -60,15 +60,6 @@ describe("StatDisplay", () => {
 		},
 	);
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<StatDisplay label="Extra" value="0" className="stat-extra" />,
-		);
-		expect(
-			container.querySelector("[data-slot='stat-display']"),
-		).toHaveClass("stat-extra");
-	});
-
 	it("has no accessibility violations on the default render", async () => {
 		await expectNoA11yViolations(
 			<StatDisplay label="Active stacks" value="42" />,

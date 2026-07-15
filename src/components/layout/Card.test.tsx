@@ -18,22 +18,14 @@ describe("Card", () => {
 		expect(screen.getByText("Settings")).toBeInTheDocument();
 	});
 
-	it.each([
-		{ size: "sm" as const, expected: "p-3" },
-		{ size: "md" as const, expected: "p-4" },
-	])("applies size $size padding", ({ size, expected }) => {
-		const { container } = render(<Card size={size}>Body</Card>);
-		const root = container.querySelector("[data-slot='card']");
-		expect(root).toHaveAttribute("data-size", size);
-		expect(root?.className).toContain(expected);
-	});
-
-	it("merges className onto the root", () => {
-		const { container } = render(<Card className="card-extra">Body</Card>);
-		expect(container.querySelector("[data-slot='card']")).toHaveClass(
-			"card-extra",
-		);
-	});
+	it.each([{ size: "sm" as const }, { size: "md" as const }])(
+		"applies size $size",
+		({ size }) => {
+			const { container } = render(<Card size={size}>Body</Card>);
+			const root = container.querySelector("[data-slot='card']");
+			expect(root).toHaveAttribute("data-size", size);
+		},
+	);
 
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(

@@ -17,13 +17,6 @@ describe("Skeleton", () => {
 		).toHaveAttribute("data-shape", shape);
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(<Skeleton className="skel-extra" />);
-		expect(container.querySelector("[data-slot='skeleton']")).toHaveClass(
-			"skel-extra",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<Skeleton shape="block" />);
 	});

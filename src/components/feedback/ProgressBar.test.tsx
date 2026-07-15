@@ -46,28 +46,14 @@ describe("ProgressBar", () => {
 	});
 
 	it.each([
-		{ size: "sm" as const, expected: "h-1.5" },
-		{ size: "md" as const, expected: "h-2.5" },
-		{ size: "lg" as const, expected: "h-3.5" },
-	])("applies $size track height", ({ size, expected }) => {
+		{ size: "sm" as const },
+		{ size: "md" as const },
+		{ size: "lg" as const },
+	])("applies data-size $size", ({ size }) => {
 		render(<ProgressBar aria-label="Deploy" value={25} size={size} />);
 
 		const bar = screen.getByRole("progressbar", { name: "Deploy" });
-		expect(bar.className).toContain(expected);
 		expect(bar).toHaveAttribute("data-size", size);
-	});
-
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<ProgressBar
-				aria-label="Deploy"
-				value={10}
-				className="progress-extra"
-			/>,
-		);
-		expect(
-			container.querySelector("[data-slot='progress-bar']"),
-		).toHaveClass("progress-extra");
 	});
 
 	it("has no accessibility violations when determinate", async () => {

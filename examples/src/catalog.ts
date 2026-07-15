@@ -234,7 +234,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "money-input",
 				label: "MoneyInput",
 				description:
-					"FormField + ISO 4217 amount entry (integer minor units, currency adornment).",
+					"FormField + amount entry (fiat + built-in BTC). BtcInput for sats API.",
 			},
 			{
 				id: "field-error",

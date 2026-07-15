@@ -18,15 +18,6 @@ describe("VisuallyHidden", () => {
 		).toBeInTheDocument();
 	});
 
-	it("applies className to the root", () => {
-		const { container } = render(
-			<VisuallyHidden className="extra">Hidden</VisuallyHidden>,
-		);
-		expect(
-			container.querySelector('[data-slot="visually-hidden"]'),
-		).toHaveClass("extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<span>

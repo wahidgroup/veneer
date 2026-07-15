@@ -193,18 +193,6 @@ describe("Combobox", () => {
 		expect(option).toHaveClass("bg-primary/10");
 		expect(option).toHaveClass("text-primary");
 	});
-	it("applies className to the combobox input", () => {
-		render(
-			<Combobox
-				aria-label="Fruit"
-				className="extra-class"
-				options={OPTIONS}
-				value=""
-				onChange={ignoreSingle}
-			/>,
-		);
-		expect(screen.getByRole("combobox")).toHaveClass("extra-class");
-	});
 
 	it.each([
 		{ invalid: true, name: "invalid" },

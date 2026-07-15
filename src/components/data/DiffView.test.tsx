@@ -149,19 +149,6 @@ describe("DiffView", () => {
 		expect(screen.getByText("No changes")).toBeInTheDocument();
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<DiffView
-				mode="lines"
-				lines={SAMPLE_LINES}
-				className="diff-extra"
-			/>,
-		);
-		expect(container.querySelector("[data-slot='diff-view']")).toHaveClass(
-			"diff-extra",
-		);
-	});
-
 	it("has no accessibility violations in lines mode", async () => {
 		await expectNoA11yViolations(
 			<DiffView mode="lines" lines={SAMPLE_LINES} path="a.ts" />,

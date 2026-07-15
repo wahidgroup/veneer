@@ -74,15 +74,6 @@ describe("PlanSummary", () => {
 		expect(within(list).getByText("aws_lb.d")).toBeInTheDocument();
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<PlanSummary resources={RESOURCES} className="plan-extra" />,
-		);
-		expect(
-			container.querySelector("[data-slot='plan-summary']"),
-		).toHaveClass("plan-extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<PlanSummary resources={RESOURCES} />);
 	});

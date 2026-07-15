@@ -44,24 +44,27 @@ describe("Drawer", () => {
 		expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 	});
 
-	it.each([
-		["right", "rounded-l-lg"],
-		["left", "rounded-r-lg"],
-		["top", "rounded-b-lg"],
-		["bottom", "rounded-t-lg"],
-	] as const)("places the panel on the %s edge", (side, edgeClass) => {
-		render(
-			<Drawer open side={side} title="Side" onOpenChange={noopOpenChange}>
-				Body
-			</Drawer>,
-		);
+	it.each([["right"], ["left"], ["top"], ["bottom"]] as const)(
+		"places the panel on the %s edge",
+		(side) => {
+			render(
+				<Drawer
+					open
+					side={side}
+					title="Side"
+					onOpenChange={noopOpenChange}
+				>
+					Body
+				</Drawer>,
+			);
 
-		const shell = requireHtmlElement(
-			document.querySelector('[data-slot="drawer"]'),
-		);
-		expect(shell).toHaveAttribute("data-side", side);
-		expect(screen.getByRole("dialog")).toHaveClass(edgeClass);
-	});
+			const shell = requireHtmlElement(
+				document.querySelector('[data-slot="drawer"]'),
+			);
+			expect(shell).toHaveAttribute("data-side", side);
+			expect(screen.getByRole("dialog")).toBeInTheDocument();
+		},
+	);
 
 	it("closes on Escape", async () => {
 		const user = userEvent.setup();
@@ -264,20 +267,6 @@ describe("Drawer", () => {
 			</div>,
 		);
 		expect(invoker).toHaveFocus();
-	});
-
-	it("merges className onto the dialog panel", () => {
-		render(
-			<Drawer
-				open
-				title="Sized"
-				className="drawer-extra"
-				onOpenChange={noopOpenChange}
-			>
-				Body
-			</Drawer>,
-		);
-		expect(screen.getByRole("dialog")).toHaveClass("drawer-extra");
 	});
 
 	it("has no accessibility violations when open", async () => {

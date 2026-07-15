@@ -6,47 +6,75 @@ import {
 	currencyAdornmentText,
 	formatMajorDraft,
 	formatMoneyMinor,
+	majorAsciiToMinor,
 	majorNumberToMinor,
 	parseMajorInput,
 } from "./formatMoneyMinor.js";
 
+/**
+ * Normalizes NBSP from Intl so string compares stay stable across engines.
+ */
+function normalizeSpaces(value: string): string {
+	const normalized = value.replace(/\u00a0/g, " ");
+	return normalized;
+}
+
 describe("formatMoneyMinor", () => {
-	it("formats USD cents with two fraction digits", () => {
-		const formatted = formatMoneyMinor({
+	it.each([
+		{
+			label: "USD cents",
 			amountMinor: 1999,
 			currency: "usd",
 			locale: "en-US",
-		});
-		expect(formatted.replace(/\u00a0/g, " ")).toContain("19.99");
-	});
+			currencies: undefined,
+			expectedSubstring: "19.99",
+		},
+		{
+			label: "JPY whole units",
+			amountMinor: 1980,
+			currency: "JPY",
+			locale: "en-US",
+			currencies: undefined,
+			expectedSubstring: "1,980",
+		},
+		{
+			label: "BTC sats via crypto catalog",
+			amountMinor: 15000,
+			currency: "BTC",
+			locale: "en-US",
+			currencies: CRYPTO_CURRENCIES,
+			expectedSubstring: "0.00015000",
+		},
+		{
+			label: "bigint USD cents",
+			amountMinor: 50n,
+			currency: "USD",
+			locale: "en-US",
+			currencies: undefined,
+			expectedSubstring: "0.50",
+		},
+	])(
+		"formats $label",
+		({ amountMinor, currency, locale, currencies, expectedSubstring }) => {
+			const formatted = formatMoneyMinor({
+				amountMinor,
+				currency,
+				locale,
+				currencies,
+			});
+			const display = normalizeSpaces(formatted);
+			expect(display).toContain(expectedSubstring);
+		},
+	);
 
-	it("formats JPY with zero fraction digits", () => {
+	it("formats JPY without a decimal point", () => {
 		const formatted = formatMoneyMinor({
 			amountMinor: 1980,
 			currency: "JPY",
 			locale: "en-US",
 		});
-		expect(formatted.replace(/\u00a0/g, " ")).toContain("1,980");
-		expect(formatted.includes(".")).toBe(false);
-	});
-
-	it("formats BTC sats when the crypto catalog is provided", () => {
-		const formatted = formatMoneyMinor({
-			amountMinor: 15000,
-			currency: "BTC",
-			locale: "en-US",
-			currencies: CRYPTO_CURRENCIES,
-		});
-		expect(formatted.replace(/\u00a0/g, " ")).toContain("0.00015000");
-	});
-
-	it("accepts bigint minor amounts", () => {
-		const formatted = formatMoneyMinor({
-			amountMinor: 50n,
-			currency: "USD",
-			locale: "en-US",
-		});
-		expect(formatted.replace(/\u00a0/g, " ")).toContain("0.50");
+		const display = normalizeSpaces(formatted);
+		expect(display.includes(".")).toBe(false);
 	});
 
 	it("rejects non-integer number amounts", () => {
@@ -61,78 +89,209 @@ describe("formatMoneyMinor", () => {
 });
 
 describe("currencyFractionDigits", () => {
-	it("returns 2 for USD", () => {
-		expect(currencyFractionDigits("USD", "en-US")).toBe(2);
-	});
+	it.each([
+		{
+			label: "USD",
+			currency: "USD",
+			locale: "en-US",
+			currencies: undefined,
+			expected: 2,
+		},
+		{
+			label: "JPY",
+			currency: "JPY",
+			locale: "en-US",
+			currencies: undefined,
+			expected: 0,
+		},
+		{
+			label: "BTC without crypto catalog (Intl)",
+			currency: "BTC",
+			locale: "en-US",
+			currencies: undefined,
+			expected: 2,
+		},
+		{
+			label: "BTC with crypto catalog",
+			currency: "BTC",
+			locale: "en-US",
+			currencies: CRYPTO_CURRENCIES,
+			expected: 8,
+		},
+		{
+			label: "XBT with crypto catalog",
+			currency: "XBT",
+			locale: "en-US",
+			currencies: CRYPTO_CURRENCIES,
+			expected: 8,
+		},
+	])(
+		"returns $expected for $label",
+		({ currency, locale, currencies, expected }) => {
+			const digits = currencyFractionDigits(currency, locale, currencies);
+			expect(digits).toBe(expected);
+		},
+	);
 
-	it("returns 0 for JPY", () => {
-		expect(currencyFractionDigits("JPY", "en-US")).toBe(0);
-	});
-
-	it("uses Intl for BTC unless the crypto catalog is passed", () => {
-		expect(currencyFractionDigits("BTC", "en-US")).toBe(2);
-		expect(CRYPTO_CURRENCIES.BTC?.fractionDigits).toBe(
-			SATOSHI_FRACTION_DIGITS,
-		);
-		expect(currencyFractionDigits("BTC", "en-US", CRYPTO_CURRENCIES)).toBe(
-			8,
-		);
-		expect(currencyFractionDigits("XBT", "en-US", CRYPTO_CURRENCIES)).toBe(
-			8,
-		);
+	it("exposes satoshi fraction digits on the crypto catalog", () => {
+		const btcSpec = CRYPTO_CURRENCIES.BTC;
+		expect(btcSpec?.fractionDigits).toBe(SATOSHI_FRACTION_DIGITS);
 	});
 
 	it("uses a caller-provided currency catalog", () => {
-		expect(
-			currencyFractionDigits("ETH", "en-US", {
-				ETH: { code: "ETH", fractionDigits: 18 },
-			}),
-		).toBe(18);
-		expect(
-			currencyFractionDigits("BTC", "en-US", {
-				...CRYPTO_CURRENCIES,
-				ETH: { code: "ETH", fractionDigits: 18 },
-			}),
-		).toBe(8);
+		const ethOnly = {
+			ETH: { code: "ETH", fractionDigits: 18 },
+		};
+		const ethDigits = currencyFractionDigits("ETH", "en-US", ethOnly);
+		expect(ethDigits).toBe(18);
+
+		const withEth = {
+			...CRYPTO_CURRENCIES,
+			ETH: { code: "ETH", fractionDigits: 18 },
+		};
+		const btcDigits = currencyFractionDigits("BTC", "en-US", withEth);
+		expect(btcDigits).toBe(8);
 	});
 });
 
 describe("currencyAdornmentText", () => {
-	it("returns a currency symbol for USD", () => {
-		expect(currencyAdornmentText("USD", "en-US")).toBe("$");
-	});
-
-	it("returns a code when currencyDisplay is code", () => {
-		expect(currencyAdornmentText("USD", "en-US", "code")).toBe("USD");
+	it.each([
+		{
+			label: "USD symbol",
+			currency: "USD",
+			locale: "en-US",
+			currencyDisplay: undefined,
+			expected: "$",
+		},
+		{
+			label: "USD code",
+			currency: "USD",
+			locale: "en-US",
+			currencyDisplay: "code" as const,
+			expected: "USD",
+		},
+	])("returns $label", ({ currency, locale, currencyDisplay, expected }) => {
+		const text = currencyAdornmentText(currency, locale, currencyDisplay);
+		expect(text).toBe(expected);
 	});
 });
 
 describe("majorNumberToMinor / parseMajorInput / formatMajorDraft", () => {
-	it("rounds major USD amounts to cents", () => {
-		expect(majorNumberToMinor(19.99, 2)).toBe(1999);
-		expect(majorNumberToMinor(19.994, 2)).toBe(1999);
-		expect(majorNumberToMinor(19.995, 2)).toBe(2000);
-	});
+	it.each([
+		{ major: 19.99, fractionDigits: 2, expectedMinor: 1999 },
+		{ major: 19.994, fractionDigits: 2, expectedMinor: 1999 },
+		{ major: 19.995, fractionDigits: 2, expectedMinor: 2000 },
+	])(
+		"rounds major $major to minor $expectedMinor",
+		({ major, fractionDigits, expectedMinor }) => {
+			const minor = majorNumberToMinor(major, fractionDigits);
+			expect(minor).toBe(expectedMinor);
+		},
+	);
 
-	it("parses en-US drafts into minor units", () => {
-		expect(parseMajorInput("19.99", "en-US", 2)).toBe(1999);
-		expect(parseMajorInput("1,234.50", "en-US", 2)).toBe(123450);
-		expect(parseMajorInput("", "en-US", 2)).toBeUndefined();
-		expect(parseMajorInput("abc", "en-US", 2)).toBeUndefined();
-	});
+	it.each([
+		{
+			label: "en-US cents",
+			draft: "19.99",
+			locale: "en-US",
+			fractionDigits: 2,
+			expectedMinor: 1999,
+		},
+		{
+			label: "en-US grouped",
+			draft: "1,234.50",
+			locale: "en-US",
+			fractionDigits: 2,
+			expectedMinor: 123450,
+		},
+		{
+			label: "empty draft",
+			draft: "",
+			locale: "en-US",
+			fractionDigits: 2,
+			expectedMinor: undefined,
+		},
+		{
+			label: "non-numeric draft",
+			draft: "abc",
+			locale: "en-US",
+			fractionDigits: 2,
+			expectedMinor: undefined,
+		},
+		{
+			label: "de-DE comma decimal",
+			draft: "19,99",
+			locale: "de-DE",
+			fractionDigits: 2,
+			expectedMinor: 1999,
+		},
+		{
+			label: "BTC sats draft",
+			draft: "0.00015000",
+			locale: "en-US",
+			fractionDigits: 8,
+			expectedMinor: 15000,
+		},
+		{
+			label: "BTC fractional sats",
+			draft: "0.00001999",
+			locale: "en-US",
+			fractionDigits: 8,
+			expectedMinor: 1999,
+		},
+		{
+			label: "one BTC",
+			draft: "1",
+			locale: "en-US",
+			fractionDigits: 8,
+			expectedMinor: 100_000_000,
+		},
+	])(
+		"parses $label into minor units",
+		({ draft, locale, fractionDigits, expectedMinor }) => {
+			const minor = parseMajorInput(draft, locale, fractionDigits);
+			expect(minor).toBe(expectedMinor);
+		},
+	);
 
-	it("parses de-DE drafts with comma decimals", () => {
-		expect(parseMajorInput("19,99", "de-DE", 2)).toBe(1999);
-	});
+	it.each([
+		{ ascii: "0.1", fractionDigits: 1, expectedMinor: 1 },
+		{ ascii: "1.005", fractionDigits: 2, expectedMinor: 101 },
+	])(
+		"scales ascii major $ascii with digit-string path",
+		({ ascii, fractionDigits, expectedMinor }) => {
+			const minor = majorAsciiToMinor(ascii, fractionDigits);
+			expect(minor).toBe(expectedMinor);
+		},
+	);
 
-	it("parses BTC major drafts into sats", () => {
-		expect(parseMajorInput("0.00015000", "en-US", 8)).toBe(15000);
-		expect(parseMajorInput("1", "en-US", 8)).toBe(100_000_000);
-	});
-
-	it("formats editable major drafts without grouping", () => {
-		expect(formatMajorDraft(1999, 2, "en-US")).toBe("19.99");
-		expect(formatMajorDraft(1980, 0, "en-US")).toBe("1980");
-		expect(formatMajorDraft(15000, 8, "en-US")).toBe("0.00015");
-	});
+	it.each([
+		{
+			label: "USD cents",
+			amountMinor: 1999,
+			fractionDigits: 2,
+			locale: "en-US",
+			expectedDraft: "19.99",
+		},
+		{
+			label: "JPY whole",
+			amountMinor: 1980,
+			fractionDigits: 0,
+			locale: "en-US",
+			expectedDraft: "1980",
+		},
+		{
+			label: "BTC sats trimmed",
+			amountMinor: 15000,
+			fractionDigits: 8,
+			locale: "en-US",
+			expectedDraft: "0.00015",
+		},
+	])(
+		"formats editable $label draft without grouping",
+		({ amountMinor, fractionDigits, locale, expectedDraft }) => {
+			const draft = formatMajorDraft(amountMinor, fractionDigits, locale);
+			expect(draft).toBe(expectedDraft);
+		},
+	);
 });

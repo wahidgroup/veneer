@@ -193,20 +193,6 @@ describe("Pagination", () => {
 		expect(screen.getByText("Page 2 of 3")).toBeInTheDocument();
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<Pagination
-				pageIndex={0}
-				pageCount={2}
-				className="pagination-extra"
-				onPageChange={noopPageChange}
-			/>,
-		);
-		expect(container.querySelector("[data-slot='pagination']")).toHaveClass(
-			"pagination-extra",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<Pagination

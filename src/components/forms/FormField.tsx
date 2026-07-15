@@ -1,8 +1,8 @@
-import type { VariantProps } from "class-variance-authority";
-import type { ComponentProps, ReactNode } from "react";
+import type { ComponentProps, ReactElement, ReactNode } from "react";
+import { cloneElement, isValidElement, useId } from "react";
 
 import { cva } from "class-variance-authority";
-import { useId } from "react";
+import type { VariantProps } from "class-variance-authority";
 
 import { cn } from "../../utils/cn.js";
 import { FieldError } from "./FieldError.js";
@@ -18,8 +18,21 @@ interface FormFieldProps extends ComponentProps<"div"> {
 	children: ReactNode;
 }
 
+interface FormFieldControlProps {
+	id?: string;
+	invalid?: boolean;
+	"aria-describedby"?: string;
+}
+
+function isFormFieldControlElement(
+	node: ReactNode,
+): node is ReactElement<FormFieldControlProps> {
+	return isValidElement(node);
+}
+
 /**
- * Layout for label + control + hint/error.
+ * Layout for label + control + hint/error. Injects `id`,
+ * `aria-describedby`, and `invalid` onto a single element child.
  */
 function FormField({
 	label,
@@ -38,6 +51,19 @@ function FormField({
 	const hintId = `${controlId}-hint`;
 	const errorId = `${controlId}-error`;
 
+	const describedParts: string[] = [];
+	if (hint !== undefined && hint.length > 0) {
+		describedParts.push(hintId);
+	}
+	if (error !== undefined && error.length > 0) {
+		describedParts.push(errorId);
+	}
+
+	let fieldDescribedBy: string | undefined;
+	if (describedParts.length > 0) {
+		fieldDescribedBy = describedParts.join(" ");
+	}
+
 	let hintNode: ReactNode = null;
 	if (hint !== undefined && hint.length > 0) {
 		hintNode = <FieldHint id={hintId}>{hint}</FieldHint>;
@@ -46,6 +72,37 @@ function FormField({
 	let errorNode: ReactNode = null;
 	if (error !== undefined && error.length > 0) {
 		errorNode = <FieldError id={errorId}>{error}</FieldError>;
+	}
+
+	let control: ReactNode = children;
+	if (isFormFieldControlElement(children)) {
+		const existingDescribedBy = children.props["aria-describedby"];
+
+		let mergedDescribedBy = fieldDescribedBy;
+		if (
+			existingDescribedBy !== undefined &&
+			existingDescribedBy.length > 0
+		) {
+			if (fieldDescribedBy !== undefined) {
+				mergedDescribedBy = `${existingDescribedBy} ${fieldDescribedBy}`;
+			} else {
+				mergedDescribedBy = existingDescribedBy;
+			}
+		}
+
+		let nextId = children.props.id;
+		nextId ??= controlId;
+
+		let nextInvalid = children.props.invalid;
+		if (error !== undefined && error.length > 0) {
+			nextInvalid = true;
+		}
+
+		control = cloneElement(children, {
+			id: nextId,
+			"aria-describedby": mergedDescribedBy,
+			invalid: nextInvalid,
+		});
 	}
 
 	return (
@@ -57,7 +114,7 @@ function FormField({
 			<Label htmlFor={controlId} required={required}>
 				{label}
 			</Label>
-			{children}
+			{control}
 			{hintNode}
 			{errorNode}
 		</div>

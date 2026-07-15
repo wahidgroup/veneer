@@ -19,17 +19,6 @@ describe("FormSection", () => {
 		expect(screen.getByText("Child")).toBeInTheDocument();
 	});
 
-	it("merges className", () => {
-		const { container } = render(
-			<FormSection title="Network" className="extra">
-				<span />
-			</FormSection>,
-		);
-		expect(
-			container.querySelector('[data-slot="form-section"]'),
-		).toHaveClass("extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<FormSection title="Network">

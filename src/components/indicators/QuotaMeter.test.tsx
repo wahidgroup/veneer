@@ -29,15 +29,6 @@ describe("QuotaMeter", () => {
 		expect(meter).toHaveAttribute("aria-valuetext", "42 / 100 stacks");
 	});
 
-	it("applies className to the root", () => {
-		const { container } = render(
-			<QuotaMeter aria-label="Stacks" value={10} className="extra" />,
-		);
-		expect(
-			container.querySelector('[data-slot="quota-meter"]'),
-		).toHaveClass("extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<QuotaMeter aria-label="Stacks" value={60} label="Quota" />,

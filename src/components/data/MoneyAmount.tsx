@@ -1,10 +1,11 @@
 import type { ComponentProps } from "react";
 
+import type { CurrencyCatalog } from "../../utils/currencySpec.js";
+import { CRYPTO_CURRENCIES } from "../../utils/currencySpec.js";
 import type {
 	MoneyCurrencyDisplay,
 	MoneyCurrencySign,
 } from "../../utils/formatMoneyMinor.js";
-import type { CurrencyCatalog } from "../../utils/currencySpec.js";
 import { formatMoneyMinor } from "../../utils/formatMoneyMinor.js";
 import { cn } from "../../utils/cn.js";
 
@@ -14,13 +15,16 @@ interface MoneyAmountProps extends Omit<ComponentProps<"span">, "children"> {
 	locale?: string;
 	currencyDisplay?: MoneyCurrencyDisplay;
 	currencySign?: MoneyCurrencySign;
+	/**
+	 * Defaults to {@link CRYPTO_CURRENCIES} (BTC/XBT). Pass `{}` for Intl-only.
+	 */
 	currencies?: CurrencyCatalog;
 }
 
 /**
  * Locale-aware currency display from integer minor units. Prefer
- * `formatMoneyMinor` for non-DOM formatting. Pass `currencies` for
- * non-ISO fraction digits (e.g. {@link CRYPTO_CURRENCIES}).
+ * `formatMoneyMinor` for non-DOM formatting. BTC/XBT use satoshi scale by
+ * default; other non-ISO codes need a custom catalog.
  */
 function MoneyAmount({
 	amountMinor,
@@ -28,10 +32,15 @@ function MoneyAmount({
 	locale,
 	currencyDisplay,
 	currencySign,
-	currencies,
+	currencies: currenciesProp,
 	className,
 	...rest
 }: MoneyAmountProps) {
+	let currencies: CurrencyCatalog = CRYPTO_CURRENCIES;
+	if (currenciesProp !== undefined) {
+		currencies = currenciesProp;
+	}
+
 	const formatted = formatMoneyMinor({
 		amountMinor,
 		currency,

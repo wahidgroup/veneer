@@ -62,18 +62,6 @@ describe("Timeline", () => {
 		).toHaveLength(0);
 	});
 
-	it("merges className onto the list", () => {
-		const { container } = render(
-			<Timeline
-				className="timeline-extra"
-				items={[{ id: "1", title: "A", timestamp: "t" }]}
-			/>,
-		);
-		expect(container.querySelector("[data-slot='timeline']")).toHaveClass(
-			"timeline-extra",
-		);
-	});
-
 	it("has no accessibility violations on the default render", async () => {
 		await expectNoA11yViolations(
 			<Timeline

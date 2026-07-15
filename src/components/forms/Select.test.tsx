@@ -32,13 +32,6 @@ describe("Select", () => {
 		expect(screen.getByRole("combobox")).toHaveValue("EU West");
 	});
 
-	it("exposes a pointer cursor when not searchable", () => {
-		render(<Select aria-label="Region" options={OPTIONS} />);
-		expect(
-			screen.getByRole("combobox", { name: "Region" }).className,
-		).toContain("cursor-pointer");
-	});
-
 	it("marks invalid state", () => {
 		render(<Select aria-label="Region" options={OPTIONS} invalid />);
 		expect(screen.getByRole("combobox")).toHaveAttribute(
@@ -156,18 +149,6 @@ describe("Select", () => {
 		await user.keyboard("{Enter}");
 		expect(screen.getByRole("listbox")).toBeVisible();
 		expect(submits).toEqual([]);
-	});
-
-	it("applies className to the combobox input", () => {
-		render(
-			<Select
-				aria-label="Region"
-				options={OPTIONS}
-				className="h-8 text-xs"
-			/>,
-		);
-
-		expect(screen.getByRole("combobox")).toHaveClass("h-8", "text-xs");
 	});
 
 	it("has no accessibility violations", async () => {

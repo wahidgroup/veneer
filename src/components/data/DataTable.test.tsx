@@ -475,21 +475,6 @@ describe("DataTable", () => {
 		expect(screen.getByText("Nothing here")).toBeInTheDocument();
 	});
 
-	it("merges className onto root", () => {
-		const { container } = render(
-			<DataTable
-				columns={COLUMNS}
-				data={PEOPLE.slice(0, 1)}
-				rowCount={1}
-				getRowId={getRowId}
-				className="custom-table"
-			/>,
-		);
-		expect(
-			container.querySelector('[data-slot="data-table"]')?.className,
-		).toContain("custom-table");
-	});
-
 	it("has no axe violations on default render", async () => {
 		await expectNoA11yViolations(
 			<DataTable

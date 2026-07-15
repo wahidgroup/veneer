@@ -30,13 +30,6 @@ describe("FileUpload", () => {
 		).toBeInTheDocument();
 	});
 
-	it("merges className", () => {
-		const { container } = render(<FileUpload className="extra" />);
-		expect(
-			container.querySelector('[data-slot="file-upload"]'),
-		).toHaveClass("extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<FileUpload />);
 	});

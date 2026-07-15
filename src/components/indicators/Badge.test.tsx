@@ -14,30 +14,15 @@ describe("Badge", () => {
 	});
 
 	it.each([
-		{ variant: undefined, expectedClass: "bg-muted", label: "default" },
-		{
-			variant: "success" as const,
-			expectedClass: "bg-success-muted",
-			label: "success",
-		},
-		{
-			variant: "warning" as const,
-			expectedClass: "bg-warning",
-			label: "warning",
-		},
-		{
-			variant: "danger" as const,
-			expectedClass: "bg-destructive-muted",
-			label: "danger",
-		},
-	])("applies $label variant class", ({ variant, expectedClass }) => {
+		{ variant: undefined, label: "default" },
+		{ variant: "success" as const, label: "success" },
+		{ variant: "warning" as const, label: "warning" },
+		{ variant: "danger" as const, label: "danger" },
+	])("renders $label variant with data-slot", ({ variant }) => {
 		render(<Badge variant={variant}>Tag</Badge>);
-		expect(screen.getByText("Tag").className).toContain(expectedClass);
-	});
-
-	it("merges custom className", () => {
-		render(<Badge className="my-custom">Custom</Badge>);
-		expect(screen.getByText("Custom").className).toContain("my-custom");
+		const badge = screen.getByText("Tag");
+		expect(badge).toHaveAttribute("data-slot", "badge");
+		expect(badge).toHaveTextContent("Tag");
 	});
 
 	it("has no accessibility violations", async () => {

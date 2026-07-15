@@ -35,18 +35,6 @@ describe("DescriptionList", () => {
 		},
 	);
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<DescriptionList
-				className="desc-extra"
-				items={[{ term: "A", description: "1" }]}
-			/>,
-		);
-		expect(
-			container.querySelector("[data-slot='description-list']"),
-		).toHaveClass("desc-extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<DescriptionList

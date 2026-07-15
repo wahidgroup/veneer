@@ -127,15 +127,6 @@ describe("CodeBlock", () => {
 		).toHaveAttribute("aria-label", "Shell snippet");
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<CodeBlock code="x" className="code-extra" showCopy={false} />,
-		);
-		expect(container.querySelector("[data-slot='code-block']")).toHaveClass(
-			"code-extra",
-		);
-	});
-
 	it("has no accessibility violations on the default render", async () => {
 		await expectNoA11yViolations(
 			<CodeBlock

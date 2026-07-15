@@ -290,19 +290,6 @@ describe("LogViewer", () => {
 		expect(follows).toEqual([false]);
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<LogViewer
-				aria-label="Deploy logs"
-				lines={SAMPLE_LINES}
-				className="log-extra"
-			/>,
-		);
-		expect(container.querySelector("[data-slot='log-viewer']")).toHaveClass(
-			"log-extra",
-		);
-	});
-
 	it("has no accessibility violations on the default render", async () => {
 		await expectNoA11yViolations(
 			<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />,

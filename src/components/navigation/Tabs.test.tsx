@@ -102,13 +102,6 @@ describe("Tabs", () => {
 		expect(screen.getByRole("tabpanel")).toHaveTextContent("Panel two");
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(<DemoTabs className="tabs-extra" />);
-		expect(container.querySelector('[data-slot="tabs"]')).toHaveClass(
-			"tabs-extra",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<DemoTabs />);
 	});

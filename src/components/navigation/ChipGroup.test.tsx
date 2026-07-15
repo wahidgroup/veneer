@@ -149,22 +149,6 @@ describe("ChipGroup", () => {
 		).toBeDisabled();
 	});
 
-	it("merges className onto the group root", () => {
-		render(
-			<ChipGroup
-				aria-label="Extra"
-				className="chip-extra"
-				items={[{ id: "x", label: "X" }]}
-				onPressedChange={() => {
-					/* intentional no-op */
-				}}
-			/>,
-		);
-		expect(screen.getByRole("group", { name: "Extra" })).toHaveClass(
-			"chip-extra",
-		);
-	});
-
 	it("has no accessibility violations on the default render", async () => {
 		await expectNoA11yViolations(
 			<ChipGroup

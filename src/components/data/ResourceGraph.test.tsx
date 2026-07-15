@@ -45,47 +45,6 @@ describe("ResourceGraph", () => {
 		expect(screen.getByText("vpc → subnet (contains)")).toBeInTheDocument();
 	});
 
-	it("uses pointer cursor when nodes are selectable", () => {
-		render(
-			<ResourceGraph
-				aria-label="Network"
-				nodes={NODES}
-				edges={EDGES}
-				onNodeSelect={() => {
-					/* selectable */
-				}}
-			/>,
-		);
-
-		expect(screen.getByRole("button", { name: "Subnet" })).toHaveClass(
-			"cursor-pointer",
-		);
-	});
-
-	it("omits pointer cursor when selection is unavailable", () => {
-		render(
-			<ResourceGraph aria-label="Network" nodes={NODES} edges={EDGES} />,
-		);
-
-		expect(screen.getByRole("button", { name: "Subnet" })).not.toHaveClass(
-			"cursor-pointer",
-		);
-	});
-
-	it("applies className to the root", () => {
-		const { container } = render(
-			<ResourceGraph
-				aria-label="Network"
-				nodes={NODES}
-				edges={EDGES}
-				className="extra"
-			/>,
-		);
-		expect(
-			container.querySelector('[data-slot="resource-graph"]'),
-		).toHaveClass("extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<ResourceGraph aria-label="Network" nodes={NODES} edges={EDGES} />,

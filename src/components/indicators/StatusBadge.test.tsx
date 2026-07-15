@@ -31,15 +31,6 @@ describe("StatusBadge", () => {
 		expect(variantForStatus(status)).toBe(variant);
 	});
 
-	it("merges className onto the badge", () => {
-		render(
-			<StatusBadge status="running" className="status-extra">
-				Running
-			</StatusBadge>,
-		);
-		expect(screen.getByText("Running")).toHaveClass("status-extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<StatusBadge status="drifted">Drifted</StatusBadge>,

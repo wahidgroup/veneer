@@ -33,7 +33,8 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `DescriptionList` | [`data/DescriptionList.tsx`](../src/components/data/DescriptionList.tsx)         | Resource key/value pairs                              |
 | `StatDisplay`     | [`data/StatDisplay.tsx`](../src/components/data/StatDisplay.tsx)                 | Metric tile on Card (tone + text)                     |
 | `MoneyAmount`     | [`data/MoneyAmount.tsx`](../src/components/data/MoneyAmount.tsx)                 | ISO 4217 display from integer minor units             |
-| `MoneyInput`      | [`forms/MoneyInput.tsx`](../src/components/forms/MoneyInput.tsx)                 | Amount entry; ISO via Intl; crypto via `currencies`   |
+| `MoneyInput`      | [`forms/MoneyInput.tsx`](../src/components/forms/MoneyInput.tsx)                 | Amount entry; ISO via Intl; BTC built in              |
+| `BtcInput`        | [`forms/BtcInput.tsx`](../src/components/forms/BtcInput.tsx)                     | Satoshi API on MoneyInput (`btc` \| `sats` unit)      |
 | `BtcAmount`       | [`data/BtcAmount.tsx`](../src/components/data/BtcAmount.tsx)                     | BTC / sats display from satoshi integers              |
 | `AddressDisplay`  | [`data/AddressDisplay.tsx`](../src/components/data/AddressDisplay.tsx)           | Middle-truncate address + CopyButton                  |
 | `MaskedAccount`   | [`data/MaskedAccount.tsx`](../src/components/data/MaskedAccount.tsx)             | Masked account / IBAN + CopyButton                    |

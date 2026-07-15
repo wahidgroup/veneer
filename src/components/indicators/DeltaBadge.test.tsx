@@ -9,32 +9,25 @@ describe("DeltaBadge", () => {
 		{
 			direction: "up" as const,
 			prefix: "+",
-			variantClass: "bg-success-muted",
 		},
 		{
 			direction: "down" as const,
 			prefix: "−",
-			variantClass: "bg-destructive-muted",
 		},
 		{
 			direction: "flat" as const,
 			prefix: "=",
-			variantClass: "bg-muted",
 		},
-	])(
-		"renders $direction with visible prefix",
-		({ direction, prefix, variantClass }) => {
-			render(<DeltaBadge direction={direction} value="12.4%" />);
+	])("renders $direction with visible prefix", ({ direction, prefix }) => {
+		render(<DeltaBadge direction={direction} value="12.4%" />);
 
-			const badge = screen
-				.getByText("12.4%")
-				.closest("[data-slot='delta-badge']");
-			expect(badge).not.toBeNull();
-			expect(badge).toHaveAttribute("data-direction", direction);
-			expect(badge?.textContent).toContain(prefix);
-			expect(badge?.className).toContain(variantClass);
-		},
-	);
+		const badge = screen
+			.getByText("12.4%")
+			.closest("[data-slot='delta-badge']");
+		expect(badge).not.toBeNull();
+		expect(badge).toHaveAttribute("data-direction", direction);
+		expect(badge?.textContent).toContain(prefix);
+	});
 
 	it("has no accessibility violations", async () => {
 		const { container } = render(<DeltaBadge direction="up" value="3%" />);

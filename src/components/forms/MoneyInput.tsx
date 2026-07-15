@@ -2,10 +2,10 @@ import type { ComponentProps, KeyboardEvent, ReactNode } from "react";
 import { useId, useState } from "react";
 
 import type { MoneyCurrencyDisplay } from "../../utils/formatMoneyMinor.js";
-import type { CurrencyUiCatalog } from "./currencyCatalog.js";
 import { cn } from "../../utils/cn.js";
+import type { CurrencyUiCatalog } from "./currencyCatalog.js";
+import { CRYPTO_CURRENCY_UI, lookupCurrencyUiSpec } from "./currencyCatalog.js";
 import { controlVariants } from "./FormField.js";
-import { lookupCurrencyUiSpec } from "./currencyCatalog.js";
 import {
 	currencyAdornmentText,
 	currencyFractionDigits,
@@ -18,8 +18,9 @@ interface MoneyInputProps extends Omit<ComponentProps<"div">, "onChange"> {
 	locale?: string;
 	currencyDisplay?: MoneyCurrencyDisplay;
 	/**
-	 * Currency catalog (digits + optional adornments). Omit for ISO/Intl
-	 * only. Pass {@link CRYPTO_CURRENCY_UI} for BTC/XBT.
+	 * Currency catalog (digits + optional adornments). Defaults to
+	 * {@link CRYPTO_CURRENCY_UI} (BTC/XBT only). Pass a custom catalog to
+	 * extend or replace; pass `{}` to force Intl-only.
 	 */
 	currencies?: CurrencyUiCatalog;
 	/**
@@ -55,15 +56,24 @@ function draftFromMinor(
 	return formatMajorDraft(amountMinor, digits, locale);
 }
 
+function resolveCurrencies(
+	currencies: CurrencyUiCatalog | undefined,
+): CurrencyUiCatalog {
+	if (currencies !== undefined) {
+		return currencies;
+	}
+	return CRYPTO_CURRENCY_UI;
+}
+
 function resolveAdornment(options: {
 	currency: string;
 	locale: string | undefined;
 	currencyDisplay: MoneyCurrencyDisplay | undefined;
 	startAdornment: ReactNode | undefined;
-	currencies: CurrencyUiCatalog | undefined;
+	currencies: CurrencyUiCatalog;
 }): { node: ReactNode; inputPadClass: string } {
 	if (options.startAdornment !== undefined) {
-		return { node: options.startAdornment, inputPadClass: "pl-9" };
+		return { node: options.startAdornment, inputPadClass: "pl-12" };
 	}
 
 	const spec = lookupCurrencyUiSpec(options.currency, options.currencies);
@@ -89,14 +99,15 @@ function resolveAdornment(options: {
 
 /**
  * Currency amount field. Public value is integer minor units; pairs with
- * {@link FormField}. Fiat uses ISO 4217 via Intl. Pass `currencies` for
- * non-ISO specs (digits + adornment).
+ * {@link FormField}. Fiat uses ISO 4217 via Intl. BTC/XBT are built in;
+ * other non-ISO codes need a custom `currencies` catalog. Changing
+ * `currency` clears the committed value (no FX conversion).
  */
 function MoneyInput({
 	currency,
 	locale,
 	currencyDisplay,
-	currencies,
+	currencies: currenciesProp,
 	amountMinor: controlledMinor,
 	defaultAmountMinor,
 	onAmountMinorChange,
@@ -116,6 +127,7 @@ function MoneyInput({
 	let inputId = id;
 	inputId ??= autoId;
 
+	const currencies = resolveCurrencies(currenciesProp);
 	const isControlled = controlledMinor !== undefined;
 	const digits = currencyFractionDigits(currency, locale, currencies);
 
@@ -149,13 +161,22 @@ function MoneyInput({
 		setDraft(draftFromMinor(controlledMinor, digits, locale));
 	}
 
-	if (
-		locale !== prevLocale ||
-		currency !== prevCurrency ||
-		digits !== prevDigits
-	) {
-		setPrevLocale(locale);
+	if (currency !== prevCurrency) {
 		setPrevCurrency(currency);
+		setPrevLocale(locale);
+		setPrevDigits(digits);
+
+		if (!isControlled) {
+			setCommittedMinor(undefined);
+		}
+
+		setDraft("");
+
+		if (onAmountMinorChange !== undefined) {
+			onAmountMinorChange(undefined);
+		}
+	} else if (locale !== prevLocale || digits !== prevDigits) {
+		setPrevLocale(locale);
 		setPrevDigits(digits);
 
 		let source: number | null | undefined = committedMinor;

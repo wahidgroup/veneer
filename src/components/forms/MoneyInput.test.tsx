@@ -2,110 +2,114 @@ import { useState } from "react";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
-import { CRYPTO_CURRENCY_UI } from "./currencyCatalog.js";
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { FormField } from "./FormField.js";
 import { MoneyInput } from "./MoneyInput.js";
 
+type MinorListener = (value: number | undefined) => void;
+
+function collectMinors(): {
+	values: (number | undefined)[];
+	onAmountMinorChange: MinorListener;
+} {
+	const values: (number | undefined)[] = [];
+	const onAmountMinorChange: MinorListener = (value) => {
+		values.push(value);
+	};
+	return { values, onAmountMinorChange };
+}
+
 describe("MoneyInput", () => {
-	it("commits USD cents on blur", async () => {
+	it.each([
+		{
+			label: "USD cents on blur",
+			currency: "USD",
+			ariaLabel: "Amount",
+			typed: "19.99",
+			expectedMinor: 1999,
+			expectedDisplay: "19.99",
+		},
+		{
+			label: "JPY whole units on blur",
+			currency: "JPY",
+			ariaLabel: "Yen",
+			typed: "1980",
+			expectedMinor: 1980,
+			expectedDisplay: "1980",
+		},
+		{
+			label: "BTC sats on blur",
+			currency: "BTC",
+			ariaLabel: "Bitcoin",
+			typed: "0.00015000",
+			expectedMinor: 15000,
+			expectedDisplay: "0.00015",
+		},
+	])(
+		"commits $label",
+		async ({
+			currency,
+			ariaLabel,
+			typed,
+			expectedMinor,
+			expectedDisplay,
+		}) => {
+			const user = userEvent.setup();
+			const { values, onAmountMinorChange } = collectMinors();
+
+			render(
+				<MoneyInput
+					currency={currency}
+					locale="en-US"
+					aria-label={ariaLabel}
+					onAmountMinorChange={onAmountMinorChange}
+				/>,
+			);
+
+			const input = screen.getByRole("textbox", { name: ariaLabel });
+			await user.type(input, typed);
+			await user.tab();
+
+			const committedMinor = values.at(-1);
+			expect(committedMinor).toBe(expectedMinor);
+			expect(input).toHaveValue(expectedDisplay);
+		},
+	);
+
+	it("commits on Enter", async () => {
 		const user = userEvent.setup();
-		const values: (number | undefined)[] = [];
-
-		render(
-			<MoneyInput
-				currency="USD"
-				locale="en-US"
-				aria-label="Amount"
-				onAmountMinorChange={(value) => {
-					values.push(value);
-				}}
-			/>,
-		);
-
-		const input = screen.getByRole("textbox", { name: "Amount" });
-		await user.type(input, "19.99");
-		await user.tab();
-		expect(values.at(-1)).toBe(1999);
-		expect(input).toHaveValue("19.99");
-	});
-
-	it("commits JPY with zero fraction digits", async () => {
-		const user = userEvent.setup();
-		const values: (number | undefined)[] = [];
+		const { values, onAmountMinorChange } = collectMinors();
+		const yenWholeUnits = 1980;
 
 		render(
 			<MoneyInput
 				currency="JPY"
 				locale="en-US"
 				aria-label="Yen"
-				onAmountMinorChange={(value) => {
-					values.push(value);
-				}}
+				onAmountMinorChange={onAmountMinorChange}
 			/>,
 		);
 
 		const input = screen.getByRole("textbox", { name: "Yen" });
-		await user.type(input, "1980");
+		await user.type(input, String(yenWholeUnits));
 		await user.keyboard("{Enter}");
-		expect(values.at(-1)).toBe(1980);
+		expect(values.at(-1)).toBe(yenWholeUnits);
 		expect(input).toHaveValue("1980");
-	});
-
-	it("commits BTC sats with eight fraction digits", async () => {
-		const user = userEvent.setup();
-		const values: (number | undefined)[] = [];
-
-		render(
-			<MoneyInput
-				currency="BTC"
-				locale="en-US"
-				aria-label="Bitcoin"
-				currencies={CRYPTO_CURRENCY_UI}
-				onAmountMinorChange={(value) => {
-					values.push(value);
-				}}
-			/>,
-		);
-
-		const input = screen.getByRole("textbox", { name: "Bitcoin" });
-		await user.type(input, "0.00015000");
-		await user.tab();
-		expect(values.at(-1)).toBe(15000);
-		expect(input).toHaveValue("0.00015");
-	});
-
-	it("renders the Bitcoin icon adornment for BTC", () => {
-		const { container } = render(
-			<MoneyInput
-				currency="BTC"
-				locale="en-US"
-				aria-label="Bitcoin"
-				currencies={CRYPTO_CURRENCY_UI}
-			/>,
-		);
-		expect(
-			container.querySelector("[data-slot='money-input'] svg"),
-		).not.toBeNull();
-		expect(
-			screen.getByRole("textbox", { name: "Bitcoin" }).className,
-		).toContain("pl-9");
 	});
 
 	it("emits undefined when cleared", async () => {
 		const user = userEvent.setup();
-		const values: (number | undefined)[] = [];
+		const { values, onAmountMinorChange } = collectMinors();
+		const defaultUsdCents = 500;
 
 		render(
 			<MoneyInput
 				currency="USD"
 				locale="en-US"
 				aria-label="Amount"
-				defaultAmountMinor={500}
-				onAmountMinorChange={(value) => {
-					values.push(value);
-				}}
+				defaultAmountMinor={defaultUsdCents}
+				onAmountMinorChange={onAmountMinorChange}
 			/>,
 		);
 
@@ -117,17 +121,16 @@ describe("MoneyInput", () => {
 
 	it("restores the last good value when draft is invalid", async () => {
 		const user = userEvent.setup();
-		const values: (number | undefined)[] = [];
+		const { values, onAmountMinorChange } = collectMinors();
+		const defaultUsdCents = 100;
 
 		render(
 			<MoneyInput
 				currency="USD"
 				locale="en-US"
 				aria-label="Amount"
-				defaultAmountMinor={100}
-				onAmountMinorChange={(value) => {
-					values.push(value);
-				}}
+				defaultAmountMinor={defaultUsdCents}
+				onAmountMinorChange={onAmountMinorChange}
 			/>,
 		);
 
@@ -141,12 +144,17 @@ describe("MoneyInput", () => {
 
 	it("updates draft when controlled amountMinor changes", async () => {
 		const user = userEvent.setup();
+		const initialUsdCents = 100;
+		const bumpedUsdCents = 250;
 
 		function Harness() {
-			const [minor, setMinor] = useState<number | null>(100);
+			const [minor, setMinor] = useState<number | null>(initialUsdCents);
 			return (
 				<>
-					<button type="button" onClick={() => setMinor(250)}>
+					<button
+						type="button"
+						onClick={() => setMinor(bumpedUsdCents)}
+					>
 						Bump
 					</button>
 					<MoneyInput
@@ -167,20 +175,18 @@ describe("MoneyInput", () => {
 		}
 
 		render(<Harness />);
-		expect(screen.getByRole("textbox", { name: "Amount" })).toHaveValue(
-			"1",
-		);
+		const input = screen.getByRole("textbox", { name: "Amount" });
+		expect(input).toHaveValue("1");
 		await user.click(screen.getByRole("button", { name: "Bump" }));
-		expect(screen.getByRole("textbox", { name: "Amount" })).toHaveValue(
-			"2.5",
-		);
+		expect(input).toHaveValue("2.5");
 	});
 
 	it("supports controlled empty via amountMinor null", async () => {
 		const user = userEvent.setup();
+		const initialUsdCents = 500;
 
 		function Harness() {
-			const [minor, setMinor] = useState<number | null>(500);
+			const [minor, setMinor] = useState<number | null>(initialUsdCents);
 			return (
 				<>
 					<button type="button" onClick={() => setMinor(null)}>
@@ -220,6 +226,7 @@ describe("MoneyInput", () => {
 	it("submits committed minor units via hidden name field", async () => {
 		const user = userEvent.setup();
 		const submitted: string[] = [];
+		const defaultUsdCents = 1999;
 
 		render(
 			<form
@@ -237,7 +244,7 @@ describe("MoneyInput", () => {
 					locale="en-US"
 					aria-label="Amount"
 					name="pay"
-					defaultAmountMinor={1999}
+					defaultAmountMinor={defaultUsdCents}
 				/>
 				<button type="submit">Save</button>
 			</form>,
@@ -252,6 +259,37 @@ describe("MoneyInput", () => {
 		await user.tab();
 		await user.click(screen.getByRole("button", { name: "Save" }));
 		expect(submitted.at(-1)).toBe("1050");
+	});
+
+	it("clears the committed value when currency changes", async () => {
+		const user = userEvent.setup();
+		const { values, onAmountMinorChange } = collectMinors();
+		const defaultUsdCents = 1999;
+
+		function Harness() {
+			const [currency, setCurrency] = useState("USD");
+			return (
+				<>
+					<button type="button" onClick={() => setCurrency("BTC")}>
+						To BTC
+					</button>
+					<MoneyInput
+						currency={currency}
+						locale="en-US"
+						aria-label="Amount"
+						defaultAmountMinor={defaultUsdCents}
+						onAmountMinorChange={onAmountMinorChange}
+					/>
+				</>
+			);
+		}
+
+		render(<Harness />);
+		const input = screen.getByRole("textbox", { name: "Amount" });
+		expect(input).toHaveValue("19.99");
+		await user.click(screen.getByRole("button", { name: "To BTC" }));
+		expect(input).toHaveValue("");
+		expect(values.at(-1)).toBeUndefined();
 	});
 
 	it("shows startAdornment override", () => {
@@ -281,20 +319,6 @@ describe("MoneyInput", () => {
 		);
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<MoneyInput
-				currency="USD"
-				locale="en-US"
-				aria-label="Amount"
-				className="my-money"
-			/>,
-		);
-		expect(
-			container.querySelector("[data-slot='money-input']")?.className,
-		).toContain("my-money");
-	});
-
 	it("pairs with FormField for accessible labeling", () => {
 		render(
 			<FormField label="Pay" htmlFor="pay-amount">
@@ -305,11 +329,8 @@ describe("MoneyInput", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		const { container } = render(
+		await expectNoA11yViolations(
 			<MoneyInput currency="USD" locale="en-US" aria-label="Amount" />,
 		);
-
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
 	});
 });

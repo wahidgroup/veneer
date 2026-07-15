@@ -113,6 +113,7 @@ function currencyAdornmentText(
 
 /**
  * Convert integer minor units to a major-unit Number for Intl formatting.
+ * Uses decimal string scaling (avoids `minor / 10**digits` float drift).
  */
 function minorToMajorNumber(
 	amountMinor: number | bigint,
@@ -131,20 +132,104 @@ function minorToMajorNumber(
 }
 
 /**
+ * Convert a normalized ASCII major string (`19.99`, `-0.00001999`) to
+ * integer minor units via digit-string scaling (no `major * 10**digits`).
+ */
+function majorAsciiToMinor(
+	normalized: string,
+	digits: number,
+): number | undefined {
+	let sign = 1n;
+	let body = normalized;
+	if (body.startsWith("-")) {
+		sign = -1n;
+		body = body.slice(1);
+	} else if (body.startsWith("+")) {
+		body = body.slice(1);
+	}
+
+	const dot = body.indexOf(".");
+	let whole: string;
+	let frac: string;
+	if (dot === -1) {
+		whole = body;
+		frac = "";
+	} else {
+		whole = body.slice(0, dot);
+		frac = body.slice(dot + 1);
+	}
+
+	if (whole.length === 0) {
+		whole = "0";
+	}
+
+	for (const ch of whole) {
+		if (ch < "0" || ch > "9") {
+			return undefined;
+		}
+	}
+	for (const ch of frac) {
+		if (ch < "0" || ch > "9") {
+			return undefined;
+		}
+	}
+
+	let wholeInt = BigInt(whole);
+	let fracDigits = frac;
+
+	if (digits === 0) {
+		if (fracDigits.length > 0) {
+			const first = fracDigits.charCodeAt(0);
+			if (first >= 53) {
+				wholeInt += 1n;
+			}
+		}
+		fracDigits = "";
+	} else if (fracDigits.length > digits) {
+		const keep = fracDigits.slice(0, digits);
+		const roundDigit = fracDigits.charCodeAt(digits);
+		let fracInt = BigInt(keep);
+		if (roundDigit >= 53) {
+			fracInt += 1n;
+			const scale = 10n ** BigInt(digits);
+			if (fracInt >= scale) {
+				fracInt -= scale;
+				wholeInt += 1n;
+			}
+		}
+		fracDigits = fracInt.toString().padStart(digits, "0");
+	} else {
+		while (fracDigits.length < digits) {
+			fracDigits += "0";
+		}
+	}
+
+	const combined = `${wholeInt.toString()}${fracDigits}`;
+	let minorBig: bigint;
+	try {
+		minorBig = BigInt(combined) * sign;
+	} catch {
+		return undefined;
+	}
+
+	const asNumber = Number(minorBig);
+	if (!Number.isSafeInteger(asNumber)) {
+		return undefined;
+	}
+
+	return asNumber;
+}
+
+/**
  * Convert a major-unit Number to integer minor units (rounded).
+ * Prefer {@link majorAsciiToMinor} / {@link parseMajorInput} for user input.
  */
 function majorNumberToMinor(major: number, digits: number): number | undefined {
 	if (!Number.isFinite(major)) {
 		return undefined;
 	}
 
-	const scale = 10 ** digits;
-	const minor = Math.round(major * scale);
-	if (!Number.isSafeInteger(minor)) {
-		return undefined;
-	}
-
-	return minor;
+	return majorAsciiToMinor(String(major), digits);
 }
 
 /**
@@ -233,8 +318,7 @@ function parseMajorInput(
 		return undefined;
 	}
 
-	const major = Number(normalized);
-	return majorNumberToMinor(major, digits);
+	return majorAsciiToMinor(normalized, digits);
 }
 
 /**
@@ -265,6 +349,7 @@ export {
 	currencyFractionDigits,
 	formatMajorDraft,
 	formatMoneyMinor,
+	majorAsciiToMinor,
 	majorNumberToMinor,
 	minorToMajorNumber,
 	parseMajorInput,

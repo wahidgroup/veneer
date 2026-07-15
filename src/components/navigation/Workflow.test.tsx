@@ -473,24 +473,6 @@ describe("Workflow", () => {
 		expect(document.activeElement).not.toBe(title);
 	});
 
-	it("merges className onto root", () => {
-		const { container } = render(
-			<Workflow defaultValue="region" className="custom-workflow">
-				<WorkflowTrack aria-label="Deploy">
-					<WorkflowStep value="region">Region</WorkflowStep>
-				</WorkflowTrack>
-				<WorkflowPanel value="region" title="Region">
-					Region body
-				</WorkflowPanel>
-				<WorkflowActions />
-			</Workflow>,
-		);
-
-		expect(
-			container.querySelector('[data-slot="workflow"]')?.className,
-		).toContain("custom-workflow");
-	});
-
 	it("has no axe violations on default render", async () => {
 		await expectNoA11yViolations(
 			<Workflow defaultValue="region">

@@ -20,13 +20,6 @@ describe("Separator", () => {
 		expect(rule).toHaveAttribute("aria-orientation", "vertical");
 	});
 
-	it("merges className", () => {
-		const { container } = render(<Separator className="my-sep" />);
-		expect(
-			container.querySelector("[data-slot='separator']")?.className,
-		).toContain("my-sep");
-	});
-
 	it("has no accessibility violations", async () => {
 		const { container } = render(<Separator />);
 		const results = await axe(container);

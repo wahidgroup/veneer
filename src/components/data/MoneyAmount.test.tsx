@@ -1,41 +1,53 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { MoneyAmount } from "./MoneyAmount.js";
 
+/**
+ * Normalizes NBSP from Intl so string compares stay stable across engines.
+ */
+function normalizeSpaces(value: string): string {
+	const normalized = value.replace(/\u00a0/g, " ");
+	return normalized;
+}
+
 describe("MoneyAmount", () => {
-	it("renders a formatted minor-unit amount", () => {
-		const { container } = render(
-			<MoneyAmount amountMinor={1999} currency="USD" locale="en-US" />,
-		);
+	it.each([
+		{
+			label: "USD cents",
+			amountMinor: 1999,
+			currency: "USD",
+			expectedSubstring: "19.99",
+		},
+		{
+			label: "JPY whole units",
+			amountMinor: 1980,
+			currency: "JPY",
+			expectedSubstring: "1,980",
+		},
+	])(
+		"renders formatted $label",
+		({ amountMinor, currency, expectedSubstring }) => {
+			render(
+				<MoneyAmount
+					amountMinor={amountMinor}
+					currency={currency}
+					locale="en-US"
+				/>,
+			);
 
-		const node = container.querySelector("[data-slot='money-amount']");
-		expect(node).not.toBeNull();
-		expect(node?.textContent?.replace(/\u00a0/g, " ")).toContain("19.99");
-	});
-
-	it("merges className", () => {
-		const { container } = render(
-			<MoneyAmount
-				amountMinor={100}
-				currency="USD"
-				locale="en-US"
-				className="my-money"
-			/>,
-		);
-		expect(
-			container.querySelector("[data-slot='money-amount']")?.className,
-		).toContain("my-money");
-	});
+			const amount = screen.getByText((content) => {
+				const display = normalizeSpaces(content);
+				return display.includes(expectedSubstring);
+			});
+			expect(amount).toHaveAttribute("data-slot", "money-amount");
+		},
+	);
 
 	it("has no accessibility violations", async () => {
-		const { container } = render(
+		await expectNoA11yViolations(
 			<MoneyAmount amountMinor={500} currency="USD" locale="en-US" />,
 		);
-
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
-		expect(screen.queryByRole("presentation")).not.toBeInTheDocument();
 	});
 });

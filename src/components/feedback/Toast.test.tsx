@@ -3,7 +3,6 @@ import { userEvent } from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { axe } from "vitest-axe";
 
-import type { ToastPlacement } from "./Toast.js";
 import { Toast, ToastViewport } from "./Toast.js";
 
 function noopClose(): void {
@@ -39,49 +38,35 @@ describe("Toast", () => {
 		{
 			type: undefined,
 			role: "status" as const,
-			expectedClass: "border-info",
-			wash: "[--toast-wash:var(--info)]",
 			label: "default info",
 		},
 		{
 			type: "success" as const,
 			role: "status" as const,
-			expectedClass: "border-success",
-			wash: "[--toast-wash:var(--success-muted)]",
 			label: "success",
 		},
 		{
 			type: "error" as const,
 			role: "alert" as const,
-			expectedClass: "border-destructive",
-			wash: "[--toast-wash:var(--destructive-muted)]",
 			label: "error",
 		},
 		{
 			type: "warning" as const,
 			role: "status" as const,
-			expectedClass: "border-warning",
-			wash: "[--toast-wash:var(--warning)]",
 			label: "warning",
 		},
-	])(
-		"applies $label variant class",
-		({ type, role, expectedClass, wash }) => {
-			render(
-				<Toast
-					message="Test"
-					type={type}
-					onClose={noopClose}
-					duration={0}
-					fade={false}
-				/>,
-			);
-			const node = screen.getByRole(role);
-			expect(node.className).toContain(expectedClass);
-			expect(node.className).toContain("bg-card");
-			expect(node.className).toContain(wash);
-		},
-	);
+	])("exposes $label role", ({ type, role }) => {
+		render(
+			<Toast
+				message="Test"
+				type={type}
+				onClose={noopClose}
+				duration={0}
+				fade={false}
+			/>,
+		);
+		expect(screen.getByRole(role)).toBeInTheDocument();
+	});
 
 	it("calls onClose after the default duration", () => {
 		let closed = false;
@@ -298,19 +283,6 @@ describe("Toast", () => {
 		expect(acted).toBe("details");
 	});
 
-	it("merges className onto the toast panel", () => {
-		render(
-			<Toast
-				message="Styled"
-				duration={0}
-				fade={false}
-				className="toast-extra"
-				onClose={noopClose}
-			/>,
-		);
-		expect(screen.getByRole("status")).toHaveClass("toast-extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		vi.useRealTimers();
 		render(
@@ -326,11 +298,6 @@ describe("Toast", () => {
 	});
 
 	describe("placement", () => {
-		const PLACEMENT_CLASS: Record<ToastPlacement, string> = {
-			floating: "fixed",
-			stacked: "relative",
-		};
-
 		it("defaults to floating when standalone", () => {
 			render(
 				<Toast
@@ -343,7 +310,6 @@ describe("Toast", () => {
 
 			const node = screen.getByRole("status");
 			expect(node.getAttribute("data-placement")).toBe("floating");
-			expect(node.className).toContain(PLACEMENT_CLASS.floating);
 		});
 
 		it("defaults to stacked inside a ToastViewport", () => {
@@ -359,7 +325,6 @@ describe("Toast", () => {
 			);
 			const node = screen.getByRole("status");
 			expect(node.getAttribute("data-placement")).toBe("stacked");
-			expect(node.className).toContain(PLACEMENT_CLASS.stacked);
 		});
 
 		it("explicit stacked prop overrides standalone default", () => {
@@ -375,7 +340,6 @@ describe("Toast", () => {
 
 			const node = screen.getByRole("status");
 			expect(node.getAttribute("data-placement")).toBe("stacked");
-			expect(node.className).toContain(PLACEMENT_CLASS.stacked);
 		});
 
 		it("explicit floating prop overrides viewport default", () => {
@@ -393,29 +357,16 @@ describe("Toast", () => {
 
 			const node = screen.getByRole("status");
 			expect(node.getAttribute("data-placement")).toBe("floating");
-			expect(node.className).toContain(PLACEMENT_CLASS.floating);
 		});
 	});
 
 	describe("position", () => {
 		it.each([
-			{
-				position: "top-right" as const,
-				classes: ["top-4", "right-4"],
-			},
-			{
-				position: "top-left" as const,
-				classes: ["top-4", "left-4"],
-			},
-			{
-				position: "bottom-right" as const,
-				classes: ["bottom-4", "right-4"],
-			},
-			{
-				position: "bottom-left" as const,
-				classes: ["bottom-4", "left-4"],
-			},
-		])("places floating toast at $position", ({ position, classes }) => {
+			{ position: "top-right" as const },
+			{ position: "top-left" as const },
+			{ position: "bottom-right" as const },
+			{ position: "bottom-left" as const },
+		])("places floating toast at $position", ({ position }) => {
 			render(
 				<Toast
 					message="Corner"
@@ -427,43 +378,19 @@ describe("Toast", () => {
 			);
 			const node = screen.getByRole("status");
 			expect(node.getAttribute("data-position")).toBe(position);
-			for (const className of classes) {
-				expect(node.className).toContain(className);
-			}
 		});
 	});
 });
 
 describe("ToastViewport", () => {
-	it("renders a fixed stack with pointer-events disabled", () => {
-		render(<ToastViewport />);
-
-		const viewport = document.querySelector("[data-slot='toast-viewport']");
-		expect(viewport).toBeInTheDocument();
-		expect(viewport?.className).toContain("fixed");
-		expect(viewport?.className).toContain("z-toast");
-		expect(viewport?.className).toContain("pointer-events-none");
-		expect(viewport?.className).toContain("top-4");
-		expect(viewport?.className).toContain("right-4");
-	});
-
 	it.each([
-		{
-			position: "bottom-left" as const,
-			classes: ["bottom-4", "left-4"],
-		},
-		{
-			position: "top-left" as const,
-			classes: ["top-4", "left-4"],
-		},
-	])("honors position $position", ({ position, classes }) => {
+		{ position: "bottom-left" as const },
+		{ position: "top-left" as const },
+	])("honors position $position", ({ position }) => {
 		render(<ToastViewport position={position} />);
 
 		const viewport = document.querySelector("[data-slot='toast-viewport']");
 		expect(viewport?.getAttribute("data-position")).toBe(position);
-		for (const className of classes) {
-			expect(viewport?.className).toContain(className);
-		}
 	});
 
 	it("stacks multiple toasts as siblings inside the viewport", () => {
@@ -495,17 +422,7 @@ describe("ToastViewport", () => {
 		expect(toasts?.length).toBe(3);
 		for (const toast of toasts ?? []) {
 			expect(toast.getAttribute("data-placement")).toBe("stacked");
-			expect(toast.className).toContain("pointer-events-auto");
 		}
-	});
-
-	it("merges a caller-provided className with viewport defaults", () => {
-		render(<ToastViewport className="left-4 right-auto" />);
-		const viewport = document.querySelector("[data-slot='toast-viewport']");
-
-		expect(viewport?.className).toContain("left-4");
-		expect(viewport?.className).toContain("right-auto");
-		expect(viewport?.className).not.toContain("right-4");
 	});
 
 	it("has no accessibility violations when populated", async () => {

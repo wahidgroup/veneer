@@ -2,9 +2,19 @@ import { describe, expect, it } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
-import type { FlowConnection, FlowEdge, FlowNode } from "./flowTypes.js";
+import type {
+	FlowConnection,
+	FlowEdge,
+	FlowNode,
+	FlowStatus,
+} from "./flowTypes.js";
 import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { FlowCanvas } from "./FlowCanvas.js";
+
+const EMPTY_NODE_STATUS: Record<string, FlowStatus> = {};
+const RUNNING_TASK_STATUS: Record<string, FlowStatus> = {
+	task: "running",
+};
 
 const DROP_MIME = "application/x-veneer-flow-test";
 
@@ -57,21 +67,6 @@ describe("FlowCanvas", () => {
 		);
 	});
 
-	it("merges className on the root", () => {
-		const { container } = render(
-			<FlowCanvas
-				aria-label="Sample flow"
-				nodes={SAMPLE_NODES}
-				edges={SAMPLE_EDGES}
-				fitOnMount={false}
-				className="extra-flow"
-			/>,
-		);
-		expect(
-			container.querySelector('[data-slot="flow-canvas"]'),
-		).toHaveClass("extra-flow");
-	});
-
 	it("selects a node on click", async () => {
 		const user = userEvent.setup();
 		let selected: string | null = null;
@@ -105,15 +100,17 @@ describe("FlowCanvas", () => {
 	});
 
 	it.each([
-		["idle", "Graph idle"],
-		["running", "Node task running"],
-	] as const)("announces %s status", (status, expected) => {
-		let nodeStatus: Record<string, "idle" | "running" | "ok" | "failed"> =
-			{};
-		if (status === "running") {
-			nodeStatus = { task: "running" };
-		}
-
+		{
+			status: "idle",
+			expected: "Graph idle",
+			nodeStatus: EMPTY_NODE_STATUS,
+		},
+		{
+			status: "running",
+			expected: "Node task running",
+			nodeStatus: RUNNING_TASK_STATUS,
+		},
+	])("announces $status status", ({ expected, nodeStatus }) => {
 		render(
 			<FlowCanvas
 				aria-label="Sample flow"

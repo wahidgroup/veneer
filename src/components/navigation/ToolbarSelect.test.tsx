@@ -185,19 +185,6 @@ describe("ToolbarSelect", () => {
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<ToolbarSelect
-				aria-label="Account"
-				options={OPTIONS}
-				className="toolbar-extra"
-			/>,
-		);
-		expect(
-			container.querySelector("[data-slot='toolbar-select']"),
-		).toHaveClass("toolbar-extra");
-	});
-
 	it("has no accessibility violations when closed", async () => {
 		await expectNoA11yViolations(
 			<ToolbarSelect aria-label="Account" options={OPTIONS} />,

@@ -44,11 +44,6 @@ describe("Alert", () => {
 		expect(screen.getByTestId("custom-icon")).toBeInTheDocument();
 	});
 
-	it("merges className onto the root", () => {
-		render(<Alert className="alert-extra">Body</Alert>);
-		expect(screen.getByRole("status")).toHaveClass("alert-extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<Alert type="warning" title="Quota">

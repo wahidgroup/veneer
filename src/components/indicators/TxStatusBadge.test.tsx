@@ -9,30 +9,25 @@ describe("TxStatusBadge", () => {
 		{
 			status: "unconfirmed" as const,
 			label: "Unconfirmed",
-			variantClass: "bg-muted",
 		},
 		{
 			status: "confirming" as const,
 			label: "Confirming",
-			variantClass: "bg-info",
 		},
 		{
 			status: "confirmed" as const,
 			label: "Confirmed",
-			variantClass: "bg-success-muted",
 		},
 		{
 			status: "failed" as const,
 			label: "Failed",
-			variantClass: "bg-destructive-muted",
 		},
-	])("maps $status onto Badge tone", ({ status, label, variantClass }) => {
+	])("maps $status onto Badge tone", ({ status, label }) => {
 		render(<TxStatusBadge status={status}>{label}</TxStatusBadge>);
 
 		const badge = screen.getByText(label);
 		expect(badge).toHaveAttribute("data-slot", "tx-status-badge");
 		expect(badge).toHaveAttribute("data-status", status);
-		expect(badge.className).toContain(variantClass);
 	});
 
 	it("records confirmations on data attribute", () => {

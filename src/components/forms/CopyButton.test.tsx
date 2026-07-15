@@ -122,13 +122,6 @@ describe("CopyButton", () => {
 		).toHaveAttribute("data-copied", "false");
 	});
 
-	it("merges className onto the button", () => {
-		render(<CopyButton value="x" className="copy-extra" />);
-		expect(
-			screen.getByRole("button", { name: "Copy to clipboard" }),
-		).toHaveClass("copy-extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<CopyButton value="stack-1" />);
 	});

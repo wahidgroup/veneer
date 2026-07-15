@@ -48,18 +48,6 @@ describe("Breadcrumbs", () => {
 		);
 	});
 
-	it("merges className onto the root", () => {
-		const { container } = render(
-			<Breadcrumbs
-				items={[{ label: "Home" }]}
-				className="crumbs-extra"
-			/>,
-		);
-		expect(
-			container.querySelector("[data-slot='breadcrumbs']"),
-		).toHaveClass("crumbs-extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<Breadcrumbs

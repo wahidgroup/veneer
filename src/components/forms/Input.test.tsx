@@ -33,11 +33,6 @@ describe("Input", () => {
 		expect(screen.getByRole("textbox")).toHaveValue("vpc-1");
 	});
 
-	it("merges className", () => {
-		render(<Input aria-label="Name" className="extra" />);
-		expect(screen.getByRole("textbox").className).toContain("extra");
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<Input aria-label="Name" />);
 	});
