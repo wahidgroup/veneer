@@ -51,7 +51,7 @@ Use a subpath only when you need that feature, and install the matching peer:
 | -------------------------------- | ------------------------------------------- | ------------------------------ |
 | `@wahidgroup/veneer/data-table`  | `DataTable`, row helpers                    | `@tanstack/react-table@8.21.3` |
 | `@wahidgroup/veneer/diff`        | `DiffView`, `PlanSummary`, `buildDiffLines` | `diff@9.0.0`                   |
-| `@wahidgroup/veneer/flow`        | `FlowCanvas`, viewport, typed ports         | —                              |
+| `@wahidgroup/veneer/flow`        | `FlowCanvas`, viewport, typed ports         | -                              |
 | `@wahidgroup/veneer/flow/layout` | `layoutGraph`                               | `elkjs@0.11.1`                 |
 
 ```bash

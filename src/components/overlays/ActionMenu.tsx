@@ -1,45 +1,27 @@
-import type { KeyboardEvent, ReactNode } from "react";
+import type { ReactNode } from "react";
 import { useEffect, useId, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
+import type {
+	ActionMenuDivider,
+	ActionMenuEntry,
+	ActionMenuItem,
+} from "./actionMenuList.js";
 import { usePopover } from "../../hooks/usePopover.js";
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
-
-interface ActionMenuItem {
-	key: string;
-	label: string;
-	onSelect: () => void;
-	icon?: ReactNode;
-	variant?: "default" | "danger";
-	disabled?: boolean;
-}
-
-interface ActionMenuDivider {
-	key: string;
-	type: "divider";
-}
-
-type ActionMenuEntry = ActionMenuItem | ActionMenuDivider;
+import {
+	focusFirstMenuItem,
+	onActionMenuKeyDown,
+	renderActionMenuEntries,
+} from "./actionMenuList.js";
 
 interface ActionMenuProps {
 	label?: string;
 	items: ActionMenuEntry[];
 	disabled?: boolean;
 	className?: string;
-}
-
-function isDivider(entry: ActionMenuEntry): entry is ActionMenuDivider {
-	return "type" in entry && entry.type === "divider";
-}
-
-function listEnabledItems(root: HTMLElement): HTMLElement[] {
-	return Array.from(
-		root.querySelectorAll<HTMLElement>(
-			'[role="menuitem"]:not([aria-disabled="true"])',
-		),
-	);
 }
 
 /**
@@ -68,55 +50,8 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 			return;
 		}
 
-		const menu = document.getElementById(menuId);
-		if (menu === null) {
-			return;
-		}
-
-		const enabled = listEnabledItems(menu);
-		const first = enabled[0];
-		if (first !== undefined) {
-			first.focus();
-		}
+		focusFirstMenuItem(menuId);
 	}, [open, menuId]);
-
-	function onMenuKeyDown(event: KeyboardEvent<HTMLDivElement>) {
-		const menu = event.currentTarget;
-		const enabled = listEnabledItems(menu);
-		if (enabled.length === 0) {
-			return;
-		}
-
-		const active = document.activeElement;
-		let index = enabled.findIndex((item) => {
-			return item === active;
-		});
-		if (index < 0) {
-			index = 0;
-		}
-
-		let nextIndex = index;
-		if (event.key === "ArrowDown") {
-			event.preventDefault();
-			nextIndex = (index + 1) % enabled.length;
-		} else if (event.key === "ArrowUp") {
-			event.preventDefault();
-			nextIndex = (index - 1 + enabled.length) % enabled.length;
-		} else if (event.key === "Home") {
-			event.preventDefault();
-			nextIndex = 0;
-		} else if (event.key === "End") {
-			event.preventDefault();
-			nextIndex = enabled.length - 1;
-		} else {
-			return;
-		}
-
-		const next = enabled[nextIndex];
-		if (next !== undefined) {
-			next.focus();
-		}
-	}
 
 	let menuNode: ReactNode = null;
 	if (open) {
@@ -132,63 +67,14 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 					className={cn(
 						"z-dropdown min-w-44 overflow-auto rounded-md border border-border bg-card py-1 shadow-md",
 					)}
-					onKeyDown={onMenuKeyDown}
+					onKeyDown={onActionMenuKeyDown}
 				>
-					{items.map((entry) => {
-						if (isDivider(entry)) {
-							return (
-								<div
-									key={entry.key}
-									role="separator"
-									className="my-1 border-t border-border"
-								/>
-							);
-						}
-
-						let itemClass =
-							"h-auto w-full justify-start rounded-none px-3 py-2 text-sm";
-						if (entry.variant === "danger") {
-							itemClass = cn(
-								itemClass,
-								"text-destructive hover:bg-destructive-muted focus:bg-destructive-muted",
-							);
-						} else {
-							itemClass = cn(
-								itemClass,
-								"text-foreground hover:bg-accent focus:bg-accent",
-							);
-						}
-						if (entry.disabled === true) {
-							itemClass = cn(
-								itemClass,
-								"opacity-50 hover:bg-transparent focus:bg-transparent",
-							);
-						}
-
-						return (
-							<Button
-								key={entry.key}
-								type="button"
-								variant="ghost"
-								role="menuitem"
-								tabIndex={-1}
-								disabled={entry.disabled === true}
-								aria-disabled={entry.disabled === true}
-								className={itemClass}
-								onClick={() => {
-									if (entry.disabled === true) {
-										return;
-									}
-									entry.onSelect();
-									setOpen(false);
-								}}
-							>
-								{entry.icon}
-								<span className="min-w-0 flex-1 text-left">
-									{entry.label}
-								</span>
-							</Button>
-						);
+					{renderActionMenuEntries({
+						items,
+						onItemSelect: (entry) => {
+							entry.onSelect();
+							setOpen(false);
+						},
 					})}
 				</div>
 			</Portal>

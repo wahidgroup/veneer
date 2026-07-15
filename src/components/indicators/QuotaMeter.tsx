@@ -44,8 +44,7 @@ function clampMeter(value: number, min: number, max: number): number {
 }
 
 /**
- * Soft-limit gauge (`role="meter"`). Not for task progress — use ProgressBar
- * / CircularProgress for that.
+ * Soft-limit gauge.
  */
 function QuotaMeter({
 	value,

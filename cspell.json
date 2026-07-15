@@ -19,11 +19,13 @@
 		"qholder",
 		"satoshi",
 		"satoshis",
+		"sparkline",
 		"twmerge",
 		"unhover",
 		"veneer",
 		"Adornment",
 		"WCAG",
+		"wordlist",
 		"xyflow"
 	],
 	"ignorePaths": [

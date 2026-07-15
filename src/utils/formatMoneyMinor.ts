@@ -270,7 +270,7 @@ function localeNumberSeparators(locale?: string): {
 
 /**
  * Parse a major-unit draft string into integer minor units.
- * Empty → undefined. Invalid → undefined (safe for keystroke paths).
+ * Empty -> undefined. Invalid -> undefined.
  */
 function parseMajorInput(
 	raw: string,

@@ -14,6 +14,25 @@ export type {
 	ActionMenuItem,
 	ActionMenuProps,
 } from "./components/overlays/ActionMenu.js";
+export {
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+} from "./components/layout/Accordion.js";
+export type {
+	AccordionContentProps,
+	AccordionHeadingLevel,
+	AccordionItemProps,
+	AccordionProps,
+	AccordionTriggerProps,
+	AccordionType,
+} from "./components/layout/Accordion.js";
+export { ActivityRow } from "./components/data/ActivityRow.js";
+export type {
+	ActivityDirection,
+	ActivityRowProps,
+} from "./components/data/ActivityRow.js";
 export { AddressDisplay } from "./components/data/AddressDisplay.js";
 export type { AddressDisplayProps } from "./components/data/AddressDisplay.js";
 export { Alert, alertVariants } from "./components/feedback/Alert.js";
@@ -55,6 +74,16 @@ export type {
 	ChipGroupProps,
 } from "./components/navigation/ChipGroup.js";
 export {
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+} from "./components/layout/Collapsible.js";
+export type {
+	CollapsibleContentProps,
+	CollapsibleProps,
+	CollapsibleTriggerProps,
+} from "./components/layout/Collapsible.js";
+export {
 	CircularProgress,
 	circularProgressVariants,
 } from "./components/feedback/CircularProgress.js";
@@ -78,6 +107,11 @@ export type {
 } from "./components/overlays/CommandPalette.js";
 export { ConfirmDialog } from "./components/overlays/ConfirmDialog.js";
 export type { ConfirmDialogProps } from "./components/overlays/ConfirmDialog.js";
+export { ContextMenu } from "./components/overlays/ContextMenu.js";
+export type {
+	ContextMenuPosition,
+	ContextMenuProps,
+} from "./components/overlays/ContextMenu.js";
 export { CopyButton } from "./components/forms/CopyButton.js";
 export type { CopyButtonProps } from "./components/forms/CopyButton.js";
 export { DateTimePicker } from "./components/forms/DateTimePicker.js";
@@ -117,6 +151,14 @@ export { FieldError } from "./components/forms/FieldError.js";
 export type { FieldErrorProps } from "./components/forms/FieldError.js";
 export { FieldHint } from "./components/forms/FieldHint.js";
 export type { FieldHintProps } from "./components/forms/FieldHint.js";
+export {
+	DEFAULT_PRESETS,
+	FeeRateControl,
+} from "./components/forms/FeeRateControl.js";
+export type {
+	FeeRateControlProps,
+	FeeRatePreset,
+} from "./components/forms/FeeRateControl.js";
 export { FileUpload } from "./components/forms/FileUpload.js";
 export type { FileUploadProps } from "./components/forms/FileUpload.js";
 export { FormField, controlVariants } from "./components/forms/FormField.js";
@@ -130,6 +172,14 @@ export { Input } from "./components/forms/Input.js";
 export type { InputProps } from "./components/forms/Input.js";
 export { Label } from "./components/forms/Label.js";
 export type { LabelProps } from "./components/forms/Label.js";
+export {
+	LedgerRow,
+	ledgerAmountVariants,
+} from "./components/data/LedgerRow.js";
+export type {
+	LedgerEntryKind,
+	LedgerRowProps,
+} from "./components/data/LedgerRow.js";
 export { Loading, loadingVariants } from "./components/feedback/Loading.js";
 export type {
 	LoadingProps,
@@ -198,10 +248,33 @@ export type {
 	ResourceGraphNode,
 	ResourceGraphProps,
 } from "./components/data/ResourceGraph.js";
+export { ResizablePanel } from "./components/layout/ResizablePanel.js";
+export type {
+	ResizablePanelOrientation,
+	ResizablePanelProps,
+} from "./components/layout/ResizablePanel.js";
 export { SearchInput } from "./components/forms/SearchInput.js";
 export type { SearchInputProps } from "./components/forms/SearchInput.js";
 export { Select } from "./components/forms/Select.js";
 export type { SelectOption, SelectProps } from "./components/forms/Select.js";
+export {
+	SegmentedControl,
+	segmentedControlVariants,
+} from "./components/navigation/SegmentedControl.js";
+export type {
+	SegmentedControlOption,
+	SegmentedControlProps,
+	SegmentedControlSize,
+} from "./components/navigation/SegmentedControl.js";
+export {
+	DEFAULT_WORD_SLOT_CH,
+	SeedPhrase,
+} from "./components/data/SeedPhrase.js";
+export type {
+	SeedPhraseColumns,
+	SeedPhraseProps,
+	SeedPhraseWordCount,
+} from "./components/data/SeedPhrase.js";
 export { Separator, separatorVariants } from "./components/layout/Separator.js";
 export type { SeparatorProps } from "./components/layout/Separator.js";
 export type {
@@ -220,6 +293,14 @@ export type {
 } from "./components/navigation/SideNav.js";
 export { SkipLink } from "./components/navigation/SkipLink.js";
 export type { SkipLinkProps } from "./components/navigation/SkipLink.js";
+export {
+	Sparkline,
+	sparklineStrokeVariants,
+} from "./components/data/Sparkline.js";
+export type {
+	SparklineProps,
+	SparklineTone,
+} from "./components/data/Sparkline.js";
 export { Skeleton, skeletonVariants } from "./components/feedback/Skeleton.js";
 export type { SkeletonProps } from "./components/feedback/Skeleton.js";
 export { Slider } from "./components/forms/Slider.js";
@@ -240,6 +321,13 @@ export type {
 	StatusBadgeProps,
 	StatusBadgeStatus,
 } from "./components/indicators/StatusBadge.js";
+export { Stepper, StepperActions } from "./components/navigation/Stepper.js";
+export type {
+	StepperActionsProps,
+	StepperProps,
+	StepperStep,
+	StepperStepState,
+} from "./components/navigation/Stepper.js";
 export {
 	Tabs,
 	TabsList,
@@ -361,5 +449,12 @@ export type {
 } from "./components/forms/currencyCatalog.js";
 export { truncateMiddle } from "./utils/truncateMiddle.js";
 export type { TruncateMiddleOptions } from "./utils/truncateMiddle.js";
+export { buildPaymentUri, parsePaymentUri } from "./utils/paymentUri.js";
+export type {
+	PaymentUriBuildResult,
+	PaymentUriErrorCode,
+	PaymentUriParseResult,
+	PaymentUriParts,
+} from "./utils/paymentUri.js";
 export { cn, cva } from "./utils/index.js";
 export type { VariantProps } from "./utils/index.js";

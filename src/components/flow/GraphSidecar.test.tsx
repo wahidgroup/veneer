@@ -34,7 +34,7 @@ describe("GraphSidecar", () => {
 				sourcePort: "out",
 				targetPort: "in",
 			} satisfies FlowEdge,
-			expected: "Edge: a → b [out→in]",
+			expected: "Edge: a -> b [out->in]",
 		},
 		{
 			name: "source port only",
@@ -44,7 +44,7 @@ describe("GraphSidecar", () => {
 				target: "b",
 				sourcePort: "out",
 			} satisfies FlowEdge,
-			expected: "Edge: a → b",
+			expected: "Edge: a -> b",
 		},
 		{
 			name: "target port only",
@@ -54,7 +54,7 @@ describe("GraphSidecar", () => {
 				target: "b",
 				targetPort: "in",
 			} satisfies FlowEdge,
-			expected: "Edge: a → b",
+			expected: "Edge: a -> b",
 		},
 		{
 			name: "no ports",
@@ -63,7 +63,7 @@ describe("GraphSidecar", () => {
 				source: "a",
 				target: "b",
 			} satisfies FlowEdge,
-			expected: "Edge: a → b",
+			expected: "Edge: a -> b",
 		},
 	])("formats edge description for $name", ({ edge, expected }) => {
 		render(

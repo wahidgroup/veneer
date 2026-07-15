@@ -47,7 +47,7 @@ const GraphViewportContext = createContext<GraphViewportContextValue | null>(
 );
 
 /**
- * Access the enclosing GraphViewport transform + screen→flow projection.
+ * Access the enclosing GraphViewport transform + screen->flow projection.
  * Throws when used outside a GraphViewport subtree.
  */
 function useGraphViewport(): GraphViewportContextValue {

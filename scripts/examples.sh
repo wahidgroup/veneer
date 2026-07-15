@@ -36,7 +36,7 @@ for _ in $(seq 1 40); do
 		ready=1
 		break
 	fi
-	# API crashed early (e.g. bind race) — surface that instead of spinning.
+	# API crashed early (e.g. bind race).
 	if ! kill -0 "$api_pid" 2>/dev/null; then
 		break
 	fi

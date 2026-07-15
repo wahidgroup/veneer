@@ -42,7 +42,9 @@ describe("ResourceGraph", () => {
 		);
 
 		expect(screen.getByLabelText("Network edges")).toBeInTheDocument();
-		expect(screen.getByText("vpc → subnet (contains)")).toBeInTheDocument();
+		expect(
+			screen.getByText("vpc → subnet (contains)"),
+		).toBeInTheDocument();
 	});
 
 	it("has no accessibility violations", async () => {

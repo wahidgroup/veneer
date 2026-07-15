@@ -14,6 +14,7 @@ import {
 	NumberInput,
 	RadioGroup,
 	SearchInput,
+	SegmentedControl,
 	Select,
 	Slider,
 	TagInput,
@@ -624,6 +625,10 @@ interface MoneyInputDemoValue {
 	setCurrency: (value: string) => void;
 	amountMinor: number | undefined;
 	setAmountMinor: (value: number | undefined) => void;
+	btcUnit: "btc" | "sats";
+	setBtcUnit: (value: "btc" | "sats") => void;
+	btcSats: number | undefined;
+	setBtcSats: (value: number | undefined) => void;
 }
 
 const MoneyInputDemoContext = createContext<MoneyInputDemoValue | null>(null);
@@ -640,10 +645,21 @@ function useMoneyInputDemo() {
 function MoneyInputDemoProvider({ children }: { children: ReactNode }) {
 	const [currency, setCurrency] = useState("USD");
 	const [amountMinor, setAmountMinor] = useState<number | undefined>(1999);
+	const [btcUnit, setBtcUnit] = useState<"btc" | "sats">("btc");
+	const [btcSats, setBtcSats] = useState<number | undefined>(15000);
 
 	return (
 		<MoneyInputDemoContext.Provider
-			value={{ currency, setCurrency, amountMinor, setAmountMinor }}
+			value={{
+				currency,
+				setCurrency,
+				amountMinor,
+				setAmountMinor,
+				btcUnit,
+				setBtcUnit,
+				btcSats,
+				setBtcSats,
+			}}
 		>
 			{children}
 		</MoneyInputDemoContext.Provider>
@@ -657,12 +673,22 @@ const MONEY_CURRENCY_OPTIONS = [
 	{ value: "BTC", label: "BTC" },
 ];
 
+const BTC_UNIT_OPTIONS = [
+	{ value: "btc", label: "BTC" },
+	{ value: "sats", label: "sats" },
+];
+
 function MoneyInputCanvas() {
 	const demo = useMoneyInputDemo();
 
-	let committedLabel = "—";
+	let committedLabel = "-";
 	if (demo.amountMinor !== undefined) {
 		committedLabel = String(demo.amountMinor);
+	}
+
+	let btcCommitted = "-";
+	if (demo.btcSats !== undefined) {
+		btcCommitted = String(demo.btcSats);
 	}
 
 	return (
@@ -682,24 +708,30 @@ function MoneyInputCanvas() {
 					/>
 				</FormField>
 			</DemoRow>
-			<DemoRow label="BtcInput (BTC major)">
-				<BtcInput
-					aria-label="Bitcoin amount"
-					defaultAmountSats={15000}
-					locale="en-US"
-				/>
+			<DemoRow label="BtcInput + SegmentedControl unit">
+				<div className="flex flex-col gap-3">
+					<SegmentedControl
+						aria-label="Bitcoin unit"
+						options={BTC_UNIT_OPTIONS}
+						value={demo.btcUnit}
+						onValueChange={(value) => {
+							if (value === "btc" || value === "sats") {
+								demo.setBtcUnit(value);
+							}
+						}}
+					/>
+					<BtcInput
+						aria-label="Bitcoin amount"
+						unit={demo.btcUnit}
+						defaultAmountSats={15000}
+						locale="en-US"
+						onAmountSatsChange={demo.setBtcSats}
+					/>
+				</div>
 			</DemoRow>
-			<DemoRow label="BtcInput (sats)">
-				<BtcInput
-					aria-label="Satoshi amount"
-					unit="sats"
-					defaultAmountSats={15000}
-					locale="en-US"
-				/>
-			</DemoRow>
-			<DemoRow label="Committed minor units">
+			<DemoRow label="Committed minor / sats">
 				<span className="font-mono text-sm tabular-nums text-muted-foreground">
-					{committedLabel}
+					fiat {committedLabel} · btc {btcCommitted}
 				</span>
 			</DemoRow>
 		</Canvas>
@@ -712,7 +744,7 @@ function MoneyInputKnobs() {
 	return (
 		<RailPanel
 			title="MoneyInput"
-			description="FormField + fiat/BTC amount entry. Currency change clears. Commits on blur/Enter."
+			description="FormField + fiat/BTC amount entry. SegmentedControl owns BtcInput unit. Currency change clears. Commits on blur/Enter."
 		>
 			<DemoRow label="Currency">
 				<Select

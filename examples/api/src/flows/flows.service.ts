@@ -401,7 +401,7 @@ export class FlowsService {
 				runId,
 				nodeStates,
 				outputsByNode,
-				message: `Deposit +${String(amount)} → total ${String(total)} (≤ minAmount ${String(minAmount)}); split skipped`,
+				message: `Deposit +${String(amount)} -> total ${String(total)} (≤ minAmount ${String(minAmount)}); split skipped`,
 			};
 
 			return this.getDemo();
@@ -441,7 +441,7 @@ export class FlowsService {
 			runId,
 			nodeStates,
 			outputsByNode,
-			message: `Deposit +${String(amount)} → total ${String(total)}; split ${String(parts.halfA)}/${String(parts.halfB)} dust ${String(parts.dust)}`,
+			message: `Deposit +${String(amount)} -> total ${String(total)}; split ${String(parts.halfA)}/${String(parts.halfB)} dust ${String(parts.dust)}`,
 		};
 
 		return this.getDemo();

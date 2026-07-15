@@ -43,6 +43,24 @@ import {
 	FlowCanvasKnobs,
 } from "./flowDemos.js";
 import {
+	AccordionCanvas,
+	AccordionKnobs,
+	ActivitySurfacesCanvas,
+	ActivitySurfacesKnobs,
+	ContextMenuCanvas,
+	ContextMenuKnobs,
+	ResizablePanelCanvas,
+	ResizablePanelDemoProvider,
+	ResizablePanelKnobs,
+	SeedPhraseCanvas,
+	SeedPhraseDemoProvider,
+	SeedPhraseKnobs,
+	SegmentedControlCanvas,
+	SegmentedControlKnobs,
+	StepperCanvas,
+	StepperKnobs,
+} from "./roadmapDemos.js";
+import {
 	ChoicesCanvas,
 	ChoicesDemoProvider,
 	ChoicesKnobs,
@@ -254,6 +272,16 @@ const PRIMITIVES: Record<string, DemoEntry> = {
 		Canvas: TxStatusBadgeCanvas,
 		Knobs: TxStatusBadgeKnobs,
 	},
+	accordion: {
+		Provider: PassthroughProvider,
+		Canvas: AccordionCanvas,
+		Knobs: AccordionKnobs,
+	},
+	"resizable-panel": {
+		Provider: ResizablePanelDemoProvider,
+		Canvas: ResizablePanelCanvas,
+		Knobs: ResizablePanelKnobs,
+	},
 };
 
 const OVERLAYS: Record<string, DemoEntry> = {
@@ -291,6 +319,11 @@ const OVERLAYS: Record<string, DemoEntry> = {
 		Provider: ActionMenuDemoProvider,
 		Canvas: ActionMenuCanvas,
 		Knobs: ActionMenuKnobs,
+	},
+	"context-menu": {
+		Provider: PassthroughProvider,
+		Canvas: ContextMenuCanvas,
+		Knobs: ContextMenuKnobs,
 	},
 	toast: {
 		Provider: ToastDemoProvider,
@@ -373,6 +406,16 @@ const SHELL: Record<string, DemoEntry> = {
 		Canvas: TabsCanvas,
 		Knobs: TabsKnobs,
 	},
+	"segmented-control": {
+		Provider: PassthroughProvider,
+		Canvas: SegmentedControlCanvas,
+		Knobs: SegmentedControlKnobs,
+	},
+	stepper: {
+		Provider: PassthroughProvider,
+		Canvas: StepperCanvas,
+		Knobs: StepperKnobs,
+	},
 	"toolbar-select": {
 		Provider: PassthroughProvider,
 		Canvas: ToolbarSelectCanvas,
@@ -428,6 +471,16 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: MoneyChromeCanvas,
 		Knobs: MoneyChromeKnobs,
+	},
+	"activity-surfaces": {
+		Provider: PassthroughProvider,
+		Canvas: ActivitySurfacesCanvas,
+		Knobs: ActivitySurfacesKnobs,
+	},
+	"seed-phrase": {
+		Provider: SeedPhraseDemoProvider,
+		Canvas: SeedPhraseCanvas,
+		Knobs: SeedPhraseKnobs,
 	},
 	"code-block": {
 		Provider: CodeBlockDemoProvider,

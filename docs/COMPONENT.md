@@ -6,40 +6,51 @@ The key words "MUST", "MUST NOT", "SHOULD", and "MAY" are interpreted as in [RFC
 
 Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 
-| Component         | Path                                                                             | Use for                                               |
-| ----------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `Button`          | [`forms/Button.tsx`](../src/components/forms/Button.tsx)                         | Actions, icon/ghost chrome                            |
-| `Card`            | [`layout/Card.tsx`](../src/components/layout/Card.tsx)                           | Non-interactive panel chrome                          |
-| `SkipLink`        | [`navigation/SkipLink.tsx`](../src/components/navigation/SkipLink.tsx)           | Bypass link to main (G1)                              |
-| `Input`           | [`forms/Input.tsx`](../src/components/forms/Input.tsx)                           | Text entry                                            |
-| `Label`           | [`forms/Label.tsx`](../src/components/forms/Label.tsx)                           | Control labels                                        |
-| `FieldError`      | [`forms/FieldError.tsx`](../src/components/forms/FieldError.tsx)                 | Field-level errors                                    |
-| `FieldHint`       | [`forms/FieldHint.tsx`](../src/components/forms/FieldHint.tsx)                   | Field-level hints                                     |
-| `FormField`       | [`forms/FormField.tsx`](../src/components/forms/FormField.tsx)                   | Label + control + hint/error                          |
-| `Badge`           | [`indicators/Badge.tsx`](../src/components/indicators/Badge.tsx)                 | Status / removable chips                              |
-| `Avatar`          | [`indicators/Avatar.tsx`](../src/components/indicators/Avatar.tsx)               | User / contact identity (img + fallback)              |
-| `DeltaBadge`      | [`indicators/DeltaBadge.tsx`](../src/components/indicators/DeltaBadge.tsx)       | +/- change chip (not color-only)                      |
-| `TxStatusBadge`   | [`indicators/TxStatusBadge.tsx`](../src/components/indicators/TxStatusBadge.tsx) | Unconfirmed / confirming / confirmed / failed         |
-| `Loading`         | [`feedback/Loading.tsx`](../src/components/feedback/Loading.tsx)                 | Busy / skeleton                                       |
-| `Portal`          | [`overlays/Portal.tsx`](../src/components/overlays/Portal.tsx)                   | Portaled layers                                       |
-| `Drawer`          | [`overlays/Drawer.tsx`](../src/components/overlays/Drawer.tsx)                   | Edge sheet dialog (modal)                             |
-| `Pagination`      | [`navigation/Pagination.tsx`](../src/components/navigation/Pagination.tsx)       | Prev/Next + item-range chrome                         |
-| `EmptyState`      | [`feedback/EmptyState.tsx`](../src/components/feedback/EmptyState.tsx)           | No-results / first-run CTA                            |
-| `ErrorState`      | [`feedback/ErrorState.tsx`](../src/components/feedback/ErrorState.tsx)           | Failure / forbidden chrome (`role="alert"`)           |
-| `CopyButton`      | [`forms/CopyButton.tsx`](../src/components/forms/CopyButton.tsx)                 | Copy ARNs / IDs                                       |
-| `StatusBadge`     | [`indicators/StatusBadge.tsx`](../src/components/indicators/StatusBadge.tsx)     | Inventory status chips                                |
-| `ChipGroup`       | [`navigation/ChipGroup.tsx`](../src/components/navigation/ChipGroup.tsx)         | Multi-select filter chips (`aria-pressed`)            |
-| `CodeBlock`       | [`data/CodeBlock.tsx`](../src/components/data/CodeBlock.tsx)                     | Plain read-only code + CopyButton (+ line #, tabSize) |
-| `DescriptionList` | [`data/DescriptionList.tsx`](../src/components/data/DescriptionList.tsx)         | Resource key/value pairs                              |
-| `StatDisplay`     | [`data/StatDisplay.tsx`](../src/components/data/StatDisplay.tsx)                 | Metric tile on Card (tone + text)                     |
-| `MoneyAmount`     | [`data/MoneyAmount.tsx`](../src/components/data/MoneyAmount.tsx)                 | ISO 4217 display from integer minor units             |
-| `MoneyInput`      | [`forms/MoneyInput.tsx`](../src/components/forms/MoneyInput.tsx)                 | Amount entry; ISO via Intl; BTC built in              |
-| `BtcInput`        | [`forms/BtcInput.tsx`](../src/components/forms/BtcInput.tsx)                     | Satoshi API on MoneyInput (`btc` \| `sats` unit)      |
-| `BtcAmount`       | [`data/BtcAmount.tsx`](../src/components/data/BtcAmount.tsx)                     | BTC / sats display from satoshi integers              |
-| `AddressDisplay`  | [`data/AddressDisplay.tsx`](../src/components/data/AddressDisplay.tsx)           | Middle-truncate address + CopyButton                  |
-| `MaskedAccount`   | [`data/MaskedAccount.tsx`](../src/components/data/MaskedAccount.tsx)             | Masked account / IBAN + CopyButton                    |
-| `Separator`       | [`layout/Separator.tsx`](../src/components/layout/Separator.tsx)                 | Thematic `hr` break (horizontal / vertical)           |
-| `Timeline`        | [`data/Timeline.tsx`](../src/components/data/Timeline.tsx)                       | Ordered event rail + optional StatusBadge             |
+| Component          | Path                                                                                   | Use for                                                |
+| ------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| `Button`           | [`forms/Button.tsx`](../src/components/forms/Button.tsx)                               | Actions, icon/ghost chrome                             |
+| `Card`             | [`layout/Card.tsx`](../src/components/layout/Card.tsx)                                 | Non-interactive panel chrome                           |
+| `SkipLink`         | [`navigation/SkipLink.tsx`](../src/components/navigation/SkipLink.tsx)                 | Bypass link to main (G1)                               |
+| `Input`            | [`forms/Input.tsx`](../src/components/forms/Input.tsx)                                 | Text entry                                             |
+| `Label`            | [`forms/Label.tsx`](../src/components/forms/Label.tsx)                                 | Control labels                                         |
+| `FieldError`       | [`forms/FieldError.tsx`](../src/components/forms/FieldError.tsx)                       | Field-level errors                                     |
+| `FieldHint`        | [`forms/FieldHint.tsx`](../src/components/forms/FieldHint.tsx)                         | Field-level hints                                      |
+| `FormField`        | [`forms/FormField.tsx`](../src/components/forms/FormField.tsx)                         | Label + control + hint/error                           |
+| `Badge`            | [`indicators/Badge.tsx`](../src/components/indicators/Badge.tsx)                       | Status / removable chips                               |
+| `Avatar`           | [`indicators/Avatar.tsx`](../src/components/indicators/Avatar.tsx)                     | User / contact identity (img + fallback)               |
+| `DeltaBadge`       | [`indicators/DeltaBadge.tsx`](../src/components/indicators/DeltaBadge.tsx)             | +/- change chip (not color-only)                       |
+| `TxStatusBadge`    | [`indicators/TxStatusBadge.tsx`](../src/components/indicators/TxStatusBadge.tsx)       | Unconfirmed / confirming / confirmed / failed          |
+| `Loading`          | [`feedback/Loading.tsx`](../src/components/feedback/Loading.tsx)                       | Busy / skeleton                                        |
+| `Portal`           | [`overlays/Portal.tsx`](../src/components/overlays/Portal.tsx)                         | Portaled layers                                        |
+| `Drawer`           | [`overlays/Drawer.tsx`](../src/components/overlays/Drawer.tsx)                         | Edge sheet dialog (modal)                              |
+| `Pagination`       | [`navigation/Pagination.tsx`](../src/components/navigation/Pagination.tsx)             | Prev/Next + item-range chrome                          |
+| `EmptyState`       | [`feedback/EmptyState.tsx`](../src/components/feedback/EmptyState.tsx)                 | No-results / first-run CTA                             |
+| `ErrorState`       | [`feedback/ErrorState.tsx`](../src/components/feedback/ErrorState.tsx)                 | Failure / forbidden chrome (`role="alert"`)            |
+| `CopyButton`       | [`forms/CopyButton.tsx`](../src/components/forms/CopyButton.tsx)                       | Copy ARNs / IDs                                        |
+| `StatusBadge`      | [`indicators/StatusBadge.tsx`](../src/components/indicators/StatusBadge.tsx)           | Inventory status chips                                 |
+| `ChipGroup`        | [`navigation/ChipGroup.tsx`](../src/components/navigation/ChipGroup.tsx)               | Multi-select filter chips (`aria-pressed`)             |
+| `SegmentedControl` | [`navigation/SegmentedControl.tsx`](../src/components/navigation/SegmentedControl.tsx) | Exclusive segment strip (`radiogroup`)                 |
+| `Stepper`          | [`navigation/Stepper.tsx`](../src/components/navigation/Stepper.tsx)                   | Form wizard steps (≠ Workflow)                         |
+| `CodeBlock`        | [`data/CodeBlock.tsx`](../src/components/data/CodeBlock.tsx)                           | Plain read-only code + CopyButton (+ line #, tabSize)  |
+| `DescriptionList`  | [`data/DescriptionList.tsx`](../src/components/data/DescriptionList.tsx)               | Resource key/value pairs                               |
+| `StatDisplay`      | [`data/StatDisplay.tsx`](../src/components/data/StatDisplay.tsx)                       | Metric tile on Card (tone + text)                      |
+| `MoneyAmount`      | [`data/MoneyAmount.tsx`](../src/components/data/MoneyAmount.tsx)                       | ISO 4217 display from integer minor units              |
+| `MoneyInput`       | [`forms/MoneyInput.tsx`](../src/components/forms/MoneyInput.tsx)                       | Amount entry; ISO via Intl; BTC built in               |
+| `BtcInput`         | [`forms/BtcInput.tsx`](../src/components/forms/BtcInput.tsx)                           | Satoshi API on MoneyInput (`btc` \| `sats` unit)       |
+| `FeeRateControl`   | [`forms/FeeRateControl.tsx`](../src/components/forms/FeeRateControl.tsx)               | sat/vB slider + presets                                |
+| `BtcAmount`        | [`data/BtcAmount.tsx`](../src/components/data/BtcAmount.tsx)                           | BTC / sats display from satoshi integers               |
+| `AddressDisplay`   | [`data/AddressDisplay.tsx`](../src/components/data/AddressDisplay.tsx)                 | Middle-truncate address + CopyButton                   |
+| `MaskedAccount`    | [`data/MaskedAccount.tsx`](../src/components/data/MaskedAccount.tsx)                   | Masked account / IBAN + CopyButton                     |
+| `ActivityRow`      | [`data/ActivityRow.tsx`](../src/components/data/ActivityRow.tsx)                       | Send/receive activity list row                         |
+| `LedgerRow`        | [`data/LedgerRow.tsx`](../src/components/data/LedgerRow.tsx)                           | Debit/credit + optional running balance                |
+| `Sparkline`        | [`data/Sparkline.tsx`](../src/components/data/Sparkline.tsx)                           | Peer-free SVG metric sparkline                         |
+| `SeedPhrase`       | [`data/SeedPhrase.tsx`](../src/components/data/SeedPhrase.tsx)                         | Backup word grid; `words.length` = n; fixed `ch` slots |
+| `Separator`        | [`layout/Separator.tsx`](../src/components/layout/Separator.tsx)                       | Thematic `hr` break (horizontal / vertical)            |
+| `Collapsible`      | [`layout/Collapsible.tsx`](../src/components/layout/Collapsible.tsx)                   | Single disclosure atom                                 |
+| `Accordion`        | [`layout/Accordion.tsx`](../src/components/layout/Accordion.tsx)                       | APG accordion (single / multiple)                      |
+| `ResizablePanel`   | [`layout/ResizablePanel.tsx`](../src/components/layout/ResizablePanel.tsx)             | Two-pane split + keyboard / pointer handle             |
+| `ContextMenu`      | [`overlays/ContextMenu.tsx`](../src/components/overlays/ContextMenu.tsx)               | Right-click APG menu                                   |
+| `Timeline`         | [`data/Timeline.tsx`](../src/components/data/Timeline.tsx)                             | Ordered event rail + optional StatusBadge              |
 
 | `TreeView` | [`data/TreeView.tsx`](../src/components/data/TreeView.tsx) | APG tree + `end` slot (`snug` \| `justify`) |
 | `LogViewer` | [`data/LogViewer.tsx`](../src/components/data/LogViewer.tsx) | Live-tail chrome; parent filters/streams `lines` |
@@ -58,6 +69,12 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `VisuallyHidden` | [`a11y/VisuallyHidden.tsx`](../src/components/a11y/VisuallyHidden.tsx) | Screen-reader-only text |
 | `DiffView` | [`data/DiffView.tsx`](../src/components/data/DiffView.tsx) | Line + tree diffs (`@wahidgroup/veneer/diff`) |
 | `PlanSummary` | [`data/PlanSummary.tsx`](../src/components/data/PlanSummary.tsx) | IaC counts + DiffView tree (`@wahidgroup/veneer/diff`) |
+
+Utils (barrel):
+
+| Symbol                                | Path                                                | Use for                           |
+| ------------------------------------- | --------------------------------------------------- | --------------------------------- |
+| `parsePaymentUri` / `buildPaymentUri` | [`utils/paymentUri.ts`](../src/utils/paymentUri.ts) | BIP-21 `bitcoin:` URI parse/build |
 
 `Button.tsx` remains the stamp example for exports, `cva`/`cn`, `data-slot`, and tokens.
 

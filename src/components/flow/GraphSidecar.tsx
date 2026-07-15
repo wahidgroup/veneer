@@ -24,7 +24,7 @@ function GraphSidecar({
 			};
 		}),
 		...edges.map((edge) => {
-			let description = `${edge.source} → ${edge.target}`;
+			let description = `${edge.source} -> ${edge.target}`;
 			if (edge.label !== undefined && edge.label.length > 0) {
 				description = `${description} (${edge.label})`;
 			}
@@ -32,7 +32,7 @@ function GraphSidecar({
 				edge.sourcePort !== undefined &&
 				edge.targetPort !== undefined
 			) {
-				description = `${description} [${edge.sourcePort}→${edge.targetPort}]`;
+				description = `${description} [${edge.sourcePort}->${edge.targetPort}]`;
 			}
 
 			return {

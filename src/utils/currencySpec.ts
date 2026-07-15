@@ -16,8 +16,7 @@ interface CurrencySpec {
 type CurrencyCatalog = Readonly<Record<string, CurrencySpec>>;
 
 /**
- * Opt-in non-ISO crypto specs (satoshi scale). Not part of ISO 4217 —
- * Intl alone mis-reports BTC fraction digits.
+ * Opt-in non-ISO crypto specs (satoshi scale). Not part of ISO 4217.
  */
 const CRYPTO_CURRENCIES = {
 	BTC: { code: "BTC", fractionDigits: SATOSHI_FRACTION_DIGITS },

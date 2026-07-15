@@ -1451,7 +1451,7 @@ const NETWORK_TREE: TreeViewItem[] = [
 	{
 		id: "rtb",
 		label: "rtb-public",
-		children: [{ id: "route-default", label: "0.0.0.0/0 → igw-main" }],
+		children: [{ id: "route-default", label: "0.0.0.0/0 -> igw-main" }],
 	},
 ];
 

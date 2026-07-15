@@ -799,7 +799,7 @@ function FlowCanvasDemoProvider({ children }: { children: ReactNode }) {
 
 function formatFieldValue(value: string | number | undefined): string {
 	if (value === undefined) {
-		return "—";
+		return "-";
 	}
 
 	return String(value);

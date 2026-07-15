@@ -29,7 +29,7 @@ export interface FlowDemoEdge {
 export interface FlowDemoRun {
 	runId: string | null;
 	nodeStates: Record<string, FlowNodeStatus>;
-	/** Per-node field id → serialized value from last run. */
+	/** Per-node field id -> serialized value from last run. */
 	outputsByNode: Record<string, Record<string, string | number>>;
 	message: string;
 }

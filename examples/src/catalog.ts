@@ -65,6 +65,18 @@ const CATALOG: CatalogCategory[] = [
 					"Thematic hr break. Horizontal default; vertical for toolbars.",
 			},
 			{
+				id: "accordion",
+				label: "Accordion",
+				description:
+					"APG accordion + Collapsible atom for settings / dense panels.",
+			},
+			{
+				id: "resizable-panel",
+				label: "ResizablePanel",
+				description:
+					"Two-pane split with keyboard-resizable separator.",
+			},
+			{
 				id: "delta-badge",
 				label: "DeltaBadge",
 				description:
@@ -183,6 +195,12 @@ const CATALOG: CatalogCategory[] = [
 					"Portaled row actions with keyboard menu navigation.",
 			},
 			{
+				id: "context-menu",
+				label: "ContextMenu",
+				description:
+					"Right-click APG menu. Esc and outside click dismiss.",
+			},
+			{
 				id: "toast",
 				label: "Toast",
 				description:
@@ -234,7 +252,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "money-input",
 				label: "MoneyInput",
 				description:
-					"FormField + amount entry (fiat + built-in BTC). BtcInput for sats API.",
+					"FormField + amount entry (fiat + built-in BTC). BtcInput + SegmentedControl for unit.",
 			},
 			{
 				id: "field-error",
@@ -311,6 +329,18 @@ const CATALOG: CatalogCategory[] = [
 					"Underline tablist + panels. Arrow keys move selection.",
 			},
 			{
+				id: "segmented-control",
+				label: "SegmentedControl",
+				description:
+					"Exclusive radiogroup strip for unit switches and view modes.",
+			},
+			{
+				id: "stepper",
+				label: "Stepper",
+				description:
+					"Linear form wizard steps (checkout / KYC). Not Workflow.",
+			},
+			{
 				id: "toolbar-select",
 				label: "ToolbarSelect",
 				description:
@@ -382,7 +412,13 @@ const CATALOG: CatalogCategory[] = [
 				id: "money-chrome",
 				label: "Money & identity",
 				description:
-					"MoneyAmount, BtcAmount, AddressDisplay, MaskedAccount — display-only finance/crypto chrome.",
+					"MoneyAmount, BtcAmount, AddressDisplay, MaskedAccount. Display-only finance/crypto chrome.",
+			},
+			{
+				id: "activity-surfaces",
+				label: "Activity surfaces",
+				description:
+					"ActivityRow, LedgerRow, FeeRateControl, Sparkline, PaymentUri helpers.",
 			},
 			{
 				id: "code-block",
@@ -420,6 +456,11 @@ const CATALOG: CatalogCategory[] = [
 				description:
 					"API-backed deposit-split playground: typed ports, elk layout, knob triggers (@wahidgroup/veneer/flow).",
 				apiDriven: true,
+			},
+			{
+				id: "seed-phrase",
+				label: "SeedPhrase",
+				description: "Backup word grid presentation only.",
 			},
 		],
 	},
