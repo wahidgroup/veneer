@@ -2,6 +2,8 @@ import { Module } from "@nestjs/common";
 
 import { CommandsController } from "./commands/commands.controller.js";
 import { CommandsService } from "./commands/commands.service.js";
+import { FlowsController } from "./flows/flows.controller.js";
+import { FlowsService } from "./flows/flows.service.js";
 import { HealthController } from "./health/health.controller.js";
 import { LogsController } from "./logs/logs.controller.js";
 import { LogsGateway } from "./logs/logs.gateway.js";
@@ -17,6 +19,7 @@ import { TablesService } from "./tables/tables.service.js";
 @Module({
 	controllers: [
 		CommandsController,
+		FlowsController,
 		HealthController,
 		LogsController,
 		MetricsController,
@@ -25,6 +28,7 @@ import { TablesService } from "./tables/tables.service.js";
 	],
 	providers: [
 		CommandsService,
+		FlowsService,
 		LogsService,
 		LogsGateway,
 		MetricsService,

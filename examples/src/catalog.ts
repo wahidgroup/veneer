@@ -378,6 +378,13 @@ const CATALOG: CatalogCategory[] = [
 				description:
 					"SVG dependency map with accessible edge list. No canvas/pan-zoom in v1.",
 			},
+			{
+				id: "flow-canvas",
+				label: "FlowCanvas",
+				description:
+					"API-backed deposit-split playground: typed ports, elk layout, knob triggers (@wahidgroup/veneer/flow).",
+				apiDriven: true,
+			},
 		],
 	},
 ];

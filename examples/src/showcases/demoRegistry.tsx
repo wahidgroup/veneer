@@ -36,6 +36,11 @@ import {
 	ResourceGraphKnobs,
 } from "./dataDemos.js";
 import {
+	FlowCanvasCanvas,
+	FlowCanvasDemoProvider,
+	FlowCanvasKnobs,
+} from "./flowDemos.js";
+import {
 	ChoicesCanvas,
 	ChoicesDemoProvider,
 	ChoicesKnobs,
@@ -405,6 +410,11 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: PassthroughProvider,
 		Canvas: ResourceGraphCanvas,
 		Knobs: ResourceGraphKnobs,
+	},
+	"flow-canvas": {
+		Provider: FlowCanvasDemoProvider,
+		Canvas: FlowCanvasCanvas,
+		Knobs: FlowCanvasKnobs,
 	},
 };
 

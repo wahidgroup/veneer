@@ -692,4 +692,309 @@ describe("examples api", () => {
 			},
 		});
 	});
+
+	it("runs the deposit split flow and respects minAmount gate", async () => {
+		let response = await fetch(`${baseUrl}/v1/flows/demo/reset`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+
+		const resetBody = (await readBody(response)) as {
+			data: {
+				nodes: { id: string }[];
+				edges: { valueKind: string }[];
+			};
+		};
+		expect(resetBody.data.nodes.length).toBe(5);
+		expect(
+			resetBody.data.edges.every((edge) => {
+				return (
+					edge.valueKind === "number" || edge.valueKind === "string"
+				);
+			}),
+		).toBe(true);
+
+		response = await fetch(
+			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
+			{
+				method: "PATCH",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ config: { minAmount: 50 } }),
+			},
+		);
+		expect(response.status).toBe(200);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ amount: 10, address: "bc1qholder" }),
+		});
+		expect(response.status).toBe(201);
+
+		let triggerBody = (await readBody(response)) as {
+			data: {
+				run: {
+					nodeStates: Record<string, string>;
+					outputsByNode: Record<
+						string,
+						Record<string, string | number>
+					>;
+					message: string;
+				};
+			};
+		};
+		expect(triggerBody.data.run.nodeStates["split-half"]).toBe("failed");
+		expect(triggerBody.data.run.nodeStates["send-a"]).toBe("idle");
+		expect(
+			triggerBody.data.run.outputsByNode["account-listener"]?.amount,
+		).toBe(10);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/reset`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(
+			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
+			{
+				method: "PATCH",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ config: { minAmount: 50 } }),
+			},
+		);
+		expect(response.status).toBe(200);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ amount: 101, address: "bc1qholder" }),
+		});
+		expect(response.status).toBe(201);
+
+		triggerBody = (await readBody(response)) as {
+			data: {
+				run: {
+					nodeStates: Record<string, string>;
+					outputsByNode: Record<
+						string,
+						Record<string, string | number>
+					>;
+					message: string;
+				};
+			};
+		};
+		expect(triggerBody.data.run.nodeStates["split-half"]).toBe("ok");
+		expect(triggerBody.data.run.outputsByNode["split-half"]?.halfA).toBe(
+			50,
+		);
+		expect(triggerBody.data.run.outputsByNode["split-half"]?.halfB).toBe(
+			50,
+		);
+		expect(triggerBody.data.run.outputsByNode["split-half"]?.dust).toBe(1);
+		expect(
+			triggerBody.data.run.outputsByNode["split-half"]?.addressOut,
+		).toBe("bc1qholder");
+		expect(triggerBody.data.run.outputsByNode["return-dust"]?.address).toBe(
+			"bc1qholder",
+		);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/run`);
+		expect(response.status).toBe(200);
+	});
+
+	it("accumulates deposit amounts across triggers until reset", async () => {
+		let response = await fetch(`${baseUrl}/v1/flows/demo/reset`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(
+			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
+			{
+				method: "PATCH",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ config: { minAmount: 0 } }),
+			},
+		);
+		expect(response.status).toBe(200);
+
+		for (let i = 0; i < 10; i += 1) {
+			response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
+				method: "POST",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ amount: 1, address: "bc1qholder" }),
+			});
+			expect(response.status).toBe(201);
+		}
+
+		const body = (await readBody(response)) as {
+			data: {
+				run: {
+					nodeStates: Record<string, string>;
+					outputsByNode: Record<
+						string,
+						Record<string, string | number>
+					>;
+				};
+			};
+		};
+		expect(body.data.run.outputsByNode["account-listener"]?.amount).toBe(
+			10,
+		);
+		expect(body.data.run.outputsByNode["split-half"]?.amount).toBe(10);
+		expect(body.data.run.outputsByNode["split-half"]?.halfA).toBe(5);
+		expect(body.data.run.outputsByNode["split-half"]?.halfB).toBe(5);
+		expect(body.data.run.outputsByNode["split-half"]?.dust).toBe(0);
+		expect(body.data.run.nodeStates["split-half"]).toBe("ok");
+	});
+
+	it("rejects invalid trigger and config payloads", async () => {
+		let response = await fetch(`${baseUrl}/v1/flows/demo/reset`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ amount: -1, address: "bc1qholder" }),
+		});
+		expect(response.status).toBe(400);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ amount: 1, address: "" }),
+		});
+		expect(response.status).toBe(400);
+
+		response = await fetch(
+			`${baseUrl}/v1/flows/demo/nodes/missing-node/config`,
+			{
+				method: "PATCH",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ config: { minAmount: 1 } }),
+			},
+		);
+		expect(response.status).toBe(400);
+
+		response = await fetch(
+			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
+			{
+				method: "PATCH",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ config: { minAmount: -1 } }),
+			},
+		);
+		expect(response.status).toBe(400);
+
+		response = await fetch(
+			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
+			{
+				method: "PATCH",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({
+					config: { minAmount: 5, extra: "nope" },
+				}),
+			},
+		);
+		expect(response.status).toBe(400);
+	});
+
+	it("resets the cumulative deposit counter", async () => {
+		let response = await fetch(`${baseUrl}/v1/flows/demo/reset`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(
+			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
+			{
+				method: "PATCH",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ config: { minAmount: 0 } }),
+			},
+		);
+		expect(response.status).toBe(200);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ amount: 3, address: "bc1qholder" }),
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/reset`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(
+			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
+			{
+				method: "PATCH",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ config: { minAmount: 0 } }),
+			},
+		);
+		expect(response.status).toBe(200);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ amount: 2, address: "bc1qholder" }),
+		});
+		expect(response.status).toBe(201);
+
+		const body = (await readBody(response)) as {
+			data: {
+				run: {
+					outputsByNode: Record<
+						string,
+						Record<string, string | number>
+					>;
+				};
+			};
+		};
+		expect(body.data.run.outputsByNode["account-listener"]?.amount).toBe(2);
+	});
+
+	it("returns a full run body from GET /run after a trigger", async () => {
+		let response = await fetch(`${baseUrl}/v1/flows/demo/reset`, {
+			method: "POST",
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(
+			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
+			{
+				method: "PATCH",
+				headers: { "content-type": "application/json" },
+				body: JSON.stringify({ config: { minAmount: 0 } }),
+			},
+		);
+		expect(response.status).toBe(200);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
+			method: "POST",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ amount: 4, address: "bc1qholder" }),
+		});
+		expect(response.status).toBe(201);
+
+		response = await fetch(`${baseUrl}/v1/flows/demo/run`);
+		expect(response.status).toBe(200);
+		const body = (await readBody(response)) as {
+			data: {
+				runId: string | null;
+				nodeStates: Record<string, string>;
+				outputsByNode: Record<string, Record<string, string | number>>;
+				message: string;
+			};
+		};
+		expect(body.data.runId).toMatch(/^run-/);
+		expect(body.data.nodeStates["account-listener"]).toBe("ok");
+		expect(body.data.outputsByNode["account-listener"]?.amount).toBe(4);
+		expect(typeof body.data.message).toBe("string");
+	});
 });

@@ -111,6 +111,140 @@
 				]
 			}
 		},
+		"/v1/flows/demo": {
+			"get": {
+				"operationId": "FlowsController_getDemo",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FlowDemoSnapshotDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"flows"
+				]
+			}
+		},
+		"/v1/flows/demo/reset": {
+			"post": {
+				"operationId": "FlowsController_reset",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FlowDemoSnapshotDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"flows"
+				]
+			}
+		},
+		"/v1/flows/demo/trigger": {
+			"post": {
+				"operationId": "FlowsController_trigger",
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FlowTriggerDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FlowDemoSnapshotDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"flows"
+				]
+			}
+		},
+		"/v1/flows/demo/run": {
+			"get": {
+				"operationId": "FlowsController_getRun",
+				"parameters": [],
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FlowDemoRunDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"flows"
+				]
+			}
+		},
+		"/v1/flows/demo/nodes/{id}/config": {
+			"patch": {
+				"operationId": "FlowsController_patchConfig",
+				"parameters": [
+					{
+						"name": "id",
+						"required": true,
+						"in": "path",
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/FlowNodeConfigDto"
+							}
+						}
+					}
+				},
+				"responses": {
+					"200": {
+						"description": "",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/FlowDemoSnapshotDto"
+								}
+							}
+						}
+					}
+				},
+				"tags": [
+					"flows"
+				]
+			}
+		},
 		"/health": {
 			"get": {
 				"operationId": "HealthController_getHealth",
@@ -883,6 +1017,179 @@
 				},
 				"required": [
 					"count"
+				]
+			},
+			"FlowFieldDefDto": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					},
+					"kind": {
+						"type": "string",
+						"enum": [
+							"number",
+							"string"
+						]
+					},
+					"direction": {
+						"type": "string",
+						"enum": [
+							"in",
+							"out"
+						]
+					}
+				},
+				"required": [
+					"id",
+					"label",
+					"kind",
+					"direction"
+				]
+			},
+			"FlowDemoNodeDto": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"label": {
+						"type": "string"
+					},
+					"fields": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/FlowFieldDefDto"
+						}
+					},
+					"config": {
+						"type": "object",
+						"additionalProperties": true
+					}
+				},
+				"required": [
+					"id",
+					"label",
+					"fields",
+					"config"
+				]
+			},
+			"FlowDemoEdgeDto": {
+				"type": "object",
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"source": {
+						"type": "string"
+					},
+					"target": {
+						"type": "string"
+					},
+					"sourcePort": {
+						"type": "string"
+					},
+					"targetPort": {
+						"type": "string"
+					},
+					"valueKind": {
+						"type": "string",
+						"enum": [
+							"number",
+							"string"
+						]
+					}
+				},
+				"required": [
+					"id",
+					"source",
+					"target",
+					"sourcePort",
+					"targetPort",
+					"valueKind"
+				]
+			},
+			"FlowDemoRunDto": {
+				"type": "object",
+				"properties": {
+					"runId": {
+						"type": "string",
+						"nullable": true
+					},
+					"nodeStates": {
+						"type": "object",
+						"additionalProperties": {}
+					},
+					"outputsByNode": {
+						"type": "object",
+						"additionalProperties": true
+					},
+					"message": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"runId",
+					"nodeStates",
+					"outputsByNode",
+					"message"
+				]
+			},
+			"FlowDemoSnapshotDto": {
+				"type": "object",
+				"properties": {
+					"nodes": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/FlowDemoNodeDto"
+						}
+					},
+					"edges": {
+						"type": "array",
+						"items": {
+							"$ref": "#/components/schemas/FlowDemoEdgeDto"
+						}
+					},
+					"run": {
+						"$ref": "#/components/schemas/FlowDemoRunDto"
+					}
+				},
+				"required": [
+					"nodes",
+					"edges",
+					"run"
+				]
+			},
+			"FlowTriggerDto": {
+				"type": "object",
+				"properties": {
+					"amount": {
+						"type": "number",
+						"maximum": 1000000
+					},
+					"address": {
+						"type": "string",
+						"maxLength": 256
+					}
+				},
+				"required": [
+					"amount",
+					"address"
+				]
+			},
+			"FlowNodeConfigDto": {
+				"type": "object",
+				"properties": {
+					"config": {
+						"type": "object",
+						"additionalProperties": true
+					}
+				},
+				"required": [
+					"config"
 				]
 			},
 			"HealthStatusDto": {

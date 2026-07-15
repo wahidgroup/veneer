@@ -41,9 +41,9 @@ npm install @wahidgroup/veneer
 
 Peers: `react` >= 19, `react-dom` >= 19. Consumer app needs Tailwind CSS v4.
 
-### Optional peers: DataTable and Diff
+### Optional peers: DataTable, Diff, and Flow
 
-`@tanstack/react-table` and `diff` are **optional peers**. They are not installed with a plain `npm install @wahidgroup/veneer`. The root entry (`@wahidgroup/veneer`) never imports them.
+`@tanstack/react-table`, `diff`, and `elkjs` are **optional peers**. They are not installed with a plain `npm install @wahidgroup/veneer`. The root entry (`@wahidgroup/veneer`) never imports them.
 
 Use a subpath only when you need that feature, and install the matching peer:
 
@@ -51,6 +51,8 @@ Use a subpath only when you need that feature, and install the matching peer:
 | ------------------------------- | ------------------------------------------- | ------------------------------ |
 | `@wahidgroup/veneer/data-table` | `DataTable`, row helpers                    | `@tanstack/react-table@8.21.3` |
 | `@wahidgroup/veneer/diff`       | `DiffView`, `PlanSummary`, `buildDiffLines` | `diff@9.0.0`                   |
+| `@wahidgroup/veneer/flow`        | `FlowCanvas`, viewport, typed ports         | —                              |
+| `@wahidgroup/veneer/flow/layout` | `layoutGraph`                               | `elkjs@0.11.1`                 |
 
 ```bash
 # only if you import from /data-table
@@ -58,13 +60,20 @@ npm install @tanstack/react-table@8.21.3
 
 # only if you import from /diff
 npm install diff@9.0.0
+
+# only if you import layoutGraph from /flow/layout
+npm install elkjs@0.11.1
 ```
 
 ```ts
 import { Button } from "@wahidgroup/veneer";
 import { DataTable } from "@wahidgroup/veneer/data-table";
 import { DiffView, PlanSummary } from "@wahidgroup/veneer/diff";
+import { FlowCanvas } from "@wahidgroup/veneer/flow";
+import { layoutGraph } from "@wahidgroup/veneer/flow/layout";
 ```
+
+See [`docs/FLOW.md`](docs/FLOW.md) for canvas architecture.
 
 ### Theme
 

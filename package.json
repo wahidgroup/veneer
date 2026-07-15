@@ -20,6 +20,14 @@
 			"types": "./dist/diff.d.ts",
 			"default": "./dist/diff.js"
 		},
+		"./flow": {
+			"types": "./dist/flow.d.ts",
+			"default": "./dist/flow.js"
+		},
+		"./flow/layout": {
+			"types": "./dist/flow-layout.d.ts",
+			"default": "./dist/flow-layout.js"
+		},
 		"./theme.css": "./theme.css",
 		"./package.json": "./package.json"
 	},
@@ -56,16 +64,20 @@
 	},
 	"license": "MIT",
 	"peerDependencies": {
-		"react": ">=19",
-		"react-dom": ">=19",
 		"@tanstack/react-table": "8.21.3",
-		"diff": "9.0.0"
+		"diff": "9.0.0",
+		"elkjs": "0.11.1",
+		"react": ">=19",
+		"react-dom": ">=19"
 	},
 	"peerDependenciesMeta": {
 		"@tanstack/react-table": {
 			"optional": true
 		},
 		"diff": {
+			"optional": true
+		},
+		"elkjs": {
 			"optional": true
 		}
 	},
@@ -87,6 +99,7 @@
 		"@wahidgroup/lint-rules": "0.1.0",
 		"cspell": "9.7.0",
 		"diff": "9.0.0",
+		"elkjs": "0.11.1",
 		"eslint": "9.39.2",
 		"eslint-plugin-jsx-a11y": "6.10.2",
 		"eslint-plugin-react-hooks": "7.1.1",

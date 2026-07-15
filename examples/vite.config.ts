@@ -44,6 +44,11 @@ export default defineConfig({
 				"src/data-table.ts",
 			),
 			"@wahidgroup/veneer/diff": path.join(packageRoot, "src/diff.ts"),
+			"@wahidgroup/veneer/flow/layout": path.join(
+				packageRoot,
+				"src/flow-layout.ts",
+			),
+			"@wahidgroup/veneer/flow": path.join(packageRoot, "src/flow.ts"),
 			"@wahidgroup/veneer": path.join(packageRoot, "src/index.ts"),
 			react: path.join(rootModules, "react"),
 			"react-dom": path.join(rootModules, "react-dom"),

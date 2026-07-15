@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import * as dataTable from "./data-table.js";
 import * as diff from "./diff.js";
+import * as flow from "./flow.js";
+import * as flowLayout from "./flow-layout.js";
 import * as lib from "./index.js";
 
 /**
@@ -124,6 +126,21 @@ const EXPECTED_DIFF_EXPORTS = new Set([
 	"buildDiffLines",
 ]);
 
+const EXPECTED_FLOW_EXPORTS = new Set([
+	"FlowCanvas",
+	"GraphEdgeLayer",
+	"GraphHandle",
+	"GraphNode",
+	"GraphSidecar",
+	"GraphStatusRegion",
+	"GraphViewport",
+	"buildStatusMessage",
+	"sameValueKindConnection",
+	"useGraphViewport",
+]);
+
+const EXPECTED_FLOW_LAYOUT_EXPORTS = new Set(["layoutGraph"]);
+
 describe("public API surface", () => {
 	it("exposes exactly the expected set of runtime exports", () => {
 		const actualKeys = new Set(Object.keys(lib));
@@ -159,6 +176,32 @@ describe("public API surface", () => {
 		});
 		const unexpected = [...actualKeys].filter((k) => {
 			return !EXPECTED_DIFF_EXPORTS.has(k);
+		});
+		expect(missing).toEqual([]);
+		expect(unexpected).toEqual([]);
+	});
+
+	it("exposes the flow subpath runtime exports", () => {
+		const actualKeys = new Set(Object.keys(flow));
+
+		const missing = [...EXPECTED_FLOW_EXPORTS].filter((k) => {
+			return !actualKeys.has(k);
+		});
+		const unexpected = [...actualKeys].filter((k) => {
+			return !EXPECTED_FLOW_EXPORTS.has(k);
+		});
+		expect(missing).toEqual([]);
+		expect(unexpected).toEqual([]);
+	});
+
+	it("exposes the flow/layout subpath runtime exports", () => {
+		const actualKeys = new Set(Object.keys(flowLayout));
+
+		const missing = [...EXPECTED_FLOW_LAYOUT_EXPORTS].filter((k) => {
+			return !actualKeys.has(k);
+		});
+		const unexpected = [...actualKeys].filter((k) => {
+			return !EXPECTED_FLOW_LAYOUT_EXPORTS.has(k);
 		});
 		expect(missing).toEqual([]);
 		expect(unexpected).toEqual([]);

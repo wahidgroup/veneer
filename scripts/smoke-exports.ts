@@ -82,7 +82,7 @@ try {
 /**
  * Node-bound markers that must not appear in published dist JS.
  */
-const nodeBound = /node:|require\(|__dirname|__filename/;
+const nodeBound = /node:[a-zA-Z]|require\(|__dirname|__filename/;
 let failed = false;
 
 const jsFiles = await collectJsFiles(distDir);
@@ -106,10 +106,11 @@ const rootSource = await readFile(rootEntry, "utf8");
 if (
 	rootSource.includes("@tanstack/react-table") ||
 	rootSource.includes('from "diff"') ||
-	rootSource.includes("from 'diff'")
+	rootSource.includes("from 'diff'") ||
+	rootSource.includes("elkjs")
 ) {
 	console.error(
-		"root dist/index.js must not import @tanstack/react-table or diff",
+		"root dist/index.js must not import @tanstack/react-table, diff, or elkjs",
 	);
 
 	failed = true;
@@ -129,6 +130,35 @@ const diffEntry = path.join(distDir, "diff.js");
 const diffSource = await readFile(diffEntry, "utf8");
 if (!diffSource.includes("./components/data/DiffView.js")) {
 	console.error("dist/diff.js missing DiffView re-export");
+
+	failed = true;
+}
+
+const flowEntry = path.join(distDir, "flow.js");
+const flowSource = await readFile(flowEntry, "utf8");
+if (!flowSource.includes("./components/flow/FlowCanvas.js")) {
+	console.error("dist/flow.js missing FlowCanvas re-export");
+
+	failed = true;
+}
+if (
+	flowSource.includes('from "./components/flow/layoutGraph.js"') ||
+	flowSource.includes("from 'elkjs") ||
+	flowSource.includes('from "elkjs')
+) {
+	console.error(
+		"dist/flow.js must not import elkjs or layoutGraph (use ./flow/layout)",
+	);
+
+	failed = true;
+} else {
+	console.log("ok flow entry free of elkjs / layoutGraph imports");
+}
+
+const flowLayoutEntry = path.join(distDir, "flow-layout.js");
+const flowLayoutSource = await readFile(flowLayoutEntry, "utf8");
+if (!flowLayoutSource.includes("./components/flow/layoutGraph.js")) {
+	console.error("dist/flow-layout.js missing layoutGraph re-export");
 
 	failed = true;
 }

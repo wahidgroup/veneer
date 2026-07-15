@@ -1,7 +1,7 @@
 # Veneer examples
 
 Vite app. Aliases `@wahidgroup/veneer` -> package `src` for live review
-(plus `@wahidgroup/veneer/data-table` and `@wahidgroup/veneer/diff` entry points).
+(plus `@wahidgroup/veneer/data-table`, `/diff`, and `/flow` entry points).
 
 ## Run
 

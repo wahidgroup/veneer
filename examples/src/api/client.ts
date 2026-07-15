@@ -559,7 +559,258 @@ async function resetCommands(): Promise<{ count: number }> {
 	return requireCount(unwrap(result.data));
 }
 
-export type { CommandItem, InstanceOption, ProgressJob, QuotaSnapshot };
+type FlowFieldKind = "number" | "string";
+type FlowNodeStatus = "idle" | "running" | "ok" | "failed";
+
+interface FlowDemoField {
+	id: string;
+	label: string;
+	kind: FlowFieldKind;
+	direction: "in" | "out";
+}
+
+interface FlowDemoNode {
+	id: string;
+	label: string;
+	fields: FlowDemoField[];
+	config: Record<string, number | string>;
+}
+
+interface FlowDemoEdge {
+	id: string;
+	source: string;
+	target: string;
+	sourcePort: string;
+	targetPort: string;
+	valueKind: FlowFieldKind;
+}
+
+interface FlowDemoRun {
+	runId: string | null;
+	nodeStates: Record<string, FlowNodeStatus>;
+	outputsByNode: Record<string, Record<string, string | number>>;
+	message: string;
+}
+
+interface FlowDemoSnapshot {
+	nodes: FlowDemoNode[];
+	edges: FlowDemoEdge[];
+	run: FlowDemoRun;
+}
+
+function isFlowFieldKind(value: unknown): value is FlowFieldKind {
+	return value === "number" || value === "string";
+}
+
+function isFlowNodeStatus(value: unknown): value is FlowNodeStatus {
+	return (
+		value === "idle" ||
+		value === "running" ||
+		value === "ok" ||
+		value === "failed"
+	);
+}
+
+function requireFlowField(data: unknown): FlowDemoField {
+	if (
+		!isRecord(data) ||
+		typeof data.id !== "string" ||
+		typeof data.label !== "string" ||
+		!isFlowFieldKind(data.kind) ||
+		(data.direction !== "in" && data.direction !== "out")
+	) {
+		throw new Error("flow field payload invalid");
+	}
+
+	return {
+		id: data.id,
+		label: data.label,
+		kind: data.kind,
+		direction: data.direction,
+	};
+}
+
+function requireFlowNode(data: unknown): FlowDemoNode {
+	if (
+		!isRecord(data) ||
+		typeof data.id !== "string" ||
+		typeof data.label !== "string" ||
+		!Array.isArray(data.fields) ||
+		!isRecord(data.config)
+	) {
+		throw new Error("flow node payload invalid");
+	}
+
+	const fields: FlowDemoField[] = [];
+	for (const field of data.fields) {
+		fields.push(requireFlowField(field));
+	}
+
+	const config: Record<string, number | string> = {};
+	for (const [key, value] of Object.entries(data.config)) {
+		if (typeof value === "number" || typeof value === "string") {
+			config[key] = value;
+		}
+	}
+
+	return {
+		id: data.id,
+		label: data.label,
+		fields,
+		config,
+	};
+}
+
+function requireFlowEdge(data: unknown): FlowDemoEdge {
+	if (
+		!isRecord(data) ||
+		typeof data.id !== "string" ||
+		typeof data.source !== "string" ||
+		typeof data.target !== "string" ||
+		typeof data.sourcePort !== "string" ||
+		typeof data.targetPort !== "string" ||
+		!isFlowFieldKind(data.valueKind)
+	) {
+		throw new Error("flow edge payload invalid");
+	}
+
+	return {
+		id: data.id,
+		source: data.source,
+		target: data.target,
+		sourcePort: data.sourcePort,
+		targetPort: data.targetPort,
+		valueKind: data.valueKind,
+	};
+}
+
+function requireFlowRun(data: unknown): FlowDemoRun {
+	if (
+		!isRecord(data) ||
+		(data.runId !== null && typeof data.runId !== "string") ||
+		!isRecord(data.nodeStates) ||
+		!isRecord(data.outputsByNode) ||
+		typeof data.message !== "string"
+	) {
+		throw new Error("flow run payload invalid");
+	}
+
+	const nodeStates: Record<string, FlowNodeStatus> = {};
+	for (const [id, status] of Object.entries(data.nodeStates)) {
+		if (isFlowNodeStatus(status)) {
+			nodeStates[id] = status;
+		}
+	}
+
+	const outputsByNode: Record<string, Record<string, string | number>> = {};
+	for (const [id, fields] of Object.entries(data.outputsByNode)) {
+		if (!isRecord(fields)) {
+			continue;
+		}
+		const mapped: Record<string, string | number> = {};
+		for (const [fieldId, value] of Object.entries(fields)) {
+			if (typeof value === "string" || typeof value === "number") {
+				mapped[fieldId] = value;
+			}
+		}
+		outputsByNode[id] = mapped;
+	}
+
+	return {
+		runId: data.runId,
+		nodeStates,
+		outputsByNode,
+		message: data.message,
+	};
+}
+
+function requireFlowSnapshot(data: unknown): FlowDemoSnapshot {
+	if (
+		!isRecord(data) ||
+		!Array.isArray(data.nodes) ||
+		!Array.isArray(data.edges) ||
+		!isRecord(data.run)
+	) {
+		throw new Error("flow snapshot payload invalid");
+	}
+
+	const nodes: FlowDemoNode[] = [];
+	for (const node of data.nodes) {
+		nodes.push(requireFlowNode(node));
+	}
+
+	const edges: FlowDemoEdge[] = [];
+	for (const edge of data.edges) {
+		edges.push(requireFlowEdge(edge));
+	}
+
+	return {
+		nodes,
+		edges,
+		run: requireFlowRun(data.run),
+	};
+}
+
+async function getFlowDemo(): Promise<FlowDemoSnapshot> {
+	const result = await client.GET("/v1/flows/demo");
+	if (result.error !== undefined) {
+		throw new Error("get flow demo failed");
+	}
+
+	return requireFlowSnapshot(unwrap(result.data));
+}
+
+async function resetFlowDemo(): Promise<FlowDemoSnapshot> {
+	const result = await client.POST("/v1/flows/demo/reset");
+	if (result.error !== undefined) {
+		throw new Error("reset flow demo failed");
+	}
+
+	return requireFlowSnapshot(unwrap(result.data));
+}
+
+async function triggerFlowDemo(
+	amount: number,
+	address: string,
+): Promise<FlowDemoSnapshot> {
+	const result = await client.POST("/v1/flows/demo/trigger", {
+		body: { amount, address },
+	});
+	if (result.error !== undefined) {
+		throw new Error("trigger flow demo failed");
+	}
+
+	return requireFlowSnapshot(unwrap(result.data));
+}
+
+async function patchFlowNodeConfig(
+	id: string,
+	config: Record<string, number | string>,
+): Promise<FlowDemoSnapshot> {
+	const result = await client.PATCH("/v1/flows/demo/nodes/{id}/config", {
+		params: { path: { id } },
+		body: { config },
+	});
+	if (result.error !== undefined) {
+		throw new Error("patch flow node config failed");
+	}
+
+	return requireFlowSnapshot(unwrap(result.data));
+}
+
+export type {
+	CommandItem,
+	FlowDemoEdge,
+	FlowDemoField,
+	FlowDemoNode,
+	FlowDemoRun,
+	FlowDemoSnapshot,
+	FlowFieldKind,
+	FlowNodeStatus,
+	InstanceOption,
+	ProgressJob,
+	QuotaSnapshot,
+};
 export {
 	addCommand,
 	addInstanceOption,
@@ -567,6 +818,7 @@ export {
 	client,
 	consumeQuota,
 	createExamplesApiClient,
+	getFlowDemo,
 	getHealth,
 	getLogStreamStatus,
 	getProgressJob,
@@ -575,11 +827,13 @@ export {
 	listCommands,
 	listInstanceOptions,
 	listTableRows,
+	patchFlowNodeConfig,
 	releaseQuota,
 	removeCommand,
 	removeInstanceOption,
 	removeTableRows,
 	resetCommands,
+	resetFlowDemo,
 	resetInstanceOptions,
 	resetLogStream,
 	resetProgressJob,
@@ -591,4 +845,5 @@ export {
 	stopLogStream,
 	stopProgressJob,
 	stopTableStream,
+	triggerFlowDemo,
 };

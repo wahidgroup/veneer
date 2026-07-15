@@ -43,6 +43,7 @@ Composites MUST reuse these instead of reinventing chrome, fields, or portals:
 | `Popover`          | [`overlays/Popover.tsx`](../src/components/overlays/Popover.tsx)                   | Non-modal floating panel                               |
 | `CommandPalette`   | [`overlays/CommandPalette.tsx`](../src/components/overlays/CommandPalette.tsx)     | Modal jump / command list                              |
 | `ResourceGraph`    | [`data/ResourceGraph.tsx`](../src/components/data/ResourceGraph.tsx)               | SVG dependency map + edge list                         |
+| `FlowCanvas`       | [`flow/FlowCanvas.tsx`](../src/components/flow/FlowCanvas.tsx) via `/flow`         | Hybrid editable flow canvas (optional `elkjs` peer)    |
 | `VisuallyHidden`   | [`a11y/VisuallyHidden.tsx`](../src/components/a11y/VisuallyHidden.tsx)             | Screen-reader-only text                                |
 | `DiffView`         | [`data/DiffView.tsx`](../src/components/data/DiffView.tsx)                         | Line + tree diffs (`@wahidgroup/veneer/diff`)          |
 | `PlanSummary`      | [`data/PlanSummary.tsx`](../src/components/data/PlanSummary.tsx)                   | IaC counts + DiffView tree (`@wahidgroup/veneer/diff`) |
