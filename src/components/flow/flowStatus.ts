@@ -52,8 +52,8 @@ function resolveStatus(
 }
 
 /**
- * Local port position on a node. Multiple ports on one side spread evenly.
- * `index` / `count` are among ports sharing that side (0-based).
+ * Local port position on a node. Multiple ports on one side spread evenly
+ * unless `ratio` is set (0–1 along the side).
  */
 function portAnchor(
 	side: FlowPortSide,
@@ -61,23 +61,32 @@ function portAnchor(
 	height: number,
 	index = 0,
 	count = 1,
+	ratio?: number,
 ): { x: number; y: number } {
-	let ratio = 0.5;
-	if (count > 1) {
-		ratio = (index + 1) / (count + 1);
+	let resolved = 0.5;
+	if (ratio !== undefined) {
+		resolved = ratio;
+		if (resolved < 0) {
+			resolved = 0;
+		}
+		if (resolved > 1) {
+			resolved = 1;
+		}
+	} else if (count > 1) {
+		resolved = (index + 1) / (count + 1);
 	}
 
 	if (side === "WEST") {
-		return { x: 0, y: height * ratio };
+		return { x: 0, y: height * resolved };
 	}
 	if (side === "EAST") {
-		return { x: width, y: height * ratio };
+		return { x: width, y: height * resolved };
 	}
 	if (side === "NORTH") {
-		return { x: width * ratio, y: 0 };
+		return { x: width * resolved, y: 0 };
 	}
 
-	return { x: width * ratio, y: height };
+	return { x: width * resolved, y: height };
 }
 
 /**

@@ -6,7 +6,12 @@ import type {
 	FlowDemoRun,
 	FlowDemoSnapshot,
 } from "./flow-types.js";
-import { DEFAULT_MIN_AMOUNT, MAX_ADDRESS_LENGTH, MAX_DEPOSIT_AMOUNT, MAX_MIN_AMOUNT } from "./flow-types.js";
+import {
+	DEFAULT_MIN_AMOUNT,
+	MAX_ADDRESS_LENGTH,
+	MAX_DEPOSIT_AMOUNT,
+	MAX_MIN_AMOUNT,
+} from "./flow-types.js";
 
 function emptyRun(): FlowDemoRun {
 	return {
@@ -280,11 +285,17 @@ export class FlowsService {
 		}
 
 		if (nodeId !== "split-half") {
-			throw new BadRequestException("node does not accept config patches");
+			throw new BadRequestException(
+				"node does not accept config patches",
+			);
 		}
 
 		const rawMin = config.minAmount;
-		if (typeof rawMin !== "number" || !Number.isInteger(rawMin) || rawMin < 0) {
+		if (
+			typeof rawMin !== "number" ||
+			!Number.isInteger(rawMin) ||
+			rawMin < 0
+		) {
 			throw new BadRequestException(
 				"minAmount must be a non-negative integer",
 			);
@@ -297,7 +308,11 @@ export class FlowsService {
 
 		const keys = Object.keys(config);
 		for (const key of keys) {
-			if (key === "__proto__" || key === "constructor" || key === "prototype") {
+			if (
+				key === "__proto__" ||
+				key === "constructor" ||
+				key === "prototype"
+			) {
 				throw new BadRequestException("invalid config key");
 			}
 			if (key !== "minAmount") {

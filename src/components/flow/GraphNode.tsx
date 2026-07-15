@@ -99,6 +99,7 @@ function GraphNode({
 					nodeHeight={node.height}
 					slotIndex={slotIndex}
 					slotCount={slotCount}
+					anchor={port.anchor}
 					kind={kind}
 					valueKind={port.valueKind}
 					tabIndex={handleTabIndex}
@@ -134,6 +135,8 @@ function GraphNode({
 	}
 
 	return (
+		/* Composite flow node: focusable shell with nested port Buttons. */
+		/* eslint-disable-next-line jsx-a11y/no-noninteractive-element-interactions -- roving tabindex group hosts keyboard nav */
 		<div
 			data-slot="graph-node"
 			data-node-id={node.id}

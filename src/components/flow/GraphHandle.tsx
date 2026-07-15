@@ -18,6 +18,8 @@ interface GraphHandleProps extends Omit<
 	slotIndex?: number;
 	/** Total ports on this side. */
 	slotCount?: number;
+	/** Optional 0–1 side position; overrides even slot spread. */
+	anchor?: number;
 	kind?: "source" | "target";
 	valueKind?: FlowValueKind;
 }
@@ -32,21 +34,23 @@ function GraphHandle({
 	nodeHeight,
 	slotIndex = 0,
 	slotCount = 1,
+	anchor,
 	kind = "source",
 	valueKind,
 	className,
 	style,
 	...rest
 }: GraphHandleProps) {
-	const anchor = portAnchor(
+	const point = portAnchor(
 		side,
 		nodeWidth,
 		nodeHeight,
 		slotIndex,
 		slotCount,
+		anchor,
 	);
-	const left = anchor.x - 5;
-	const top = anchor.y - 5;
+	const left = point.x - 5;
+	const top = point.y - 5;
 	const tint = handleTintForValueKind(valueKind);
 
 	return (

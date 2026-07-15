@@ -109,8 +109,7 @@ function FlowCanvas({
 	}
 
 	const nodeElements: ReactNode[] = [];
-	for (let index = 0; index < nodes.length; index += 1) {
-		const node = nodes[index];
+	for (const [index, node] of nodes.entries()) {
 		if (node === undefined) {
 			continue;
 		}

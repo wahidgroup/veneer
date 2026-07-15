@@ -26,6 +26,50 @@ async function readBody(response: Response): Promise<unknown> {
 	return body;
 }
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+
+function readEnvelopeData(body: unknown): Record<string, unknown> {
+	if (!isRecord(body) || !isRecord(body.data)) {
+		throw new Error("expected data envelope");
+	}
+	return body.data;
+}
+
+function readFlowRun(body: unknown): Record<string, unknown> {
+	const data = readEnvelopeData(body);
+	if (!isRecord(data.run)) {
+		throw new Error("expected run payload");
+	}
+	return data.run;
+}
+
+function readOutputsByNode(
+	run: Record<string, unknown>,
+): Record<string, Record<string, unknown>> {
+	const outputsByNode = run.outputsByNode;
+	if (!isRecord(outputsByNode)) {
+		throw new Error("expected outputsByNode");
+	}
+	const narrowed: Record<string, Record<string, unknown>> = {};
+	for (const [nodeId, outputs] of Object.entries(outputsByNode)) {
+		if (!isRecord(outputs)) {
+			throw new Error("expected node outputs");
+		}
+		narrowed[nodeId] = outputs;
+	}
+	return narrowed;
+}
+
+function readNodeStates(run: Record<string, unknown>): Record<string, unknown> {
+	const nodeStates = run.nodeStates;
+	if (!isRecord(nodeStates)) {
+		throw new Error("expected nodeStates");
+	}
+	return nodeStates;
+}
+
 describe("examples api", () => {
 	let app: NestExpressApplication;
 	let baseUrl: string;
@@ -699,15 +743,22 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		const resetBody = (await readBody(response)) as {
-			data: {
-				nodes: { id: string }[];
-				edges: { valueKind: string }[];
-			};
-		};
-		expect(resetBody.data.nodes.length).toBe(5);
+		const resetData = readEnvelopeData(await readBody(response));
+		expect(Array.isArray(resetData.nodes)).toBe(true);
+		expect(Array.isArray(resetData.edges)).toBe(true);
+		if (
+			!Array.isArray(resetData.nodes) ||
+			!Array.isArray(resetData.edges)
+		) {
+			throw new Error("expected nodes and edges arrays");
+		}
+
+		expect(resetData.nodes).toHaveLength(5);
 		expect(
-			resetBody.data.edges.every((edge) => {
+			resetData.edges.every((edge) => {
+				if (!isRecord(edge)) {
+					return false;
+				}
 				return (
 					edge.valueKind === "number" || edge.valueKind === "string"
 				);
@@ -731,23 +782,12 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		let triggerBody = (await readBody(response)) as {
-			data: {
-				run: {
-					nodeStates: Record<string, string>;
-					outputsByNode: Record<
-						string,
-						Record<string, string | number>
-					>;
-					message: string;
-				};
-			};
-		};
-		expect(triggerBody.data.run.nodeStates["split-half"]).toBe("failed");
-		expect(triggerBody.data.run.nodeStates["send-a"]).toBe("idle");
-		expect(
-			triggerBody.data.run.outputsByNode["account-listener"]?.amount,
-		).toBe(10);
+		let run = readFlowRun(await readBody(response));
+		let nodeStates = readNodeStates(run);
+		let outputsByNode = readOutputsByNode(run);
+		expect(nodeStates["split-half"]).toBe("failed");
+		expect(nodeStates["send-a"]).toBe("idle");
+		expect(outputsByNode["account-listener"]?.amount).toBe(10);
 
 		response = await fetch(`${baseUrl}/v1/flows/demo/reset`, {
 			method: "POST",
@@ -771,32 +811,15 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		triggerBody = (await readBody(response)) as {
-			data: {
-				run: {
-					nodeStates: Record<string, string>;
-					outputsByNode: Record<
-						string,
-						Record<string, string | number>
-					>;
-					message: string;
-				};
-			};
-		};
-		expect(triggerBody.data.run.nodeStates["split-half"]).toBe("ok");
-		expect(triggerBody.data.run.outputsByNode["split-half"]?.halfA).toBe(
-			50,
-		);
-		expect(triggerBody.data.run.outputsByNode["split-half"]?.halfB).toBe(
-			50,
-		);
-		expect(triggerBody.data.run.outputsByNode["split-half"]?.dust).toBe(1);
-		expect(
-			triggerBody.data.run.outputsByNode["split-half"]?.addressOut,
-		).toBe("bc1qholder");
-		expect(triggerBody.data.run.outputsByNode["return-dust"]?.address).toBe(
-			"bc1qholder",
-		);
+		run = readFlowRun(await readBody(response));
+		nodeStates = readNodeStates(run);
+		outputsByNode = readOutputsByNode(run);
+		expect(nodeStates["split-half"]).toBe("ok");
+		expect(outputsByNode["split-half"]?.halfA).toBe(50);
+		expect(outputsByNode["split-half"]?.halfB).toBe(50);
+		expect(outputsByNode["split-half"]?.dust).toBe(1);
+		expect(outputsByNode["split-half"]?.addressOut).toBe("bc1qholder");
+		expect(outputsByNode["return-dust"]?.address).toBe("bc1qholder");
 
 		response = await fetch(`${baseUrl}/v1/flows/demo/run`);
 		expect(response.status).toBe(200);
@@ -827,25 +850,15 @@ describe("examples api", () => {
 			expect(response.status).toBe(201);
 		}
 
-		const body = (await readBody(response)) as {
-			data: {
-				run: {
-					nodeStates: Record<string, string>;
-					outputsByNode: Record<
-						string,
-						Record<string, string | number>
-					>;
-				};
-			};
-		};
-		expect(body.data.run.outputsByNode["account-listener"]?.amount).toBe(
-			10,
-		);
-		expect(body.data.run.outputsByNode["split-half"]?.amount).toBe(10);
-		expect(body.data.run.outputsByNode["split-half"]?.halfA).toBe(5);
-		expect(body.data.run.outputsByNode["split-half"]?.halfB).toBe(5);
-		expect(body.data.run.outputsByNode["split-half"]?.dust).toBe(0);
-		expect(body.data.run.nodeStates["split-half"]).toBe("ok");
+		const run = readFlowRun(await readBody(response));
+		const outputsByNode = readOutputsByNode(run);
+		const nodeStates = readNodeStates(run);
+		expect(outputsByNode["account-listener"]?.amount).toBe(10);
+		expect(outputsByNode["split-half"]?.amount).toBe(10);
+		expect(outputsByNode["split-half"]?.halfA).toBe(5);
+		expect(outputsByNode["split-half"]?.halfB).toBe(5);
+		expect(outputsByNode["split-half"]?.dust).toBe(0);
+		expect(nodeStates["split-half"]).toBe("ok");
 	});
 
 	it("rejects invalid trigger and config payloads", async () => {
@@ -946,17 +959,10 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		const body = (await readBody(response)) as {
-			data: {
-				run: {
-					outputsByNode: Record<
-						string,
-						Record<string, string | number>
-					>;
-				};
-			};
-		};
-		expect(body.data.run.outputsByNode["account-listener"]?.amount).toBe(2);
+		const outputsByNode = readOutputsByNode(
+			readFlowRun(await readBody(response)),
+		);
+		expect(outputsByNode["account-listener"]?.amount).toBe(2);
 	});
 
 	it("returns a full run body from GET /run after a trigger", async () => {
@@ -984,17 +990,13 @@ describe("examples api", () => {
 
 		response = await fetch(`${baseUrl}/v1/flows/demo/run`);
 		expect(response.status).toBe(200);
-		const body = (await readBody(response)) as {
-			data: {
-				runId: string | null;
-				nodeStates: Record<string, string>;
-				outputsByNode: Record<string, Record<string, string | number>>;
-				message: string;
-			};
-		};
-		expect(body.data.runId).toMatch(/^run-/);
-		expect(body.data.nodeStates["account-listener"]).toBe("ok");
-		expect(body.data.outputsByNode["account-listener"]?.amount).toBe(4);
-		expect(typeof body.data.message).toBe("string");
+
+		const body = readEnvelopeData(await readBody(response));
+		const nodeStates = readNodeStates(body);
+		const outputsByNode = readOutputsByNode(body);
+		expect(body.runId).toMatch(/^run-/);
+		expect(nodeStates["account-listener"]).toBe("ok");
+		expect(outputsByNode["account-listener"]?.amount).toBe(4);
+		expect(typeof body.message).toBe("string");
 	});
 });

@@ -11,6 +11,7 @@ interface FlowPort {
 	side: FlowPortSide;
 	label?: string;
 	valueKind?: FlowValueKind;
+	anchor?: number;
 }
 
 interface FlowPoint {

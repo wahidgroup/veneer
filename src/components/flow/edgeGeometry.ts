@@ -16,6 +16,7 @@ function endpoint(
 			node.height,
 			slot.index,
 			slot.count,
+			port.anchor,
 		);
 
 		const point: FlowPoint = {

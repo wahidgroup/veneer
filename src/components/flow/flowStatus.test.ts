@@ -13,6 +13,13 @@ describe("portAnchor", () => {
 		expect(portAnchor("EAST", 100, 120, 1, 3)).toEqual({ x: 100, y: 60 });
 		expect(portAnchor("EAST", 100, 120, 2, 3)).toEqual({ x: 100, y: 90 });
 	});
+
+	it("honors an explicit ratio over slot spread", () => {
+		expect(portAnchor("EAST", 100, 200, 0, 3, 0.25)).toEqual({
+			x: 100,
+			y: 50,
+		});
+	});
 });
 
 describe("portSlotOnSide", () => {

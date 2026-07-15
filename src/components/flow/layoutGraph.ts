@@ -14,9 +14,7 @@ interface ElkEngine {
 	layout(graph: ElkNode): Promise<ElkNode>;
 }
 
-interface ElkEngineConstructor {
-	new (): ElkEngine;
-}
+type ElkEngineConstructor = new () => ElkEngine;
 
 /**
  * Narrows the elkjs default export to a constructable engine.

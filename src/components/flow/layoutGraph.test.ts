@@ -61,8 +61,13 @@ describe("layoutGraph", () => {
 		expect(a).toBeDefined();
 		expect(b).toBeDefined();
 		expect(c).toBeDefined();
-		expect(a!.x).toBeLessThan(b!.x);
-		expect(b!.x).toBeLessThan(c!.x);
+
+		if (a === undefined || b === undefined || c === undefined) {
+			return;
+		}
+
+		expect(a.x).toBeLessThan(b.x);
+		expect(b.x).toBeLessThan(c.x);
 		expect(result.edges).toHaveLength(2);
 	});
 

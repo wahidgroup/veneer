@@ -198,7 +198,7 @@ function GraphViewport({
 
 	function onPointerMove(event: ReactPointerEvent<HTMLDivElement>) {
 		const pan = panRef.current;
-		if (pan === null || pan.pointerId !== event.pointerId) {
+		if (pan?.pointerId !== event.pointerId) {
 			return;
 		}
 
@@ -213,7 +213,7 @@ function GraphViewport({
 
 	function onPointerUp(event: ReactPointerEvent<HTMLDivElement>) {
 		const pan = panRef.current;
-		if (pan === null || pan.pointerId !== event.pointerId) {
+		if (pan?.pointerId !== event.pointerId) {
 			return;
 		}
 

@@ -31,9 +31,96 @@ import {
 import { Canvas, DemoRow, DemoSectionHeader, RailPanel } from "./demoChrome.js";
 
 const DROP_MIME = "application/x-veneer-flow-type";
-const NODE_WIDTH = 200;
+const NODE_WIDTH = 240;
 const MAX_EXTRA_PORTS = 4;
 const DEFAULT_MIN_AMOUNT = 10;
+
+/** Card layout metrics (must match FieldRows / Card sm padding). */
+const CARD_PAD = 12;
+const CARD_TITLE = 22;
+const CARD_SECTION_GAP = 4;
+const CARD_SECTION_LABEL = 14;
+const CARD_LIST_GAP = 2;
+const CARD_ROW = 18;
+const CARD_ROW_GAP = 2;
+
+function measureCardLayout(fields: FlowDemoField[]): {
+	height: number;
+	anchorById: Map<string, number>;
+} {
+	const inputs: FlowDemoField[] = [];
+	const outputs: FlowDemoField[] = [];
+	for (const field of fields) {
+		if (field.direction === "in") {
+			inputs.push(field);
+		} else {
+			outputs.push(field);
+		}
+	}
+
+	const anchorById = new Map<string, number>();
+	let y = CARD_PAD + CARD_TITLE;
+
+	function placeSection(sectionFields: FlowDemoField[]) {
+		if (sectionFields.length === 0) {
+			return;
+		}
+		y += CARD_SECTION_GAP + CARD_SECTION_LABEL + CARD_LIST_GAP;
+		for (let index = 0; index < sectionFields.length; index += 1) {
+			const field = sectionFields[index];
+			if (field === undefined) {
+				continue;
+			}
+			const mid = y + CARD_ROW / 2;
+			anchorById.set(field.id, mid);
+			y += CARD_ROW;
+			if (index < sectionFields.length - 1) {
+				y += CARD_ROW_GAP;
+			}
+		}
+	}
+
+	placeSection(inputs);
+	placeSection(outputs);
+	y += CARD_PAD;
+
+	let height = y;
+	if (height < 120) {
+		height = 120;
+	}
+
+	return { height, anchorById };
+}
+
+function nodeHeightForFields(fields: FlowDemoField[]): number {
+	const layout = measureCardLayout(fields);
+	return layout.height;
+}
+
+function fieldsToPorts(fields: FlowDemoField[]): FlowPort[] {
+	const layout = measureCardLayout(fields);
+	const ports: FlowPort[] = [];
+	for (const field of fields) {
+		let side: FlowPort["side"] = "EAST";
+		if (field.direction === "in") {
+			side = "WEST";
+		}
+		const midY = layout.anchorById.get(field.id);
+		let anchor: number | undefined;
+		if (midY !== undefined && layout.height > 0) {
+			anchor = midY / layout.height;
+		}
+		ports.push({
+			id: field.id,
+			side,
+			label: field.label,
+			valueKind: field.kind,
+			anchor,
+		});
+	}
+
+	return ports;
+}
 
 const DEFAULT_SNAPSHOT: FlowDemoSnapshot = {
 	nodes: [
@@ -266,35 +353,6 @@ function useFlowCanvasDemo(): FlowCanvasDemoValue {
 	return value;
 }
 
-function nodeHeightForFields(count: number): number {
-	const base = 72;
-	const perField = 16;
-	const computed = base + count * perField;
-	if (computed < 96) {
-		return 96;
-	}
-
-	return computed;
-}
-
-function fieldsToPorts(fields: FlowDemoField[]): FlowPort[] {
-	const ports: FlowPort[] = [];
-	for (const field of fields) {
-		let side: FlowPort["side"] = "EAST";
-		if (field.direction === "in") {
-			side = "WEST";
-		}
-		ports.push({
-			id: field.id,
-			side,
-			label: field.label,
-			valueKind: field.kind,
-		});
-	}
-
-	return ports;
-}
-
 function snapshotToCanvas(snapshot: FlowDemoSnapshot): {
 	nodes: FlowNode[];
 	edges: FlowEdge[];
@@ -314,11 +372,11 @@ function snapshotToCanvas(snapshot: FlowDemoSnapshot): {
 			x,
 			y: 80,
 			width: NODE_WIDTH,
-			height: nodeHeightForFields(demoNode.fields.length),
+			height: nodeHeightForFields(demoNode.fields),
 			ports: fieldsToPorts(demoNode.fields),
 		});
 
-		x += NODE_WIDTH + 80;
+		x += NODE_WIDTH + 96;
 	}
 
 	const edges: FlowEdge[] = snapshot.edges.map((edge) => {
@@ -392,8 +450,9 @@ function applySnapshotState(
 					y: prev.y,
 					width: prev.width,
 					height: nodeHeightForFields(
-						(mapped.fieldsByNode[node.id] ?? []).length,
+						mapped.fieldsByNode[node.id] ?? [],
 					),
+					ports: fieldsToPorts(mapped.fieldsByNode[node.id] ?? []),
 				};
 			}),
 		);
@@ -557,16 +616,32 @@ function FlowCanvasDemoProvider({ children }: { children: ReactNode }) {
 					return [node.id, node.label] as const;
 				}),
 			);
+			const fieldsSnapshot = fieldsByNode;
 			setNodes(
 				result.nodes.map((node) => {
 					const label = labels.get(node.id);
-					if (label === undefined) {
-						return node;
+					const fields = fieldsSnapshot[node.id] ?? [];
+					let nextLabel = node.label;
+					if (label !== undefined) {
+						nextLabel = label;
 					}
-					return { ...node, label };
+					return {
+						...node,
+						label: nextLabel,
+						width: NODE_WIDTH,
+						height: nodeHeightForFields(fields),
+						ports: fieldsToPorts(fields),
+					};
 				}),
 			);
-			setEdges(result.edges);
+			setEdges(
+				result.edges.map((edge) => {
+					return {
+						...edge,
+						points: undefined,
+					};
+				}),
+			);
 		} finally {
 			setLayoutBusy(false);
 		}
@@ -608,7 +683,7 @@ function FlowCanvasDemoProvider({ children }: { children: ReactNode }) {
 				}
 				return {
 					...node,
-					height: nodeHeightForFields(nextFields.length),
+					height: nodeHeightForFields(nextFields),
 					ports: fieldsToPorts(nextFields),
 				};
 			}),
@@ -679,7 +754,7 @@ function FlowCanvasDemoProvider({ children }: { children: ReactNode }) {
 				x: position.x,
 				y: position.y,
 				width: NODE_WIDTH,
-				height: nodeHeightForFields(fields.length),
+				height: nodeHeightForFields(fields),
 				ports: fieldsToPorts(fields),
 			},
 		]);
@@ -745,7 +820,7 @@ function FieldRows({
 
 	return (
 		<div className="mt-1">
-			<p className="text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+			<p className="h-3.5 text-[10px] font-medium uppercase leading-[14px] tracking-wide text-muted-foreground">
 				{title}
 			</p>
 			<ul className="mt-0.5 space-y-0.5">
@@ -758,7 +833,7 @@ function FieldRows({
 					return (
 						<li
 							key={`${field.direction}-${field.id}`}
-							className="flex justify-between gap-2 text-[11px] leading-tight"
+							className="flex h-[18px] items-center justify-between gap-2 text-[11px] leading-none"
 						>
 							<span className="truncate text-muted-foreground">
 								{field.label}{" "}
@@ -923,9 +998,9 @@ function FlowCanvasCanvas() {
 						return (
 							<Card
 								size="sm"
-								className="h-full w-full overflow-hidden shadow-none"
+								className="box-border h-full w-full overflow-hidden p-3 shadow-none"
 							>
-								<p className="truncate text-sm font-medium">
+								<p className="h-[22px] truncate text-sm font-medium leading-[22px]">
 									{node.label}
 								</p>
 								<FieldRows

@@ -299,8 +299,11 @@ describe("FlowCanvas", () => {
 			'[data-slot="graph-viewport"]',
 		);
 		expect(viewport).not.toBeNull();
+		if (viewport === null) {
+			return;
+		}
 
-		fireEvent.drop(viewport!, {
+		fireEvent.drop(viewport, {
 			dataTransfer: {
 				getData: (mime: string) => {
 					if (mime === DROP_MIME) {
@@ -313,7 +316,14 @@ describe("FlowCanvas", () => {
 			clientY: 80,
 		});
 		expect(drops).toHaveLength(1);
-		expect(drops[0]!.type).toBe("http.send");
+
+		const drop = drops[0];
+		expect(drop).toBeDefined();
+		if (drop === undefined) {
+			return;
+		}
+
+		expect(drop.type).toBe("http.send");
 	});
 
 	it("renders GraphHandle as Button chrome", () => {

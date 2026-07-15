@@ -14,7 +14,15 @@ import {
 	ApiProperty,
 	ApiTags,
 } from "@nestjs/swagger";
-import { IsInt, IsObject, IsString, Max, MaxLength, Min, MinLength } from "class-validator";
+import {
+	IsInt,
+	IsObject,
+	IsString,
+	Max,
+	MaxLength,
+	Min,
+	MinLength,
+} from "class-validator";
 
 import { FlowsService } from "./flows.service.js";
 
