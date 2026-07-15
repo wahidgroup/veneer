@@ -53,6 +53,30 @@ const CATALOG: CatalogCategory[] = [
 					"Status and metadata chips for inventory tables and headers.",
 			},
 			{
+				id: "avatar",
+				label: "Avatar",
+				description:
+					"User / contact identity with image or initials fallback.",
+			},
+			{
+				id: "separator",
+				label: "Separator",
+				description:
+					"Thematic hr break. Horizontal default; vertical for toolbars.",
+			},
+			{
+				id: "delta-badge",
+				label: "DeltaBadge",
+				description:
+					"+/− change chip with visible prefix (not color-only).",
+			},
+			{
+				id: "tx-status-badge",
+				label: "TxStatusBadge",
+				description:
+					"Unconfirmed / confirming / confirmed / failed for chain activity.",
+			},
+			{
 				id: "loading",
 				label: "Loading",
 				description:
@@ -207,6 +231,12 @@ const CATALOG: CatalogCategory[] = [
 					"TagInput, NumberInput, Slider, DateTimePicker, FileUpload.",
 			},
 			{
+				id: "money-input",
+				label: "MoneyInput",
+				description:
+					"FormField + ISO 4217 amount entry (integer minor units, currency adornment).",
+			},
+			{
 				id: "field-error",
 				label: "FieldError",
 				description:
@@ -347,6 +377,12 @@ const CATALOG: CatalogCategory[] = [
 				label: "StatDisplay",
 				description:
 					"Metric tiles on Card. Tone styles value text and pairs with Badge or caption.",
+			},
+			{
+				id: "money-chrome",
+				label: "Money & identity",
+				description:
+					"MoneyAmount, BtcAmount, AddressDisplay, MaskedAccount — display-only finance/crypto chrome.",
 			},
 			{
 				id: "code-block",

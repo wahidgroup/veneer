@@ -524,6 +524,7 @@ function OptionPicker(props: OptionPickerProps) {
 					className={cn(
 						controlVariants({ invalid: resolvedInvalid }),
 						"py-2 pr-10",
+						readOnly && "cursor-pointer caret-transparent",
 						className,
 					)}
 					onFocus={() => {

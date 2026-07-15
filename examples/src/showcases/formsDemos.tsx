@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, type ReactNode } from "react";
 
 import {
+	CRYPTO_CURRENCY_UI,
 	Checkbox,
 	Combobox,
 	DateTimePicker,
@@ -9,6 +10,7 @@ import {
 	FormField,
 	FormSection,
 	Input,
+	MoneyInput,
 	NumberInput,
 	RadioGroup,
 	SearchInput,
@@ -55,6 +57,7 @@ function useFormFieldDemo() {
 	if (value === null) {
 		throw new Error("FormFieldDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -224,6 +227,7 @@ function useFormsComboboxDemo() {
 	if (value === null) {
 		throw new Error("FormsComboboxDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -310,6 +314,7 @@ function useChoicesDemo() {
 	if (value === null) {
 		throw new Error("ChoicesDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -400,6 +405,7 @@ function useSearchDemo() {
 	if (value === null) {
 		throw new Error("SearchDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -501,6 +507,7 @@ function useDeployDemo() {
 	if (value === null) {
 		throw new Error("DeployDemoProvider required");
 	}
+
 	return value;
 }
 
@@ -612,6 +619,102 @@ function DeployKnobs() {
 	);
 }
 
+interface MoneyInputDemoValue {
+	currency: string;
+	setCurrency: (value: string) => void;
+	amountMinor: number | undefined;
+	setAmountMinor: (value: number | undefined) => void;
+}
+
+const MoneyInputDemoContext = createContext<MoneyInputDemoValue | null>(null);
+
+function useMoneyInputDemo() {
+	const value = useContext(MoneyInputDemoContext);
+	if (value === null) {
+		throw new Error("MoneyInputDemoProvider required");
+	}
+
+	return value;
+}
+
+function MoneyInputDemoProvider({ children }: { children: ReactNode }) {
+	const [currency, setCurrency] = useState("USD");
+	const [amountMinor, setAmountMinor] = useState<number | undefined>(1999);
+
+	return (
+		<MoneyInputDemoContext.Provider
+			value={{ currency, setCurrency, amountMinor, setAmountMinor }}
+		>
+			{children}
+		</MoneyInputDemoContext.Provider>
+	);
+}
+
+const MONEY_CURRENCY_OPTIONS = [
+	{ value: "USD", label: "USD" },
+	{ value: "EUR", label: "EUR" },
+	{ value: "JPY", label: "JPY" },
+	{ value: "BTC", label: "BTC" },
+];
+
+function MoneyInputCanvas() {
+	const demo = useMoneyInputDemo();
+
+	let committedLabel = "—";
+	if (demo.amountMinor !== undefined) {
+		committedLabel = String(demo.amountMinor);
+	}
+
+	return (
+		<Canvas>
+			<DemoRow label="FormField + MoneyInput">
+				<FormField
+					label="Payment amount"
+					htmlFor="money-demo"
+					hint="Integer minor units. Pass currencies catalog for crypto."
+				>
+					<MoneyInput
+						id="money-demo"
+						currency={demo.currency}
+						locale="en-US"
+						defaultAmountMinor={1999}
+						currencies={CRYPTO_CURRENCY_UI}
+						onAmountMinorChange={demo.setAmountMinor}
+					/>
+				</FormField>
+			</DemoRow>
+			<DemoRow label="Committed minor units">
+				<span className="font-mono text-sm tabular-nums text-muted-foreground">
+					{committedLabel}
+				</span>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function MoneyInputKnobs() {
+	const demo = useMoneyInputDemo();
+
+	return (
+		<RailPanel
+			title="MoneyInput"
+			description="FormField + amount entry (fiat + BTC sats). Commits on blur/Enter."
+		>
+			<DemoRow label="Currency">
+				<Select
+					id="money-currency"
+					options={MONEY_CURRENCY_OPTIONS}
+					value={demo.currency}
+					aria-label="Currency"
+					onChange={(value) => {
+						demo.setCurrency(value);
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 function FieldErrorCanvas() {
 	return (
 		<Canvas>
@@ -636,6 +739,9 @@ export {
 	DeployCanvas,
 	DeployDemoProvider,
 	DeployKnobs,
+	MoneyInputCanvas,
+	MoneyInputDemoProvider,
+	MoneyInputKnobs,
 	FieldErrorCanvas,
 	FieldErrorKnobs,
 	FormFieldCanvas,

@@ -34,6 +34,8 @@ import {
 	TreeViewKnobs,
 	ResourceGraphCanvas,
 	ResourceGraphKnobs,
+	MoneyChromeCanvas,
+	MoneyChromeKnobs,
 } from "./dataDemos.js";
 import {
 	FlowCanvasCanvas,
@@ -47,6 +49,9 @@ import {
 	DeployCanvas,
 	DeployDemoProvider,
 	DeployKnobs,
+	MoneyInputCanvas,
+	MoneyInputDemoProvider,
+	MoneyInputKnobs,
 	FieldErrorCanvas,
 	FieldErrorKnobs,
 	FormFieldCanvas,
@@ -72,6 +77,14 @@ import {
 	BadgeCanvas,
 	BadgeDemoProvider,
 	BadgeKnobs,
+	AvatarCanvas,
+	AvatarKnobs,
+	SeparatorCanvas,
+	SeparatorKnobs,
+	DeltaBadgeCanvas,
+	DeltaBadgeKnobs,
+	TxStatusBadgeCanvas,
+	TxStatusBadgeKnobs,
 	ButtonCanvas,
 	ButtonDemoProvider,
 	ButtonKnobs,
@@ -221,6 +234,26 @@ const PRIMITIVES: Record<string, DemoEntry> = {
 		Canvas: StatusBadgeCanvas,
 		Knobs: StatusBadgeKnobs,
 	},
+	avatar: {
+		Provider: PassthroughProvider,
+		Canvas: AvatarCanvas,
+		Knobs: AvatarKnobs,
+	},
+	separator: {
+		Provider: PassthroughProvider,
+		Canvas: SeparatorCanvas,
+		Knobs: SeparatorKnobs,
+	},
+	"delta-badge": {
+		Provider: PassthroughProvider,
+		Canvas: DeltaBadgeCanvas,
+		Knobs: DeltaBadgeKnobs,
+	},
+	"tx-status-badge": {
+		Provider: PassthroughProvider,
+		Canvas: TxStatusBadgeCanvas,
+		Knobs: TxStatusBadgeKnobs,
+	},
 };
 
 const OVERLAYS: Record<string, DemoEntry> = {
@@ -296,6 +329,11 @@ const FORMS: Record<string, DemoEntry> = {
 		Provider: DeployDemoProvider,
 		Canvas: DeployCanvas,
 		Knobs: DeployKnobs,
+	},
+	"money-input": {
+		Provider: MoneyInputDemoProvider,
+		Canvas: MoneyInputCanvas,
+		Knobs: MoneyInputKnobs,
 	},
 	"field-error": {
 		Provider: PassthroughProvider,
@@ -385,6 +423,11 @@ const DATA: Record<string, DemoEntry> = {
 		Provider: StatDisplayDemoProvider,
 		Canvas: StatDisplayCanvas,
 		Knobs: StatDisplayKnobs,
+	},
+	"money-chrome": {
+		Provider: PassthroughProvider,
+		Canvas: MoneyChromeCanvas,
+		Knobs: MoneyChromeKnobs,
 	},
 	"code-block": {
 		Provider: CodeBlockDemoProvider,

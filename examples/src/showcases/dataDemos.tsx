@@ -13,14 +13,19 @@ import type {
 } from "@wahidgroup/veneer/data-table";
 import { DataTable, useDataTableRows } from "@wahidgroup/veneer/data-table";
 import {
+	AddressDisplay,
 	Badge,
+	BtcAmount,
 	Button,
 	ChipGroup,
 	CodeBlock,
 	CopyButton,
 	DescriptionList,
 	EmptyState,
+	MaskedAccount,
+	MoneyAmount,
 	Pagination,
+	ResourceGraph,
 	SearchInput,
 	Select,
 	StatDisplay,
@@ -28,7 +33,6 @@ import {
 	Timeline,
 	Toggle,
 	TreeView,
-	ResourceGraph,
 } from "@wahidgroup/veneer";
 
 import type { TableListParams, TableRow } from "../api/client.js";
@@ -1599,6 +1603,41 @@ function ResourceGraphKnobs() {
 	);
 }
 
+function MoneyChromeCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="MoneyAmount">
+				<MoneyAmount amountMinor={1999} currency="USD" locale="en-US" />
+				<MoneyAmount amountMinor={1980} currency="JPY" locale="en-US" />
+			</DemoRow>
+			<DemoRow label="BtcAmount">
+				<BtcAmount amountSats={15000} unit="sats" locale="en-US" />
+				<BtcAmount amountSats={100} unit="btc" locale="en-US" />
+			</DemoRow>
+			<DemoRow label="AddressDisplay">
+				<AddressDisplay address="bc1q123456789012345678901234567890" />
+			</DemoRow>
+			<DemoRow label="MaskedAccount">
+				<MaskedAccount value="DE89370400440532013000" />
+				<MaskedAccount
+					value="DE89370400440532013000"
+					masked={false}
+					format="iban"
+				/>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function MoneyChromeKnobs() {
+	return (
+		<RailPanel
+			title="Money & identity"
+			description="Display-only finance/crypto chrome. Amounts use integer minor units / sats; copy always uses the full value."
+		/>
+	);
+}
+
 export type { InventoryRow };
 export {
 	DataTableDemoProvider,
@@ -1627,4 +1666,6 @@ export {
 	TreeViewKnobs,
 	ResourceGraphCanvas,
 	ResourceGraphKnobs,
+	MoneyChromeCanvas,
+	MoneyChromeKnobs,
 };

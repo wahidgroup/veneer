@@ -41,6 +41,10 @@ import {
 	Toggle,
 	Tooltip,
 	VisuallyHidden,
+	Avatar,
+	DeltaBadge,
+	Separator,
+	TxStatusBadge,
 	type AlertType,
 	type CommandPaletteItem,
 	type DrawerSide,
@@ -1267,6 +1271,102 @@ function StatusBadgeKnobs() {
 		<RailPanel
 			title="StatusBadge"
 			description="Maps inventory statuses onto Badge tone variants."
+		/>
+	);
+}
+
+function AvatarCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Fallback initials">
+				<Avatar alt="" fallback="WG" size="sm" />
+				<Avatar alt="Wahid Group" fallback="WG" size="md" />
+				<Avatar alt="" fallback="WG" size="lg" />
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function AvatarKnobs() {
+	return (
+		<RailPanel
+			title="Avatar"
+			description="Identity chrome with image or initials fallback. Pass alt='' when the name is adjacent."
+		/>
+	);
+}
+
+function SeparatorCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Horizontal">
+				<div className="w-full max-w-md space-y-3">
+					<p className="text-sm text-foreground">Above</p>
+					<Separator />
+					<p className="text-sm text-foreground">Below</p>
+				</div>
+			</DemoRow>
+			<DemoRow label="Vertical">
+				<div className="flex h-8 items-center gap-3">
+					<span className="text-sm">Start</span>
+					<Separator orientation="vertical" />
+					<span className="text-sm">End</span>
+				</div>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function SeparatorKnobs() {
+	return (
+		<RailPanel
+			title="Separator"
+			description="Native hr thematic break. Vertical sets aria-orientation."
+		/>
+	);
+}
+
+function DeltaBadgeCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Directions">
+				<DeltaBadge direction="up" value="12.4%" />
+				<DeltaBadge direction="down" value="3.1%" />
+				<DeltaBadge direction="flat" value="0.0%" />
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function DeltaBadgeKnobs() {
+	return (
+		<RailPanel
+			title="DeltaBadge"
+			description="Change chip with visible +/-/= prefix so meaning is not color-only."
+		/>
+	);
+}
+
+function TxStatusBadgeCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Statuses">
+				<TxStatusBadge status="unconfirmed">Unconfirmed</TxStatusBadge>
+				<TxStatusBadge status="confirming" confirmations={2}>
+					Confirming (2)
+				</TxStatusBadge>
+				<TxStatusBadge status="confirmed">Confirmed</TxStatusBadge>
+				<TxStatusBadge status="failed">Failed</TxStatusBadge>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function TxStatusBadgeKnobs() {
+	return (
+		<RailPanel
+			title="TxStatusBadge"
+			description="On-chain / mempool status chips for activity lists."
 		/>
 	);
 }
@@ -3191,6 +3291,14 @@ export {
 	CopyButtonKnobs,
 	StatusBadgeCanvas,
 	StatusBadgeKnobs,
+	AvatarCanvas,
+	AvatarKnobs,
+	SeparatorCanvas,
+	SeparatorKnobs,
+	DeltaBadgeCanvas,
+	DeltaBadgeKnobs,
+	TxStatusBadgeCanvas,
+	TxStatusBadgeKnobs,
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,

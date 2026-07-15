@@ -14,6 +14,8 @@ export type {
 	ActionMenuItem,
 	ActionMenuProps,
 } from "./components/overlays/ActionMenu.js";
+export { AddressDisplay } from "./components/data/AddressDisplay.js";
+export type { AddressDisplayProps } from "./components/data/AddressDisplay.js";
 export { Alert, alertVariants } from "./components/feedback/Alert.js";
 export type { AlertProps, AlertType } from "./components/feedback/Alert.js";
 export { AppShell } from "./components/layout/AppShell.js";
@@ -29,8 +31,12 @@ export {
 	APP_SHELL_TABLET_MAX_PX,
 	resolveAppShellViewport,
 } from "./components/layout/AppShell.js";
+export { Avatar, avatarVariants } from "./components/indicators/Avatar.js";
+export type { AvatarProps } from "./components/indicators/Avatar.js";
 export { Badge, badgeVariants } from "./components/indicators/Badge.js";
 export type { BadgeProps } from "./components/indicators/Badge.js";
+export { BtcAmount } from "./components/data/BtcAmount.js";
+export type { BtcAmountProps } from "./components/data/BtcAmount.js";
 export { Breadcrumbs } from "./components/navigation/Breadcrumbs.js";
 export type {
 	BreadcrumbItem,
@@ -76,6 +82,14 @@ export { CopyButton } from "./components/forms/CopyButton.js";
 export type { CopyButtonProps } from "./components/forms/CopyButton.js";
 export { DateTimePicker } from "./components/forms/DateTimePicker.js";
 export type { DateTimePickerProps } from "./components/forms/DateTimePicker.js";
+export {
+	DeltaBadge,
+	variantForDelta,
+} from "./components/indicators/DeltaBadge.js";
+export type {
+	DeltaBadgeProps,
+	DeltaDirection,
+} from "./components/indicators/DeltaBadge.js";
 export {
 	DescriptionList,
 	descriptionListVariants,
@@ -131,8 +145,17 @@ export type {
 	LogViewerProps,
 } from "./components/data/LogViewer.js";
 export type { FilterLogViewerLinesOptions } from "./components/data/filterLogViewerLines.js";
+export { MaskedAccount } from "./components/data/MaskedAccount.js";
+export type {
+	MaskedAccountFormat,
+	MaskedAccountProps,
+} from "./components/data/MaskedAccount.js";
 export { Modal } from "./components/overlays/Modal.js";
 export type { ModalProps } from "./components/overlays/Modal.js";
+export { MoneyAmount } from "./components/data/MoneyAmount.js";
+export type { MoneyAmountProps } from "./components/data/MoneyAmount.js";
+export { MoneyInput } from "./components/forms/MoneyInput.js";
+export type { MoneyInputProps } from "./components/forms/MoneyInput.js";
 export { NumberInput } from "./components/forms/NumberInput.js";
 export type { NumberInputProps } from "./components/forms/NumberInput.js";
 export { Pagination } from "./components/navigation/Pagination.js";
@@ -177,6 +200,8 @@ export { SearchInput } from "./components/forms/SearchInput.js";
 export type { SearchInputProps } from "./components/forms/SearchInput.js";
 export { Select } from "./components/forms/Select.js";
 export type { SelectOption, SelectProps } from "./components/forms/Select.js";
+export { Separator, separatorVariants } from "./components/layout/Separator.js";
+export type { SeparatorProps } from "./components/layout/Separator.js";
 export type {
 	FieldOption,
 	OptionFilterMode,
@@ -261,6 +286,14 @@ export type {
 	TreeViewItem,
 	TreeViewProps,
 } from "./components/data/TreeView.js";
+export {
+	TxStatusBadge,
+	variantForTxStatus,
+} from "./components/indicators/TxStatusBadge.js";
+export type {
+	TxStatus,
+	TxStatusBadgeProps,
+} from "./components/indicators/TxStatusBadge.js";
 export { ToolbarSelect } from "./components/navigation/ToolbarSelect.js";
 export type {
 	ToolbarSelectOption,
@@ -288,5 +321,42 @@ export type {
 } from "./components/navigation/Workflow.js";
 export { useControllableState } from "./hooks/useControllableState.js";
 export { useDebounce } from "./hooks/useDebounce.js";
+export {
+	formatBtcSats,
+	SATOSHI_FRACTION_DIGITS,
+} from "./utils/formatBtcSats.js";
+export type {
+	BtcDisplayUnit,
+	FormatBtcSatsOptions,
+} from "./utils/formatBtcSats.js";
+export {
+	CRYPTO_CURRENCIES,
+	currencyFractionDigits,
+	lookupCurrencySpec,
+} from "./utils/currencySpec.js";
+export type { CurrencyCatalog, CurrencySpec } from "./utils/currencySpec.js";
+export {
+	currencyAdornmentText,
+	formatMajorDraft,
+	formatMoneyMinor,
+	majorNumberToMinor,
+	minorToMajorNumber,
+	parseMajorInput,
+} from "./utils/formatMoneyMinor.js";
+export type {
+	FormatMoneyMinorOptions,
+	MoneyCurrencyDisplay,
+	MoneyCurrencySign,
+} from "./utils/formatMoneyMinor.js";
+export {
+	CRYPTO_CURRENCY_UI,
+	lookupCurrencyUiSpec,
+} from "./components/forms/currencyCatalog.js";
+export type {
+	CurrencyUiCatalog,
+	CurrencyUiSpec,
+} from "./components/forms/currencyCatalog.js";
+export { truncateMiddle } from "./utils/truncateMiddle.js";
+export type { TruncateMiddleOptions } from "./utils/truncateMiddle.js";
 export { cn, cva } from "./utils/index.js";
 export type { VariantProps } from "./utils/index.js";

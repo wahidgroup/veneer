@@ -32,6 +32,13 @@ describe("Select", () => {
 		expect(screen.getByRole("combobox")).toHaveValue("EU West");
 	});
 
+	it("exposes a pointer cursor when not searchable", () => {
+		render(<Select aria-label="Region" options={OPTIONS} />);
+		expect(
+			screen.getByRole("combobox", { name: "Region" }).className,
+		).toContain("cursor-pointer");
+	});
+
 	it("marks invalid state", () => {
 		render(<Select aria-label="Region" options={OPTIONS} invalid />);
 		expect(screen.getByRole("combobox")).toHaveAttribute(
