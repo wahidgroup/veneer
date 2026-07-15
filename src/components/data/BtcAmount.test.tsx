@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { BtcAmount } from "./BtcAmount.js";
 
 describe("BtcAmount", () => {
@@ -28,11 +28,8 @@ describe("BtcAmount", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		const { container } = render(
+		await expectNoA11yViolations(
 			<BtcAmount amountSats={1} unit="sats" locale="en" />,
 		);
-
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
 	});
 });

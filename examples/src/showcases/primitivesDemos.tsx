@@ -4,8 +4,11 @@ import {
 	useEffect,
 	useRef,
 	useState,
+	type CSSProperties,
 	type ReactNode,
 } from "react";
+
+import { X } from "lucide-react";
 
 import {
 	ActionMenu,
@@ -14,6 +17,7 @@ import {
 	Button,
 	Card,
 	CircularProgress,
+	ColorPicker,
 	CommandPalette,
 	ConfirmDialog,
 	CopyButton,
@@ -52,6 +56,17 @@ import {
 	type ToastFade,
 	type ToastPosition,
 	type ToastType,
+	Accordion,
+	AccordionContent,
+	AccordionItem,
+	AccordionTrigger,
+	Collapsible,
+	CollapsibleContent,
+	CollapsibleTrigger,
+	ContextMenu,
+	ResizablePanel,
+	SegmentedControl,
+	type ResizablePanelOrientation,
 } from "@wahidgroup/veneer";
 
 import type { CommandItem, ProgressJob, QuotaSnapshot } from "../api/client.js";
@@ -562,16 +577,26 @@ function AlertKnobs() {
 
 function ButtonCanvas() {
 	const demo = useButtonDemo();
+	const skinnedStyle = buttonStyle(demo.colors, demo.metrics);
+
+	let playgroundLabel: string | undefined;
+	let playgroundChildren: ReactNode = "Action";
+	if (demo.size === "icon") {
+		playgroundLabel = "Action";
+		playgroundChildren = <X className="size-4" aria-hidden />;
+	}
 
 	return (
 		<Canvas>
-			<DemoRow label="Playground">
+			<DemoRow label="Playground (skinned)">
 				<Button
 					variant={demo.variant}
 					size={demo.size}
 					disabled={demo.disabled}
+					style={skinnedStyle}
+					aria-label={playgroundLabel}
 				>
-					Action
+					{playgroundChildren}
 				</Button>
 			</DemoRow>
 			<DemoRow label="Variants">
@@ -586,10 +611,10 @@ function ButtonCanvas() {
 				<Button size="sm">Small</Button>
 				<Button size="md">Medium</Button>
 				<Button variant="ghost" size="icon" aria-label="Icon ghost">
-					×
+					<X className="size-4" aria-hidden />
 				</Button>
 				<Button variant="danger" size="icon" aria-label="Icon danger">
-					×
+					<X className="size-4" aria-hidden />
 				</Button>
 			</DemoRow>
 		</Canvas>
@@ -605,6 +630,42 @@ type ButtonVariant =
 	| "danger";
 type ButtonSize = "sm" | "md" | "icon";
 
+type ButtonColorSlot = "bg" | "fg";
+
+interface ButtonColorState {
+	bg: string;
+	fg: string;
+}
+
+interface ButtonSizeMetrics {
+	height: number | "";
+	px: number | "";
+	fz: number | "";
+}
+
+const BUTTON_COLOR_DEFAULTS: ButtonColorState = {
+	bg: "#7dd3fc",
+	fg: "#0f172a",
+};
+
+const BUTTON_METRICS_DEFAULTS: ButtonSizeMetrics = {
+	height: "",
+	px: "",
+	fz: "",
+};
+
+const BUTTON_SWATCHES = [
+	"#7dd3fc",
+	"#bae6fd",
+	"#38bdf8",
+	"#0f172a",
+	"#22c55e",
+	"#052e16",
+	"#ef4444",
+	"#ffffff",
+	"#161616",
+];
+
 interface ButtonDemoValue {
 	variant: ButtonVariant;
 	setVariant: (value: ButtonVariant) => void;
@@ -612,6 +673,17 @@ interface ButtonDemoValue {
 	setSize: (value: ButtonSize) => void;
 	disabled: boolean;
 	setDisabled: (value: boolean) => void;
+	colors: ButtonColorState;
+	slot: ButtonColorSlot;
+	setSlot: (slot: ButtonColorSlot) => void;
+	setColor: (slot: ButtonColorSlot, hex: string) => void;
+	resetColors: () => void;
+	metrics: ButtonSizeMetrics;
+	setMetric: (
+		key: keyof ButtonSizeMetrics,
+		value: number | undefined,
+	) => void;
+	resetMetrics: () => void;
 }
 
 const ButtonDemoContext = createContext<ButtonDemoValue | null>(null);
@@ -629,6 +701,13 @@ function ButtonDemoProvider({ children }: { children: ReactNode }) {
 	const [variant, setVariant] = useState<ButtonVariant>("filled");
 	const [size, setSize] = useState<ButtonSize>("md");
 	const [disabled, setDisabled] = useState(false);
+	const [colors, setColors] = useState<ButtonColorState>(
+		BUTTON_COLOR_DEFAULTS,
+	);
+	const [slot, setSlot] = useState<ButtonColorSlot>("bg");
+	const [metrics, setMetrics] = useState<ButtonSizeMetrics>(
+		BUTTON_METRICS_DEFAULTS,
+	);
 
 	return (
 		<ButtonDemoContext.Provider
@@ -639,11 +718,65 @@ function ButtonDemoProvider({ children }: { children: ReactNode }) {
 				setSize,
 				disabled,
 				setDisabled,
+				colors,
+				slot,
+				setSlot,
+				setColor: (nextSlot, hex) => {
+					setColors((current) => {
+						return { ...current, [nextSlot]: hex };
+					});
+				},
+				resetColors: () => {
+					setColors(BUTTON_COLOR_DEFAULTS);
+				},
+				metrics,
+				setMetric: (key, value) => {
+					setMetrics((current) => {
+						if (value === undefined) {
+							return { ...current, [key]: "" };
+						}
+						return { ...current, [key]: value };
+					});
+				},
+				resetMetrics: () => {
+					setMetrics(BUTTON_METRICS_DEFAULTS);
+				},
 			}}
 		>
 			{children}
 		</ButtonDemoContext.Provider>
 	);
+}
+
+function buttonStyle(
+	colors: ButtonColorState,
+	metrics: ButtonSizeMetrics,
+): CSSProperties & {
+	"--button-bg": string;
+	"--button-fg": string;
+} {
+	const style: CSSProperties & {
+		"--button-bg": string;
+		"--button-fg": string;
+		"--button-height"?: string;
+		"--button-px"?: string;
+		"--button-fz"?: string;
+	} = {
+		"--button-bg": colors.bg,
+		"--button-fg": colors.fg,
+	};
+
+	if (metrics.height !== "") {
+		style["--button-height"] = `${String(metrics.height)}px`;
+	}
+	if (metrics.px !== "") {
+		style["--button-px"] = `${String(metrics.px)}px`;
+	}
+	if (metrics.fz !== "") {
+		style["--button-fz"] = `${String(metrics.fz)}px`;
+	}
+
+	return style;
 }
 
 const BUTTON_VARIANT_OPTIONS = [
@@ -663,11 +796,17 @@ const BUTTON_SIZE_OPTIONS = [
 
 function ButtonKnobs() {
 	const demo = useButtonDemo();
+	const slotColor = demo.colors[demo.slot];
+
+	let slotLabel = "Background";
+	if (demo.slot === "fg") {
+		slotLabel = "Foreground";
+	}
 
 	return (
 		<RailPanel
 			title="Button"
-			description="Primary actions for consoles and forms. Prefer filled for the main CTA."
+			description="Playground: --button-bg/fg + optional --button-height/px/fz (Mantine-style). Empty size fields = size preset. Ghost/secondary/danger ignore color skin."
 		>
 			<DemoRow
 				label="Variant"
@@ -708,7 +847,7 @@ function ButtonKnobs() {
 			</DemoRow>
 			<DemoRow
 				label="Size"
-				description="Control height and padding. Icon is square chrome sizing."
+				description="Preset fallbacks. Icon is square; custom height sets both axes."
 			>
 				<Select
 					id="button-size"
@@ -732,6 +871,51 @@ function ButtonKnobs() {
 				/>
 			</DemoRow>
 			<DemoRow
+				label="Height"
+				description="--button-height in px. Leave empty for size preset."
+			>
+				<NumberInput
+					aria-label="Button height px"
+					placeholder="preset"
+					min={24}
+					max={96}
+					value={demo.metrics.height}
+					onValueChange={(value) => {
+						demo.setMetric("height", value);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Padding X"
+				description="--button-px. Ignored for icon size (p-0)."
+			>
+				<NumberInput
+					aria-label="Button padding x px"
+					placeholder="preset"
+					min={0}
+					max={64}
+					value={demo.metrics.px}
+					onValueChange={(value) => {
+						demo.setMetric("px", value);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
+				label="Font size"
+				description="--button-fz in px. Leave empty for size preset."
+			>
+				<NumberInput
+					aria-label="Button font size px"
+					placeholder="preset"
+					min={10}
+					max={32}
+					value={demo.metrics.fz}
+					onValueChange={(value) => {
+						demo.setMetric("fz", value);
+					}}
+				/>
+			</DemoRow>
+			<DemoRow
 				label="Disabled"
 				description="Blocks interaction and dims the playground button."
 			>
@@ -741,6 +925,58 @@ function ButtonKnobs() {
 					onCheckedChange={demo.setDisabled}
 				/>
 			</DemoRow>
+			<DemoRow label="Color slot">
+				<Select
+					aria-label="Button color slot"
+					options={[
+						{ value: "bg", label: "Background" },
+						{ value: "fg", label: "Foreground" },
+					]}
+					value={demo.slot}
+					onChange={(value) => {
+						if (value === "bg") {
+							demo.setSlot("bg");
+							return;
+						}
+						if (value === "fg") {
+							demo.setSlot("fg");
+						}
+					}}
+				/>
+			</DemoRow>
+			<DemoRow label={slotLabel}>
+				<ColorPicker
+					key={demo.slot}
+					label={slotLabel}
+					value={slotColor}
+					swatches={BUTTON_SWATCHES}
+					onValueChange={(hex) => {
+						demo.setColor(demo.slot, hex);
+					}}
+				/>
+			</DemoRow>
+			<div className="flex flex-wrap gap-2">
+				<Button
+					type="button"
+					variant="secondary"
+					size="sm"
+					onClick={() => {
+						demo.resetColors();
+					}}
+				>
+					Reset colors
+				</Button>
+				<Button
+					type="button"
+					variant="secondary"
+					size="sm"
+					onClick={() => {
+						demo.resetMetrics();
+					}}
+				>
+					Reset size
+				</Button>
+			</div>
 		</RailPanel>
 	);
 }
@@ -837,25 +1073,82 @@ function BadgeCanvas() {
 	const demo = useBadgeDemo();
 
 	return (
-		<Canvas>
-			<DemoRow label="Playground">
-				<Badge variant={demo.variant} size={demo.size}>
-					Status
-				</Badge>
-			</DemoRow>
-			<DemoRow label="Variants">
-				<Badge>Default</Badge>
-				<Badge variant="primary">Primary</Badge>
-				<Badge variant="success">Success</Badge>
-				<Badge variant="warning">Warning</Badge>
-				<Badge variant="danger">Danger</Badge>
-				<Badge variant="info">Info</Badge>
-			</DemoRow>
-			<DemoRow label="Sizes">
-				<Badge size="sm">Small</Badge>
-				<Badge size="md">Medium</Badge>
-			</DemoRow>
-		</Canvas>
+		<div className="flex flex-col gap-2">
+			<section className="flex flex-col border-b border-border pb-2">
+				<DemoSectionHeader
+					title="Badge"
+					description="Tone chips for inventory tables and headers."
+				/>
+				<Canvas>
+					<DemoRow label="Playground">
+						<Badge variant={demo.variant} size={demo.size}>
+							Status
+						</Badge>
+					</DemoRow>
+					<DemoRow label="Variants">
+						<Badge>Default</Badge>
+						<Badge variant="primary">Primary</Badge>
+						<Badge variant="success">Success</Badge>
+						<Badge variant="warning">Warning</Badge>
+						<Badge variant="danger">Danger</Badge>
+						<Badge variant="info">Info</Badge>
+					</DemoRow>
+					<DemoRow label="Sizes">
+						<Badge size="sm">Small</Badge>
+						<Badge size="md">Medium</Badge>
+					</DemoRow>
+				</Canvas>
+			</section>
+			<section className="flex flex-col border-b border-border pb-2">
+				<DemoSectionHeader
+					title="StatusBadge"
+					description="Maps inventory statuses onto Badge tone variants."
+				/>
+				<Canvas>
+					<DemoRow label="Statuses">
+						<StatusBadge status="running">Running</StatusBadge>
+						<StatusBadge status="pending">Pending</StatusBadge>
+						<StatusBadge status="success">Healthy</StatusBadge>
+						<StatusBadge status="warning">Degraded</StatusBadge>
+						<StatusBadge status="danger">Failed</StatusBadge>
+						<StatusBadge status="drifted">Drifted</StatusBadge>
+					</DemoRow>
+				</Canvas>
+			</section>
+			<section className="flex flex-col border-b border-border pb-2">
+				<DemoSectionHeader
+					title="DeltaBadge"
+					description="Change chip with visible +/-/= prefix so meaning is not color-only."
+				/>
+				<Canvas>
+					<DemoRow label="Directions">
+						<DeltaBadge direction="up" value="12.4%" />
+						<DeltaBadge direction="down" value="3.1%" />
+						<DeltaBadge direction="flat" value="0.0%" />
+					</DemoRow>
+				</Canvas>
+			</section>
+			<section className="flex flex-col">
+				<DemoSectionHeader
+					title="TxStatusBadge"
+					description="On-chain / mempool status chips for activity lists."
+				/>
+				<Canvas>
+					<DemoRow label="Statuses">
+						<TxStatusBadge status="unconfirmed">
+							Unconfirmed
+						</TxStatusBadge>
+						<TxStatusBadge status="confirming" confirmations={2}>
+							Confirming (2)
+						</TxStatusBadge>
+						<TxStatusBadge status="confirmed">
+							Confirmed
+						</TxStatusBadge>
+						<TxStatusBadge status="failed">Failed</TxStatusBadge>
+					</DemoRow>
+				</Canvas>
+			</section>
+		</div>
 	);
 }
 
@@ -865,7 +1158,7 @@ function BadgeKnobs() {
 	return (
 		<RailPanel
 			title="Badge"
-			description="Status and metadata chips for inventory tables and headers."
+			description="Family showcase: Badge, StatusBadge, DeltaBadge, TxStatusBadge. Knobs apply to Badge playground only."
 		>
 			<DemoRow
 				label="Variant"
@@ -1251,30 +1544,6 @@ function CopyButtonKnobs() {
 	);
 }
 
-function StatusBadgeCanvas() {
-	return (
-		<Canvas>
-			<DemoRow label="Statuses">
-				<StatusBadge status="running">Running</StatusBadge>
-				<StatusBadge status="pending">Pending</StatusBadge>
-				<StatusBadge status="success">Healthy</StatusBadge>
-				<StatusBadge status="warning">Degraded</StatusBadge>
-				<StatusBadge status="danger">Failed</StatusBadge>
-				<StatusBadge status="drifted">Drifted</StatusBadge>
-			</DemoRow>
-		</Canvas>
-	);
-}
-
-function StatusBadgeKnobs() {
-	return (
-		<RailPanel
-			title="StatusBadge"
-			description="Maps inventory statuses onto Badge tone variants."
-		/>
-	);
-}
-
 function AvatarCanvas() {
 	return (
 		<Canvas>
@@ -1322,51 +1591,6 @@ function SeparatorKnobs() {
 		<RailPanel
 			title="Separator"
 			description="Native hr thematic break. Vertical sets aria-orientation."
-		/>
-	);
-}
-
-function DeltaBadgeCanvas() {
-	return (
-		<Canvas>
-			<DemoRow label="Directions">
-				<DeltaBadge direction="up" value="12.4%" />
-				<DeltaBadge direction="down" value="3.1%" />
-				<DeltaBadge direction="flat" value="0.0%" />
-			</DemoRow>
-		</Canvas>
-	);
-}
-
-function DeltaBadgeKnobs() {
-	return (
-		<RailPanel
-			title="DeltaBadge"
-			description="Change chip with visible +/-/= prefix so meaning is not color-only."
-		/>
-	);
-}
-
-function TxStatusBadgeCanvas() {
-	return (
-		<Canvas>
-			<DemoRow label="Statuses">
-				<TxStatusBadge status="unconfirmed">Unconfirmed</TxStatusBadge>
-				<TxStatusBadge status="confirming" confirmations={2}>
-					Confirming (2)
-				</TxStatusBadge>
-				<TxStatusBadge status="confirmed">Confirmed</TxStatusBadge>
-				<TxStatusBadge status="failed">Failed</TxStatusBadge>
-			</DemoRow>
-		</Canvas>
-	);
-}
-
-function TxStatusBadgeKnobs() {
-	return (
-		<RailPanel
-			title="TxStatusBadge"
-			description="On-chain / mempool status chips for activity lists."
 		/>
 	);
 }
@@ -2391,11 +2615,11 @@ function ProgressBarCanvas() {
 			<section className="flex flex-col border-b border-border pb-2">
 				<DemoSectionHeader
 					title="API playground"
-					description="Nest deploy job drives value. Knobs set size / indeterminate / label."
+					description="Nest deploy job drives ProgressBar and CircularProgress. Knobs set size / indeterminate / bar label."
 					apiDriven
 				/>
 				<Canvas>
-					<div className="flex w-full max-w-md flex-col gap-3">
+					<div className="flex w-full max-w-md flex-col gap-4">
 						<ProgressBar
 							aria-label={demo.job.label}
 							value={apiValue}
@@ -2403,18 +2627,26 @@ function ProgressBarCanvas() {
 							size={demo.size}
 							label={apiLabel}
 						/>
+						<div className="flex items-center gap-4">
+							<CircularProgress
+								aria-label={demo.job.label}
+								value={apiValue}
+								max={demo.job.max}
+								size={demo.size}
+							/>
+							<p className="text-sm text-muted-foreground">
+								value={String(demo.job.value)} /{" "}
+								{String(demo.job.max)} · streaming=
+								{String(demo.job.streaming)}
+							</p>
+						</div>
 						<ProgressJobControls />
-						<p className="text-sm text-muted-foreground">
-							value={String(demo.job.value)} /{" "}
-							{String(demo.job.max)} · streaming=
-							{String(demo.job.streaming)}
-						</p>
 					</div>
 				</Canvas>
 			</section>
 			<section className="flex flex-col border-b border-border pb-2">
 				<DemoSectionHeader
-					title="Static samples"
+					title="ProgressBar"
 					description="Fixed determinate / indeterminate bars for visual reference."
 				/>
 				<Canvas>
@@ -2445,6 +2677,32 @@ function ProgressBarCanvas() {
 								label="Waiting for plan…"
 							/>
 						</div>
+					</DemoRow>
+				</Canvas>
+			</section>
+			<section className="flex flex-col border-b border-border pb-2">
+				<DemoSectionHeader
+					title="CircularProgress"
+					description="Compact progressbar ring. Fixed size ladder + indeterminate pulse."
+				/>
+				<Canvas>
+					<DemoRow label="Determinate">
+						<div className="flex flex-wrap items-center gap-6">
+							<CircularProgress
+								aria-label="Upload"
+								value={35}
+								size="sm"
+							/>
+							<CircularProgress aria-label="Sync" value={70} />
+							<CircularProgress
+								aria-label="Apply"
+								value={100}
+								size="lg"
+							/>
+						</div>
+					</DemoRow>
+					<DemoRow label="Indeterminate">
+						<CircularProgress aria-label="Working" />
 					</DemoRow>
 				</Canvas>
 			</section>
@@ -2512,84 +2770,10 @@ function ProgressBarCanvas() {
 function ProgressBarKnobs() {
 	return (
 		<RailPanel
-			title="ProgressBar"
-			description="Leaf bar + Nest job playground. ProgressGroup Start/Reset stays on canvas."
+			title="Progress"
+			description="ProgressBar, CircularProgress, and ProgressGroup. Nest job + size/indeterminate knobs drive the shared playground; label applies to the bar only."
 		>
 			<ProgressJobKnobsFields includeLabel />
-		</RailPanel>
-	);
-}
-
-function CircularProgressCanvas() {
-	const demo = useProgressJobDemo();
-
-	let apiValue: number | undefined = demo.job.value;
-	if (demo.indeterminate) {
-		apiValue = undefined;
-	}
-
-	return (
-		<div className="flex flex-col gap-2">
-			<section className="flex flex-col border-b border-border pb-2">
-				<DemoSectionHeader
-					title="API playground"
-					description="Same Nest progress job as ProgressBar. Ring animates on value ticks."
-					apiDriven
-				/>
-				<Canvas>
-					<div className="flex flex-col items-start gap-3">
-						<CircularProgress
-							aria-label={demo.job.label}
-							value={apiValue}
-							max={demo.job.max}
-							size={demo.size}
-						/>
-						<ProgressJobControls />
-						<p className="text-sm text-muted-foreground">
-							value={String(demo.job.value)} /{" "}
-							{String(demo.job.max)} · streaming=
-							{String(demo.job.streaming)}
-						</p>
-					</div>
-				</Canvas>
-			</section>
-			<section className="flex flex-col">
-				<DemoSectionHeader
-					title="Static samples"
-					description="Fixed size ladder + indeterminate pulse."
-				/>
-				<Canvas>
-					<DemoRow label="Determinate">
-						<div className="flex flex-wrap items-center gap-6">
-							<CircularProgress
-								aria-label="Upload"
-								value={35}
-								size="sm"
-							/>
-							<CircularProgress aria-label="Sync" value={70} />
-							<CircularProgress
-								aria-label="Apply"
-								value={100}
-								size="lg"
-							/>
-						</div>
-					</DemoRow>
-					<DemoRow label="Indeterminate">
-						<CircularProgress aria-label="Working" />
-					</DemoRow>
-				</Canvas>
-			</section>
-		</div>
-	);
-}
-
-function CircularProgressKnobs() {
-	return (
-		<RailPanel
-			title="CircularProgress"
-			description="Compact progressbar ring. Knobs drive API playground; omit value = indeterminate."
-		>
-			<ProgressJobKnobsFields />
 		</RailPanel>
 	);
 }
@@ -3259,6 +3443,206 @@ function CommandPaletteKnobs() {
 	);
 }
 
+function AccordionCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Single accordion">
+				<Accordion
+					type="single"
+					defaultValue="fees"
+					className="w-full max-w-lg"
+				>
+					<AccordionItem value="fees">
+						<AccordionTrigger>Network fees</AccordionTrigger>
+						<AccordionContent>
+							Economy, normal, and priority presets map to sat/vB.
+						</AccordionContent>
+					</AccordionItem>
+					<AccordionItem value="privacy">
+						<AccordionTrigger>Privacy</AccordionTrigger>
+						<AccordionContent>
+							Address reuse warnings and coin control stay in-app.
+						</AccordionContent>
+					</AccordionItem>
+				</Accordion>
+			</DemoRow>
+			<DemoRow label="Collapsible atom">
+				<Collapsible
+					defaultOpen
+					className="w-full max-w-lg rounded-md border border-border p-3"
+				>
+					<CollapsibleTrigger>Advanced</CollapsibleTrigger>
+					<CollapsibleContent>
+						<p className="pt-2 text-sm text-muted-foreground">
+							Nested disclosure without accordion keyboard group.
+						</p>
+					</CollapsibleContent>
+				</Collapsible>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function AccordionKnobs() {
+	return (
+		<RailPanel
+			title="Accordion"
+			description="APG accordion + Collapsible atom. Heading wraps trigger."
+		/>
+	);
+}
+
+function ResizablePanelDemoProvider({ children }: { children: ReactNode }) {
+	const [orientation, setOrientation] =
+		useState<ResizablePanelOrientation>("horizontal");
+
+	return (
+		<ResizablePanelDemoContext.Provider
+			value={{ orientation, setOrientation }}
+		>
+			{children}
+		</ResizablePanelDemoContext.Provider>
+	);
+}
+
+const ResizablePanelDemoContext = createContext<{
+	orientation: ResizablePanelOrientation;
+	setOrientation: (value: ResizablePanelOrientation) => void;
+} | null>(null);
+
+function useResizablePanelDemo() {
+	const value = useContext(ResizablePanelDemoContext);
+	if (value === null) {
+		throw new Error("ResizablePanelDemoProvider required");
+	}
+
+	return value;
+}
+
+function ResizablePanelCanvas() {
+	const demo = useResizablePanelDemo();
+
+	let startLabel = "Start";
+	let endLabel = "End";
+	if (demo.orientation === "vertical") {
+		startLabel = "Top";
+		endLabel = "Bottom";
+	} else {
+		startLabel = "Left";
+		endLabel = "Right";
+	}
+
+	return (
+		<Canvas>
+			<div className="flex w-full max-w-3xl flex-col gap-2">
+				<div className="text-sm font-medium text-foreground">
+					{demo.orientation} split — drag the handle or focus it and
+					use arrow keys
+				</div>
+				<div className="h-72 w-full overflow-hidden rounded-md border border-border">
+					<ResizablePanel
+						key={demo.orientation}
+						orientation={demo.orientation}
+						defaultSize={40}
+						minSize={20}
+						maxSize={80}
+						start={
+							<div className="flex h-full min-h-24 items-start bg-muted/40 p-3 text-sm">
+								{startLabel}
+							</div>
+						}
+						end={
+							<div className="flex h-full min-h-24 items-start p-3 text-sm">
+								{endLabel}
+							</div>
+						}
+					/>
+				</div>
+			</div>
+		</Canvas>
+	);
+}
+
+function ResizablePanelKnobs() {
+	const demo = useResizablePanelDemo();
+
+	return (
+		<RailPanel
+			title="ResizablePanel"
+			description="Drag the separator or focus it and use arrows. Toggle orientation below."
+		>
+			<DemoRow label="Orientation">
+				<SegmentedControl
+					aria-label="Split orientation"
+					options={[
+						{ value: "horizontal", label: "Horizontal" },
+						{ value: "vertical", label: "Vertical" },
+					]}
+					value={demo.orientation}
+					onValueChange={(value) => {
+						if (value === "horizontal") {
+							demo.setOrientation("horizontal");
+							return;
+						}
+						if (value === "vertical") {
+							demo.setOrientation("vertical");
+						}
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
+function ContextMenuCanvas() {
+	return (
+		<Canvas>
+			<DemoRow label="Right-click target">
+				<ContextMenu
+					items={[
+						{
+							key: "copy",
+							label: "Copy address",
+							onSelect: () => {
+								/* intentional no-op */
+							},
+						},
+						{
+							key: "explorer",
+							label: "Open explorer",
+							onSelect: () => {
+								/* intentional no-op */
+							},
+						},
+						{ key: "div", type: "divider" },
+						{
+							key: "hide",
+							label: "Hide",
+							variant: "danger",
+							onSelect: () => {
+								/* intentional no-op */
+							},
+						},
+					]}
+				>
+					<div className="rounded-md border border-dashed border-border px-6 py-10 text-sm text-muted-foreground">
+						Right-click here
+					</div>
+				</ContextMenu>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function ContextMenuKnobs() {
+	return (
+		<RailPanel
+			title="ContextMenu"
+			description="APG menu on contextmenu. Esc and outside click dismiss."
+		/>
+	);
+}
+
 export {
 	ActionMenuCanvas,
 	ActionMenuDemoProvider,
@@ -3274,8 +3658,6 @@ export {
 	ButtonKnobs,
 	CardCanvas,
 	CardKnobs,
-	CircularProgressCanvas,
-	CircularProgressKnobs,
 	ProgressJobDemoProvider,
 	CommandPaletteCanvas,
 	CommandPaletteDemoProvider,
@@ -3289,16 +3671,10 @@ export {
 	ErrorStateKnobs,
 	CopyButtonCanvas,
 	CopyButtonKnobs,
-	StatusBadgeCanvas,
-	StatusBadgeKnobs,
 	AvatarCanvas,
 	AvatarKnobs,
 	SeparatorCanvas,
 	SeparatorKnobs,
-	DeltaBadgeCanvas,
-	DeltaBadgeKnobs,
-	TxStatusBadgeCanvas,
-	TxStatusBadgeKnobs,
 	LoadingCanvas,
 	LoadingDemoProvider,
 	LoadingKnobs,
@@ -3326,4 +3702,11 @@ export {
 	TooltipKnobs,
 	VisuallyHiddenCanvas,
 	VisuallyHiddenKnobs,
+	AccordionCanvas,
+	AccordionKnobs,
+	ResizablePanelCanvas,
+	ResizablePanelDemoProvider,
+	ResizablePanelKnobs,
+	ContextMenuCanvas,
+	ContextMenuKnobs,
 };

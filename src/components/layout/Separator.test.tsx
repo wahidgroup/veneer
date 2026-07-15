@@ -1,7 +1,7 @@
 import { render } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { Separator } from "./Separator.js";
 
 describe("Separator", () => {
@@ -21,8 +21,6 @@ describe("Separator", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		const { container } = render(<Separator />);
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
+		await expectNoA11yViolations(<Separator />);
 	});
 });

@@ -41,11 +41,11 @@ describe("CodeBlock", () => {
 		);
 
 		expect(
-			container.querySelector("[data-slot='code-block']"),
-		).not.toBeNull();
-		expect(
 			screen.getByText('resource "aws_s3_bucket" "logs" {}'),
 		).toBeInTheDocument();
+		expect(
+			container.querySelector("[data-slot='code-block']"),
+		).not.toBeNull();
 		expect(
 			container.querySelector("[data-slot='code-block-code']"),
 		).not.toBeNull();

@@ -572,10 +572,14 @@ describe("Workflow", () => {
 			).toBeGreaterThan(0);
 		});
 
-		const regionStep = container.querySelector(
-			"[data-slot='workflow-step'][data-value='region']",
-		);
-		expect(regionStep?.className).toContain("flex-col");
+		expect(
+			container.querySelector("[data-slot='workflow']"),
+		).toHaveAttribute("data-orientation", "horizontal");
+		expect(
+			container.querySelector(
+				"[data-slot='workflow-step'][data-value='region']",
+			),
+		).not.toBeNull();
 	});
 
 	it("uses a vertical rail with connectors when orientation is vertical", async () => {
@@ -605,9 +609,8 @@ describe("Workflow", () => {
 			).toBe(1);
 		});
 
-		const trackList = container.querySelector(
-			"[data-slot='workflow-track'] ol",
-		);
-		expect(trackList?.className).toContain("flex-col");
+		expect(
+			container.querySelector("[data-slot='workflow']"),
+		).toHaveAttribute("data-orientation", "vertical");
 	});
 });

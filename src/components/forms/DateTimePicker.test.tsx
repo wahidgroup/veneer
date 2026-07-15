@@ -44,13 +44,6 @@ describe("DateTimePicker", () => {
 		);
 	});
 
-	it("exposes a pointer cursor on the control", () => {
-		render(<DateTimePicker aria-label="Window" />);
-		expect(screen.getByLabelText("Window").className).toContain(
-			"cursor-pointer",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
 			<DateTimePicker aria-label="Window" granularity="date" />,

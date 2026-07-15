@@ -3,6 +3,7 @@ import { createContext, useContext, useState, type ReactNode } from "react";
 import {
 	BtcInput,
 	Checkbox,
+	ColorPicker,
 	Combobox,
 	DateTimePicker,
 	FieldError,
@@ -12,6 +13,7 @@ import {
 	Input,
 	MoneyInput,
 	NumberInput,
+	Popover,
 	RadioGroup,
 	SearchInput,
 	SegmentedControl,
@@ -778,10 +780,167 @@ function FieldErrorKnobs() {
 	);
 }
 
+type ColorPickerPresentation = "standalone" | "popover";
+
+const COLOR_PICKER_SWATCHES = [
+	"#161616",
+	"#252525",
+	"#404040",
+	"#8b8b8b",
+	"#d4d4d4",
+	"#ffffff",
+	"#7dd3fc",
+	"#003b5c",
+	"#22c55e",
+	"#ef4444",
+];
+
+interface ColorPickerDemoValue {
+	presentation: ColorPickerPresentation;
+	setPresentation: (value: ColorPickerPresentation) => void;
+	color: string;
+	setColor: (value: string) => void;
+	popoverOpen: boolean;
+	setPopoverOpen: (value: boolean) => void;
+}
+
+const ColorPickerDemoContext = createContext<ColorPickerDemoValue | null>(null);
+
+function useColorPickerDemo() {
+	const value = useContext(ColorPickerDemoContext);
+	if (value === null) {
+		throw new Error("ColorPickerDemoProvider required");
+	}
+
+	return value;
+}
+
+function ColorPickerDemoProvider({ children }: { children: ReactNode }) {
+	const [presentation, setPresentation] =
+		useState<ColorPickerPresentation>("standalone");
+	const [color, setColor] = useState("#3b82f6");
+	const [popoverOpen, setPopoverOpen] = useState(false);
+
+	return (
+		<ColorPickerDemoContext.Provider
+			value={{
+				presentation,
+				setPresentation,
+				color,
+				setColor,
+				popoverOpen,
+				setPopoverOpen,
+			}}
+		>
+			{children}
+		</ColorPickerDemoContext.Provider>
+	);
+}
+
+function ColorPickerCanvas() {
+	const demo = useColorPickerDemo();
+
+	const picker = (
+		<ColorPicker
+			label="Accent color"
+			value={demo.color}
+			swatches={COLOR_PICKER_SWATCHES}
+			onValueChange={demo.setColor}
+			className="max-w-none"
+		/>
+	);
+
+	let surface: ReactNode;
+	if (demo.presentation === "popover") {
+		surface = (
+			<Popover
+				trigger={
+					<span className="inline-flex items-center gap-2">
+						<span
+							aria-hidden="true"
+							className="size-4 shrink-0 rounded border border-border"
+							style={{ backgroundColor: demo.color }}
+						/>
+						<span>Pick color</span>
+						<span className="font-mono text-xs text-muted-foreground">
+							{demo.color}
+						</span>
+					</span>
+				}
+				open={demo.popoverOpen}
+				onOpenChange={demo.setPopoverOpen}
+				className="w-72 max-w-[min(18rem,calc(100vw-2rem))]"
+			>
+				{picker}
+			</Popover>
+		);
+	} else {
+		surface = picker;
+	}
+
+	let rowLabel = "Standalone ColorPicker";
+	if (demo.presentation === "popover") {
+		rowLabel = "Popover ColorPicker";
+	}
+
+	let selectedRow: ReactNode = null;
+	if (demo.presentation === "standalone") {
+		selectedRow = (
+			<DemoRow label="Selected">
+				<span className="font-mono text-sm tabular-nums text-muted-foreground">
+					{demo.color}
+				</span>
+			</DemoRow>
+		);
+	}
+
+	return (
+		<Canvas className="min-h-[32rem]">
+			<DemoRow label={rowLabel}>{surface}</DemoRow>
+			{selectedRow}
+		</Canvas>
+	);
+}
+
+function ColorPickerKnobs() {
+	const demo = useColorPickerDemo();
+
+	return (
+		<RailPanel
+			title="ColorPicker"
+			description="HSV plane + hue + HEX/RGB + swatches. Zero deps. Standalone panel or inside Popover."
+		>
+			<DemoRow label="Presentation">
+				<SegmentedControl
+					aria-label="ColorPicker presentation"
+					size="sm"
+					options={[
+						{ value: "standalone", label: "Standalone" },
+						{ value: "popover", label: "Popover" },
+					]}
+					value={demo.presentation}
+					onValueChange={(value) => {
+						if (value === "standalone") {
+							demo.setPresentation("standalone");
+							return;
+						}
+						if (value === "popover") {
+							demo.setPresentation("popover");
+						}
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 export {
 	ChoicesCanvas,
 	ChoicesDemoProvider,
 	ChoicesKnobs,
+	ColorPickerCanvas,
+	ColorPickerDemoProvider,
+	ColorPickerKnobs,
 	DeployCanvas,
 	DeployDemoProvider,
 	DeployKnobs,

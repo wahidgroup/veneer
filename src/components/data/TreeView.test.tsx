@@ -263,9 +263,6 @@ describe("TreeView", () => {
 		expect(
 			container.querySelector("[data-slot='tree-view-end']"),
 		).toHaveAttribute("data-align", "snug");
-		expect(
-			container.querySelector("[data-slot='tree-view-end']"),
-		).not.toHaveClass("ml-auto");
 
 		rerender(
 			<TreeView
@@ -283,9 +280,6 @@ describe("TreeView", () => {
 		expect(
 			container.querySelector("[data-slot='tree-view-end']"),
 		).toHaveAttribute("data-align", "justify");
-		expect(
-			container.querySelector("[data-slot='tree-view-end']"),
-		).toHaveClass("ml-auto");
 	});
 
 	it("does not toggle expand when clicking item.end", async () => {

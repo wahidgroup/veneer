@@ -1,13 +1,17 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
 import { Button } from "./Button.js";
+import {
+	cssVarStyle,
+	expectNoA11yViolations,
+} from "../../test/component-harness.js";
 
 describe("Button", () => {
 	it("renders children with data-slot", () => {
 		render(<Button>Click me</Button>);
+
 		const btn = screen.getByRole("button", { name: "Click me" });
 		expect(btn).toBeInTheDocument();
 		expect(btn).toHaveAttribute("data-slot", "button");
@@ -28,6 +32,7 @@ describe("Button", () => {
 		{ variant: "ghost" as const, label: "ghost" },
 	])("renders $label variant", ({ variant }) => {
 		render(<Button variant={variant}>Btn</Button>);
+
 		const btn = screen.getByRole("button");
 		expect(btn).toBeInTheDocument();
 		expect(btn).toHaveAttribute("data-slot", "button");
@@ -43,6 +48,7 @@ describe("Button", () => {
 				×
 			</Button>,
 		);
+
 		const btn = screen.getByRole("button");
 		expect(btn).toBeInTheDocument();
 		expect(btn).toHaveAttribute("data-slot", "button");
@@ -51,6 +57,23 @@ describe("Button", () => {
 	it("applies disabled attribute", () => {
 		render(<Button disabled>Disabled</Button>);
 		expect(screen.getByRole("button")).toBeDisabled();
+	});
+
+	it("accepts --button-* skin vars on the element", () => {
+		const skinVars = {
+			"--button-bg": "#22c55e",
+			"--button-fg": "#052e16",
+			"--button-height": "48px",
+			"--button-px": "20px",
+			"--button-fz": "16px",
+		} satisfies Record<`--${string}`, string>;
+
+		render(<Button style={cssVarStyle(skinVars)}>Skinned</Button>);
+
+		const btn = screen.getByRole("button", { name: "Skinned" });
+		for (const [name, value] of Object.entries(skinVars)) {
+			expect(btn.style.getPropertyValue(name)).toBe(value);
+		}
 	});
 
 	it("fires onClick when clicked", async () => {
@@ -89,8 +112,6 @@ describe("Button", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		const { container } = render(<Button>Accessible</Button>);
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
+		await expectNoA11yViolations(<Button>Accessible</Button>);
 	});
 });

@@ -68,6 +68,26 @@ export { Card, cardVariants } from "./components/layout/Card.js";
 export type { CardProps } from "./components/layout/Card.js";
 export { Checkbox } from "./components/forms/Checkbox.js";
 export type { CheckboxProps } from "./components/forms/Checkbox.js";
+export {
+	ColorPicker,
+	DEFAULT_HEX,
+	formatRgbCss,
+} from "./components/forms/ColorPicker.js";
+export type {
+	ColorPickerMode,
+	ColorPickerProps,
+} from "./components/forms/ColorPicker.js";
+export {
+	clampChannel,
+	hexToHsv,
+	hexToRgb,
+	hsvToHex,
+	hsvToRgb,
+	normalizeHex,
+	rgbToHex,
+	rgbToHsv,
+} from "./components/forms/colorMath.js";
+export type { HsvColor, RgbColor } from "./components/forms/colorMath.js";
 export { ChipGroup } from "./components/navigation/ChipGroup.js";
 export type {
 	ChipGroupItem,

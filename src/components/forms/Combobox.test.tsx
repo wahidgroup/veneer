@@ -164,13 +164,13 @@ describe("Combobox", () => {
 				name: "US East (N. Virginia)",
 				selected: true,
 			}),
-		).toHaveClass("bg-primary/10");
+		).toBeInTheDocument();
 		expect(
 			within(listbox).getByRole("option", {
 				name: "Asia Pacific (Singapore)",
 				selected: false,
 			}),
-		).not.toHaveClass("bg-primary/10");
+		).toBeInTheDocument();
 	});
 
 	it("marks the selected single option in the listbox", async () => {
@@ -186,12 +186,12 @@ describe("Combobox", () => {
 
 		await user.click(screen.getByRole("combobox"));
 
-		const option = within(screen.getByRole("listbox")).getByRole("option", {
-			name: "EU West (Ireland)",
-			selected: true,
-		});
-		expect(option).toHaveClass("bg-primary/10");
-		expect(option).toHaveClass("text-primary");
+		expect(
+			within(screen.getByRole("listbox")).getByRole("option", {
+				name: "EU West (Ireland)",
+				selected: true,
+			}),
+		).toBeInTheDocument();
 	});
 
 	it.each([

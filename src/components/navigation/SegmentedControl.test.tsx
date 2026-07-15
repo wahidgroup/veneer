@@ -3,8 +3,11 @@ import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import type { SegmentedControlProps } from "./SegmentedControl.js";
-import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { SegmentedControl } from "./SegmentedControl.js";
+import {
+	cssVarStyle,
+	expectNoA11yViolations,
+} from "../../test/component-harness.js";
 
 const UNIT_OPTIONS = [
 	{ value: "btc", label: "BTC" },
@@ -98,11 +101,21 @@ describe("SegmentedControl", () => {
 		expect(screen.getByRole("radio", { name: "sats" })).toBeDisabled();
 	});
 
-	it("merges className onto the radiogroup", () => {
-		renderUnit({ className: "mt-2" });
-		expect(screen.getByRole("radiogroup", { name: "Unit" })).toHaveClass(
-			"mt-2",
-		);
+	it("accepts CSS variable style overrides on the root", () => {
+		const skinVars = {
+			"--segment-track-bg": "#112233",
+			"--segment-active-bg": "#445566",
+			"--segment-active-fg": "#ffffff",
+			"--segment-inactive-fg": "#8899aa",
+			"--segment-active-ring": "#aabbcc",
+		} satisfies Record<`--${string}`, string>;
+
+		renderUnit({ style: cssVarStyle(skinVars) });
+
+		const group = screen.getByRole("radiogroup", { name: "Unit" });
+		for (const [name, value] of Object.entries(skinVars)) {
+			expect(group.style.getPropertyValue(name)).toBe(value);
+		}
 	});
 
 	it("has no accessibility violations on the default render", async () => {

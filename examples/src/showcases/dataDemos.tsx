@@ -33,6 +33,15 @@ import {
 	Timeline,
 	Toggle,
 	TreeView,
+	ActivityRow,
+	buildPaymentUri,
+	FeeRateControl,
+	LedgerRow,
+	parsePaymentUri,
+	SeedPhrase,
+	SegmentedControl,
+	Sparkline,
+	TxStatusBadge,
 } from "@wahidgroup/veneer";
 
 import type { TableListParams, TableRow } from "../api/client.js";
@@ -1638,6 +1647,193 @@ function MoneyChromeKnobs() {
 	);
 }
 
+function ActivitySurfacesCanvas() {
+	const built = buildPaymentUri({
+		address: "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t4",
+		amountSats: 1999,
+		label: "Invoice",
+	});
+
+	let uriPreview = "build failed";
+	if (built.ok) {
+		uriPreview = built.value;
+	}
+
+	const parsed = parsePaymentUri(uriPreview);
+	let parseLabel = "parse failed";
+	if (parsed.ok && parsed.value.amountSats !== undefined) {
+		parseLabel = `${String(parsed.value.amountSats)} sats`;
+	}
+
+	return (
+		<Canvas>
+			<DemoRow label="FeeRateControl">
+				<FeeRateControl aria-label="Fee rate" defaultValue={10} />
+			</DemoRow>
+			<DemoRow label="ActivityRow">
+				<ActivityRow
+					direction="in"
+					title="Received"
+					subtitle="2 min ago"
+					amount={<BtcAmount amountSats={25000} unit="sats" />}
+					status={
+						<TxStatusBadge status="confirming" confirmations={2}>
+							Confirming
+						</TxStatusBadge>
+					}
+				/>
+			</DemoRow>
+			<DemoRow label="LedgerRow">
+				<ul className="w-full max-w-md divide-y divide-border rounded-md border border-border">
+					<LedgerRow
+						description="Payroll"
+						amountMinor={-12500}
+						currency="USD"
+						balanceMinor={87500}
+					/>
+					<LedgerRow
+						description="Refund"
+						amountMinor={2500}
+						currency="USD"
+						balanceMinor={90000}
+					/>
+				</ul>
+			</DemoRow>
+			<DemoRow label="Sparkline">
+				<Sparkline
+					values={[4, 8, 6, 12, 9, 14, 11]}
+					aria-label="Weekly volume"
+				/>
+			</DemoRow>
+			<DemoRow label="PaymentUri">
+				<code className="block max-w-full break-all text-xs text-muted-foreground">
+					{uriPreview}
+					{" -> "}
+					{parseLabel}
+				</code>
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function ActivitySurfacesKnobs() {
+	return (
+		<RailPanel
+			title="Activity surfaces"
+			description="FeeRateControl, ActivityRow, LedgerRow, Sparkline, PaymentUri parse/build."
+		/>
+	);
+}
+
+const SEED_DEMO_WORDS = [
+	"abandon",
+	"ability",
+	"able",
+	"about",
+	"above",
+	"absent",
+	"absorb",
+	"abstract",
+	"absurd",
+	"abuse",
+	"access",
+	"accident",
+	"account",
+	"accuse",
+	"achieve",
+	"acid",
+	"acoustic",
+	"acquire",
+	"across",
+	"act",
+	"action",
+	"actor",
+	"actress",
+	"actual",
+] as const;
+
+type SeedDemoWordCount = "12" | "15" | "18" | "24";
+
+function SeedPhraseDemoProvider({ children }: { children: ReactNode }) {
+	const [wordCount, setWordCount] = useState<SeedDemoWordCount>("12");
+
+	return (
+		<SeedPhraseDemoContext.Provider value={{ wordCount, setWordCount }}>
+			{children}
+		</SeedPhraseDemoContext.Provider>
+	);
+}
+
+const SeedPhraseDemoContext = createContext<{
+	wordCount: SeedDemoWordCount;
+	setWordCount: (value: SeedDemoWordCount) => void;
+} | null>(null);
+
+function useSeedPhraseDemo() {
+	const value = useContext(SeedPhraseDemoContext);
+	if (value === null) {
+		throw new Error("SeedPhraseDemoProvider required");
+	}
+
+	return value;
+}
+
+function SeedPhraseCanvas() {
+	const demo = useSeedPhraseDemo();
+	const count = Number(demo.wordCount);
+	const words = SEED_DEMO_WORDS.slice(0, count);
+
+	return (
+		<Canvas>
+			<DemoRow label={`Reveal + copy (${String(count)} words)`}>
+				<SeedPhrase words={words} showCopy defaultRevealed={false} />
+			</DemoRow>
+		</Canvas>
+	);
+}
+
+function SeedPhraseKnobs() {
+	const demo = useSeedPhraseDemo();
+
+	return (
+		<RailPanel
+			title="SeedPhrase"
+			description="n-words via words.length. Fixed ch slots keep hide/reveal size stable."
+		>
+			<DemoRow label="Word count">
+				<SegmentedControl
+					aria-label="Seed phrase word count"
+					size="sm"
+					options={[
+						{ value: "12", label: "12" },
+						{ value: "15", label: "15" },
+						{ value: "18", label: "18" },
+						{ value: "24", label: "24" },
+					]}
+					value={demo.wordCount}
+					onValueChange={(value) => {
+						if (value === "12") {
+							demo.setWordCount("12");
+							return;
+						}
+						if (value === "15") {
+							demo.setWordCount("15");
+							return;
+						}
+						if (value === "18") {
+							demo.setWordCount("18");
+							return;
+						}
+						if (value === "24") {
+							demo.setWordCount("24");
+						}
+					}}
+				/>
+			</DemoRow>
+		</RailPanel>
+	);
+}
+
 export type { InventoryRow };
 export {
 	DataTableDemoProvider,
@@ -1668,4 +1864,9 @@ export {
 	ResourceGraphKnobs,
 	MoneyChromeCanvas,
 	MoneyChromeKnobs,
+	ActivitySurfacesCanvas,
+	ActivitySurfacesKnobs,
+	SeedPhraseCanvas,
+	SeedPhraseDemoProvider,
+	SeedPhraseKnobs,
 };

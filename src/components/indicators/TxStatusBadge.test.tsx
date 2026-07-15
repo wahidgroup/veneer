@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { TxStatusBadge } from "./TxStatusBadge.js";
 
 describe("TxStatusBadge", () => {
@@ -43,10 +43,8 @@ describe("TxStatusBadge", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		const { container } = render(
+		await expectNoA11yViolations(
 			<TxStatusBadge status="confirmed">Confirmed</TxStatusBadge>,
 		);
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
 	});
 });

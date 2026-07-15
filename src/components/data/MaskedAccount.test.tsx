@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { MaskedAccount } from "./MaskedAccount.js";
 
 const IBAN = "DE89370400440532013000";
@@ -34,11 +34,8 @@ describe("MaskedAccount", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		const { container } = render(
+		await expectNoA11yViolations(
 			<MaskedAccount value={IBAN} showCopy={false} />,
 		);
-
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
 	});
 });

@@ -3,20 +3,27 @@ import { describe, expect, it } from "vitest";
 import { truncateMiddle } from "./truncateMiddle.js";
 
 describe("truncateMiddle", () => {
-	it("returns short values unchanged", () => {
-		expect(truncateMiddle("abcdef", { start: 4, end: 4 })).toBe("abcdef");
-	});
-
-	it("keeps start and end characters with an ellipsis", () => {
-		expect(
-			truncateMiddle("12345678901234567890", {
-				start: 6,
-				end: 6,
-			}),
-		).toBe("123456…567890");
-	});
-
-	it("uses default start and end of 6", () => {
-		expect(truncateMiddle("0123456789ABCDEF")).toBe("012345…ABCDEF");
+	it.each([
+		{
+			label: "short value unchanged",
+			value: "abcdef",
+			options: { start: 4, end: 4 },
+			expected: "abcdef",
+		},
+		{
+			label: "start and end with ellipsis",
+			value: "12345678901234567890",
+			options: { start: 6, end: 6 },
+			expected: "123456…567890",
+		},
+		{
+			label: "default start and end of 6",
+			value: "0123456789ABCDEF",
+			options: undefined,
+			expected: "012345…ABCDEF",
+		},
+	])("formats $label", ({ value, options, expected }) => {
+		const truncated = truncateMiddle(value, options);
+		expect(truncated).toBe(expected);
 	});
 });

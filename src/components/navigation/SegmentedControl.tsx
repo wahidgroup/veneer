@@ -14,7 +14,7 @@ interface SegmentedControlOption {
 }
 
 const segmentedControlVariants = cva(
-	"inline-flex items-center rounded-md border border-border bg-muted p-0.5",
+	"inline-flex items-center rounded-md border border-border bg-[var(--segment-track-bg,var(--muted))] p-0.5",
 	{
 		variants: {
 			size: {
@@ -44,9 +44,8 @@ interface SegmentedControlProps
 }
 
 /**
- * Exclusive single-select segment strip (`role="radiogroup"`).
- * Use for unit switches (btc|sats), view modes, and compact filters.
- * Prefer over ChipGroup (multi) and Tabs (panels).
+ * Exclusive single-select strip (`role="radiogroup"`). Prefer over ChipGroup
+ * (multi) and Tabs (panels). Skin via `--segment-*` CSS vars on the root.
  */
 function SegmentedControl({
 	options,
@@ -194,16 +193,16 @@ function SegmentedControl({
 				}
 
 				let segmentClass =
-					"rounded-[calc(var(--radius-md)-2px)] shadow-none";
+					"rounded-[calc(var(--radius-md)-2px)] shadow-none hover:bg-[var(--segment-hover-bg,color-mix(in_srgb,var(--segment-active-bg,var(--primary))_18%,transparent))] active:bg-[var(--segment-hover-bg,color-mix(in_srgb,var(--segment-active-bg,var(--primary))_24%,transparent))]";
 				if (selected) {
 					segmentClass = cn(
 						segmentClass,
-						"bg-background font-medium text-foreground shadow-sm ring-1 ring-border",
+						"bg-[var(--segment-active-bg,var(--background))] font-medium text-[var(--segment-active-fg,var(--foreground))] shadow-sm ring-1 ring-[var(--segment-active-ring,var(--border))] hover:text-[var(--segment-active-fg,var(--foreground))] hover:bg-[var(--segment-hover-bg,color-mix(in_srgb,var(--segment-active-bg,var(--primary))_12%,var(--segment-active-bg,var(--background))))] active:bg-[var(--segment-hover-bg,color-mix(in_srgb,var(--segment-active-bg,var(--primary))_18%,var(--segment-active-bg,var(--background))))]",
 					);
 				} else {
 					segmentClass = cn(
 						segmentClass,
-						"bg-transparent font-normal text-muted-foreground hover:text-foreground",
+						"bg-transparent font-normal text-[var(--segment-inactive-fg,var(--muted-foreground))] hover:text-[var(--segment-active-fg,var(--foreground))]",
 					);
 				}
 

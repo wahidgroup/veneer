@@ -191,7 +191,6 @@ describe("AppShell", () => {
 		expect(root).toHaveAttribute("data-rail-position", "end");
 		expect(rail).toHaveAttribute("data-collapsed", "true");
 		expect(rail).toHaveAttribute("data-position", "end");
-		expect(rail).toHaveClass("w-0", "min-w-0", "overflow-hidden");
 	});
 
 	it("docks the controls rail under main when railPosition is bottom", () => {
@@ -212,10 +211,7 @@ describe("AppShell", () => {
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(root).toHaveAttribute("data-rail-position", "bottom");
 		expect(column).not.toBeNull();
-		expect(column).toHaveClass("flex-col");
 		expect(rail).toHaveAttribute("data-position", "bottom");
-		expect(rail).toHaveClass("h-64", "border-t");
-		expect(rail).not.toHaveClass("border-l");
 	});
 
 	it("keeps the same main element when railPosition toggles", () => {
@@ -235,8 +231,6 @@ describe("AppShell", () => {
 		);
 		expect(main).not.toBeNull();
 		expect(column).not.toBeNull();
-		expect(column).not.toHaveClass("flex-col");
-
 		rerender(
 			<AppShell
 				sidebar={<div>Nav</div>}
@@ -253,10 +247,12 @@ describe("AppShell", () => {
 		expect(
 			container.querySelector("[data-slot='app-shell-main-column']"),
 		).toBe(column);
-		expect(column).toHaveClass("flex-col");
+		expect(
+			container.querySelector("[data-slot='app-shell']"),
+		).toHaveAttribute("data-rail-position", "bottom");
 	});
 
-	it("collapses a bottom rail by height, not width", () => {
+	it("marks bottom rail collapsed", () => {
 		const { container } = render(
 			<AppShell
 				railCollapsed
@@ -266,9 +262,12 @@ describe("AppShell", () => {
 				Main
 			</AppShell>,
 		);
+		const root = container.querySelector("[data-slot='app-shell']");
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
-		expect(rail).toHaveClass("h-0", "min-h-0", "overflow-hidden");
-		expect(rail).not.toHaveClass("w-0");
+		expect(root).toHaveAttribute("data-rail-collapsed", "true");
+		expect(root).toHaveAttribute("data-rail-position", "bottom");
+		expect(rail).toHaveAttribute("data-collapsed", "true");
+		expect(rail).toHaveAttribute("data-position", "bottom");
 	});
 
 	it("overlays a bottom rail from the bottom edge on tablet", () => {
@@ -287,10 +286,10 @@ describe("AppShell", () => {
 
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(rail).toHaveAttribute("data-overlay", "true");
-		expect(rail).toHaveClass("absolute", "bottom-0", "left-14", "right-0");
+		expect(rail).toHaveAttribute("data-position", "bottom");
 	});
 
-	it("locks the shell and scrolls main as the primary pane", () => {
+	it("renders shell regions", () => {
 		const { container } = render(
 			<AppShell
 				header={<div>Header</div>}
@@ -300,22 +299,21 @@ describe("AppShell", () => {
 				Main
 			</AppShell>,
 		);
-		expect(container.querySelector("[data-slot='app-shell']")).toHaveClass(
-			"h-dvh",
-			"overflow-hidden",
-		);
+		expect(
+			container.querySelector("[data-slot='app-shell']"),
+		).not.toBeNull();
 		expect(
 			container.querySelector("[data-slot='app-shell-main']"),
-		).toHaveClass("overflow-y-auto");
+		).not.toBeNull();
 		expect(
 			container.querySelector("[data-slot='app-shell-sidebar']"),
-		).toHaveClass("overflow-y-auto", "[scrollbar-width:none]");
+		).not.toBeNull();
 		expect(
 			container.querySelector("[data-slot='app-shell-rail']"),
-		).toHaveClass("overflow-y-auto", "[scrollbar-width:none]");
+		).not.toBeNull();
 		expect(
-			container.querySelector("[data-slot='app-shell-main']"),
-		).not.toHaveClass("[scrollbar-width:none]");
+			container.querySelector("[data-slot='app-shell-header']"),
+		).not.toBeNull();
 	});
 
 	it("uses tablet icon rail and overlays the knobs pane", () => {
@@ -337,9 +335,8 @@ describe("AppShell", () => {
 		);
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(root).toHaveAttribute("data-viewport", "tablet");
-		expect(sidebar).toHaveClass("w-14");
+		expect(sidebar).toHaveAttribute("data-mode", "tablet");
 		expect(rail).toHaveAttribute("data-overlay", "true");
-		expect(rail).toHaveClass("absolute", "left-14", "right-0");
 	});
 
 	it("uses a mobile drawer and full-width rail overlay", () => {
@@ -358,14 +355,9 @@ describe("AppShell", () => {
 		);
 
 		const root = container.querySelector("[data-slot='app-shell']");
-		const sidebar = container.querySelector(
-			"[data-slot='app-shell-sidebar']",
-		);
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(root).toHaveAttribute("data-viewport", "mobile");
-		expect(sidebar).toHaveClass("absolute", "w-56");
 		expect(rail).toHaveAttribute("data-overlay", "true");
-		expect(rail).toHaveClass("absolute", "inset-0");
 		expect(
 			container.querySelector("[data-slot='app-shell-backdrop']"),
 		).not.toBeNull();

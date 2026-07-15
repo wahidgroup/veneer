@@ -50,7 +50,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "badge",
 				label: "Badge",
 				description:
-					"Status and metadata chips for inventory tables and headers.",
+					"Badge family: tone chips, StatusBadge, DeltaBadge, TxStatusBadge.",
 			},
 			{
 				id: "avatar",
@@ -77,18 +77,6 @@ const CATALOG: CatalogCategory[] = [
 					"Two-pane split with keyboard-resizable separator.",
 			},
 			{
-				id: "delta-badge",
-				label: "DeltaBadge",
-				description:
-					"+/− change chip with visible prefix (not color-only).",
-			},
-			{
-				id: "tx-status-badge",
-				label: "TxStatusBadge",
-				description:
-					"Unconfirmed / confirming / confirmed / failed for chain activity.",
-			},
-			{
 				id: "loading",
 				label: "Loading",
 				description:
@@ -96,16 +84,9 @@ const CATALOG: CatalogCategory[] = [
 			},
 			{
 				id: "progress-bar",
-				label: "ProgressBar",
+				label: "Progress",
 				description:
-					"Leaf bar + ProgressGroup. Nest job Start/Stop/Reset + size/indeterminate knobs.",
-				apiDriven: true,
-			},
-			{
-				id: "circular-progress",
-				label: "CircularProgress",
-				description:
-					"Compact progress ring. Nest job animation + size/indeterminate knobs.",
+					"ProgressBar, CircularProgress, ProgressGroup. Shared Nest job + size/indeterminate knobs.",
 				apiDriven: true,
 			},
 			{
@@ -138,12 +119,6 @@ const CATALOG: CatalogCategory[] = [
 				label: "CopyButton",
 				description:
 					"Copy ARN/ID to clipboard with brief copied affordance.",
-			},
-			{
-				id: "status-badge",
-				label: "StatusBadge",
-				description:
-					"Running / Failed / Drifted chips mapped onto Badge tones.",
 			},
 		],
 	},
@@ -255,6 +230,12 @@ const CATALOG: CatalogCategory[] = [
 					"FormField + amount entry (fiat + built-in BTC). BtcInput + SegmentedControl for unit.",
 			},
 			{
+				id: "color-picker",
+				label: "ColorPicker",
+				description:
+					"HSV plane + hue + HEX/RGB + swatches. Knob: standalone panel or Popover.",
+			},
+			{
 				id: "field-error",
 				label: "FieldError",
 				description:
@@ -332,7 +313,7 @@ const CATALOG: CatalogCategory[] = [
 				id: "segmented-control",
 				label: "SegmentedControl",
 				description:
-					"Exclusive radiogroup strip for unit switches and view modes.",
+					"Exclusive radiogroup strip. Skin with --segment-* CSS vars.",
 			},
 			{
 				id: "stepper",

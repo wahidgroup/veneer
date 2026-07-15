@@ -1,7 +1,6 @@
 import { render, screen, within } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
 import type { DiffLine, DiffResource } from "./diffTypes.js";
 import { expectNoA11yViolations } from "../../test/component-harness.js";
@@ -156,12 +155,9 @@ describe("DiffView", () => {
 	});
 
 	it("has no accessibility violations in tree mode", async () => {
-		const { container } = render(
+		await expectNoA11yViolations(
 			<DiffView mode="tree" resources={SAMPLE_RESOURCES} />,
 		);
-
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
 	});
 
 	it("renders split layout without losing rows", () => {

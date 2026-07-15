@@ -31,23 +31,29 @@ const NODES: FlowNode[] = [
 ];
 
 describe("sameValueKindConnection", () => {
-	it("allows number to number", () => {
-		const connection: FlowConnection = {
-			source: "a",
-			target: "b",
-			sourcePort: "amount",
-			targetPort: "amount",
-		};
-		expect(sameValueKindConnection(NODES, connection)).toBe(true);
-	});
-
-	it("rejects string to number", () => {
-		const connection: FlowConnection = {
-			source: "a",
-			target: "b",
-			sourcePort: "address",
-			targetPort: "amount",
-		};
-		expect(sameValueKindConnection(NODES, connection)).toBe(false);
+	it.each([
+		{
+			label: "allows number to number",
+			connection: {
+				source: "a",
+				target: "b",
+				sourcePort: "amount",
+				targetPort: "amount",
+			} satisfies FlowConnection,
+			expected: true,
+		},
+		{
+			label: "rejects string to number",
+			connection: {
+				source: "a",
+				target: "b",
+				sourcePort: "address",
+				targetPort: "amount",
+			} satisfies FlowConnection,
+			expected: false,
+		},
+	])("$label", ({ connection, expected }) => {
+		const allowed = sameValueKindConnection(NODES, connection);
+		expect(allowed).toBe(expected);
 	});
 });

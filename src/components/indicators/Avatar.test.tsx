@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { Avatar } from "./Avatar.js";
 
 describe("Avatar", () => {
@@ -42,8 +42,6 @@ describe("Avatar", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		const { container } = render(<Avatar alt="User" fallback="U" />);
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
+		await expectNoA11yViolations(<Avatar alt="User" fallback="U" />);
 	});
 });

@@ -27,33 +27,49 @@ describe("findOptionLabel", () => {
 });
 
 describe("filterFieldOptions", () => {
-	it("returns all options when not searchable", () => {
-		expect(filterFieldOptions(OPTIONS, "east", false, "local")).toEqual(
+	it.each([
+		{
+			label: "all options when not searchable",
+			query: "east",
+			searchable: false,
+			filterMode: "local" as const,
+			expected: OPTIONS,
+		},
+		{
+			label: "all options for remote filter mode",
+			query: "east",
+			searchable: true,
+			filterMode: "remote" as const,
+			expected: OPTIONS,
+		},
+		{
+			label: "labels locally when searchable",
+			query: "east",
+			searchable: true,
+			filterMode: "local" as const,
+			expected: [{ value: "us-east-1", label: "US East" }],
+		},
+		{
+			label: "option values as well as labels",
+			query: "eu-west",
+			searchable: true,
+			filterMode: "local" as const,
+			expected: [{ value: "eu-west-1", label: "EU West" }],
+		},
+		{
+			label: "all options for empty local query",
+			query: "  ",
+			searchable: true,
+			filterMode: "local" as const,
+			expected: OPTIONS,
+		},
+	])("returns $label", ({ query, searchable, filterMode, expected }) => {
+		const filtered = filterFieldOptions(
 			OPTIONS,
+			query,
+			searchable,
+			filterMode,
 		);
-	});
-
-	it("returns all options for remote filter mode", () => {
-		expect(filterFieldOptions(OPTIONS, "east", true, "remote")).toEqual(
-			OPTIONS,
-		);
-	});
-
-	it("filters labels locally when searchable", () => {
-		expect(filterFieldOptions(OPTIONS, "east", true, "local")).toEqual([
-			{ value: "us-east-1", label: "US East" },
-		]);
-	});
-
-	it("matches option values as well as labels", () => {
-		expect(filterFieldOptions(OPTIONS, "eu-west", true, "local")).toEqual([
-			{ value: "eu-west-1", label: "EU West" },
-		]);
-	});
-
-	it("returns all options for empty local query", () => {
-		expect(filterFieldOptions(OPTIONS, "  ", true, "local")).toEqual(
-			OPTIONS,
-		);
+		expect(filtered).toEqual(expected);
 	});
 });

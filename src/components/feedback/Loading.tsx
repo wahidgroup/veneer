@@ -127,10 +127,18 @@ function Loading({
 		);
 	}
 
+	let resolvedSize = "md";
+	if (size === "sm") {
+		resolvedSize = "sm";
+	} else if (size === "lg") {
+		resolvedSize = "lg";
+	}
+
 	return (
 		<div
 			data-slot="loading"
 			data-variant={resolvedVariant}
+			data-size={resolvedSize}
 			role="status"
 			aria-label={statusLabel}
 			aria-busy="true"

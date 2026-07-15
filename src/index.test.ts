@@ -36,6 +36,17 @@ const EXPECTED_EXPORTS = new Set([
 	"Card",
 	"cardVariants",
 	"Checkbox",
+	"ColorPicker",
+	"DEFAULT_HEX",
+	"formatRgbCss",
+	"clampChannel",
+	"hexToHsv",
+	"hexToRgb",
+	"hsvToHex",
+	"hsvToRgb",
+	"normalizeHex",
+	"rgbToHex",
+	"rgbToHsv",
 	"ChipGroup",
 	"Collapsible",
 	"CollapsibleContent",
@@ -195,66 +206,40 @@ const EXPECTED_FLOW_EXPORTS = new Set([
 const EXPECTED_FLOW_LAYOUT_EXPORTS = new Set(["layoutGraph"]);
 
 describe("public API surface", () => {
-	it("exposes exactly the expected set of runtime exports", () => {
-		const actualKeys = new Set(Object.keys(lib));
+	it.each([
+		{
+			label: "main barrel",
+			module: lib,
+			expected: EXPECTED_EXPORTS,
+		},
+		{
+			label: "data-table subpath",
+			module: dataTable,
+			expected: EXPECTED_DATA_TABLE_EXPORTS,
+		},
+		{
+			label: "diff subpath",
+			module: diff,
+			expected: EXPECTED_DIFF_EXPORTS,
+		},
+		{
+			label: "flow subpath",
+			module: flow,
+			expected: EXPECTED_FLOW_EXPORTS,
+		},
+		{
+			label: "flow/layout subpath",
+			module: flowLayout,
+			expected: EXPECTED_FLOW_LAYOUT_EXPORTS,
+		},
+	])("exposes exact runtime exports for $label", ({ module, expected }) => {
+		const actualKeys = new Set(Object.keys(module));
 
-		const missing = [...EXPECTED_EXPORTS].filter((k) => {
-			return !actualKeys.has(k);
+		const missing = [...expected].filter((key) => {
+			return !actualKeys.has(key);
 		});
-		const unexpected = [...actualKeys].filter((k) => {
-			return !EXPECTED_EXPORTS.has(k);
-		});
-		expect(missing).toEqual([]);
-		expect(unexpected).toEqual([]);
-	});
-
-	it("exposes the data-table subpath runtime exports", () => {
-		const actualKeys = new Set(Object.keys(dataTable));
-
-		const missing = [...EXPECTED_DATA_TABLE_EXPORTS].filter((k) => {
-			return !actualKeys.has(k);
-		});
-		const unexpected = [...actualKeys].filter((k) => {
-			return !EXPECTED_DATA_TABLE_EXPORTS.has(k);
-		});
-		expect(missing).toEqual([]);
-		expect(unexpected).toEqual([]);
-	});
-
-	it("exposes the diff subpath runtime exports", () => {
-		const actualKeys = new Set(Object.keys(diff));
-
-		const missing = [...EXPECTED_DIFF_EXPORTS].filter((k) => {
-			return !actualKeys.has(k);
-		});
-		const unexpected = [...actualKeys].filter((k) => {
-			return !EXPECTED_DIFF_EXPORTS.has(k);
-		});
-		expect(missing).toEqual([]);
-		expect(unexpected).toEqual([]);
-	});
-
-	it("exposes the flow subpath runtime exports", () => {
-		const actualKeys = new Set(Object.keys(flow));
-
-		const missing = [...EXPECTED_FLOW_EXPORTS].filter((k) => {
-			return !actualKeys.has(k);
-		});
-		const unexpected = [...actualKeys].filter((k) => {
-			return !EXPECTED_FLOW_EXPORTS.has(k);
-		});
-		expect(missing).toEqual([]);
-		expect(unexpected).toEqual([]);
-	});
-
-	it("exposes the flow/layout subpath runtime exports", () => {
-		const actualKeys = new Set(Object.keys(flowLayout));
-
-		const missing = [...EXPECTED_FLOW_LAYOUT_EXPORTS].filter((k) => {
-			return !actualKeys.has(k);
-		});
-		const unexpected = [...actualKeys].filter((k) => {
-			return !EXPECTED_FLOW_LAYOUT_EXPORTS.has(k);
+		const unexpected = [...actualKeys].filter((key) => {
+			return !expected.has(key);
 		});
 		expect(missing).toEqual([]);
 		expect(unexpected).toEqual([]);

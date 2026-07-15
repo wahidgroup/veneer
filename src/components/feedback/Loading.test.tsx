@@ -1,7 +1,7 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { Loading } from "./Loading.js";
 
 describe("Loading", () => {
@@ -23,33 +23,16 @@ describe("Loading", () => {
 	});
 
 	it.each([
-		{
-			size: undefined,
-			expectedH: "h-12",
-			expectedW: "w-12",
-			label: "default md",
-		},
-		{
-			size: "sm" as const,
-			expectedH: "h-8",
-			expectedW: "w-8",
-			label: "sm",
-		},
-		{
-			size: "lg" as const,
-			expectedH: "h-16",
-			expectedW: "w-16",
-			label: "lg",
-		},
-	])(
-		"applies $label spinner size classes",
-		({ size, expectedH, expectedW }) => {
-			const { container } = render(<Loading size={size} />);
-			const spinner = container.querySelector(".animate-spin");
-			expect(spinner?.className).toContain(expectedH);
-			expect(spinner?.className).toContain(expectedW);
-		},
-	);
+		{ size: undefined, expected: "md", label: "default md" },
+		{ size: "sm" as const, expected: "sm", label: "sm" },
+		{ size: "lg" as const, expected: "lg", label: "lg" },
+	])("exposes $label size on data-size", ({ size, expected }) => {
+		render(<Loading size={size} />);
+		expect(screen.getByRole("status")).toHaveAttribute(
+			"data-size",
+			expected,
+		);
+	});
 
 	it("renders skeleton bones", () => {
 		const { container } = render(<Loading variant="skeleton" lines={4} />);
@@ -60,14 +43,10 @@ describe("Loading", () => {
 	});
 
 	it("has no accessibility violations for spinner", async () => {
-		const { container } = render(<Loading text="Loading..." />);
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
+		await expectNoA11yViolations(<Loading text="Loading..." />);
 	});
 
 	it("has no accessibility violations for skeleton", async () => {
-		const { container } = render(<Loading variant="skeleton" lines={3} />);
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
+		await expectNoA11yViolations(<Loading variant="skeleton" lines={3} />);
 	});
 });

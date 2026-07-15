@@ -62,18 +62,22 @@ describe("Collapsible", () => {
 		).toHaveAttribute("aria-expanded", "true");
 	});
 
-	it("rotates caret when open and closed", async () => {
+	it("toggles aria-expanded when opened and closed", async () => {
 		const user = userEvent.setup();
 
 		render(<DemoCollapsible />);
 
 		const trigger = screen.getByRole("button", { name: "Toggle section" });
-		const caret = trigger.querySelector('[data-slot="collapsible-caret"]');
-		expect(caret).not.toBeNull();
-		expect(caret).not.toHaveClass("rotate-180");
+		expect(trigger).toHaveAttribute("aria-expanded", "false");
+		expect(
+			trigger.querySelector('[data-slot="collapsible-caret"]'),
+		).not.toBeNull();
 
 		await user.click(trigger);
-		expect(caret).toHaveClass("rotate-180");
+		expect(trigger).toHaveAttribute("aria-expanded", "true");
+
+		await user.click(trigger);
+		expect(trigger).toHaveAttribute("aria-expanded", "false");
 	});
 
 	it("reports open changes when controlled", async () => {

@@ -1,8 +1,8 @@
 import { act, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { axe } from "vitest-axe";
 
+import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { Toast, ToastViewport } from "./Toast.js";
 
 function noopClose(): void {
@@ -285,7 +285,7 @@ describe("Toast", () => {
 
 	it("has no accessibility violations", async () => {
 		vi.useRealTimers();
-		render(
+		await expectNoA11yViolations(
 			<Toast
 				message="A11y check"
 				onClose={noopClose}
@@ -293,8 +293,6 @@ describe("Toast", () => {
 				fade={false}
 			/>,
 		);
-		const results = await axe(screen.getByRole("status"));
-		expect(results).toHaveNoViolations();
 	});
 
 	describe("placement", () => {
@@ -426,7 +424,7 @@ describe("ToastViewport", () => {
 	});
 
 	it("has no accessibility violations when populated", async () => {
-		render(
+		await expectNoA11yViolations(
 			<ToastViewport>
 				<Toast
 					message="A11y A"
@@ -442,8 +440,5 @@ describe("ToastViewport", () => {
 				/>
 			</ToastViewport>,
 		);
-
-		const results = await axe(document.body);
-		expect(results).toHaveNoViolations();
 	});
 });

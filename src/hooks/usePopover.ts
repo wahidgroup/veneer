@@ -69,21 +69,25 @@ function usePopover({
 		const naturalHeight = floating.scrollHeight;
 
 		let placeBelow = true;
-		if (spaceBelow < naturalHeight && spaceBelow < spaceAbove) {
+		let maxHeight: number | undefined;
+		if (naturalHeight <= spaceBelow) {
+			placeBelow = true;
+		} else if (naturalHeight <= spaceAbove) {
 			placeBelow = false;
+		} else if (spaceBelow >= spaceAbove) {
+			placeBelow = true;
+			maxHeight = Math.max(spaceBelow, 0);
+		} else {
+			placeBelow = false;
+			maxHeight = Math.max(spaceAbove, 0);
 		}
 
-		let maxHeight = spaceBelow;
-		if (!placeBelow) {
-			maxHeight = spaceAbove;
-		}
-		if (maxHeight < 0) {
-			maxHeight = 0;
+		let height = naturalHeight;
+		if (maxHeight !== undefined) {
+			height = Math.min(naturalHeight, maxHeight);
 		}
 
-		const height = Math.min(naturalHeight, maxHeight);
 		const maxWidth = viewportWidth - resolvedPadding * 2;
-
 		let width = floating.offsetWidth;
 		if (matchWidth) {
 			width = rect.width;
@@ -109,9 +113,12 @@ function usePopover({
 			position: "fixed",
 			top,
 			left,
-			maxHeight,
 			visibility: "visible",
 		};
+		if (maxHeight !== undefined) {
+			next.maxHeight = maxHeight;
+			next.overflowY = "auto";
+		}
 		if (matchWidth) {
 			next.width = width;
 		}
@@ -145,6 +152,13 @@ function usePopover({
 		}
 
 		update();
+		const frame = window.requestAnimationFrame(() => {
+			update();
+		});
+
+		return () => {
+			window.cancelAnimationFrame(frame);
+		};
 	}, [open, update]);
 
 	useEffect(() => {

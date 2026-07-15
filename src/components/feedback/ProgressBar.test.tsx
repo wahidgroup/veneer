@@ -1,6 +1,5 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
 import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { ProgressBar } from "./ProgressBar.js";
@@ -63,8 +62,6 @@ describe("ProgressBar", () => {
 	});
 
 	it("has no accessibility violations when indeterminate", async () => {
-		const { container } = render(<ProgressBar aria-label="Sync" />);
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
+		await expectNoA11yViolations(<ProgressBar aria-label="Sync" />);
 	});
 });

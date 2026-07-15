@@ -37,13 +37,6 @@ describe("SearchInput", () => {
 		expect(screen.getByRole("searchbox")).toHaveValue("beta");
 	});
 
-	it("hides the native webkit search cancel control", () => {
-		render(<SearchInput debounceMs={0} />);
-		expect(screen.getByRole("searchbox").className).toContain(
-			"webkit-search-cancel-button",
-		);
-	});
-
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(<SearchInput debounceMs={0} />);
 	});

@@ -68,7 +68,7 @@ describe("Accordion", () => {
 		).toHaveAttribute("aria-expanded", "false");
 	});
 
-	it("rotates caret when section opens and closes", async () => {
+	it("exposes aria-expanded on triggers when sections open and close", async () => {
 		const user = userEvent.setup();
 
 		render(<DemoAccordion defaultValue="one" collapsible />);
@@ -77,19 +77,14 @@ describe("Accordion", () => {
 		const closedTrigger = screen.getByRole("button", {
 			name: "Section two",
 		});
-		const openCaret = openTrigger.querySelector(
-			'[data-slot="collapsible-caret"]',
-		);
-		const closedCaret = closedTrigger.querySelector(
-			'[data-slot="collapsible-caret"]',
-		);
-		expect(openCaret).not.toBeNull();
-		expect(closedCaret).not.toBeNull();
-		expect(openCaret).toHaveClass("rotate-180");
-		expect(closedCaret).not.toHaveClass("rotate-180");
+		expect(openTrigger).toHaveAttribute("aria-expanded", "true");
+		expect(closedTrigger).toHaveAttribute("aria-expanded", "false");
+		expect(
+			openTrigger.querySelector('[data-slot="collapsible-caret"]'),
+		).not.toBeNull();
 
 		await user.click(openTrigger);
-		expect(openCaret).not.toHaveClass("rotate-180");
+		expect(openTrigger).toHaveAttribute("aria-expanded", "false");
 	});
 
 	it("keeps a section open in single mode when not collapsible", async () => {

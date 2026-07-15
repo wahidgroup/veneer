@@ -2,7 +2,6 @@ import { useState } from "react";
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
-import { axe } from "vitest-axe";
 
 import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { DEFAULT_WORD_SLOT_CH, SeedPhrase } from "./SeedPhrase.js";
@@ -221,11 +220,8 @@ describe("SeedPhrase", () => {
 	});
 
 	it("has no accessibility violations when revealed", async () => {
-		const { container } = render(
+		await expectNoA11yViolations(
 			<SeedPhrase words={WORDS} defaultRevealed />,
 		);
-
-		const results = await axe(container);
-		expect(results).toHaveNoViolations();
 	});
 });
