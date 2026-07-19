@@ -27,14 +27,10 @@ jobs:
           scope: ${{ steps.pkg.outputs.scope }}
           package-manager-cache: false
 
-      - name: Configure GitHub Packages Auth
-        run: |
-          for f in .npmrc examples/.npmrc examples/api/.npmrc tests/.npmrc; do
-            echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> "$f"
-          done
-
       - name: Install dependencies
         run: make setup
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: CI
         run: make ci ${{ runner.debug == '1' && 'debug=1' || '' }}

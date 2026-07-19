@@ -79,7 +79,7 @@ help-body:
 	@printf '    yank               If set (e.g., yank=1), yank a published version\n'
 	@printf '    API_PORT           Override examples API port (default: free port)\n'
 	@printf '    UI_PORT            Override examples Vite port (default: free port)\n'
-	@printf '    NPM_INSTALL_FLAGS  Extra flags for npm install/ci\n'
+	@printf '    NPM_INSTALL_FLAGS  Extra flags for npm install/ci (e.g. --ignore-scripts)\n'
 	@printf '    CI                 If set (CI=true), setup.sh uses npm ci\n\n'
 	@printf 'EXAMPLES:\n'
 	@printf '    make setup\n'
@@ -111,7 +111,7 @@ node_modules: package.json package-lock.json
 
 setup:
 	@chmod +x scripts/setup.sh scripts/get-port.sh
-	@./scripts/setup.sh
+	@NPM_INSTALL_FLAGS="$(NPM_INSTALL_FLAGS)" ./scripts/setup.sh
 
 all: setup build
 

@@ -42,15 +42,13 @@ jobs:
         with:
           node-version-file: .nvmrc
           cache: npm
-
-      - name: Configure GitHub Packages Auth
-        run: |
-          for f in .npmrc examples/.npmrc examples/api/.npmrc tests/.npmrc; do
-            echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> "$f"
-          done
+          registry-url: https://npm.pkg.github.com
+          scope: "@wahidgroup"
 
       - name: Setup
         run: make setup NPM_INSTALL_FLAGS=--ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Security Audit
         run: make audit
