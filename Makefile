@@ -36,6 +36,12 @@ ifneq ($(filter 1,$(yank)),)
 RELEASE_FLAGS += --yank
 endif
 
+# Prefer version= (veneer); accept VERSION= for back-compat
+RELEASE_VERSION := $(version)
+ifeq ($(strip $(RELEASE_VERSION)),)
+RELEASE_VERSION := $(VERSION)
+endif
+
 ifdef CI
 NPM_INSTALL_CMD := npm ci
 else
@@ -172,7 +178,7 @@ ci:
 	$(MAKE) pack
 
 release: node_modules
-	@./scripts/release.sh "$(version)" $(RELEASE_FLAGS)
+	@./scripts/release.sh "$(RELEASE_VERSION)" $(RELEASE_FLAGS)
 
 generate-api:
 	@echo "Refreshing OpenAPI spec + examples client types..."

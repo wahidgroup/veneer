@@ -14,8 +14,7 @@ import { buildQueryKey, resolveUpdater } from "./dataTableQuery.js";
 interface UseDataTableSelectionArgs<TData> {
 	controlledSelection: DataTableRowSelection | undefined;
 	onRowSelectionChange:
-		| ((selection: DataTableRowSelection) => void)
-		| undefined;
+		((selection: DataTableRowSelection) => void) | undefined;
 	activeQuery: DataTableQuery;
 	pageSize: number;
 	data: TData[];

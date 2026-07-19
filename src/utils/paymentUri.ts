@@ -25,8 +25,7 @@ type PaymentUriParseResult =
 	| { ok: false; code: PaymentUriErrorCode };
 
 type PaymentUriBuildResult =
-	| { ok: true; value: string }
-	| { ok: false; code: PaymentUriErrorCode };
+	{ ok: true; value: string } | { ok: false; code: PaymentUriErrorCode };
 
 const BIP21_SCHEME = "bitcoin";
 const RESERVED_QUERY_KEYS = new Set(["amount", "label", "message"]);
