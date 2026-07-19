@@ -22,14 +22,14 @@ jobs:
 
       - uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version-file: .nvmrc
           registry-url: https://npm.pkg.github.com
           scope: ${{ steps.pkg.outputs.scope }}
           package-manager-cache: false
 
       - name: Configure GitHub Packages Auth
         run: |
-          for f in .npmrc examples/api/.npmrc; do
+          for f in .npmrc examples/.npmrc examples/api/.npmrc tests/.npmrc; do
             echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> "$f"
           done
 
@@ -37,7 +37,7 @@ jobs:
         run: make setup
 
       - name: CI
-        run: make ci
+        run: make ci ${{ runner.debug == '1' && 'debug=1' || '' }}
 
       - name: Verify version matches tag
         run: |
@@ -46,7 +46,7 @@ jobs:
           CURRENT=$(node -p "require('./package.json').version")
           if [ "$CURRENT" != "$VERSION" ]; then
             echo "package.json version (${CURRENT}) does not match tag (${VERSION})"
-            echo "Bump package.json on main via make release before tagging."
+            echo "Bump package.json on main via make release version=v${VERSION} before tagging."
             exit 1
           fi
 

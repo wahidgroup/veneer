@@ -47,12 +47,12 @@ Peers: `react` >= 19, `react-dom` >= 19. Consumer app needs Tailwind CSS v4.
 
 Use a subpath only when you need that feature, and install the matching peer:
 
-| Subpath                          | What you get                                | Required peer                  |
-| -------------------------------- | ------------------------------------------- | ------------------------------ |
-| `@wahidgroup/veneer/data-table`  | `DataTable`, row helpers                    | `@tanstack/react-table@8.21.3` |
-| `@wahidgroup/veneer/diff`        | `DiffView`, `PlanSummary`, `buildDiffLines` | `diff@9.0.0`                   |
-| `@wahidgroup/veneer/flow`        | `FlowCanvas`, viewport, typed ports         | -                              |
-| `@wahidgroup/veneer/flow/layout` | `layoutGraph`                               | `elkjs@0.11.1`                 |
+| Subpath                          | What you get                                | Required peer                         |
+| -------------------------------- | ------------------------------------------- | ------------------------------------- |
+| `@wahidgroup/veneer/data-table`  | `DataTable`, row helpers                    | `@tanstack/react-table` `>=8.21.3 <9` |
+| `@wahidgroup/veneer/diff`        | `DiffView`, `PlanSummary`, `buildDiffLines` | `diff` `>=9.0.0 <10`                  |
+| `@wahidgroup/veneer/flow`        | `FlowCanvas`, viewport, typed ports         | -                                     |
+| `@wahidgroup/veneer/flow/layout` | `layoutGraph`                               | `elkjs` `>=0.11.1 <1`                 |
 
 ```bash
 # only if you import from /data-table

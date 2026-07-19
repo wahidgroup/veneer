@@ -5,6 +5,12 @@ ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 STAMP_DIR="$ROOT/.make"
 SETUP_HASH_FILE="$STAMP_DIR/setup.hash"
 
+# GitHub Actions sets CI=true; prefer lockfile-faithful installs there.
+NPM_INSTALL_CMD=install
+if [ "${CI:-}" = "true" ] || [ "${CI:-}" = "1" ]; then
+	NPM_INSTALL_CMD=ci
+fi
+
 compute_setup_hash() {
 	shasum -a 256 \
 		"$ROOT/package.json" \
@@ -49,26 +55,22 @@ setup_required() {
 	return 1
 }
 
+npm_install_tree() {
+	local prefix="$1"
+	echo "Installing dependencies in ${prefix} (npm ${NPM_INSTALL_CMD})..."
+	# shellcheck disable=SC2086
+	npm --prefix "$prefix" "${NPM_INSTALL_CMD}" ${NPM_INSTALL_FLAGS:-}
+}
+
 main() {
 	mkdir -p "$STAMP_DIR"
 
 	if setup_required; then
-		echo "Installing kit dependencies..."
-		# shellcheck disable=SC2086
-		npm --prefix "$ROOT" install ${NPM_INSTALL_FLAGS:-}
-
-		echo "Installing examples dependencies..."
-		# shellcheck disable=SC2086
-		npm --prefix "$ROOT/examples" install ${NPM_INSTALL_FLAGS:-}
-
-		echo "Installing examples API dependencies..."
-		# shellcheck disable=SC2086
-		npm --prefix "$ROOT/examples/api" install ${NPM_INSTALL_FLAGS:-}
-
-		echo "Installing E2E dependencies..."
+		npm_install_tree "$ROOT"
+		npm_install_tree "$ROOT/examples"
+		npm_install_tree "$ROOT/examples/api"
 		mkdir -p "$ROOT/tests"
-		# shellcheck disable=SC2086
-		npm --prefix "$ROOT/tests" install ${NPM_INSTALL_FLAGS:-}
+		npm_install_tree "$ROOT/tests"
 
 		echo "Installing Playwright chromium..."
 		(cd "$ROOT/tests" && npx playwright install --with-deps chromium)
