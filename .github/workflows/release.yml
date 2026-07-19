@@ -13,8 +13,6 @@ jobs:
   release:
     name: Publish & Release
     runs-on: ubuntu-latest
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v6
 
@@ -31,6 +29,8 @@ jobs:
 
       - name: Install dependencies
         run: make setup
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: CI
         run: make ci ${{ runner.debug == '1' && 'debug=1' || '' }}
@@ -51,6 +51,8 @@ jobs:
 
       - name: Publish to GitHub Packages
         run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2

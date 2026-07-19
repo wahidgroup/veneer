@@ -14,8 +14,6 @@ jobs:
   ci:
     name: CI
     runs-on: ubuntu-latest-l
-    env:
-      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v6
 
@@ -28,6 +26,8 @@ jobs:
 
       - name: Setup
         run: make setup
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: CI
         run: make ci ${{ runner.debug == '1' && 'debug=1' || '' }}
