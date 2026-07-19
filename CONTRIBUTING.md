@@ -13,6 +13,11 @@ make lint
 
 Use `make help` for the full command list. Apply fixes with `make lint fix=1`.
 
+Husky hooks:
+
+- `commit-msg` - enforces the commit header format (see [Title](#title))
+- `pre-push` - runs `make lint` and verifies commit signatures. Commits MUST be signed before push.
+
 ### Code Style
 
 Contributors MUST:
@@ -31,15 +36,15 @@ All pull requests MUST conform to the title, body, and metadata specifications b
 
 ### Title
 
-PR titles MUST follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification:
+PR titles and commit headers MUST follow [Conventional Commits 1.0.0](https://www.conventionalcommits.org/en/v1.0.0/):
 
 ```
-<type>[optional scope]: <Subject>
+<type>[optional scope][!]: <description>
 ```
 
 #### Type
 
-The type MUST be one of:
+The type MUST be lowercase and one of:
 
 | Type       | Purpose                                                 | Semver |
 | ---------- | ------------------------------------------------------- | ------ |
@@ -53,37 +58,40 @@ The type MUST be one of:
 | `build`    | Build system or dependency changes                      | -      |
 | `ci`       | CI configuration changes                                | -      |
 | `chore`    | Maintenance, no production code change                  | -      |
+| `revert`   | Revert a previous commit                                | -      |
 
 #### Scope
 
-The scope is OPTIONAL and identifies the affected area of the codebase. Recommended scopes:
+The scope is OPTIONAL, MUST be lowercase (`[a-z0-9/-]+`), and identifies the affected area. Recommended scopes:
 
 - Module: `components`, `utils`, `hooks`, `theme`, `test`
 - Cross-cutting: `deps`, `docs`, `ci`, `scripts`
 
-#### Subject
+#### Description
 
-The subject MUST:
+The description MUST:
 
-- Use imperative mood ("Add" not "Added")
+- Use imperative mood ("add" not "added" / "adds")
+- Start with a lowercase letter or digit (not Sentence case)
 - NOT end with a period
-- Be under 72 characters
+- Keep the full header under 100 characters
 
 #### Breaking Changes
 
 Append `!` after the type or scope to indicate a breaking change:
 
 ```
-feat!: Drop support for React 18
-refactor(utils)!: Rename exported helper
+feat!: drop support for React 18
+refactor(utils)!: rename exported helper
 ```
 
 #### Examples
 
-- `feat(components): Add Button`
-- `fix(utils): Correct class merge order`
-- `chore(deps): Bump typescript`
-- `docs: Document daily make loop`
+- `feat(components): add Button`
+- `fix(utils): correct class merge order`
+- `chore(deps): bump typescript`
+- `docs: document daily make loop`
+- `revert: undo accidental export rename`
 
 ### Body
 
