@@ -3536,7 +3536,7 @@ function ResizablePanelCanvas() {
 		<Canvas>
 			<div className="flex w-full max-w-3xl flex-col gap-2">
 				<div className="text-sm font-medium text-foreground">
-					{demo.orientation} split — drag the handle or focus it and
+					{demo.orientation} split: drag the handle or focus it and
 					use arrow keys
 				</div>
 				<div className="h-72 w-full overflow-hidden rounded-md border border-border">

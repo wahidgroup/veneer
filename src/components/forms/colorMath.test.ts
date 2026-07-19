@@ -27,7 +27,7 @@ describe("colorMath", () => {
 		{ input: "#abc", expected: "#aabbcc" },
 		{ input: "ABC", expected: "#aabbcc" },
 		{ input: " #FfFfFf ", expected: "#ffffff" },
-	])("normalizeHex($input) → $expected", ({ input, expected }) => {
+	])("normalizeHex($input) -> $expected", ({ input, expected }) => {
 		expect(normalizeHex(input)).toBe(expected);
 	});
 

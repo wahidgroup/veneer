@@ -1,9 +1,8 @@
 {
 	"name": "@wahidgroup/veneer",
 	"version": "0.1.0",
-	"description": "React component library for Wahid Group apps",
+	"description": "A lightweight component library for React apps",
 	"type": "module",
-	"private": true,
 	"engines": {
 		"node": ">=24"
 	},

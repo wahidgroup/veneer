@@ -32,7 +32,7 @@ interface SeedPhraseProps extends Omit<ComponentProps<"div">, "children"> {
 	showCopy?: boolean;
 }
 
-/** BIP39 English max word length — used for stable slot width. */
+/** BIP39 English max word length: used for stable slot width. */
 const DEFAULT_WORD_SLOT_CH = 8;
 
 function resolveColumns(
@@ -65,10 +65,9 @@ function gridColumnsClass(columns: SeedPhraseColumns): string {
 }
 
 /**
- * Presentation-only seed phrase grid. Parent supplies `words` — no BIP39
+ * Presentation-only seed phrase grid. Parent supplies `words`. No BIP39
  * wordlist and no entropy generation. Unrevealed display omits plaintext
- * from the DOM (mask glyphs only). Word cells use a fixed `ch` width so
- * reveal/hide does not shift layout. Secrets UI chrome, not a wallet.
+ * from the DOM (mask glyphs only).
  */
 function SeedPhrase({
 	words,
