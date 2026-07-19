@@ -240,11 +240,7 @@ function ToolbarSelectKnobs() {
 }
 
 type SegmentColorSlot =
-	| "trackBg"
-	| "activeBg"
-	| "activeFg"
-	| "inactiveFg"
-	| "activeRing";
+	"trackBg" | "activeBg" | "activeFg" | "inactiveFg" | "activeRing";
 
 interface SegmentColorState {
 	trackBg: string;

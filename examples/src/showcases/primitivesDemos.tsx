@@ -622,12 +622,7 @@ function ButtonCanvas() {
 }
 
 type ButtonVariant =
-	| "filled"
-	| "outlined"
-	| "text"
-	| "ghost"
-	| "secondary"
-	| "danger";
+	"filled" | "outlined" | "text" | "ghost" | "secondary" | "danger";
 type ButtonSize = "sm" | "md" | "icon";
 
 type ButtonColorSlot = "bg" | "fg";
@@ -1016,12 +1011,7 @@ function CardKnobs() {
 }
 
 type BadgeVariant =
-	| "default"
-	| "primary"
-	| "success"
-	| "warning"
-	| "danger"
-	| "info";
+	"default" | "primary" | "success" | "warning" | "danger" | "info";
 type BadgeSize = "sm" | "md";
 
 interface BadgeDemoValue {

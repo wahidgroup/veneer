@@ -53,8 +53,7 @@ export interface TableServerPatchMessage {
 }
 
 export type TableServerMessage =
-	| TableServerSnapshotMessage
-	| TableServerPatchMessage;
+	TableServerSnapshotMessage | TableServerPatchMessage;
 
 export interface TableSubscribeMessage {
 	type: "subscribe";

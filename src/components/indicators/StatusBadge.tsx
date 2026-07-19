@@ -4,12 +4,7 @@ import type { BadgeProps } from "./Badge.js";
 import { Badge } from "./Badge.js";
 
 type StatusBadgeStatus =
-	| "running"
-	| "pending"
-	| "success"
-	| "warning"
-	| "danger"
-	| "drifted";
+	"running" | "pending" | "success" | "warning" | "danger" | "drifted";
 
 interface StatusBadgeProps extends Omit<BadgeProps, "variant" | "children"> {
 	status: StatusBadgeStatus;
