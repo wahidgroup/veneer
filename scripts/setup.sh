@@ -12,19 +12,22 @@ if [ "${CI:-}" = "true" ] || [ "${CI:-}" = "1" ]; then
 fi
 
 compute_setup_hash() {
-	shasum -a 256 \
-		"$ROOT/package.json" \
-		"$ROOT/package-lock.json" \
-		"$ROOT/examples/package.json" \
-		"$ROOT/examples/package-lock.json" \
-		"$ROOT/examples/api/package.json" \
-		"$ROOT/examples/api/package-lock.json" \
-		"$ROOT/examples/api/openapi.json" \
-		"$ROOT/tests/package.json" \
-		"$ROOT/tests/package-lock.json" \
-		2>/dev/null \
-		| shasum -a 256 \
-		| awk '{ print $1 }'
+	# Include install mode/flags so e.g. --ignore-scripts vs normal cannot share a stamp.
+	{
+		shasum -a 256 \
+			"$ROOT/package.json" \
+			"$ROOT/package-lock.json" \
+			"$ROOT/examples/package.json" \
+			"$ROOT/examples/package-lock.json" \
+			"$ROOT/examples/api/package.json" \
+			"$ROOT/examples/api/package-lock.json" \
+			"$ROOT/examples/api/openapi.json" \
+			"$ROOT/tests/package.json" \
+			"$ROOT/tests/package-lock.json" \
+			2>/dev/null
+		printf 'npm-cmd:%s\n' "$NPM_INSTALL_CMD"
+		printf 'npm-flags:%s\n' "${NPM_INSTALL_FLAGS:-}"
+	} | shasum -a 256 | awk '{ print $1 }'
 }
 
 setup_required() {
