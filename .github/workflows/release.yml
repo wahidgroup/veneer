@@ -13,6 +13,8 @@ jobs:
   release:
     name: Publish & Release
     runs-on: ubuntu-latest
+    env:
+      NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v6
 
@@ -26,12 +28,6 @@ jobs:
           registry-url: https://npm.pkg.github.com
           scope: ${{ steps.pkg.outputs.scope }}
           package-manager-cache: false
-
-      - name: Configure GitHub Packages Auth
-        run: |
-          for f in .npmrc examples/.npmrc examples/api/.npmrc tests/.npmrc; do
-            echo "//npm.pkg.github.com/:_authToken=${{ secrets.GITHUB_TOKEN }}" >> "$f"
-          done
 
       - name: Install dependencies
         run: make setup
@@ -55,8 +51,6 @@ jobs:
 
       - name: Publish to GitHub Packages
         run: npm publish
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2
