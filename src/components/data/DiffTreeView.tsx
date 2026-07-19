@@ -167,7 +167,7 @@ function DiffTreeView({
 												aria-hidden="true"
 												className="hidden px-1 text-muted-foreground sm:inline"
 											>
-												→
+												->
 											</span>
 											<div className="rounded bg-success/10 px-2 py-1 text-foreground break-all">
 												<AttrValue

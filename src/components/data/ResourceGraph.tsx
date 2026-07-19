@@ -225,7 +225,7 @@ function ResourceGraph({
 	});
 
 	const listItems = edges.map((edge) => {
-		let description = `${edge.from} → ${edge.to}`;
+		let description = `${edge.from} -> ${edge.to}`;
 		if (edge.label !== undefined && edge.label.length > 0) {
 			description = `${description} (${edge.label})`;
 		}
