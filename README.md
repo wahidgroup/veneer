@@ -1,6 +1,6 @@
 # veneer
 
-Lightweight UI kit for React apps: forms, data display, overlays, navigation, and feedback on Tailwind CSS v4 tokens (`theme.css`). DataTable, Diff, and Flow ship as optional subpaths so the root entry stays lean. Peers: `react` / `react-dom` `>=19`.
+Lightweight UI kit for React apps: forms, data display, overlays, navigation, and feedback on Tailwind CSS v4 tokens (`theme.css`). DataTable, Diff, and Flow ship as optional sub-paths so the root entry stays lean. Peers: `react` / `react-dom` `>=19`.
 
 ## Install
 
