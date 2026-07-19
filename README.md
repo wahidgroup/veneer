@@ -1,6 +1,6 @@
 # @wahidgroup/veneer
 
-A lightweight UI kit for React apps: forms, data display, overlays, navigation, and feedback on Tailwind CSS v4 tokens (`theme.css`). Heavy features (DataTable, Diff, Flow) ship as optional subpaths so the root entry stays lean.
+A lightweight UI kit for React apps: forms, data display, overlays, navigation, and feedback on Tailwind CSS v4 tokens (`theme.css`). Heavy features (DataTable, Diff, Flow) ship as optional sub-paths so the root entry stays lean.
 
 ## Install
 
@@ -152,7 +152,7 @@ make examples
 
 See [`examples/README.md`](examples/README.md).
 
-## Optional subpaths
+## Optional sub-paths
 
 `@tanstack/react-table`, `diff`, and `elkjs` are **optional peers**. Plain `npm install @wahidgroup/veneer` does not install them. The root entry never imports them.
 
