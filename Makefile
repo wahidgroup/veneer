@@ -26,13 +26,13 @@ export LOG_LEVEL = debug
 endif
 
 RELEASE_FLAGS :=
-ifneq ($(filter 1,$(dry-run)),)
+ifneq ($(strip $(dry-run)),)
 RELEASE_FLAGS += --dry-run
 endif
-ifneq ($(filter 1,$(allow-staged)),)
+ifneq ($(strip $(allow-staged)),)
 RELEASE_FLAGS += --allow-staged
 endif
-ifneq ($(filter 1,$(yank)),)
+ifneq ($(strip $(yank)),)
 RELEASE_FLAGS += --yank
 endif
 
@@ -47,39 +47,40 @@ help:
 
 help-body:
 	@printf 'USAGE:\n'
-	@printf '    make <target> [fix=1] [debug=1] [VERSION=vX.Y.Z] [dry-run=1] [allow-staged=1] [yank=1]\n\n'
+	@printf '    make <target> [fix=1] [debug=1] [version=vX.Y.Z] [dry-run=1] [allow-staged=1] [yank=1]\n\n'
 	@printf 'DESCRIPTION:\n'
 	@printf '    Build, test, lint, and release %s following POSIX/GNU CLI conventions.\n\n' '$(PROJECT)'
 	@printf 'TARGETS:\n'
-	@printf '    help           Show this help and exit\n'
-	@printf '    help-ref       Show reference documentation links\n'
-	@printf '    version        Show project version information\n'
-	@printf '    setup          Install kit + examples + API + Playwright + API types\n'
-	@printf '    lint           Run linters + spellcheck (fix mode via fix=1)\n'
-	@printf '    test           Kit + API Vitest, generate API types, Playwright\n'
-	@printf '    build          Build for production\n'
-	@printf '    smoke          Smoke-load built package exports\n'
-	@printf '    pack           Assert npm pack contents (minimal + sbom)\n'
-	@printf '    audit          Audit root + examples + API + tests (fix=1)\n'
-	@printf '    spellcheck     Run spell checker\n'
-	@printf '    sbom           Generate software bill of materials\n'
-	@printf '    ci             Lint + build + test + examples-build + smoke + pack\n'
-	@printf '    release        Release workflow (see OPTIONS)\n'
-	@printf '    generate-api   Refresh OpenAPI spec + examples client types\n'
-	@printf '    examples       Run Nest API + Vite examples\n'
-	@printf '    examples-build Production build of examples/\n'
-	@printf '    clean-dist     Remove dist and artifacts\n'
-	@printf '    clean          Remove dist, artifacts, and node_modules\n\n'
+	@printf '    help               Show this help and exit\n'
+	@printf '    help-ref           Show reference documentation links\n'
+	@printf '    version            Show project version information\n'
+	@printf '    setup              Install kit + examples + API + Playwright + API types\n'
+	@printf '    lint               Run linters + spellcheck (fix mode via fix=1)\n'
+	@printf '    test               Kit + API Vitest, generate API types, Playwright\n'
+	@printf '    build              Build for production\n'
+	@printf '    smoke              Smoke-load built package exports\n'
+	@printf '    pack               Assert npm pack contents (minimal + sbom)\n'
+	@printf '    audit              Audit root + examples + API + tests (fix=1)\n'
+	@printf '    spellcheck         Run spell checker\n'
+	@printf '    sbom               Generate software bill of materials\n'
+	@printf '    ci                 Lint + build + test + examples-build + smoke + pack\n'
+	@printf '    release            Release workflow (see OPTIONS)\n'
+	@printf '    generate-api       Refresh OpenAPI spec + examples client types\n'
+	@printf '    examples           Run Nest API + Vite examples\n'
+	@printf '    examples-build     Production build of examples/\n'
+	@printf '    clean-dist         Remove dist and artifacts\n'
+	@printf '    clean              Remove dist, artifacts, and node_modules\n\n'
 	@printf 'OPTIONS / VARIABLES:\n'
-	@printf '    fix            If set (e.g., fix=1), apply lint/audit fixes\n'
-	@printf '    debug          If set (e.g., debug=1), enable debug logs for tests\n'
-	@printf '    VERSION        Release version (e.g., VERSION=v0.2.0)\n'
-	@printf '    dry-run        If set (e.g., dry-run=1), preview release without changes\n'
-	@printf '    allow-staged   If set (e.g., allow-staged=1), include staged files in release\n'
-	@printf '    yank           If set (e.g., yank=1), yank a published version\n'
-	@printf '    API_PORT       Override examples API port (default: free port)\n'
-	@printf '    UI_PORT        Override examples Vite port (default: free port)\n'
-	@printf '    NPM_INSTALL_FLAGS  Extra flags for npm install/ci\n\n'
+	@printf '    fix                If set (e.g., fix=1), apply lint/audit fixes\n'
+	@printf '    debug              If set (e.g., debug=1), enable debug logs for tests\n'
+	@printf '    version            Release version (e.g., version=v0.2.0)\n'
+	@printf '    dry-run            If set (e.g., dry-run=1), preview release without changes\n'
+	@printf '    allow-staged       If set (e.g., allow-staged=1), include staged files in release\n'
+	@printf '    yank               If set (e.g., yank=1), yank a published version\n'
+	@printf '    API_PORT           Override examples API port (default: free port)\n'
+	@printf '    UI_PORT            Override examples Vite port (default: free port)\n'
+	@printf '    NPM_INSTALL_FLAGS  Extra flags for npm install/ci\n'
+	@printf '    CI                 If set (CI=true), setup.sh uses npm ci\n\n'
 	@printf 'EXAMPLES:\n'
 	@printf '    make setup\n'
 	@printf '    make examples\n'
@@ -88,7 +89,8 @@ help-body:
 	@printf '    make lint fix=1\n'
 	@printf '    make test debug=1\n'
 	@printf '    make audit fix=1\n'
-	@printf '    make release VERSION=v0.2.0\n\n'
+	@printf '    make release version=v0.2.0\n'
+	@printf '    make release version=v0.2.0 dry-run=1\n\n'
 	@printf 'EXIT STATUS:\n'
 	@printf '    0    Success\n'
 	@printf '    >0   Error occurred\n\n'
@@ -170,7 +172,7 @@ ci:
 	$(MAKE) pack
 
 release: node_modules
-	@./scripts/release.sh "$(VERSION)" $(RELEASE_FLAGS)
+	@./scripts/release.sh "$(version)" $(RELEASE_FLAGS)
 
 generate-api:
 	@echo "Refreshing OpenAPI spec + examples client types..."

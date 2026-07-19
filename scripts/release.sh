@@ -455,7 +455,7 @@ interactive_cherry_pick() {
 			fail "Cherry-pick conflict on ${line}
         Resolve the conflict, then resume:
           git cherry-pick --continue
-          make release v${VERSION}"
+          make release version=v${VERSION}"
 		fi
 		ok "Cherry-picked ${line}"
 	done <<< "$selected"
