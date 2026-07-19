@@ -1,54 +1,31 @@
-# @wahidgroup/veneer
+# veneer
 
-A lightweight UI kit for React apps: forms, data display, overlays, navigation, and feedback on Tailwind CSS v4 tokens (`theme.css`). Heavy features (DataTable, Diff, Flow) ship as optional sub-paths so the root entry stays lean.
+Lightweight UI kit for React apps: forms, data display, overlays, navigation, and feedback on Tailwind CSS v4 tokens (`theme.css`). DataTable, Diff, and Flow ship as optional sub-paths so the root entry stays lean. Peers: `react` / `react-dom` `>=19`.
 
 ## Install
-
-Published to [GitHub Packages](https://npm.pkg.github.com). Point the `@wahidgroup` scope at the registry (see root [`.npmrc`](.npmrc)), then:
 
 ```bash
 npm install @wahidgroup/veneer
 ```
 
-Peers: `react` / `react-dom` `>=19`. Consumer app needs Tailwind CSS v4.
+GitHub Packages: configure the `@wahidgroup` registry (see [`.npmrc`](.npmrc)).
 
-## Quick start
-
-App CSS entry:
+App CSS:
 
 ```css
 @import "tailwindcss";
 @import "@wahidgroup/veneer/theme.css";
 ```
 
-Set theme on `<html>`:
+Theme on `<html>`:
 
 ```html
-<html data-theme="light">
-	<!-- or data-theme="dark" -->
-</html>
+<html data-theme="light"></html>
 ```
 
-`.dark` on an ancestor is an alias for the same dark tokens. Prefer `data-theme` as the source of truth.
+`.dark` on an ancestor is an alias for the same dark tokens. Prefer `data-theme`.
 
-```tsx
-import { Badge, Button, Loading, cn } from "@wahidgroup/veneer";
-
-export function Toolbar() {
-	return (
-		<div className={cn("flex items-center gap-2")}>
-			<Button variant="filled">Save</Button>
-			<Button variant="outlined">Cancel</Button>
-			<Badge variant="success">Ready</Badge>
-			<Loading text="Working..." />
-		</div>
-	);
-}
-```
-
-## Examples
-
-### Form field
+## Form field
 
 `FormField` wires label, hint, error, and `aria-describedby` onto a single control child:
 
@@ -82,9 +59,9 @@ export function NameField({
 }
 ```
 
-### Money + status
+## Money + status
 
-Integer minor units (and sats for BTC) keep formatting deterministic:
+Integer minor units (sats for BTC):
 
 ```tsx
 import { MoneyAmount, StatusBadge } from "@wahidgroup/veneer";
@@ -99,7 +76,7 @@ export function BalanceRow() {
 }
 ```
 
-### Empty state
+## Empty state
 
 Compose the action with `Button`. EmptyState is chrome only:
 
@@ -118,9 +95,9 @@ export function NoTransfers() {
 }
 ```
 
-### Button skinning
+## Button skinning
 
-Filled / outlined / text honor CSS vars (`--button-bg`, `--button-fg`, size vars). Ghost / secondary / danger stay on semantic tokens:
+Filled / outlined / text honor `--button-bg`, `--button-fg`, and size vars. Ghost / secondary / danger stay on semantic tokens:
 
 ```tsx
 import type { CSSProperties } from "react";
@@ -143,25 +120,18 @@ export function BrandSave() {
 }
 ```
 
-Live category showcases (Vite aliases package `src`):
+## Package entrypoints
 
-```bash
-make setup
-make examples
-```
-
-See [`examples/README.md`](examples/README.md).
-
-## Optional sub-paths
-
-`@tanstack/react-table`, `diff`, and `elkjs` are **optional peers**. Plain `npm install @wahidgroup/veneer` does not install them. The root entry never imports them.
-
-| Subpath                          | Exports                                     | Required peer                         |
+| Import                           | Contents                                    | Required peer                         |
 | -------------------------------- | ------------------------------------------- | ------------------------------------- |
+| `@wahidgroup/veneer`             | root components + `cn`                      | `react`, `react-dom`                  |
+| `@wahidgroup/veneer/theme.css`   | tokens + `@source` for Tailwind             | Tailwind CSS v4                       |
 | `@wahidgroup/veneer/data-table`  | `DataTable`, row helpers                    | `@tanstack/react-table` `>=8.21.3 <9` |
 | `@wahidgroup/veneer/diff`        | `DiffView`, `PlanSummary`, `buildDiffLines` | `diff` `>=9.0.0 <10`                  |
 | `@wahidgroup/veneer/flow`        | `FlowCanvas`, viewport, typed ports         | none                                  |
 | `@wahidgroup/veneer/flow/layout` | `layoutGraph`                               | `elkjs` `>=0.11.1 <1`                 |
+
+Optional peers are not installed with a plain `npm install @wahidgroup/veneer`. The root entry never imports them.
 
 ```bash
 npm install @tanstack/react-table@8.21.3   # /data-table
@@ -176,9 +146,9 @@ import { FlowCanvas } from "@wahidgroup/veneer/flow";
 import { layoutGraph } from "@wahidgroup/veneer/flow/layout";
 ```
 
-## Theme
+## Theme overrides
 
-Defaults live under `@layer theme` for `:root` / `[data-theme="light"]` and `.dark` / `[data-theme="dark"]`. Override or add a brand theme in the app:
+Defaults live under `@layer theme` for `:root` / `[data-theme="light"]` and `.dark` / `[data-theme="dark"]`:
 
 ```css
 @layer theme {
@@ -191,31 +161,55 @@ Defaults live under `@layer theme` for `:root` / `[data-theme="light"]` and `.da
 
 Do **not** put light/dark hex values inside `@theme` / `@theme inline`. That freezes utilities at build time. Keep values on `--token` vars.
 
-Three-way toggles (light / dark / system) are an **app** concern: set `data-theme` from `localStorage` + `matchMedia("(prefers-color-scheme: dark)")`. Veneer ships activation hooks, not media-only dark.
+Light / dark / system toggles are an app concern: set `data-theme` from `localStorage` + `matchMedia("(prefers-color-scheme: dark)")`.
 
-`theme.css` registers `@source "./dist"` for class scanning.
-
-## Develop
+## Examples app
 
 ```bash
 make setup
-make lint
-make test
-make coverage
-make build
-make ci
+make examples
 ```
 
-Kit watch: `make test watch=1`. Cobertura: `make coverage`. Fix lint: `make lint fix=1`. `make help` lists targets.
+Vite aliases package `src`. See [`examples/README.md`](examples/README.md).
+
+## Dev
+
+```
+make setup           deps (kit + examples + API + Playwright)
+make lint            lint + spell (fix=1)
+make test            kit + API Vitest + Playwright (watch=1 = kit only)
+make coverage        kit Vitest + Cobertura (coverage/)
+make test-examples   API Vitest + Playwright
+make build           dist/
+make smoke           load dist exports
+make examples        Nest API + Vite showcases
+make examples-build  production build of examples/
+make spellcheck      cspell
+make sbom            sbom.json (also shipped in npm pack)
+make pack            assert npm pack is minimal + includes sbom
+make ci              lint, build, coverage, test-examples, examples-build, smoke, pack
+make release         version=v0.2.0 [dry-run=1]
+make clean-dist      wipe dist + artifacts + coverage + sbom
+make clean           wipe dist + artifacts + sbom + node_modules
+```
+
+```bash
+make release version=v0.2.0
+make release version=v0.2.0 dry-run=1
+```
 
 New components MUST follow [`docs/COMPONENT.md`](docs/COMPONENT.md).
 
-## Styling stack
+## CI
 
-- `class-variance-authority`: typed variants (`buttonVariants`, etc.)
-- `cn`: `clsx` + `tailwind-merge`
-- `lucide-react`: icons in SearchInput, Select, Combobox, TagInput, FileUpload, and related controls
-- Semantic CSS variables via `theme.css` (`@theme inline` bridge + `@layer theme` values)
+- PR Checks: title, body, metadata
+- CI: `make ci`, upload coverage + SBOM
+- Audit: deps + weekly
+- Release: tag `releases/v*`, publish + attach SBOM
+
+## Stack
+
+TypeScript 5.9+, React 19, Tailwind CSS v4, Vitest, CVA, `cn` (`clsx` + `tailwind-merge`), Lucide, `@wahidgroup/lint-rules`.
 
 ## License
 
