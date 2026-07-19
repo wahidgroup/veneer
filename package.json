@@ -1,6 +1,6 @@
 {
 	"name": "@wahidgroup/veneer",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"description": "A lightweight component library for React apps",
 	"type": "module",
 	"engines": {
