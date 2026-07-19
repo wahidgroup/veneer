@@ -13,7 +13,7 @@ define PRINT_PAGER
 @{ $(1); } | less -FRX
 endef
 
-ifneq ($(strip $(fix)),)
+ifneq ($(filter 1,$(fix)),)
 LINT_MODE := fix
 else
 LINT_MODE := check
@@ -26,13 +26,13 @@ export LOG_LEVEL = debug
 endif
 
 RELEASE_FLAGS :=
-ifneq ($(strip $(dry-run)),)
+ifneq ($(filter 1,$(dry-run)),)
 RELEASE_FLAGS += --dry-run
 endif
-ifneq ($(strip $(allow-staged)),)
+ifneq ($(filter 1,$(allow-staged)),)
 RELEASE_FLAGS += --allow-staged
 endif
-ifneq ($(strip $(yank)),)
+ifneq ($(filter 1,$(yank)),)
 RELEASE_FLAGS += --yank
 endif
 
