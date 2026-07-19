@@ -13,6 +13,13 @@ export default defineConfig({
 		exclude: ["node_modules"],
 		setupFiles: ["src/test/setup.ts"],
 		root: ".",
+		coverage: {
+			provider: "v8",
+			reporter: ["text", "cobertura"],
+			reportsDirectory: "coverage",
+			include: ["src/**/*.{ts,tsx}"],
+			exclude: ["src/**/*.test.{ts,tsx}", "src/test/**"],
+		},
 	},
 	resolve: {
 		alias: {

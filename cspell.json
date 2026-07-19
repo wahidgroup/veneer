@@ -3,6 +3,7 @@
 	"import": ["@wahidgroup/lint-rules/cspell"],
 	"words": [
 		"clsx",
+		"cobertura",
 		"cva",
 		"darraghor",
 		"elkjs",
@@ -36,6 +37,7 @@
 		"package-lock.json",
 		"npm-shrinkwrap.json",
 		"sbom.json",
+		"coverage",
 		"examples/node_modules",
 		"examples/dist",
 		"examples/package-lock.json",

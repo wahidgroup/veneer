@@ -201,11 +201,12 @@ Three-way toggles (light / dark / system) are an **app** concern: set `data-them
 make setup
 make lint
 make test
+make coverage
 make build
 make ci
 ```
 
-Watch kit tests: `npm run test:watch`. Fix lint: `make lint fix=1`. `make help` lists targets.
+Kit watch: `make test watch=1`. Cobertura: `make coverage`. Fix lint: `make lint fix=1`. `make help` lists targets.
 
 New components MUST follow [`docs/COMPONENT.md`](docs/COMPONENT.md).
 
