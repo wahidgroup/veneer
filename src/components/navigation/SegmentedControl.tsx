@@ -123,7 +123,7 @@ function SegmentedControl({
 			return;
 		}
 
-		let nextIndex = index;
+		let nextIndex: number;
 		if (event.key === "ArrowRight" || event.key === "ArrowDown") {
 			event.preventDefault();
 			nextIndex = (index + 1) % enabled.length;

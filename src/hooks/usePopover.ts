@@ -68,7 +68,7 @@ function usePopover({
 		const spaceAbove = rect.top - resolvedOffset - resolvedPadding;
 		const naturalHeight = floating.scrollHeight;
 
-		let placeBelow = true;
+		let placeBelow: boolean;
 		let maxHeight: number | undefined;
 		if (naturalHeight <= spaceBelow) {
 			placeBelow = true;

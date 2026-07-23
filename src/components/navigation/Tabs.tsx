@@ -174,7 +174,7 @@ function TabsTrigger({
 			return;
 		}
 
-		let nextIndex = index;
+		let nextIndex: number;
 		if (event.key === "ArrowRight") {
 			event.preventDefault();
 			nextIndex = (index + 1) % tabs.length;
