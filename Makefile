@@ -29,17 +29,6 @@ ifneq ($(filter 1,$(watch)),)
 TEST_WATCH := 1
 endif
 
-RELEASE_FLAGS :=
-ifneq ($(filter 1,$(dry-run)),)
-RELEASE_FLAGS += --dry-run
-endif
-ifneq ($(filter 1,$(allow-staged)),)
-RELEASE_FLAGS += --allow-staged
-endif
-ifneq ($(filter 1,$(yank)),)
-RELEASE_FLAGS += --yank
-endif
-
 RELEASE_VERSION := $(version)
 
 ifdef CI
@@ -194,7 +183,10 @@ ci:
 	$(MAKE) pack
 
 release: setup
-	@./scripts/release.sh "$(RELEASE_VERSION)" $(RELEASE_FLAGS)
+	@DRY_RUN="$(if $(filter 1,$(dry-run)),1,)" \
+		ALLOW_STAGED="$(if $(filter 1,$(allow-staged)),1,)" \
+		YANK="$(if $(filter 1,$(yank)),1,)" \
+		./scripts/release.sh "$(RELEASE_VERSION)"
 
 generate-api: setup
 	@echo "Refreshing OpenAPI spec + examples client types..."
