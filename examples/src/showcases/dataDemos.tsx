@@ -26,7 +26,6 @@ import {
 	MoneyAmount,
 	Pagination,
 	ResourceGraph,
-	SearchInput,
 	Select,
 	StatDisplay,
 	StatusBadge,

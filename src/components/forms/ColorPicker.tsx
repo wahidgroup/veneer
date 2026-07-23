@@ -228,7 +228,7 @@ function ColorPicker({
 	};
 
 	const onHueKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-		let nextH = hsv.h;
+		let nextH: number;
 		if (event.key === "ArrowRight" || event.key === "ArrowUp") {
 			event.preventDefault();
 			nextH = clampHue(hsv.h + 1);

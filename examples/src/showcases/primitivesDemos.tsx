@@ -3512,8 +3512,8 @@ function useResizablePanelDemo() {
 function ResizablePanelCanvas() {
 	const demo = useResizablePanelDemo();
 
-	let startLabel = "Start";
-	let endLabel = "End";
+	let startLabel: string;
+	let endLabel: string;
 	if (demo.orientation === "vertical") {
 		startLabel = "Top";
 		endLabel = "Bottom";
