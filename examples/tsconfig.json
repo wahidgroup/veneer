@@ -9,6 +9,7 @@
 		"noEmit": true,
 		"skipLibCheck": true,
 		"isolatedModules": true,
+		"types": ["vite/client"],
 		"paths": {
 			"@wahidgroup/veneer": ["../src/index.ts"],
 			"@wahidgroup/veneer/data-table": ["../src/data-table.ts"],
