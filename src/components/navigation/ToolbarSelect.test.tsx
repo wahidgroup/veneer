@@ -136,13 +136,7 @@ describe("ToolbarSelect", () => {
 	it("closes once on Escape and restores the trigger", async () => {
 		const user = userEvent.setup();
 
-		render(
-			<ToolbarSelect
-				aria-label="Account"
-				options={OPTIONS}
-				defaultValue="acct-1"
-			/>,
-		);
+		render(<ToolbarSelect aria-label="Account" options={OPTIONS} defaultValue="acct-1" />);
 
 		const trigger = screen.getByRole("button", { name: "Account: Prod" });
 		await user.click(trigger);

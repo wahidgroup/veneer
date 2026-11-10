@@ -27,9 +27,7 @@ test("action menu is visible and holds focus after open", async ({ page }) => {
 	).toBe(true);
 });
 
-test("consumed Escape closes the menu, stays marked, and still bubbles", async ({
-	page,
-}) => {
+test("consumed Escape closes the menu, stays marked, and still bubbles", async ({ page }) => {
 	await page.goto("/");
 	const trigger = page.getByRole("button", { name: "Stack" });
 	await trigger.click();
@@ -37,22 +35,14 @@ test("consumed Escape closes the menu, stays marked, and still bubbles", async (
 	await page.evaluate(() => {
 		document.addEventListener("keydown", (event) => {
 			document.body.dataset.escapeKey = event.key;
-			document.body.dataset.escapePrevented = String(
-				event.defaultPrevented,
-			);
+			document.body.dataset.escapePrevented = String(event.defaultPrevented);
 		});
 	});
 
 	await page.keyboard.press("Escape");
 	await expect(page.getByRole("menu")).toHaveCount(0);
-	await expect(page.locator("body")).toHaveAttribute(
-		"data-escape-key",
-		"Escape",
-	);
-	await expect(page.locator("body")).toHaveAttribute(
-		"data-escape-prevented",
-		"true",
-	);
+	await expect(page.locator("body")).toHaveAttribute("data-escape-key", "Escape");
+	await expect(page.locator("body")).toHaveAttribute("data-escape-prevented", "true");
 	await expect(trigger).toBeFocused();
 });
 
@@ -76,9 +66,7 @@ test("popover and toolbar select close once on Escape", async ({ page }) => {
 const pickerNames = ["Region", "Zone"] as const;
 
 for (const name of pickerNames) {
-	test(`escape leaves focus on the outside input for ${name}`, async ({
-		page,
-	}) => {
+	test(`escape leaves focus on the outside input for ${name}`, async ({ page }) => {
 		await page.goto("/");
 		const field = page.getByRole("combobox", { name });
 		await field.click();
@@ -91,9 +79,7 @@ for (const name of pickerNames) {
 		await expect(outside).toBeFocused();
 	});
 
-	test(`outside input press keeps focus and closes ${name}`, async ({
-		page,
-	}) => {
+	test(`outside input press keeps focus and closes ${name}`, async ({ page }) => {
 		await page.goto("/");
 		const field = page.getByRole("combobox", { name });
 		await field.click();
@@ -105,9 +91,7 @@ for (const name of pickerNames) {
 		await expect(outside).toBeFocused();
 	});
 
-	test(`inert press leaves ${name} unfocused and closed`, async ({
-		page,
-	}) => {
+	test(`inert press leaves ${name} unfocused and closed`, async ({ page }) => {
 		await page.goto("/");
 		const field = page.getByRole("combobox", { name });
 		await field.click();
@@ -135,9 +119,7 @@ test("consumer close keeps focus on the outside input", async ({ page }) => {
 
 	const outside = page.getByRole("textbox", { name: "Outside" });
 	await outside.focus();
-	await page
-		.getByRole("button", { name: "Dismiss panel" })
-		.dispatchEvent("click");
+	await page.getByRole("button", { name: "Dismiss panel" }).dispatchEvent("click");
 	await expect(page.getByRole("dialog")).toHaveCount(0);
 	await expect(outside).toBeFocused();
 });
@@ -148,22 +130,16 @@ test("escape closes a later modal before the combobox", async ({ page }) => {
 	await expect(page.getByRole("listbox")).toBeVisible();
 	await page.keyboard.press("Tab");
 	await page.keyboard.press("Enter");
-	await expect(
-		page.getByRole("dialog", { name: "Stacked notice" }),
-	).toBeVisible();
+	await expect(page.getByRole("dialog", { name: "Stacked notice" })).toBeVisible();
 	await expect(page.getByRole("listbox")).toBeVisible();
 	await page.keyboard.press("Escape");
-	await expect(
-		page.getByRole("dialog", { name: "Stacked notice" }),
-	).toHaveCount(0);
+	await expect(page.getByRole("dialog", { name: "Stacked notice" })).toHaveCount(0);
 	await expect(page.getByRole("listbox")).toBeVisible();
 	await page.keyboard.press("Escape");
 	await expect(page.getByRole("listbox")).toHaveCount(0);
 });
 
-test("a later modal paints over the combobox list where they overlap", async ({
-	page,
-}) => {
+test("a later modal paints over the combobox list where they overlap", async ({ page }) => {
 	await page.goto("/");
 	const listbox = page.getByRole("listbox");
 	await page.getByRole("combobox", { name: "Region" }).click();
@@ -176,10 +152,7 @@ test("a later modal paints over the combobox list where they overlap", async ({
 	expect(
 		await listbox.evaluate((node) => {
 			const rect = node.getBoundingClientRect();
-			const hit = document.elementFromPoint(
-				rect.left + rect.width / 2,
-				rect.top + rect.height / 2,
-			);
+			const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
 			const shell = document.querySelector("[data-slot='modal']");
 			return shell.contains(hit);
 		}),
@@ -187,18 +160,13 @@ test("a later modal paints over the combobox list where they overlap", async ({
 	expect(
 		await listbox.evaluate((node) => {
 			const rect = node.getBoundingClientRect();
-			const hit = document.elementFromPoint(
-				rect.left + rect.width / 2,
-				rect.top + rect.height / 2,
-			);
+			const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
 			return node.contains(hit);
 		}),
 	).toBe(false);
 });
 
-test("escape closes a select inside a drawer before the drawer", async ({
-	page,
-}) => {
+test("escape closes a select inside a drawer before the drawer", async ({ page }) => {
 	await page.goto("/");
 	await page.getByRole("button", { name: "Open drawer" }).click();
 	await expect(page.getByRole("dialog", { name: "Shelf" })).toBeVisible();
@@ -211,9 +179,7 @@ test("escape closes a select inside a drawer before the drawer", async ({
 	await expect(page.getByRole("dialog", { name: "Shelf" })).toHaveCount(0);
 });
 
-test("a child that prevents Escape leaves the popover open", async ({
-	page,
-}) => {
+test("a child that prevents Escape leaves the popover open", async ({ page }) => {
 	await page.goto("/");
 	await page.getByRole("button", { name: "Hold", exact: true }).click();
 	await expect(page.getByRole("dialog", { name: "Hold" })).toBeVisible();
@@ -269,17 +235,11 @@ const drawOrderCases = [
 ] as const;
 
 for (const entry of drawOrderCases) {
-	test(`drawn child ${entry.title} is on top and closes alone`, async ({
-		page,
-	}) => {
+	test(`drawn child ${entry.title} is on top and closes alone`, async ({ page }) => {
 		await page.goto("/");
 		await page.getByRole("button", { name: entry.openParent }).click();
-		await expect(
-			page.getByRole("dialog", { name: entry.parentName }),
-		).toBeVisible();
-		await page
-			.locator(entry.childLocator)
-			.click({ button: entry.childButton });
+		await expect(page.getByRole("dialog", { name: entry.parentName })).toBeVisible();
+		await page.locator(entry.childLocator).click({ button: entry.childButton });
 		const panel = page.locator(`[data-slot='${entry.panelSlot}']`);
 		await expect(panel).toBeVisible();
 		expect(
@@ -290,18 +250,13 @@ for (const entry of drawOrderCases) {
 		expect(
 			await panel.evaluate((node) => {
 				const rect = node.getBoundingClientRect();
-				const hit = document.elementFromPoint(
-					rect.left + rect.width / 2,
-					rect.top + rect.height / 2,
-				);
+				const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
 				return node.contains(hit);
 			}),
 		).toBe(true);
 		await page.keyboard.press("Escape");
 		await expect(panel).toHaveCount(0);
-		await expect(
-			page.getByRole("dialog", { name: entry.parentName }),
-		).toBeVisible();
+		await expect(page.getByRole("dialog", { name: entry.parentName })).toBeVisible();
 	});
 }
 
@@ -322,37 +277,21 @@ test.describe("app shell mobile dismiss", () => {
 	test.use({ viewport: { width: 390, height: 844 } });
 
 	for (const order of shellOrders) {
-		test(`one escape closes both panes opened ${order.title}`, async ({
-			page,
-		}) => {
+		test(`one escape closes both panes opened ${order.title}`, async ({ page }) => {
 			await page.goto("/");
-			await expect(
-				page.locator("[data-slot='app-shell']"),
-			).toHaveAttribute("data-viewport", "mobile");
+			await expect(page.locator("[data-slot='app-shell']")).toHaveAttribute("data-viewport", "mobile");
 			await page.getByRole("button", { name: order.first }).click();
 			await page.getByRole("button", { name: order.second }).click();
-			await expect(
-				page.locator("[data-slot='app-shell-backdrop']"),
-			).toHaveCount(1);
+			await expect(page.locator("[data-slot='app-shell-backdrop']")).toHaveCount(1);
 			await page.keyboard.press("Escape");
-			await expect(
-				page.locator("[data-slot='app-shell']"),
-			).toHaveAttribute("data-collapsed", "true");
-			await expect(
-				page.locator("[data-slot='app-shell']"),
-			).toHaveAttribute("data-rail-collapsed", "true");
-			await expect(
-				page.locator("[data-slot='app-shell-backdrop']"),
-			).toHaveCount(0);
+			await expect(page.locator("[data-slot='app-shell']")).toHaveAttribute("data-collapsed", "true");
+			await expect(page.locator("[data-slot='app-shell']")).toHaveAttribute("data-rail-collapsed", "true");
+			await expect(page.locator("[data-slot='app-shell-backdrop']")).toHaveCount(0);
 		});
 
-		test(`backdrop click closes both panes opened ${order.title}`, async ({
-			page,
-		}) => {
+		test(`backdrop click closes both panes opened ${order.title}`, async ({ page }) => {
 			await page.goto("/");
-			await expect(
-				page.locator("[data-slot='app-shell']"),
-			).toHaveAttribute("data-viewport", "mobile");
+			await expect(page.locator("[data-slot='app-shell']")).toHaveAttribute("data-viewport", "mobile");
 			await page.getByRole("button", { name: order.first }).click();
 			await page.getByRole("button", { name: order.second }).click();
 			const backdrop = page.locator("[data-slot='app-shell-backdrop']");
@@ -365,12 +304,8 @@ test.describe("app shell mobile dismiss", () => {
 				};
 			});
 			await page.mouse.click(point.x, point.y);
-			await expect(
-				page.locator("[data-slot='app-shell']"),
-			).toHaveAttribute("data-collapsed", "true");
-			await expect(
-				page.locator("[data-slot='app-shell']"),
-			).toHaveAttribute("data-rail-collapsed", "true");
+			await expect(page.locator("[data-slot='app-shell']")).toHaveAttribute("data-collapsed", "true");
+			await expect(page.locator("[data-slot='app-shell']")).toHaveAttribute("data-rail-collapsed", "true");
 			await expect(backdrop).toHaveCount(0);
 		});
 	}

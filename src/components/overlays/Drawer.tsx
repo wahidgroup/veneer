@@ -6,10 +6,7 @@ import { X } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
 import { lockBodyScroll } from "../../utils/lockBodyScroll.js";
-import {
-	DISMISS_LAYER_TIER_CLASS,
-	useDismissLayer,
-} from "../../overlays/dismissLayerStack.js";
+import { DISMISS_LAYER_TIER_CLASS, useDismissLayer } from "../../overlays/dismissLayerStack.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
 import { captureFocusRestore, focusInitial, restoreFocus, trapTabKey } from "../../utils/focusScope.js";

@@ -74,15 +74,13 @@ function ToolbarSelect({
 		currentValue = value;
 	}
 
-	const { setReference, setFloating, floatingStyles, focusable } = usePopover(
-		{
-			open,
-			onClose: () => {
-				setOpen(false);
-			},
-			matchTriggerWidth: false,
+	const { setReference, setFloating, floatingStyles, focusable } = usePopover({
+		open,
+		onClose: () => {
+			setOpen(false);
 		},
-	);
+		matchTriggerWidth: false,
+	});
 
 	useLayoutEffect(() => {
 		if (!focusable) {

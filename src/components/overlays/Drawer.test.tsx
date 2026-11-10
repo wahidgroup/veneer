@@ -55,40 +55,37 @@ describe("Drawer", () => {
 	it.each([
 		["Drawer", Drawer],
 		["Modal", Modal],
-	] as const)(
-		"%s skips Escape that a child already consumed",
-		async (_name, Overlay) => {
-			const user = userEvent.setup();
-			let open = true;
-			const keys: string[] = [];
+	] as const)("%s skips Escape that a child already consumed", async (_name, Overlay) => {
+		const user = userEvent.setup();
+		let open = true;
+		const keys: string[] = [];
 
-			render(
-				<Overlay
-					open={open}
-					title="Stacked"
-					onOpenChange={(next) => {
-						open = next;
+		render(
+			<Overlay
+				open={open}
+				title="Stacked"
+				onOpenChange={(next) => {
+					open = next;
+				}}
+			>
+				<button
+					type="button"
+					onKeyDown={(event) => {
+						event.preventDefault();
+						keys.push(event.key);
 					}}
 				>
-					<button
-						type="button"
-						onKeyDown={(event) => {
-							event.preventDefault();
-							keys.push(event.key);
-						}}
-					>
-						Inner
-					</button>
-				</Overlay>,
-			);
+					Inner
+				</button>
+			</Overlay>,
+		);
 
-			screen.getByRole("button", { name: "Inner" }).focus();
-			await user.keyboard("{Escape}");
-			expect(keys).toEqual(["Escape"]);
-			expect(open).toBe(true);
-			expect(screen.getByRole("dialog")).toBeInTheDocument();
-		},
-	);
+		screen.getByRole("button", { name: "Inner" }).focus();
+		await user.keyboard("{Escape}");
+		expect(keys).toEqual(["Escape"]);
+		expect(open).toBe(true);
+		expect(screen.getByRole("dialog")).toBeInTheDocument();
+	});
 
 	it("closes on Escape", async () => {
 		const user = userEvent.setup();

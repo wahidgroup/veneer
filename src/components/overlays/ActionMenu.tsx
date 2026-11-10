@@ -30,15 +30,13 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 	const menuId = useId();
 	const [open, setOpen] = useState(false);
 
-	const { setReference, setFloating, floatingStyles, focusable } = usePopover(
-		{
-			open,
-			onClose: () => {
-				setOpen(false);
-			},
-			matchTriggerWidth: false,
+	const { setReference, setFloating, floatingStyles, focusable } = usePopover({
+		open,
+		onClose: () => {
+			setOpen(false);
 		},
-	);
+		matchTriggerWidth: false,
+	});
 
 	useLayoutEffect(() => {
 		if (!focusable) {

@@ -22,10 +22,7 @@ export default defineConfig({
 			react: path.join(rootModules, "react"),
 			"react-dom": path.join(rootModules, "react-dom"),
 			"react/jsx-runtime": path.join(rootModules, "react/jsx-runtime.js"),
-			"react/jsx-dev-runtime": path.join(
-				rootModules,
-				"react/jsx-dev-runtime.js",
-			),
+			"react/jsx-dev-runtime": path.join(rootModules, "react/jsx-dev-runtime.js"),
 		},
 	},
 	server: {
