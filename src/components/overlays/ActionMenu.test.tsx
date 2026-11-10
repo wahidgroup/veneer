@@ -1,10 +1,30 @@
 import { render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
+import { useEffect } from "react";
 import { describe, expect, it } from "vitest";
 import { axe } from "vitest-axe";
 
 import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { ActionMenu } from "./ActionMenu.js";
+
+function EscapeLog({ entries }: { entries: boolean[] }) {
+	useEffect(() => {
+		function onKeyDown(event: KeyboardEvent) {
+			if (event.key !== "Escape") {
+				return;
+			}
+
+			entries.push(event.defaultPrevented);
+		}
+
+		document.body.addEventListener("keydown", onKeyDown);
+		return () => {
+			document.body.removeEventListener("keydown", onKeyDown);
+		};
+	}, [entries]);
+
+	return null;
+}
 
 describe("ActionMenu", () => {
 	it("opens, selects an item, and closes", async () => {
@@ -78,6 +98,93 @@ describe("ActionMenu", () => {
 
 		await user.click(screen.getByRole("menuitem", { name: "Ok" }));
 		expect(selected).toBe("ok");
+	});
+
+	it("focuses inside a visible menu after open", async () => {
+		const user = userEvent.setup();
+
+		render(
+			<ActionMenu
+				items={[
+					{
+						key: "a",
+						label: "Alpha",
+						onSelect: () => {
+							/* intentional no-op */
+						},
+					},
+					{
+						key: "b",
+						label: "Beta",
+						onSelect: () => {
+							/* intentional no-op */
+						},
+					},
+				]}
+			/>,
+		);
+
+		await user.click(screen.getByRole("button", { name: /Actions/ }));
+		const menu = screen.getByRole("menu");
+		expect(window.getComputedStyle(menu).visibility).toBe("visible");
+		expect(menu.contains(document.activeElement)).toBe(true);
+	});
+
+	it("consumes Escape, keeps it bubbling, and restores the trigger", async () => {
+		const user = userEvent.setup();
+		const prevented: boolean[] = [];
+
+		render(
+			<>
+				<EscapeLog entries={prevented} />
+				<ActionMenu
+					label="Stack"
+					items={[
+						{
+							key: "a",
+							label: "Alpha",
+							onSelect: () => {
+								/* intentional no-op */
+							},
+						},
+					]}
+				/>
+			</>,
+		);
+
+		const trigger = screen.getByRole("button", { name: /Stack/ });
+		await user.click(trigger);
+		await user.keyboard("{Escape}");
+		expect(prevented).toEqual([true]);
+		expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+		expect(trigger).toHaveFocus();
+	});
+
+	it("leaves Escape unmarked while the menu is closed", async () => {
+		const user = userEvent.setup();
+		const prevented: boolean[] = [];
+
+		render(
+			<>
+				<EscapeLog entries={prevented} />
+				<ActionMenu
+					items={[
+						{
+							key: "a",
+							label: "Alpha",
+							onSelect: () => {
+								/* intentional no-op */
+							},
+						},
+					]}
+				/>
+			</>,
+		);
+
+		screen.getByRole("button", { name: /Actions/ }).focus();
+		await user.keyboard("{Escape}");
+		expect(prevented).toEqual([false]);
+		expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 	});
 
 	it("moves focus with arrow keys", async () => {

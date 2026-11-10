@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 
 import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { Drawer } from "./Drawer.js";
+import { Modal } from "./Modal.js";
 
 function noopOpenChange(_open: boolean): void {
 	/* intentional no-op for closed/static renders */
@@ -62,6 +63,44 @@ describe("Drawer", () => {
 				document.querySelector('[data-slot="drawer"]'),
 			);
 			expect(shell).toHaveAttribute("data-side", side);
+			expect(screen.getByRole("dialog")).toBeInTheDocument();
+		},
+	);
+
+	it.each([
+		["Drawer", Drawer],
+		["Modal", Modal],
+	] as const)(
+		"%s skips Escape that a child already consumed",
+		async (_name, Overlay) => {
+			const user = userEvent.setup();
+			let open = true;
+			const keys: string[] = [];
+
+			render(
+				<Overlay
+					open={open}
+					title="Stacked"
+					onOpenChange={(next) => {
+						open = next;
+					}}
+				>
+					<button
+						type="button"
+						onKeyDown={(event) => {
+							event.preventDefault();
+							keys.push(event.key);
+						}}
+					>
+						Inner
+					</button>
+				</Overlay>,
+			);
+
+			screen.getByRole("button", { name: "Inner" }).focus();
+			await user.keyboard("{Escape}");
+			expect(keys).toEqual(["Escape"]);
+			expect(open).toBe(true);
 			expect(screen.getByRole("dialog")).toBeInTheDocument();
 		},
 	);

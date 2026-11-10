@@ -1,6 +1,6 @@
 import type { KeyboardEvent, ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
-import { useEffect, useId, useState } from "react";
+import { useId, useLayoutEffect, useState } from "react";
 
 import { usePopover } from "../../hooks/usePopover.js";
 import { cn } from "../../utils/cn.js";
@@ -80,16 +80,18 @@ function ToolbarSelect({
 		currentValue = value;
 	}
 
-	const { setReference, setFloating, floatingStyles } = usePopover({
-		open,
-		onClose: () => {
-			setOpen(false);
+	const { setReference, setFloating, floatingStyles, focusable } = usePopover(
+		{
+			open,
+			onClose: () => {
+				setOpen(false);
+			},
+			matchTriggerWidth: false,
 		},
-		matchTriggerWidth: false,
-	});
+	);
 
-	useEffect(() => {
-		if (!open) {
+	useLayoutEffect(() => {
+		if (!focusable) {
 			return;
 		}
 
@@ -116,7 +118,7 @@ function ToolbarSelect({
 		if (focusTarget !== undefined) {
 			focusTarget.focus();
 		}
-	}, [open, listboxId, currentValue]);
+	}, [focusable, listboxId, currentValue]);
 
 	function commitValue(next: string) {
 		if (!isControlled) {

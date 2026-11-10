@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useEffect, useId, useState } from "react";
+import { useId, useLayoutEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import type {
@@ -37,21 +37,23 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 	const menuId = useId();
 	const [open, setOpen] = useState(false);
 
-	const { setReference, setFloating, floatingStyles } = usePopover({
-		open,
-		onClose: () => {
-			setOpen(false);
+	const { setReference, setFloating, floatingStyles, focusable } = usePopover(
+		{
+			open,
+			onClose: () => {
+				setOpen(false);
+			},
+			matchTriggerWidth: false,
 		},
-		matchTriggerWidth: false,
-	});
+	);
 
-	useEffect(() => {
-		if (!open) {
+	useLayoutEffect(() => {
+		if (!focusable) {
 			return;
 		}
 
 		focusFirstMenuItem(menuId);
-	}, [open, menuId]);
+	}, [focusable, menuId]);
 
 	let menuNode: ReactNode = null;
 	if (open) {

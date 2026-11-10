@@ -26,6 +26,7 @@ function allocatePort(envKey: string): string {
 
 const API_PORT = allocatePort("E2E_API_PORT");
 const UI_PORT = allocatePort("E2E_UI_PORT");
+const PROOF_PORT = allocatePort("E2E_PROOF_PORT");
 
 const webServerEnv = {
 	...process.env,
@@ -64,6 +65,16 @@ export default defineConfig({
 			cwd: ROOT,
 			env: webServerEnv,
 			url: `http://127.0.0.1:${UI_PORT}`,
+			reuseExistingServer: !process.env.CI,
+			timeout: 180_000,
+			stdout: "pipe",
+			stderr: "pipe",
+		},
+		{
+			command: `npx vite --config overlay-focus.vite.config.ts --host 127.0.0.1 --port ${PROOF_PORT} --strictPort`,
+			cwd: resolve(ROOT, "examples"),
+			env: webServerEnv,
+			url: `http://127.0.0.1:${PROOF_PORT}`,
 			reuseExistingServer: !process.env.CI,
 			timeout: 180_000,
 			stdout: "pipe",

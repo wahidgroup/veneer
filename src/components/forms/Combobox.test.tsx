@@ -241,6 +241,29 @@ describe("Combobox", () => {
 		);
 	});
 
+	it("closes once on Escape", async () => {
+		const user = userEvent.setup();
+		const queries: string[] = [];
+
+		render(
+			<Combobox
+				options={OPTIONS}
+				value=""
+				onChange={ignoreSingle}
+				onSearchChange={(query) => {
+					queries.push(query);
+				}}
+			/>,
+		);
+
+		const input = screen.getByRole("combobox");
+		await user.click(input);
+		await user.type(input, "a");
+		await user.keyboard("{Escape}");
+		expect(queries).toEqual(["a", ""]);
+		expect(screen.queryByRole("listbox")).toBeNull();
+	});
+
 	it("closes on Escape", async () => {
 		const user = userEvent.setup();
 

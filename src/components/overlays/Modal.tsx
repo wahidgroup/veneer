@@ -62,6 +62,10 @@ function Modal({
 
 		function onKeyDown(event: KeyboardEvent) {
 			if (event.key === "Escape") {
+				if (event.defaultPrevented) {
+					return;
+				}
+
 				event.preventDefault();
 				onOpenChange(false);
 				return;

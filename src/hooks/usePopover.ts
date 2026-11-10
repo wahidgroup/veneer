@@ -7,6 +7,8 @@ import {
 	useState,
 } from "react";
 
+import { captureFocusRestore, restoreFocus } from "../utils/focusScope.js";
+
 interface UsePopoverOptions {
 	open: boolean;
 	onClose: () => void;
@@ -19,6 +21,11 @@ interface UsePopoverReturn {
 	setReference: (node: HTMLElement | null) => void;
 	setFloating: (node: HTMLElement | null) => void;
 	floatingStyles: CSSProperties;
+	/**
+	 * True on the commit whose `floatingStyles` are `visibility: visible`.
+	 * Focus then; Chromium rejects focus while the panel is hidden.
+	 */
+	focusable: boolean;
 }
 
 const HIDDEN_STYLES: CSSProperties = {
@@ -49,8 +56,14 @@ function usePopover({
 
 	const referenceRef = useRef<HTMLElement | null>(null);
 	const floatingRef = useRef<HTMLElement | null>(null);
+	const onCloseRef = useRef(onClose);
+	const restoreTargetRef = useRef<HTMLElement | null>(null);
 	const [floatingStyles, setFloatingStyles] =
 		useState<CSSProperties>(HIDDEN_STYLES);
+
+	useLayoutEffect(() => {
+		onCloseRef.current = onClose;
+	}, [onClose]);
 
 	const update = useCallback(() => {
 		const reference = referenceRef.current;
@@ -126,6 +139,18 @@ function usePopover({
 		setFloatingStyles(next);
 	}, [resolvedOffset, resolvedPadding, matchWidth]);
 
+	const handleDismissKey = useCallback((event: KeyboardEvent) => {
+		if (event.key !== "Escape") {
+			return;
+		}
+		if (event.defaultPrevented) {
+			return;
+		}
+
+		event.preventDefault();
+		onCloseRef.current();
+	}, []);
+
 	const setReference = useCallback(
 		(node: HTMLElement | null) => {
 			referenceRef.current = node;
@@ -138,13 +163,40 @@ function usePopover({
 
 	const setFloating = useCallback(
 		(node: HTMLElement | null) => {
+			const previous = floatingRef.current;
+			if (previous !== null && previous !== node) {
+				previous.removeEventListener("keydown", handleDismissKey);
+			}
+
 			floatingRef.current = node;
-			if (node !== null && open) {
+			if (node === null) {
+				return;
+			}
+
+			node.removeEventListener("keydown", handleDismissKey);
+			node.addEventListener("keydown", handleDismissKey);
+			if (open) {
 				update();
 			}
 		},
-		[open, update],
+		[open, update, handleDismissKey],
 	);
+
+	useLayoutEffect(() => {
+		if (!open) {
+			return;
+		}
+
+		restoreTargetRef.current = captureFocusRestore();
+
+		return () => {
+			const target = restoreTargetRef.current;
+			restoreTargetRef.current = null;
+			if (target?.isConnected === true) {
+				restoreFocus(target);
+			}
+		};
+	}, [open]);
 
 	useLayoutEffect(() => {
 		if (!open) {
@@ -211,25 +263,24 @@ function usePopover({
 				return;
 			}
 
-			onClose();
-		};
-
-		const handleKey = (event: KeyboardEvent) => {
-			if (event.key === "Escape") {
-				onClose();
-			}
+			onCloseRef.current();
 		};
 
 		document.addEventListener("mousedown", handlePointer);
-		document.addEventListener("keydown", handleKey);
+		document.addEventListener("keydown", handleDismissKey);
 
 		return () => {
 			document.removeEventListener("mousedown", handlePointer);
-			document.removeEventListener("keydown", handleKey);
+			document.removeEventListener("keydown", handleDismissKey);
 		};
-	}, [open, onClose]);
+	}, [open, handleDismissKey]);
 
-	return { setReference, setFloating, floatingStyles };
+	let focusable = false;
+	if (open && floatingStyles.visibility === "visible") {
+		focusable = true;
+	}
+
+	return { setReference, setFloating, floatingStyles, focusable };
 }
 
 export type { UsePopoverOptions, UsePopoverReturn };
