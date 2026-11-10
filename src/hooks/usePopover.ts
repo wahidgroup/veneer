@@ -7,6 +7,9 @@ import {
 	useState,
 } from "react";
 
+import { useDismissLayer } from "../overlays/dismissLayerStack.js";
+import { captureFocusRestore, restoreFocus } from "../utils/focusScope.js";
+
 interface UsePopoverOptions {
 	open: boolean;
 	onClose: () => void;
@@ -19,6 +22,11 @@ interface UsePopoverReturn {
 	setReference: (node: HTMLElement | null) => void;
 	setFloating: (node: HTMLElement | null) => void;
 	floatingStyles: CSSProperties;
+	/**
+	 * True on the commit whose `floatingStyles` are `visibility: visible`.
+	 * Focus then; Chromium rejects focus while the panel is hidden.
+	 */
+	focusable: boolean;
 }
 
 const HIDDEN_STYLES: CSSProperties = {
@@ -28,8 +36,27 @@ const HIDDEN_STYLES: CSSProperties = {
 	visibility: "hidden",
 };
 
+type DismissReason = "escape" | "outside-press";
+
+/**
+ * True when focus is on the document body or absent.
+ * A trigger that already holds focus is not focused again.
+ */
+function shouldRestoreTrigger(trigger: HTMLElement): boolean {
+	const active = document.activeElement;
+	if (active === trigger) {
+		return false;
+	}
+	if (active === null || active === document.body) {
+		return true;
+	}
+
+	return false;
+}
+
 /**
  * Positions a portaled panel under a trigger; dismisses on outside press or Escape.
+ * The floating node is mounted only while open, so focus that was inside it reads as body at the restore site.
  */
 function usePopover({
 	open,
@@ -49,8 +76,15 @@ function usePopover({
 
 	const referenceRef = useRef<HTMLElement | null>(null);
 	const floatingRef = useRef<HTMLElement | null>(null);
+	const onCloseRef = useRef(onClose);
+	const restoreTargetRef = useRef<HTMLElement | null>(null);
+	const dismissReasonRef = useRef<DismissReason | null>(null);
 	const [floatingStyles, setFloatingStyles] =
 		useState<CSSProperties>(HIDDEN_STYLES);
+
+	useLayoutEffect(() => {
+		onCloseRef.current = onClose;
+	}, [onClose]);
 
 	const update = useCallback(() => {
 		const reference = referenceRef.current;
@@ -126,6 +160,14 @@ function usePopover({
 		setFloatingStyles(next);
 	}, [resolvedOffset, resolvedPadding, matchWidth]);
 
+	useDismissLayer({
+		open,
+		onEscape: () => {
+			dismissReasonRef.current = "escape";
+			onCloseRef.current();
+		},
+	});
+
 	const setReference = useCallback(
 		(node: HTMLElement | null) => {
 			referenceRef.current = node;
@@ -145,6 +187,33 @@ function usePopover({
 		},
 		[open, update],
 	);
+
+	useLayoutEffect(() => {
+		if (!open) {
+			return;
+		}
+
+		restoreTargetRef.current = captureFocusRestore();
+
+		return () => {
+			const target = restoreTargetRef.current;
+			const reason = dismissReasonRef.current;
+			restoreTargetRef.current = null;
+			dismissReasonRef.current = null;
+
+			if (reason === "outside-press") {
+				return;
+			}
+			if (target?.isConnected !== true) {
+				return;
+			}
+			if (!shouldRestoreTrigger(target)) {
+				return;
+			}
+
+			restoreFocus(target);
+		};
+	}, [open]);
 
 	useLayoutEffect(() => {
 		if (!open) {
@@ -211,25 +280,23 @@ function usePopover({
 				return;
 			}
 
-			onClose();
-		};
-
-		const handleKey = (event: KeyboardEvent) => {
-			if (event.key === "Escape") {
-				onClose();
-			}
+			dismissReasonRef.current = "outside-press";
+			onCloseRef.current();
 		};
 
 		document.addEventListener("mousedown", handlePointer);
-		document.addEventListener("keydown", handleKey);
 
 		return () => {
 			document.removeEventListener("mousedown", handlePointer);
-			document.removeEventListener("keydown", handleKey);
 		};
-	}, [open, onClose]);
+	}, [open]);
 
-	return { setReference, setFloating, floatingStyles };
+	let focusable = false;
+	if (open && floatingStyles.visibility === "visible") {
+		focusable = true;
+	}
+
+	return { setReference, setFloating, floatingStyles, focusable };
 }
 
 export type { UsePopoverOptions, UsePopoverReturn };

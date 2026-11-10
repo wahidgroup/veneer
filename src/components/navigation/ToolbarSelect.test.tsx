@@ -157,6 +157,25 @@ describe("ToolbarSelect", () => {
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 	});
 
+	it("closes once on Escape and restores the trigger", async () => {
+		const user = userEvent.setup();
+
+		render(
+			<ToolbarSelect
+				aria-label="Account"
+				options={OPTIONS}
+				defaultValue="acct-1"
+			/>,
+		);
+
+		const trigger = screen.getByRole("button", { name: "Account: Prod" });
+		await user.click(trigger);
+		expect(screen.getByRole("listbox")).toBeInTheDocument();
+		await user.keyboard("{Escape}");
+		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
+		expect(trigger).toHaveFocus();
+	});
+
 	it("supports Home, End, and Escape", async () => {
 		const user = userEvent.setup();
 

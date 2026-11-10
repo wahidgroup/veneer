@@ -32,6 +32,27 @@ describe("Popover", () => {
 		expect(opens.at(-1)).toBe(false);
 	});
 
+	it("closes once on Escape", async () => {
+		const user = userEvent.setup();
+		const opens: boolean[] = [];
+
+		render(
+			<Popover
+				trigger="Details"
+				onOpenChange={(open) => {
+					opens.push(open);
+				}}
+			>
+				<button type="button">Inside</button>
+			</Popover>,
+		);
+
+		await user.click(screen.getByRole("button", { name: "Details" }));
+		await user.keyboard("{Escape}");
+		expect(opens).toEqual([true, false]);
+		expect(screen.queryByRole("dialog")).toBeNull();
+	});
+
 	it("allows focusing interactive content inside", async () => {
 		const user = userEvent.setup();
 

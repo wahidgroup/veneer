@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { useEffect, useId, useState } from "react";
+import { useId, useLayoutEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
 import type {
@@ -8,6 +8,7 @@ import type {
 	ActionMenuItem,
 } from "./actionMenuList.js";
 import { usePopover } from "../../hooks/usePopover.js";
+import { DISMISS_LAYER_TIER_CLASS } from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
@@ -37,21 +38,23 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 	const menuId = useId();
 	const [open, setOpen] = useState(false);
 
-	const { setReference, setFloating, floatingStyles } = usePopover({
-		open,
-		onClose: () => {
-			setOpen(false);
+	const { setReference, setFloating, floatingStyles, focusable } = usePopover(
+		{
+			open,
+			onClose: () => {
+				setOpen(false);
+			},
+			matchTriggerWidth: false,
 		},
-		matchTriggerWidth: false,
-	});
+	);
 
-	useEffect(() => {
-		if (!open) {
+	useLayoutEffect(() => {
+		if (!focusable) {
 			return;
 		}
 
 		focusFirstMenuItem(menuId);
-	}, [open, menuId]);
+	}, [focusable, menuId]);
 
 	let menuNode: ReactNode = null;
 	if (open) {
@@ -65,7 +68,8 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 					tabIndex={-1}
 					style={floatingStyles}
 					className={cn(
-						"z-dropdown min-w-44 overflow-auto rounded-md border border-border bg-card py-1 shadow-md",
+						DISMISS_LAYER_TIER_CLASS,
+						"min-w-44 overflow-auto rounded-md border border-border bg-card py-1 shadow-md",
 					)}
 					onKeyDown={onActionMenuKeyDown}
 				>

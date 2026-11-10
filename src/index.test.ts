@@ -173,6 +173,7 @@ const EXPECTED_EXPORTS = new Set([
 	"toastVariants",
 	"useControllableState",
 	"useDebounce",
+	"useDismissLayer",
 ]);
 
 const EXPECTED_DATA_TABLE_EXPORTS = new Set([
