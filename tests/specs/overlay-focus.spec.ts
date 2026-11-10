@@ -161,6 +161,41 @@ test("escape closes a later modal before the combobox", async ({ page }) => {
 	await expect(page.getByRole("listbox")).toHaveCount(0);
 });
 
+test("a later modal paints over the combobox list where they overlap", async ({
+	page,
+}) => {
+	await page.goto("/");
+	const listbox = page.getByRole("listbox");
+	await page.getByRole("combobox", { name: "Region" }).click();
+	await expect(listbox).toBeVisible();
+	await page.keyboard.press("Tab");
+	await page.keyboard.press("Enter");
+	const modal = page.locator("[data-slot='modal']");
+	await expect(modal).toBeVisible();
+	await expect(listbox).toBeVisible();
+	expect(
+		await listbox.evaluate((node) => {
+			const rect = node.getBoundingClientRect();
+			const hit = document.elementFromPoint(
+				rect.left + rect.width / 2,
+				rect.top + rect.height / 2,
+			);
+			const shell = document.querySelector("[data-slot='modal']");
+			return shell.contains(hit);
+		}),
+	).toBe(true);
+	expect(
+		await listbox.evaluate((node) => {
+			const rect = node.getBoundingClientRect();
+			const hit = document.elementFromPoint(
+				rect.left + rect.width / 2,
+				rect.top + rect.height / 2,
+			);
+			return node.contains(hit);
+		}),
+	).toBe(false);
+});
+
 test("escape closes a select inside a drawer before the drawer", async ({
 	page,
 }) => {
@@ -196,6 +231,149 @@ test("escape closes a context menu before its drawer", async ({ page }) => {
 	await page.keyboard.press("Escape");
 	await expect(page.getByRole("menu")).toHaveCount(0);
 	await expect(page.getByRole("dialog", { name: "Shelf" })).toBeVisible();
+});
+
+const drawOrderCases = [
+	{
+		title: "select inside modal",
+		openParent: "Open select modal",
+		parentName: "Select modal",
+		childLocator: "[aria-label='Modal zone']",
+		childButton: "left",
+		panelSlot: "select-listbox",
+	},
+	{
+		title: "popover inside modal",
+		openParent: "Open popover modal",
+		parentName: "Popover modal",
+		childLocator: "role=button[name='Modal popover']",
+		childButton: "left",
+		panelSlot: "popover-content",
+	},
+	{
+		title: "select inside drawer",
+		openParent: "Open drawer",
+		parentName: "Shelf",
+		childLocator: "[aria-label='Shelf zone']",
+		childButton: "left",
+		panelSlot: "select-listbox",
+	},
+	{
+		title: "context menu inside drawer",
+		openParent: "Open drawer",
+		parentName: "Shelf",
+		childLocator: "text='Shelf row'",
+		childButton: "right",
+		panelSlot: "context-menu-panel",
+	},
+] as const;
+
+for (const entry of drawOrderCases) {
+	test(`drawn child ${entry.title} is on top and closes alone`, async ({
+		page,
+	}) => {
+		await page.goto("/");
+		await page.getByRole("button", { name: entry.openParent }).click();
+		await expect(
+			page.getByRole("dialog", { name: entry.parentName }),
+		).toBeVisible();
+		await page
+			.locator(entry.childLocator)
+			.click({ button: entry.childButton });
+		const panel = page.locator(`[data-slot='${entry.panelSlot}']`);
+		await expect(panel).toBeVisible();
+		expect(
+			await panel.evaluate((node) => {
+				return getComputedStyle(node).zIndex;
+			}),
+		).toBe("100");
+		expect(
+			await panel.evaluate((node) => {
+				const rect = node.getBoundingClientRect();
+				const hit = document.elementFromPoint(
+					rect.left + rect.width / 2,
+					rect.top + rect.height / 2,
+				);
+				return node.contains(hit);
+			}),
+		).toBe(true);
+		await page.keyboard.press("Escape");
+		await expect(panel).toHaveCount(0);
+		await expect(
+			page.getByRole("dialog", { name: entry.parentName }),
+		).toBeVisible();
+	});
+}
+
+const shellOrders = [
+	{
+		title: "rail then drawer",
+		first: "Open shell rail",
+		second: "Open shell drawer",
+	},
+	{
+		title: "drawer then rail",
+		first: "Open shell drawer",
+		second: "Open shell rail",
+	},
+] as const;
+
+test.describe("app shell mobile dismiss", () => {
+	test.use({ viewport: { width: 390, height: 844 } });
+
+	for (const order of shellOrders) {
+		test(`one escape closes both panes opened ${order.title}`, async ({
+			page,
+		}) => {
+			await page.goto("/");
+			await expect(
+				page.locator("[data-slot='app-shell']"),
+			).toHaveAttribute("data-viewport", "mobile");
+			await page.getByRole("button", { name: order.first }).click();
+			await page.getByRole("button", { name: order.second }).click();
+			await expect(
+				page.locator("[data-slot='app-shell-backdrop']"),
+			).toHaveCount(1);
+			await page.keyboard.press("Escape");
+			await expect(
+				page.locator("[data-slot='app-shell']"),
+			).toHaveAttribute("data-collapsed", "true");
+			await expect(
+				page.locator("[data-slot='app-shell']"),
+			).toHaveAttribute("data-rail-collapsed", "true");
+			await expect(
+				page.locator("[data-slot='app-shell-backdrop']"),
+			).toHaveCount(0);
+		});
+
+		test(`backdrop click closes both panes opened ${order.title}`, async ({
+			page,
+		}) => {
+			await page.goto("/");
+			await expect(
+				page.locator("[data-slot='app-shell']"),
+			).toHaveAttribute("data-viewport", "mobile");
+			await page.getByRole("button", { name: order.first }).click();
+			await page.getByRole("button", { name: order.second }).click();
+			const backdrop = page.locator("[data-slot='app-shell-backdrop']");
+			await expect(backdrop).toHaveCount(1);
+			const point = await backdrop.evaluate((node) => {
+				const rect = node.getBoundingClientRect();
+				return {
+					x: rect.right - 8,
+					y: rect.top + 8,
+				};
+			});
+			await page.mouse.click(point.x, point.y);
+			await expect(
+				page.locator("[data-slot='app-shell']"),
+			).toHaveAttribute("data-collapsed", "true");
+			await expect(
+				page.locator("[data-slot='app-shell']"),
+			).toHaveAttribute("data-rail-collapsed", "true");
+			await expect(backdrop).toHaveCount(0);
+		});
+	}
 });
 
 test("option picker closes once on Escape", async ({ page }) => {

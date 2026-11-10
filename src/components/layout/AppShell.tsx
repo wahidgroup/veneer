@@ -192,23 +192,6 @@ function AppShell({
 		}
 	}, [viewport, onRailCollapsedChange, onSidebarCollapsedChange]);
 
-	useDismissLayer({
-		open: drawerOpen,
-		onEscape: () => {
-			if (onSidebarCollapsedChange !== undefined) {
-				onSidebarCollapsedChange(true);
-			}
-		},
-	});
-	useDismissLayer({
-		open: railOverlayOpen,
-		onEscape: () => {
-			if (onRailCollapsedChange !== undefined) {
-				onRailCollapsedChange(true);
-			}
-		},
-	});
-
 	function dismissOverlays() {
 		if (railOverlayOpen && onRailCollapsedChange !== undefined) {
 			onRailCollapsedChange(true);
@@ -217,6 +200,11 @@ function AppShell({
 			onSidebarCollapsedChange(true);
 		}
 	}
+
+	useDismissLayer({
+		open: drawerOpen || railOverlayOpen,
+		onEscape: dismissOverlays,
+	});
 
 	let headerNode: ReactNode = null;
 	if (header !== undefined) {

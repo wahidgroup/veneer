@@ -10,6 +10,12 @@ interface UseDismissLayerOptions {
 }
 
 /**
+ * Every portaled dismiss layer paints in this tier.
+ * DOM mount order breaks ties. This is the S-ORDER invariant.
+ */
+const DISMISS_LAYER_TIER_CLASS = "z-modal";
+
+/**
  * One bubble-phase document listener for every open dismiss layer.
  * The listener is added on the first push and removed on the last pop.
  */
@@ -121,4 +127,4 @@ function useDismissLayer({ open, onEscape }: UseDismissLayerOptions): void {
 }
 
 export type { DismissLayer, UseDismissLayerOptions };
-export { DismissLayerStack, useDismissLayer };
+export { DISMISS_LAYER_TIER_CLASS, DismissLayerStack, useDismissLayer };

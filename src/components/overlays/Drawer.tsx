@@ -6,7 +6,10 @@ import { X } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
 import { lockBodyScroll } from "../../utils/lockBodyScroll.js";
-import { useDismissLayer } from "../../overlays/dismissLayerStack.js";
+import {
+	DISMISS_LAYER_TIER_CLASS,
+	useDismissLayer,
+} from "../../overlays/dismissLayerStack.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
 import {
@@ -128,15 +131,16 @@ function Drawer({
 		return null;
 	}
 
-	let shellClass = "fixed inset-0 z-modal flex justify-end";
+	const shellTier = "fixed inset-0 " + DISMISS_LAYER_TIER_CLASS;
+	let shellClass = shellTier + " flex justify-end";
 	if (resolvedSide === "left") {
-		shellClass = "fixed inset-0 z-modal flex justify-start";
+		shellClass = shellTier + " flex justify-start";
 	}
 	if (resolvedSide === "top") {
-		shellClass = "fixed inset-0 z-modal flex flex-col justify-start";
+		shellClass = shellTier + " flex flex-col justify-start";
 	}
 	if (resolvedSide === "bottom") {
-		shellClass = "fixed inset-0 z-modal flex flex-col justify-end";
+		shellClass = shellTier + " flex flex-col justify-end";
 	}
 
 	let closeControl: ReactNode = null;

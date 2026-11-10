@@ -2,6 +2,7 @@ import { useState } from "react";
 
 import {
 	ActionMenu,
+	AppShell,
 	Combobox,
 	ContextMenu,
 	Drawer,
@@ -44,8 +45,12 @@ function OverlayFocusProof() {
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [holdOpen, setHoldOpen] = useState(false);
+	const [popoverModalOpen, setPopoverModalOpen] = useState(false);
 	const [popoverOpens, setPopoverOpens] = useState<boolean[]>([]);
 	const [queries, setQueries] = useState<string[]>([]);
+	const [selectModalOpen, setSelectModalOpen] = useState(false);
+	const [shellDrawerCollapsed, setShellDrawerCollapsed] = useState(true);
+	const [shellRailCollapsed, setShellRailCollapsed] = useState(true);
 
 	return (
 		<main>
@@ -149,6 +154,69 @@ function OverlayFocusProof() {
 				</ContextMenu>
 			</Drawer>
 			<p data-testid="queries">{queries.join("|")}</p>
+			<button
+				type="button"
+				onClick={() => {
+					setSelectModalOpen(true);
+				}}
+			>
+				Open select modal
+			</button>
+			<Modal
+				open={selectModalOpen}
+				title="Select modal"
+				onOpenChange={setSelectModalOpen}
+			>
+				<Select
+					aria-label="Modal zone"
+					options={ZONE_OPTIONS}
+					defaultValue=""
+				/>
+			</Modal>
+			<button
+				type="button"
+				onClick={() => {
+					setPopoverModalOpen(true);
+				}}
+			>
+				Open popover modal
+			</button>
+			<Modal
+				open={popoverModalOpen}
+				title="Popover modal"
+				onOpenChange={setPopoverModalOpen}
+			>
+				<Popover trigger="Modal popover" title="Nested popover">
+					<p>Popover body</p>
+				</Popover>
+			</Modal>
+			<button
+				type="button"
+				onClick={() => {
+					setShellRailCollapsed(false);
+				}}
+			>
+				Open shell rail
+			</button>
+			<button
+				type="button"
+				onClick={() => {
+					setShellDrawerCollapsed(false);
+				}}
+			>
+				Open shell drawer
+			</button>
+			<AppShell
+				railPosition="bottom"
+				sidebarCollapsed={shellDrawerCollapsed}
+				onSidebarCollapsedChange={setShellDrawerCollapsed}
+				railCollapsed={shellRailCollapsed}
+				onRailCollapsedChange={setShellRailCollapsed}
+				sidebar={<div>Nav</div>}
+				rail={<div>Knobs</div>}
+			>
+				Shell body
+			</AppShell>
 		</main>
 	);
 }

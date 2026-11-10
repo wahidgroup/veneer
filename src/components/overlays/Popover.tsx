@@ -3,6 +3,7 @@ import { useId } from "react";
 
 import { useControllableState } from "../../hooks/useControllableState.js";
 import { usePopover } from "../../hooks/usePopover.js";
+import { DISMISS_LAYER_TIER_CLASS } from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
@@ -87,7 +88,8 @@ function Popover({
 					data-slot="popover-content"
 					style={floatingStyles}
 					className={cn(
-						"z-50 max-w-xs rounded-md border border-border bg-popover p-3",
+						DISMISS_LAYER_TIER_CLASS,
+						"max-w-xs rounded-md border border-border bg-popover p-3",
 						"text-sm text-popover-foreground shadow-md outline-none",
 						className,
 					)}

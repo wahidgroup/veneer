@@ -2,7 +2,10 @@ import type { MouseEvent, ReactNode } from "react";
 import { useEffect, useId, useRef, useState } from "react";
 
 import type { ActionMenuEntry } from "./actionMenuList.js";
-import { useDismissLayer } from "../../overlays/dismissLayerStack.js";
+import {
+	DISMISS_LAYER_TIER_CLASS,
+	useDismissLayer,
+} from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Portal } from "./Portal.js";
 import {
@@ -101,7 +104,8 @@ function ContextMenu({ items, children, className }: ContextMenuProps) {
 						visibility: "visible",
 					}}
 					className={cn(
-						"z-dropdown min-w-44 overflow-auto rounded-md border border-border bg-card py-1 shadow-md",
+						DISMISS_LAYER_TIER_CLASS,
+						"min-w-44 overflow-auto rounded-md border border-border bg-card py-1 shadow-md",
 					)}
 					onKeyDown={onActionMenuKeyDown}
 				>

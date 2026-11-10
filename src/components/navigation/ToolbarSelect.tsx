@@ -3,6 +3,7 @@ import { ChevronDown } from "lucide-react";
 import { useId, useLayoutEffect, useState } from "react";
 
 import { usePopover } from "../../hooks/usePopover.js";
+import { DISMISS_LAYER_TIER_CLASS } from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "../overlays/Portal.js";
@@ -210,7 +211,8 @@ function ToolbarSelect({
 					aria-label={ariaLabel}
 					style={floatingStyles}
 					className={cn(
-						"z-dropdown max-h-72 min-w-44 overflow-auto rounded-md border border-border bg-card py-1 shadow-md",
+						DISMISS_LAYER_TIER_CLASS,
+						"max-h-72 min-w-44 overflow-auto rounded-md border border-border bg-card py-1 shadow-md",
 					)}
 					onKeyDown={onListboxKeyDown}
 				>

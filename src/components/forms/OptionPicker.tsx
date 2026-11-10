@@ -4,6 +4,7 @@ import { Check, ChevronDown, X } from "lucide-react";
 
 import type { FieldOption, OptionFilterMode } from "./fieldOption.js";
 import { usePopover } from "../../hooks/usePopover.js";
+import { DISMISS_LAYER_TIER_CLASS } from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Loading } from "../feedback/Loading.js";
 import { Badge } from "../indicators/Badge.js";
@@ -461,7 +462,8 @@ function OptionPicker(props: OptionPickerProps) {
 					data-slot={listboxSlot}
 					aria-multiselectable={isMulti}
 					className={cn(
-						"z-dropdown overflow-auto rounded-md border border-border bg-card shadow-md",
+						DISMISS_LAYER_TIER_CLASS,
+						"overflow-auto rounded-md border border-border bg-card shadow-md",
 						"py-1",
 					)}
 					style={floatingStyles}

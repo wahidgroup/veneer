@@ -4,7 +4,10 @@ import { X } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
 import { lockBodyScroll } from "../../utils/lockBodyScroll.js";
-import { useDismissLayer } from "../../overlays/dismissLayerStack.js";
+import {
+	DISMISS_LAYER_TIER_CLASS,
+	useDismissLayer,
+} from "../../overlays/dismissLayerStack.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
 import {
@@ -110,7 +113,11 @@ function Modal({
 		<Portal>
 			<div
 				data-slot="modal"
-				className="fixed inset-0 z-modal flex items-center justify-center p-4"
+				className={
+					"fixed inset-0 " +
+					DISMISS_LAYER_TIER_CLASS +
+					" flex items-center justify-center p-4"
+				}
 			>
 				<div
 					data-slot="modal-backdrop"
