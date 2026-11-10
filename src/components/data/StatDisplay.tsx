@@ -19,9 +19,7 @@ const statDisplayValueVariants = cva("text-2xl font-semibold tracking-tight", {
 	},
 });
 
-type StatDisplayTone = NonNullable<
-	VariantProps<typeof statDisplayValueVariants>["tone"]
->;
+type StatDisplayTone = NonNullable<VariantProps<typeof statDisplayValueVariants>["tone"]>;
 
 interface StatDisplayProps extends Omit<ComponentProps<"div">, "children"> {
 	label: ReactNode;
@@ -42,15 +40,7 @@ const TONE_LABEL: Record<Exclude<StatDisplayTone, "default">, string> = {
  * pair with visible text (`badge` slot or the built-in tone caption) so
  * meaning is not color-only (WCAG 1.4.1).
  */
-function StatDisplay({
-	label,
-	value,
-	hint,
-	tone,
-	badge,
-	className,
-	...rest
-}: StatDisplayProps) {
+function StatDisplay({ label, value, hint, tone, badge, className, ...rest }: StatDisplayProps) {
 	let resolvedTone: StatDisplayTone = "default";
 	if (tone === "success") {
 		resolvedTone = "success";
@@ -69,10 +59,7 @@ function StatDisplay({
 		);
 	} else if (resolvedTone !== "default") {
 		accessory = (
-			<span
-				data-slot="stat-display-tone"
-				className="text-xs font-medium text-muted-foreground"
-			>
+			<span data-slot="stat-display-tone" className="text-xs font-medium text-muted-foreground">
 				{TONE_LABEL[resolvedTone]}
 			</span>
 		);
@@ -81,10 +68,7 @@ function StatDisplay({
 	let hintNode: ReactNode = null;
 	if (hint !== undefined) {
 		hintNode = (
-			<p
-				data-slot="stat-display-hint"
-				className="mt-1 text-xs text-muted-foreground"
-			>
+			<p data-slot="stat-display-hint" className="mt-1 text-xs text-muted-foreground">
 				{hint}
 			</p>
 		);
@@ -99,18 +83,12 @@ function StatDisplay({
 			{...rest}
 		>
 			<div className="flex items-start justify-between gap-2">
-				<p
-					data-slot="stat-display-label"
-					className="text-xs font-medium text-muted-foreground"
-				>
+				<p data-slot="stat-display-label" className="text-xs font-medium text-muted-foreground">
 					{label}
 				</p>
 				{accessory}
 			</div>
-			<p
-				data-slot="stat-display-value"
-				className={statDisplayValueVariants({ tone: resolvedTone })}
-			>
+			<p data-slot="stat-display-value" className={statDisplayValueVariants({ tone: resolvedTone })}>
 				{value}
 			</p>
 			{hintNode}

@@ -30,12 +30,4 @@ interface DiffResource {
 type DiffViewMode = "lines" | "tree";
 type DiffLayout = "unified" | "split";
 
-export type {
-	DiffAttribute,
-	DiffChangeKind,
-	DiffLayout,
-	DiffLine,
-	DiffLineKind,
-	DiffResource,
-	DiffViewMode,
-};
+export type { DiffAttribute, DiffChangeKind, DiffLayout, DiffLine, DiffLineKind, DiffResource, DiffViewMode };

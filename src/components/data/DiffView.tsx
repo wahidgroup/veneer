@@ -1,12 +1,7 @@
 import type { ComponentProps } from "react";
 import { useId } from "react";
 
-import type {
-	DiffLayout,
-	DiffLine,
-	DiffResource,
-	DiffViewMode,
-} from "./diffTypes.js";
+import type { DiffLayout, DiffLine, DiffResource, DiffViewMode } from "./diffTypes.js";
 import { DiffLinesView } from "./DiffLinesView.js";
 import { DiffTreeView } from "./DiffTreeView.js";
 

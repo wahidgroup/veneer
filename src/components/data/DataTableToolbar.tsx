@@ -60,10 +60,7 @@ function DataTableToolbar<TData>({
 	}
 
 	return (
-		<div
-			data-slot="data-table-toolbar"
-			className="flex flex-wrap items-center gap-3"
-		>
+		<div data-slot="data-table-toolbar" className="flex flex-wrap items-center gap-3">
 			<div className="min-h-8 min-w-[12rem] flex-1">
 				<SearchInput
 					id={`${baseId}-search`}

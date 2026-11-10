@@ -4,18 +4,10 @@ import { X } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
 import { lockBodyScroll } from "../../utils/lockBodyScroll.js";
-import {
-	DISMISS_LAYER_TIER_CLASS,
-	useDismissLayer,
-} from "../../overlays/dismissLayerStack.js";
+import { DISMISS_LAYER_TIER_CLASS, useDismissLayer } from "../../overlays/dismissLayerStack.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
-import {
-	captureFocusRestore,
-	focusInitial,
-	restoreFocus,
-	trapTabKey,
-} from "../../utils/focusScope.js";
+import { captureFocusRestore, focusInitial, restoreFocus, trapTabKey } from "../../utils/focusScope.js";
 
 interface ModalProps extends Omit<ComponentProps<"div">, "title"> {
 	open: boolean;
@@ -113,11 +105,7 @@ function Modal({
 		<Portal>
 			<div
 				data-slot="modal"
-				className={
-					"fixed inset-0 " +
-					DISMISS_LAYER_TIER_CLASS +
-					" flex items-center justify-center p-4"
-				}
+				className={"fixed inset-0 " + DISMISS_LAYER_TIER_CLASS + " flex items-center justify-center p-4"}
 			>
 				<div
 					data-slot="modal-backdrop"
@@ -143,17 +131,12 @@ function Modal({
 					{...rest}
 				>
 					<div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-4">
-						<h2
-							id={titleId}
-							className="text-lg font-semibold text-foreground"
-						>
+						<h2 id={titleId} className="text-lg font-semibold text-foreground">
 							{title}
 						</h2>
 						{closeControl}
 					</div>
-					<div className="flex-1 overflow-auto px-5 py-4 text-sm text-foreground">
-						{children}
-					</div>
+					<div className="flex-1 overflow-auto px-5 py-4 text-sm text-foreground">{children}</div>
 				</div>
 			</div>
 		</Portal>

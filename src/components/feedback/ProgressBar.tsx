@@ -5,26 +5,21 @@ import { cva } from "class-variance-authority";
 import { cn } from "../../utils/cn.js";
 import { resolveProgressMax } from "./resolveProgressMax.js";
 
-const progressBarTrackVariants = cva(
-	"relative w-full overflow-hidden rounded-full bg-muted",
-	{
-		variants: {
-			size: {
-				sm: "h-1.5",
-				md: "h-2.5",
-				lg: "h-3.5",
-			},
-		},
-		defaultVariants: {
-			size: "md",
+const progressBarTrackVariants = cva("relative w-full overflow-hidden rounded-full bg-muted", {
+	variants: {
+		size: {
+			sm: "h-1.5",
+			md: "h-2.5",
+			lg: "h-3.5",
 		},
 	},
-);
+	defaultVariants: {
+		size: "md",
+	},
+});
 
 interface ProgressBarProps
-	extends
-		Omit<ComponentProps<"div">, "children">,
-		VariantProps<typeof progressBarTrackVariants> {
+	extends Omit<ComponentProps<"div">, "children">, VariantProps<typeof progressBarTrackVariants> {
 	value?: number;
 	max?: number;
 	label?: ReactNode;
@@ -46,20 +41,10 @@ function clampProgress(value: number, max: number): number {
  * Long-running job fraction. Determinate sets `aria-valuenow`; indeterminate
  * omits it (APG range practice). Complements Loading for busy waits.
  */
-function ProgressBar({
-	value,
-	max,
-	size,
-	label,
-	"aria-label": ariaLabel,
-	className,
-	...rest
-}: ProgressBarProps) {
+function ProgressBar({ value, max, size, label, "aria-label": ariaLabel, className, ...rest }: ProgressBarProps) {
 	const resolvedMax = resolveProgressMax(max);
 
-	let resolvedSize: NonNullable<
-		VariantProps<typeof progressBarTrackVariants>["size"]
-	> = "md";
+	let resolvedSize: NonNullable<VariantProps<typeof progressBarTrackVariants>["size"]> = "md";
 	if (size === "sm") {
 		resolvedSize = "sm";
 	} else if (size === "lg") {
@@ -79,13 +64,10 @@ function ProgressBar({
 
 	let labelNode: ReactNode = null;
 	if (label !== undefined) {
-		labelNode = (
-			<div className="mb-1.5 text-sm text-muted-foreground">{label}</div>
-		);
+		labelNode = <div className="mb-1.5 text-sm text-muted-foreground">{label}</div>;
 	}
 
-	let fillClass =
-		"h-full rounded-full bg-primary transition-[width] duration-300 ease-out";
+	let fillClass = "h-full rounded-full bg-primary transition-[width] duration-300 ease-out";
 	if (indeterminate) {
 		fillClass = cn("h-full w-1/3 rounded-full bg-primary", "animate-pulse");
 	}
@@ -106,11 +88,7 @@ function ProgressBar({
 	}
 
 	return (
-		<div
-			data-slot="progress-bar"
-			className={cn("w-full", className)}
-			{...rest}
-		>
+		<div data-slot="progress-bar" className={cn("w-full", className)} {...rest}>
 			{labelNode}
 			<div
 				role="progressbar"

@@ -35,10 +35,7 @@ interface SeedPhraseProps extends Omit<ComponentProps<"div">, "children"> {
 /** BIP39 English max word length: used for stable slot width. */
 const DEFAULT_WORD_SLOT_CH = 8;
 
-function resolveColumns(
-	wordCount: number,
-	columns?: SeedPhraseColumns,
-): SeedPhraseColumns {
+function resolveColumns(wordCount: number, columns?: SeedPhraseColumns): SeedPhraseColumns {
 	if (columns !== undefined) {
 		return columns;
 	}
@@ -141,9 +138,7 @@ function SeedPhrase({
 
 	let copyControl: ReactNode = null;
 	if (resolvedShowCopy && !resolvedVerifyMode) {
-		copyControl = (
-			<CopyButton value={copyValue} aria-label="Copy seed phrase" />
-		);
+		copyControl = <CopyButton value={copyValue} aria-label="Copy seed phrase" />;
 	}
 
 	const gridClass = cn("grid gap-2", gridColumnsClass(resolvedColumns));
@@ -162,13 +157,8 @@ function SeedPhrase({
 					}
 
 					return (
-						<label
-							key={`${String(index)}-verify`}
-							className="flex min-w-0 flex-col gap-1 text-sm"
-						>
-							<span className="text-muted-foreground">
-								{index + 1}
-							</span>
+						<label key={`${String(index)}-verify`} className="flex min-w-0 flex-col gap-1 text-sm">
+							<span className="text-muted-foreground">{index + 1}</span>
 							<Input
 								value={inputValue}
 								aria-label={`Word ${String(index + 1)}`}
@@ -206,16 +196,10 @@ function SeedPhrase({
 							key={`${String(index)}-slot`}
 							className="flex items-baseline gap-2 rounded-md border border-border bg-muted/30 px-2 py-1.5 font-mono text-sm"
 						>
-							<span
-								className="w-6 shrink-0 text-muted-foreground tabular-nums"
-								aria-hidden="true"
-							>
+							<span className="w-6 shrink-0 text-muted-foreground tabular-nums" aria-hidden="true">
 								{index + 1}
 							</span>
-							<span
-								className="inline-block shrink-0 truncate"
-								style={wordSlotStyle}
-							>
+							<span className="inline-block shrink-0 truncate" style={wordSlotStyle}>
 								{displayWord}
 							</span>
 						</li>

@@ -2,10 +2,7 @@ import type { ComponentProps } from "react";
 
 import type { CurrencyCatalog } from "../../utils/currencySpec.js";
 import { CRYPTO_CURRENCIES } from "../../utils/currencySpec.js";
-import type {
-	MoneyCurrencyDisplay,
-	MoneyCurrencySign,
-} from "../../utils/formatMoneyMinor.js";
+import type { MoneyCurrencyDisplay, MoneyCurrencySign } from "../../utils/formatMoneyMinor.js";
 import { formatMoneyMinor } from "../../utils/formatMoneyMinor.js";
 import { cn } from "../../utils/cn.js";
 
@@ -51,11 +48,7 @@ function MoneyAmount({
 	});
 
 	return (
-		<span
-			data-slot="money-amount"
-			className={cn("tabular-nums", className)}
-			{...rest}
-		>
+		<span data-slot="money-amount" className={cn("tabular-nums", className)} {...rest}>
 			{formatted}
 		</span>
 	);

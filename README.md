@@ -42,12 +42,7 @@ export function NameField({
 	onChange: (value: string) => void;
 }) {
 	return (
-		<FormField
-			label="Display name"
-			hint="Shown on invoices"
-			error={error}
-			required
-		>
+		<FormField label="Display name" hint="Shown on invoices" error={error} required>
 			<Input
 				value={value}
 				onChange={(event) => {
@@ -85,10 +80,7 @@ import { Button, EmptyState } from "@wahidgroup/veneer";
 
 export function NoTransfers() {
 	return (
-		<EmptyState
-			title="No transfers yet"
-			action={<Button variant="filled">Send payment</Button>}
-		>
+		<EmptyState title="No transfers yet" action={<Button variant="filled">Send payment</Button>}>
 			When you move funds, they show up here.
 		</EmptyState>
 	);
@@ -209,7 +201,7 @@ New components MUST follow [`docs/COMPONENT.md`](docs/COMPONENT.md).
 
 ## Stack
 
-TypeScript 5.9+, React 19, Tailwind CSS v4, Vitest, CVA, `cn` (`clsx` + `tailwind-merge`), Lucide, `@wahidgroup/lint-rules`.
+TypeScript 6, React 19, Tailwind CSS v4, Vitest, CVA, `cn` (`clsx` + `tailwind-merge`), Lucide, `@wahidgroup/lint-rules`.
 
 ## License
 

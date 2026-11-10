@@ -18,10 +18,7 @@ describe("Input", () => {
 		{ invalid: false, attr: "false" },
 	])("sets aria-invalid=$attr", ({ invalid, attr }) => {
 		render(<Input aria-label="Name" invalid={invalid} />);
-		expect(screen.getByRole("textbox")).toHaveAttribute(
-			"aria-invalid",
-			attr,
-		);
+		expect(screen.getByRole("textbox")).toHaveAttribute("aria-invalid", attr);
 	});
 
 	it("accepts typed input", async () => {

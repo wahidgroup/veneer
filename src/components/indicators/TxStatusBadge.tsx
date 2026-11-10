@@ -14,9 +14,7 @@ interface TxStatusBadgeProps extends Omit<BadgeProps, "variant" | "children"> {
 /**
  * Maps on-chain / mempool status tokens onto Badge tone variants.
  */
-function variantForTxStatus(
-	status: TxStatus,
-): NonNullable<BadgeProps["variant"]> {
+function variantForTxStatus(status: TxStatus): NonNullable<BadgeProps["variant"]> {
 	if (status === "unconfirmed") {
 		return "default";
 	}
@@ -39,14 +37,7 @@ function variantForTxStatus(
  * Pass localized label as `children`; optional `confirmations` annotates
  * confirming rows via `data-confirmations`.
  */
-function TxStatusBadge({
-	status,
-	children,
-	confirmations,
-	size,
-	className,
-	...rest
-}: TxStatusBadgeProps) {
+function TxStatusBadge({ status, children, confirmations, size, className, ...rest }: TxStatusBadgeProps) {
 	let confirmationsAttr: string | undefined;
 	if (confirmations !== undefined) {
 		confirmationsAttr = String(confirmations);

@@ -14,11 +14,7 @@ import { SearchInput } from "../forms/SearchInput.js";
 import { Badge } from "../indicators/Badge.js";
 import { ChipGroup } from "../navigation/ChipGroup.js";
 import { CodeBlock } from "./CodeBlock.js";
-import {
-	filterLogViewerLines,
-	formatLineData,
-	parseInstant,
-} from "./filterLogViewerLines.js";
+import { filterLogViewerLines, formatLineData, parseInstant } from "./filterLogViewerLines.js";
 
 type LogViewerLevel = "debug" | "info" | "warn" | "error";
 
@@ -61,9 +57,7 @@ const LEVEL_LABEL: Record<LogViewerLevel, string> = {
 	error: "error",
 };
 
-function badgeVariantForLevel(
-	level: LogViewerLevel,
-): NonNullable<BadgeProps["variant"]> {
+function badgeVariantForLevel(level: LogViewerLevel): NonNullable<BadgeProps["variant"]> {
 	if (level === "debug") {
 		return "default";
 	}
@@ -92,10 +86,7 @@ function formatAt(at: string): string {
  * Keep the newest `maxLines` (buffer tail). Oldest -> newest top -> bottom
  * (live-tail / `tail -f` convention).
  */
-function visibleLines(
-	lines: LogViewerLine[],
-	maxLines: number | undefined,
-): LogViewerLine[] {
+function visibleLines(lines: LogViewerLine[], maxLines: number | undefined): LogViewerLine[] {
 	if (maxLines === undefined) {
 		return lines;
 	}
@@ -159,9 +150,7 @@ function LogViewer({
 	}
 
 	const levelsControlled = levels !== undefined;
-	const [uncontrolledLevels, setUncontrolledLevels] = useState<
-		LogViewerLevel[]
-	>(() => {
+	const [uncontrolledLevels, setUncontrolledLevels] = useState<LogViewerLevel[]>(() => {
 		if (defaultLevels !== undefined) {
 			return defaultLevels;
 		}
@@ -175,15 +164,13 @@ function LogViewer({
 	}
 
 	const queriesControlled = queries !== undefined;
-	const [uncontrolledQueries, setUncontrolledQueries] = useState<string[]>(
-		() => {
-			if (defaultQueries !== undefined) {
-				return defaultQueries;
-			}
+	const [uncontrolledQueries, setUncontrolledQueries] = useState<string[]>(() => {
+		if (defaultQueries !== undefined) {
+			return defaultQueries;
+		}
 
-			return [];
-		},
-	);
+		return [];
+	});
 
 	let currentQueries = uncontrolledQueries;
 	if (queriesControlled) {
@@ -473,10 +460,7 @@ function LogViewer({
 	}
 
 	if (maxLines !== undefined && lines.length > maxLines) {
-		statusParts = [
-			...statusParts,
-			`Showing last ${String(maxLines)} of ${String(lines.length)}`,
-		];
+		statusParts = [...statusParts, `Showing last ${String(maxLines)} of ${String(lines.length)}`];
 	}
 
 	const statusText = statusParts.join(". ");
@@ -536,34 +520,23 @@ function LogViewer({
 	} else {
 		bodyNode = visible.map((line) => {
 			let timestampNode: ReactNode = (
-				<span
-					data-slot="log-viewer-timestamp"
-					className="truncate text-muted-foreground"
-				/>
+				<span data-slot="log-viewer-timestamp" className="truncate text-muted-foreground" />
 			);
 			if (line.timestamp !== undefined) {
 				timestampNode = (
-					<span
-						data-slot="log-viewer-timestamp"
-						className="truncate text-muted-foreground"
-					>
+					<span data-slot="log-viewer-timestamp" className="truncate text-muted-foreground">
 						{line.timestamp}
 					</span>
 				);
 			} else if (line.at !== undefined) {
 				timestampNode = (
-					<span
-						data-slot="log-viewer-timestamp"
-						className="truncate text-muted-foreground"
-					>
+					<span data-slot="log-viewer-timestamp" className="truncate text-muted-foreground">
 						{formatAt(line.at)}
 					</span>
 				);
 			}
 
-			let levelNode: ReactNode = (
-				<span data-slot="log-viewer-level" className="block w-full" />
-			);
+			let levelNode: ReactNode = <span data-slot="log-viewer-level" className="block w-full" />;
 			if (line.level !== undefined) {
 				levelNode = (
 					<Badge
@@ -581,12 +554,9 @@ function LogViewer({
 			const isExpanded = expandedIds.has(line.id);
 			const detailId = `${detailIdPrefix}-detail-${line.id}`;
 
-			let toggleNode: ReactNode = (
-				<span data-slot="log-viewer-expand" className="block size-7" />
-			);
+			let toggleNode: ReactNode = <span data-slot="log-viewer-expand" className="block size-7" />;
 			if (hasData) {
-				let chevronClass =
-					"size-3.5 shrink-0 transition-transform duration-150";
+				let chevronClass = "size-3.5 shrink-0 transition-transform duration-150";
 				if (isExpanded) {
 					chevronClass = cn(chevronClass, "rotate-90");
 				}
@@ -605,10 +575,7 @@ function LogViewer({
 							toggleExpanded(line.id);
 						}}
 					>
-						<ChevronRight
-							className={chevronClass}
-							aria-hidden="true"
-						/>
+						<ChevronRight className={chevronClass} aria-hidden="true" />
 					</Button>
 				);
 			}
@@ -632,19 +599,12 @@ function LogViewer({
 			}
 
 			return (
-				<div
-					key={line.id}
-					data-slot="log-viewer-line"
-					className="border-b border-border/60 last:border-b-0"
-				>
+				<div key={line.id} data-slot="log-viewer-line" className="border-b border-border/60 last:border-b-0">
 					<div className="group grid grid-cols-[1.75rem_minmax(0,11rem)_3.5rem_minmax(0,1fr)_1.75rem] items-center gap-x-2 px-2 py-1 sm:grid-cols-[1.75rem_minmax(0,13rem)_3.5rem_minmax(0,1fr)_1.75rem]">
 						{toggleNode}
 						{timestampNode}
 						{levelNode}
-						<span
-							data-slot="log-viewer-text"
-							className="min-w-0 whitespace-pre-wrap break-all"
-						>
+						<span data-slot="log-viewer-text" className="min-w-0 whitespace-pre-wrap break-all">
 							{line.text}
 						</span>
 						<CopyButton
@@ -693,10 +653,7 @@ function LogViewer({
 			)}
 			{...rest}
 		>
-			<div
-				data-slot="log-viewer-toolbar"
-				className="flex shrink-0 flex-col gap-2 border-b border-border p-2"
-			>
+			<div data-slot="log-viewer-toolbar" className="flex shrink-0 flex-col gap-2 border-b border-border p-2">
 				<form onSubmit={handleQuerySubmit}>
 					<SearchInput
 						placeholder="Filter log text"
@@ -759,12 +716,7 @@ function LogViewer({
 					</div>
 				</div>
 			</div>
-			<div
-				data-slot="log-viewer-status"
-				role="status"
-				aria-live="polite"
-				className="sr-only"
-			>
+			<div data-slot="log-viewer-status" role="status" aria-live="polite" className="sr-only">
 				{statusText}
 			</div>
 			{logPanel}

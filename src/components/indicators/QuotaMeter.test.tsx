@@ -5,24 +5,16 @@ import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { QuotaMeter } from "./QuotaMeter.js";
 
 describe("QuotaMeter", () => {
-	it.each([
-		{ size: "sm" as const },
-		{ size: "md" as const },
-		{ size: "lg" as const },
-	])("sets data-size $size", ({ size }) => {
-		render(<QuotaMeter aria-label="Stacks" value={40} size={size} />);
-		expect(screen.getByRole("meter")).toHaveAttribute("data-size", size);
-	});
+	it.each([{ size: "sm" as const }, { size: "md" as const }, { size: "lg" as const }])(
+		"sets data-size $size",
+		({ size }) => {
+			render(<QuotaMeter aria-label="Stacks" value={40} size={size} />);
+			expect(screen.getByRole("meter")).toHaveAttribute("data-size", size);
+		},
+	);
 
 	it("exposes meter values", () => {
-		render(
-			<QuotaMeter
-				aria-label="Stacks"
-				value={42}
-				max={100}
-				valueText="42 / 100 stacks"
-			/>,
-		);
+		render(<QuotaMeter aria-label="Stacks" value={42} max={100} valueText="42 / 100 stacks" />);
 		const meter = screen.getByRole("meter", { name: "Stacks" });
 		expect(meter).toHaveAttribute("aria-valuenow", "42");
 		expect(meter).toHaveAttribute("aria-valuemax", "100");
@@ -30,8 +22,6 @@ describe("QuotaMeter", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<QuotaMeter aria-label="Stacks" value={60} label="Quota" />,
-		);
+		await expectNoA11yViolations(<QuotaMeter aria-label="Stacks" value={60} label="Quota" />);
 	});
 });

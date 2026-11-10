@@ -1,16 +1,8 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useState } from "react";
 
-import type {
-	StatDisplayTone,
-	StatusBadgeStatus,
-	TreeViewEndAlign,
-	TreeViewItem,
-} from "@wahidgroup/veneer";
-import type {
-	DataTableColumn,
-	DataTableQuery,
-} from "@wahidgroup/veneer/data-table";
+import type { StatDisplayTone, StatusBadgeStatus, TreeViewEndAlign, TreeViewItem } from "@wahidgroup/veneer";
+import type { DataTableColumn, DataTableQuery } from "@wahidgroup/veneer/data-table";
 import { DataTable, useDataTableRows } from "@wahidgroup/veneer/data-table";
 import {
 	AddressDisplay,
@@ -301,10 +293,7 @@ function DataTableServerCanvas() {
 
 function DataTableLiveCanvas() {
 	const demo = useDataTableDemo();
-	const { rows, apply, setRows } = useDataTableRows<InventoryRow>(
-		[],
-		getRowId,
-	);
+	const { rows, apply, setRows } = useDataTableRows<InventoryRow>([], getRowId);
 
 	useEffect(() => {
 		const session = connectTables({
@@ -380,9 +369,7 @@ function DataTableLiveCanvas() {
 							return;
 						}
 
-						void removeTableRows(INVENTORY_TABLE_ID, [
-							rows[0].id,
-						]).catch(() => {
+						void removeTableRows(INVENTORY_TABLE_ID, [rows[0].id]).catch(() => {
 							/* ignore */
 						});
 					}}
@@ -453,24 +440,17 @@ function DataTableCanvas() {
 		body = <DataTableServerCanvas />;
 	}
 
-	let description =
-		"Nest inventory list with full server query. Knobs switch empty / live-patch modes.";
+	let description = "Nest inventory list with full server query. Knobs switch empty / live-patch modes.";
 	if (demo.empty) {
-		description =
-			"Empty slot uses EmptyState. Toggle Empty off to restore Nest rows.";
+		description = "Empty slot uses EmptyState. Toggle Empty off to restore Nest rows.";
 	} else if (demo.liveRows) {
-		description =
-			"Client-side rows + Nest WS patches. Add / Remove / Reset mutate inventory.";
+		description = "Client-side rows + Nest WS patches. Add / Remove / Reset mutate inventory.";
 	}
 
 	return (
 		<div className="flex flex-col gap-2">
 			<section className="flex flex-col">
-				<DemoSectionHeader
-					title="API playground"
-					description={description}
-					apiDriven
-				/>
+				<DemoSectionHeader title="API playground" description={description} apiDriven />
 				<Canvas>{body}</Canvas>
 			</section>
 		</div>
@@ -483,10 +463,7 @@ function DataTableKnobs() {
 	let pageSizeRow: ReactNode = null;
 	if (!demo.empty && !demo.liveRows) {
 		pageSizeRow = (
-			<DemoRow
-				label="Page size"
-				description="Resets to page 0 when changed. 87 Nest inventory rows."
-			>
+			<DemoRow label="Page size" description="Resets to page 0 when changed. 87 Nest inventory rows.">
 				<Select
 					id="data-table-page-size"
 					options={DATA_TABLE_PAGE_SIZE_OPTIONS}
@@ -503,15 +480,8 @@ function DataTableKnobs() {
 	let liveRowsRows: ReactNode = null;
 	if (!demo.empty && demo.liveRows) {
 		liveRowsRows = (
-			<DemoRow
-				label="Auto patch"
-				description="POST /v1/tables/inventory/stream/start|stop. Server ticks ~1.5s."
-			>
-				<Toggle
-					label="Auto patch"
-					checked={demo.autoPatch}
-					onCheckedChange={demo.setAutoPatch}
-				/>
+			<DemoRow label="Auto patch" description="POST /v1/tables/inventory/stream/start|stop. Server ticks ~1.5s.">
+				<Toggle label="Auto patch" checked={demo.autoPatch} onCheckedChange={demo.setAutoPatch} />
 			</DemoRow>
 		);
 	}
@@ -521,20 +491,10 @@ function DataTableKnobs() {
 			title="DataTable"
 			description="Server mode: Nest list with full query + chip search. Live: WS snapshot/patch."
 		>
-			<DemoRow
-				label="Empty"
-				description="Render EmptyState through the empty prop."
-			>
-				<Toggle
-					label="Empty"
-					checked={demo.empty}
-					onCheckedChange={demo.setEmpty}
-				/>
+			<DemoRow label="Empty" description="Render EmptyState through the empty prop.">
+				<Toggle label="Empty" checked={demo.empty} onCheckedChange={demo.setEmpty} />
 			</DemoRow>
-			<DemoRow
-				label="Live rows"
-				description="WS /v1/tables + HTTP add/remove/reset/stream."
-			>
+			<DemoRow label="Live rows" description="WS /v1/tables + HTTP add/remove/reset/stream.">
 				<Toggle
 					label="Live rows"
 					checked={demo.liveRows}
@@ -576,9 +536,7 @@ function PaginationDemoProvider({ children }: { children: ReactNode }) {
 	const [showRange, setShowRange] = useState(true);
 
 	return (
-		<PaginationDemoContext.Provider
-			value={{ pageSize, setPageSize, showRange, setShowRange }}
-		>
+		<PaginationDemoContext.Provider value={{ pageSize, setPageSize, showRange, setShowRange }}>
 			{children}
 		</PaginationDemoContext.Provider>
 	);
@@ -640,10 +598,7 @@ function PaginationKnobs() {
 			title="Pagination"
 			description="Controlled Prev/Next with optional item range. DataTable footer uses the same component."
 		>
-			<DemoRow
-				label="Page size"
-				description="Items per page in the list."
-			>
+			<DemoRow label="Page size" description="Items per page in the list.">
 				<Select
 					id="pagination-page-size"
 					options={PAGINATION_PAGE_SIZE_OPTIONS}
@@ -654,15 +609,8 @@ function PaginationKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Range"
-				description="Pass itemCount + pageSize to show the item range label."
-			>
-				<Toggle
-					label="Show range"
-					checked={demo.showRange}
-					onCheckedChange={demo.setShowRange}
-				/>
+			<DemoRow label="Range" description="Pass itemCount + pageSize to show the item range label.">
+				<Toggle label="Show range" checked={demo.showRange} onCheckedChange={demo.setShowRange} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -673,8 +621,7 @@ interface DescriptionListDemoValue {
 	setColumns: (value: 1 | 2) => void;
 }
 
-const DescriptionListDemoContext =
-	createContext<DescriptionListDemoValue | null>(null);
+const DescriptionListDemoContext = createContext<DescriptionListDemoValue | null>(null);
 
 function useDescriptionListDemo() {
 	const value = useContext(DescriptionListDemoContext);
@@ -724,9 +671,7 @@ function DescriptionListCanvas() {
 					},
 					{
 						term: "Status",
-						description: (
-							<StatusBadge status="running">Running</StatusBadge>
-						),
+						description: <StatusBadge status="running">Running</StatusBadge>,
 					},
 				]}
 			/>
@@ -814,8 +759,7 @@ function StatDisplayCanvas() {
 
 	let badge: ReactNode = undefined;
 	if (demo.showBadge) {
-		let badgeVariant: "success" | "warning" | "danger" | "default" =
-			"default";
+		let badgeVariant: "success" | "warning" | "danger" | "default" = "default";
 		if (demo.tone === "success") {
 			badgeVariant = "success";
 		} else if (demo.tone === "warning") {
@@ -835,34 +779,19 @@ function StatDisplayCanvas() {
 		<Canvas>
 			<DemoRow label="Playground">
 				<div className="w-full max-w-xs">
-					<StatDisplay
-						label="Deployments (24h)"
-						value="128"
-						tone={demo.tone}
-						badge={badge}
-						hint={hint}
-					/>
+					<StatDisplay label="Deployments (24h)" value="128" tone={demo.tone} badge={badge} hint={hint} />
 				</div>
 			</DemoRow>
 			<DemoRow label="Tone reference">
 				<div className="grid w-full max-w-3xl gap-3 sm:grid-cols-2">
-					<StatDisplay
-						label="Active stacks"
-						value="42"
-						hint="Across all regions"
-					/>
+					<StatDisplay label="Active stacks" value="42" hint="Across all regions" />
 					<StatDisplay
 						label="Deployments (24h)"
 						value="128"
 						tone="success"
 						badge={<Badge variant="success">+12%</Badge>}
 					/>
-					<StatDisplay
-						label="Drifted resources"
-						value="7"
-						tone="warning"
-						hint="Needs review"
-					/>
+					<StatDisplay label="Drifted resources" value="7" tone="warning" hint="Needs review" />
 					<StatDisplay
 						label="Failed runs"
 						value="3"
@@ -891,36 +820,17 @@ function StatDisplayKnobs() {
 					aria-label="Stat tone"
 					onChange={(value) => {
 						const next = value;
-						if (
-							next === "default" ||
-							next === "success" ||
-							next === "warning" ||
-							next === "danger"
-						) {
+						if (next === "default" || next === "success" || next === "warning" || next === "danger") {
 							demo.setTone(next);
 						}
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Badge"
-				description="Compose a Badge in the badge slot."
-			>
-				<Toggle
-					label="Show badge"
-					checked={demo.showBadge}
-					onCheckedChange={demo.setShowBadge}
-				/>
+			<DemoRow label="Badge" description="Compose a Badge in the badge slot.">
+				<Toggle label="Show badge" checked={demo.showBadge} onCheckedChange={demo.setShowBadge} />
 			</DemoRow>
-			<DemoRow
-				label="Hint"
-				description="Supporting hint under the value."
-			>
-				<Toggle
-					label="Show hint"
-					checked={demo.showHint}
-					onCheckedChange={demo.setShowHint}
-				/>
+			<DemoRow label="Hint" description="Supporting hint under the value.">
+				<Toggle label="Show hint" checked={demo.showHint} onCheckedChange={demo.setShowHint} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -1034,10 +944,7 @@ function CodeBlockKnobs() {
 			title="CodeBlock"
 			description="Plain pre/code chrome. language is a toolbar label only; CopyButton when showCopy; optional showLineNumbers; tabSize is CSS tab-size."
 		>
-			<DemoRow
-				label="Language"
-				description="Toolbar label; picks sample code."
-			>
+			<DemoRow label="Language" description="Toolbar label; picks sample code.">
 				<Select
 					id="code-language"
 					options={CODE_LANGUAGE_OPTIONS}
@@ -1045,38 +952,23 @@ function CodeBlockKnobs() {
 					aria-label="Code language"
 					onChange={(value) => {
 						const next = value;
-						if (
-							next === "hcl" ||
-							next === "bash" ||
-							next === "json" ||
-							next === "none"
-						) {
+						if (next === "hcl" || next === "bash" || next === "json" || next === "none") {
 							demo.setLanguage(next);
 						}
 					}}
 				/>
 			</DemoRow>
 			<DemoRow label="Copy" description="Show CopyButton in the toolbar.">
-				<Toggle
-					label="Show copy"
-					checked={demo.showCopy}
-					onCheckedChange={demo.setShowCopy}
-				/>
+				<Toggle label="Show copy" checked={demo.showCopy} onCheckedChange={demo.setShowCopy} />
 			</DemoRow>
-			<DemoRow
-				label="Line numbers"
-				description="Aria-hidden gutter beside each line."
-			>
+			<DemoRow label="Line numbers" description="Aria-hidden gutter beside each line.">
 				<Toggle
 					label="Show line numbers"
 					checked={demo.showLineNumbers}
 					onCheckedChange={demo.setShowLineNumbers}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Tab size"
-				description="CSS tab-size for literal tab characters in the sample."
-			>
+			<DemoRow label="Tab size" description="CSS tab-size for literal tab characters in the sample.">
 				<Select
 					id="code-tab-size"
 					options={CODE_TAB_SIZE_OPTIONS}
@@ -1166,8 +1058,7 @@ function ChipGroupCanvas() {
 		<Canvas>
 			<div className="flex w-full max-w-2xl flex-col gap-3">
 				<p className="text-sm text-muted-foreground">
-					Region filters for the inventory table. Press to toggle;
-					dismissible chips can be removed.
+					Region filters for the inventory table. Press to toggle; dismissible chips can be removed.
 				</p>
 				<ChipGroup
 					aria-label="Region filters"
@@ -1199,25 +1090,11 @@ function ChipGroupKnobs() {
 			title="ChipGroup"
 			description="Multi-select filter chips. aria-pressed toggles; optional dismiss and Clear all."
 		>
-			<DemoRow
-				label="Clear all"
-				description="Show the Clear all control (clears pressed flags)."
-			>
-				<Toggle
-					label="Show clear all"
-					checked={demo.showClearAll}
-					onCheckedChange={demo.setShowClearAll}
-				/>
+			<DemoRow label="Clear all" description="Show the Clear all control (clears pressed flags).">
+				<Toggle label="Show clear all" checked={demo.showClearAll} onCheckedChange={demo.setShowClearAll} />
 			</DemoRow>
-			<DemoRow
-				label="Dismissible"
-				description="Mark all chips dismissible and wire onDismiss."
-			>
-				<Toggle
-					label="Dismissible"
-					checked={demo.dismissible}
-					onCheckedChange={demo.setDismissible}
-				/>
+			<DemoRow label="Dismissible" description="Mark all chips dismissible and wire onDismiss.">
+				<Toggle label="Dismissible" checked={demo.dismissible} onCheckedChange={demo.setDismissible} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -1332,8 +1209,7 @@ function TimelineCanvas() {
 		<Canvas>
 			<div className="w-full max-w-md">
 				<p className="mb-4 text-sm text-muted-foreground">
-					Deploy history for workspace prod-east. Ordered list with
-					rail; StatusBadge when status is set.
+					Deploy history for workspace prod-east. Ordered list with rail; StatusBadge when status is set.
 				</p>
 				<Timeline aria-label="Deploy history" items={items} />
 			</div>
@@ -1346,20 +1222,10 @@ function TimelineKnobs() {
 
 	return (
 		<RailPanel title="Timeline" description="Chronological events.">
-			<DemoRow
-				label="Statuses"
-				description="Show StatusBadge on each event."
-			>
-				<Toggle
-					label="Show statuses"
-					checked={demo.showStatuses}
-					onCheckedChange={demo.setShowStatuses}
-				/>
+			<DemoRow label="Statuses" description="Show StatusBadge on each event.">
+				<Toggle label="Show statuses" checked={demo.showStatuses} onCheckedChange={demo.setShowStatuses} />
 			</DemoRow>
-			<DemoRow
-				label="Descriptions"
-				description="Show secondary description under each timestamp."
-			>
+			<DemoRow label="Descriptions" description="Show secondary description under each timestamp.">
 				<Toggle
 					label="Show descriptions"
 					checked={demo.showDescriptions}
@@ -1500,13 +1366,10 @@ function TreeViewCanvas() {
 		<Canvas>
 			<div className="w-full max-w-md">
 				<p className="mb-3 text-sm text-muted-foreground">
-					VPC inventory tree. Optional `end` slot (`endAlign`: snug |
-					justify) holds Badge / StatusBadge. Arrow keys navigate
-					while typeahead uses label only.
+					VPC inventory tree. Optional `end` slot (`endAlign`: snug | justify) holds Badge / StatusBadge.
+					Arrow keys navigate while typeahead uses label only.
 				</p>
-				<p className="mb-3 text-xs text-muted-foreground">
-					{activatedLine}
-				</p>
+				<p className="mb-3 text-xs text-muted-foreground">{activatedLine}</p>
 				<TreeView
 					aria-label="Network inventory"
 					items={items}
@@ -1531,14 +1394,8 @@ function TreeViewKnobs() {
 	const demo = useTreeViewDemo();
 
 	return (
-		<RailPanel
-			title="TreeView"
-			description="APG tree. No multi-select / aria-selected in v1."
-		>
-			<DemoRow
-				label="End align"
-				description="Snug places pills after the label; justify pushes to the row edge."
-			>
+		<RailPanel title="TreeView" description="APG tree. No multi-select / aria-selected in v1.">
+			<DemoRow label="End align" description="Snug places pills after the label; justify pushes to the row edge.">
 				<Select
 					id="tree-end-align"
 					options={TREE_END_ALIGN_OPTIONS}
@@ -1554,15 +1411,8 @@ function TreeViewKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Disabled node"
-				description="Include eni-db-1 as aria-disabled in the private subnet."
-			>
-				<Toggle
-					label="Show disabled"
-					checked={demo.showDisabled}
-					onCheckedChange={demo.setShowDisabled}
-				/>
+			<DemoRow label="Disabled node" description="Include eni-db-1 as aria-disabled in the private subnet.">
+				<Toggle label="Show disabled" checked={demo.showDisabled} onCheckedChange={demo.setShowDisabled} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -1595,9 +1445,7 @@ function ResourceGraphCanvas() {
 					onNodeSelect={setSelectedId}
 				/>
 			</div>
-			<p className="text-sm text-muted-foreground">
-				Selected: {selectedId}
-			</p>
+			<p className="text-sm text-muted-foreground">Selected: {selectedId}</p>
 		</Canvas>
 	);
 }
@@ -1627,11 +1475,7 @@ function MoneyChromeCanvas() {
 			</DemoRow>
 			<DemoRow label="MaskedAccount">
 				<MaskedAccount value="DE89370400440532013000" />
-				<MaskedAccount
-					value="DE89370400440532013000"
-					masked={false}
-					format="iban"
-				/>
+				<MaskedAccount value="DE89370400440532013000" masked={false} format="iban" />
 			</DemoRow>
 		</Canvas>
 	);
@@ -1684,25 +1528,12 @@ function ActivitySurfacesCanvas() {
 			</DemoRow>
 			<DemoRow label="LedgerRow">
 				<ul className="w-full max-w-md divide-y divide-border rounded-md border border-border">
-					<LedgerRow
-						description="Payroll"
-						amountMinor={-12500}
-						currency="USD"
-						balanceMinor={87500}
-					/>
-					<LedgerRow
-						description="Refund"
-						amountMinor={2500}
-						currency="USD"
-						balanceMinor={90000}
-					/>
+					<LedgerRow description="Payroll" amountMinor={-12500} currency="USD" balanceMinor={87500} />
+					<LedgerRow description="Refund" amountMinor={2500} currency="USD" balanceMinor={90000} />
 				</ul>
 			</DemoRow>
 			<DemoRow label="Sparkline">
-				<Sparkline
-					values={[4, 8, 6, 12, 9, 14, 11]}
-					aria-label="Weekly volume"
-				/>
+				<Sparkline values={[4, 8, 6, 12, 9, 14, 11]} aria-label="Weekly volume" />
 			</DemoRow>
 			<DemoRow label="PaymentUri">
 				<code className="block max-w-full break-all text-xs text-muted-foreground">
@@ -1757,9 +1588,7 @@ function SeedPhraseDemoProvider({ children }: { children: ReactNode }) {
 	const [wordCount, setWordCount] = useState<SeedDemoWordCount>("12");
 
 	return (
-		<SeedPhraseDemoContext.Provider value={{ wordCount, setWordCount }}>
-			{children}
-		</SeedPhraseDemoContext.Provider>
+		<SeedPhraseDemoContext.Provider value={{ wordCount, setWordCount }}>{children}</SeedPhraseDemoContext.Provider>
 	);
 }
 

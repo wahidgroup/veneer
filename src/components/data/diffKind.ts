@@ -1,8 +1,6 @@
 import type { DiffChangeKind } from "./diffTypes.js";
 
-function badgeVariantForKind(
-	kind: DiffChangeKind,
-): "success" | "info" | "danger" | "warning" {
+function badgeVariantForKind(kind: DiffChangeKind): "success" | "info" | "danger" | "warning" {
 	if (kind === "create") {
 		return "success";
 	}

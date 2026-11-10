@@ -57,12 +57,8 @@ describe("CopyButton", () => {
 			/>,
 		);
 
-		await user.click(
-			screen.getByRole("button", { name: "Copy to clipboard" }),
-		);
-		expect(
-			await screen.findByRole("button", { name: "Copied" }),
-		).toHaveAttribute("data-copied", "true");
+		await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
+		expect(await screen.findByRole("button", { name: "Copied" })).toHaveAttribute("data-copied", "true");
 		expect(clipboardStore.text).toBe("arn:aws:s3:::bucket");
 		expect(seen).toEqual(["arn:aws:s3:::bucket"]);
 	});
@@ -84,16 +80,12 @@ describe("CopyButton", () => {
 			/>,
 		);
 
-		await user.click(
-			screen.getByRole("button", { name: "Copy to clipboard" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Copy to clipboard" }));
 		await act(async () => {
 			await Promise.resolve();
 		});
 
-		expect(
-			screen.getByRole("button", { name: "Copy to clipboard" }),
-		).toHaveAttribute("data-copied", "false");
+		expect(screen.getByRole("button", { name: "Copy to clipboard" })).toHaveAttribute("data-copied", "false");
 		expect(clipboardStore.text).toBe("");
 		expect(seen).toEqual([]);
 	});
@@ -103,23 +95,17 @@ describe("CopyButton", () => {
 		installClipboard();
 		render(<CopyButton value="id-1" resetMs={20} />);
 
-		fireEvent.click(
-			screen.getByRole("button", { name: "Copy to clipboard" }),
-		);
+		fireEvent.click(screen.getByRole("button", { name: "Copy to clipboard" }));
 		await act(async () => {
 			await Promise.resolve();
 		});
-		expect(
-			screen.getByRole("button", { name: "Copied" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Copied" })).toBeInTheDocument();
 
 		await act(async () => {
 			await vi.advanceTimersByTimeAsync(20);
 		});
 
-		expect(
-			screen.getByRole("button", { name: "Copy to clipboard" }),
-		).toHaveAttribute("data-copied", "false");
+		expect(screen.getByRole("button", { name: "Copy to clipboard" })).toHaveAttribute("data-copied", "false");
 	});
 
 	it("has no accessibility violations", async () => {

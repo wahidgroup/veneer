@@ -2,12 +2,7 @@ import { describe, expect, it } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 
-import type {
-	FlowConnection,
-	FlowEdge,
-	FlowNode,
-	FlowStatus,
-} from "./flowTypes.js";
+import type { FlowConnection, FlowEdge, FlowNode, FlowStatus } from "./flowTypes.js";
 import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { FlowCanvas } from "./FlowCanvas.js";
 
@@ -58,12 +53,7 @@ const SAMPLE_EDGES: FlowEdge[] = [
 describe("FlowCanvas", () => {
 	it("has no axe violations on the default read canvas", async () => {
 		await expectNoA11yViolations(
-			<FlowCanvas
-				aria-label="Sample flow"
-				nodes={SAMPLE_NODES}
-				edges={SAMPLE_EDGES}
-				fitOnMount={false}
-			/>,
+			<FlowCanvas aria-label="Sample flow" nodes={SAMPLE_NODES} edges={SAMPLE_EDGES} fitOnMount={false} />,
 		);
 	});
 
@@ -87,14 +77,7 @@ describe("FlowCanvas", () => {
 	});
 
 	it("exposes structure sidecar terms", () => {
-		render(
-			<FlowCanvas
-				aria-label="Sample flow"
-				nodes={SAMPLE_NODES}
-				edges={SAMPLE_EDGES}
-				fitOnMount={false}
-			/>,
-		);
+		render(<FlowCanvas aria-label="Sample flow" nodes={SAMPLE_NODES} edges={SAMPLE_EDGES} fitOnMount={false} />);
 		expect(screen.getByText("Node: Trigger")).toBeInTheDocument();
 		expect(screen.getByText(/Edge:/)).toBeInTheDocument();
 	});
@@ -139,14 +122,10 @@ describe("FlowCanvas", () => {
 			/>,
 		);
 
-		await user.click(
-			screen.getByRole("button", { name: "Trigger source port out" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Trigger source port out" }));
 		expect(screen.getByText(/Connecting from trigger/)).toBeInTheDocument();
 
-		await user.click(
-			screen.getByRole("button", { name: "Task target port in" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Task target port in" }));
 		expect(connections).toHaveLength(1);
 		expect(connections[0]?.source).toBe("trigger");
 		expect(connections[0]?.target).toBe("task");
@@ -194,12 +173,8 @@ describe("FlowCanvas", () => {
 			/>,
 		);
 
-		await user.click(
-			screen.getByRole("button", { name: "A source port num" }),
-		);
-		await user.click(
-			screen.getByRole("button", { name: "B target port str" }),
-		);
+		await user.click(screen.getByRole("button", { name: "A source port num" }));
+		await user.click(screen.getByRole("button", { name: "B target port str" }));
 		expect(connections).toHaveLength(0);
 		expect(screen.getByText(/Connection rejected/)).toBeInTheDocument();
 	});
@@ -266,14 +241,10 @@ describe("FlowCanvas", () => {
 		trigger.focus();
 
 		await user.keyboard("{Enter}");
-		expect(
-			container.querySelector('[data-focus-mode="edit-node"]'),
-		).toBeInTheDocument();
+		expect(container.querySelector('[data-focus-mode="edit-node"]')).toBeInTheDocument();
 
 		await user.keyboard("{Escape}");
-		expect(
-			container.querySelector('[data-focus-mode="navigate"]'),
-		).toBeInTheDocument();
+		expect(container.querySelector('[data-focus-mode="navigate"]')).toBeInTheDocument();
 	});
 
 	it("drops a palette type onto the viewport", () => {
@@ -292,9 +263,7 @@ describe("FlowCanvas", () => {
 			/>,
 		);
 
-		const viewport = container.querySelector(
-			'[data-slot="graph-viewport"]',
-		);
+		const viewport = container.querySelector('[data-slot="graph-viewport"]');
 		expect(viewport).not.toBeNull();
 		if (viewport === null) {
 			return;

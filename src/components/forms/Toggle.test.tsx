@@ -43,10 +43,7 @@ describe("Toggle", () => {
 				}}
 			/>,
 		);
-		expect(screen.getByRole("switch")).toHaveAttribute(
-			"aria-checked",
-			"true",
-		);
+		expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "true");
 	});
 
 	it("has no accessibility violations", async () => {

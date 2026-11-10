@@ -30,8 +30,6 @@ describe("RadioGroup", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<RadioGroup legend="Network" options={OPTIONS} />,
-		);
+		await expectNoA11yViolations(<RadioGroup legend="Network" options={OPTIONS} />);
 	});
 });

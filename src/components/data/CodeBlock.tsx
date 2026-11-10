@@ -29,10 +29,7 @@ function CodeBlock({
 	let languageNode: ReactNode = null;
 	if (language !== undefined && language !== "") {
 		languageNode = (
-			<span
-				data-slot="code-block-language"
-				className="text-xs font-medium text-muted-foreground"
-			>
+			<span data-slot="code-block-language" className="text-xs font-medium text-muted-foreground">
 				{language}
 			</span>
 		);
@@ -67,11 +64,7 @@ function CodeBlock({
 			}
 
 			return (
-				<span
-					key={lineKey}
-					data-slot="code-block-line"
-					className="flex gap-3"
-				>
+				<span key={lineKey} data-slot="code-block-line" className="flex gap-3">
 					<span
 						data-slot="code-block-line-number"
 						aria-hidden="true"
@@ -79,9 +72,7 @@ function CodeBlock({
 					>
 						{index + 1}
 					</span>
-					<span className="min-w-0 flex-1 whitespace-pre">
-						{lineText}
-					</span>
+					<span className="min-w-0 flex-1 whitespace-pre">{lineText}</span>
 				</span>
 			);
 		});
@@ -102,10 +93,7 @@ function CodeBlock({
 			data-slot="code-block"
 			data-line-numbers={lineNumbersAttr}
 			data-tab-size={String(tabSize)}
-			className={cn(
-				"overflow-hidden rounded-md border border-border bg-card text-card-foreground",
-				className,
-			)}
+			className={cn("overflow-hidden rounded-md border border-border bg-card text-card-foreground", className)}
 			{...rest}
 		>
 			{toolbarNode}

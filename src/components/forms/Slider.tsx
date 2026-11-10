@@ -2,10 +2,7 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "../../utils/cn.js";
 
-interface SliderProps extends Omit<
-	ComponentProps<"input">,
-	"type" | "onChange"
-> {
+interface SliderProps extends Omit<ComponentProps<"input">, "type" | "onChange"> {
 	value?: number;
 	defaultValue?: number;
 	onValueChange?: (value: number) => void;
@@ -43,18 +40,11 @@ function Slider({
 
 	let valueNode: ReactNode = null;
 	if (resolvedShowValue && value !== undefined) {
-		valueNode = (
-			<span className="tabular-nums text-sm text-muted-foreground">
-				{value}
-			</span>
-		);
+		valueNode = <span className="tabular-nums text-sm text-muted-foreground">{value}</span>;
 	}
 
 	return (
-		<div
-			data-slot="slider"
-			className={cn("flex w-full items-center gap-3", className)}
-		>
+		<div data-slot="slider" className={cn("flex w-full items-center gap-3", className)}>
 			<input
 				id={id}
 				type="range"

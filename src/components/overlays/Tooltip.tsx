@@ -19,14 +19,7 @@ const PADDING = 8;
 /**
  * Hover/focus tooltip portaled above the trigger. Sets `aria-describedby` while open.
  */
-function Tooltip({
-	content,
-	children,
-	disabled,
-	side,
-	delayMs,
-	className,
-}: TooltipProps) {
+function Tooltip({ content, children, disabled, side, delayMs, className }: TooltipProps) {
 	let resolvedSide = side;
 	resolvedSide ??= "top";
 
@@ -111,20 +104,11 @@ function Tooltip({
 
 			let placeTop = resolvedSide === "top";
 			const spaceAbove = triggerRect.top - OFFSET - PADDING;
-			const spaceBelow =
-				viewportHeight - triggerRect.bottom - OFFSET - PADDING;
+			const spaceBelow = viewportHeight - triggerRect.bottom - OFFSET - PADDING;
 
-			if (
-				placeTop &&
-				panelRect.height > spaceAbove &&
-				spaceBelow > spaceAbove
-			) {
+			if (placeTop && panelRect.height > spaceAbove && spaceBelow > spaceAbove) {
 				placeTop = false;
-			} else if (
-				!placeTop &&
-				panelRect.height > spaceBelow &&
-				spaceAbove > spaceBelow
-			) {
+			} else if (!placeTop && panelRect.height > spaceBelow && spaceAbove > spaceBelow) {
 				placeTop = true;
 			}
 
@@ -133,8 +117,7 @@ function Tooltip({
 				top = triggerRect.top - OFFSET - panelRect.height;
 			}
 
-			let left =
-				triggerRect.left + triggerRect.width / 2 - panelRect.width / 2;
+			let left = triggerRect.left + triggerRect.width / 2 - panelRect.width / 2;
 
 			if (left < PADDING) {
 				left = PADDING;

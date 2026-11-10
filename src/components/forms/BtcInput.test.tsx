@@ -21,35 +21,30 @@ describe("BtcInput", () => {
 			typed: "15000",
 			expectedSats: 15000,
 		},
-	])(
-		"commits satoshis from $label",
-		async ({ unit, ariaLabel, typed, expectedSats }) => {
-			const user = userEvent.setup();
-			const values: (number | undefined)[] = [];
+	])("commits satoshis from $label", async ({ unit, ariaLabel, typed, expectedSats }) => {
+		const user = userEvent.setup();
+		const values: (number | undefined)[] = [];
 
-			render(
-				<BtcInput
-					aria-label={ariaLabel}
-					locale="en-US"
-					unit={unit}
-					onAmountSatsChange={(value) => {
-						values.push(value);
-					}}
-				/>,
-			);
+		render(
+			<BtcInput
+				aria-label={ariaLabel}
+				locale="en-US"
+				unit={unit}
+				onAmountSatsChange={(value) => {
+					values.push(value);
+				}}
+			/>,
+		);
 
-			const input = screen.getByRole("textbox", { name: ariaLabel });
-			await user.type(input, typed);
-			await user.tab();
+		const input = screen.getByRole("textbox", { name: ariaLabel });
+		await user.type(input, typed);
+		await user.tab();
 
-			const committedSats = values.at(-1);
-			expect(committedSats).toBe(expectedSats);
-		},
-	);
+		const committedSats = values.at(-1);
+		expect(committedSats).toBe(expectedSats);
+	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<BtcInput aria-label="Bitcoin" locale="en-US" />,
-		);
+		await expectNoA11yViolations(<BtcInput aria-label="Bitcoin" locale="en-US" />);
 	});
 });

@@ -15,11 +15,7 @@ interface PaginationProps extends Omit<ComponentProps<"div">, "children"> {
 /**
  * Build the "a–b of c" / "0 rows" status string for the current page.
  */
-function formatPaginationRange(
-	pageIndex: number,
-	pageSize: number,
-	itemCount: number,
-): string {
+function formatPaginationRange(pageIndex: number, pageSize: number, itemCount: number): string {
 	if (itemCount <= 0) {
 		return "0 rows";
 	}
@@ -78,21 +74,14 @@ function Pagination({
 	let rangeNode = null;
 	if (rangeLabel !== null) {
 		rangeNode = (
-			<p
-				data-slot="pagination-range"
-				className="text-sm text-muted-foreground"
-			>
+			<p data-slot="pagination-range" className="text-sm text-muted-foreground">
 				{rangeLabel}
 			</p>
 		);
 	}
 
 	return (
-		<div
-			data-slot="pagination"
-			className={cn(...rootClasses, className)}
-			{...rest}
-		>
+		<div data-slot="pagination" className={cn(...rootClasses, className)} {...rest}>
 			{rangeNode}
 			<nav aria-label={navLabel} className="flex items-center gap-2">
 				<Button

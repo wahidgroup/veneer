@@ -19,19 +19,9 @@ describe("Toast", () => {
 	});
 
 	it("renders the message", () => {
-		render(
-			<Toast
-				message="Saved!"
-				onClose={noopClose}
-				duration={0}
-				fade={false}
-			/>,
-		);
+		render(<Toast message="Saved!" onClose={noopClose} duration={0} fade={false} />);
 		expect(screen.getByText("Saved!")).toBeInTheDocument();
-		expect(screen.getByRole("status")).toHaveAttribute(
-			"data-slot",
-			"toast",
-		);
+		expect(screen.getByRole("status")).toHaveAttribute("data-slot", "toast");
 	});
 
 	it.each([
@@ -56,15 +46,7 @@ describe("Toast", () => {
 			label: "warning",
 		},
 	])("exposes $label role", ({ type, role }) => {
-		render(
-			<Toast
-				message="Test"
-				type={type}
-				onClose={noopClose}
-				duration={0}
-				fade={false}
-			/>,
-		);
+		render(<Toast message="Test" type={type} onClose={noopClose} duration={0} fade={false} />);
 		expect(screen.getByRole(role)).toBeInTheDocument();
 	});
 
@@ -142,10 +124,7 @@ describe("Toast", () => {
 			vi.advanceTimersByTime(1000);
 		});
 		expect(closed).toBe(false);
-		expect(screen.getByRole("status")).toHaveAttribute(
-			"data-phase",
-			"exit",
-		);
+		expect(screen.getByRole("status")).toHaveAttribute("data-phase", "exit");
 
 		act(() => {
 			vi.advanceTimersByTime(250);
@@ -154,15 +133,7 @@ describe("Toast", () => {
 	});
 
 	it("applies configured opacity when shown", () => {
-		render(
-			<Toast
-				message="Dim"
-				duration={0}
-				fade={false}
-				opacity={0.5}
-				onClose={noopClose}
-			/>,
-		);
+		render(<Toast message="Dim" duration={0} fade={false} opacity={0.5} onClose={noopClose} />);
 		expect(screen.getByRole("status")).toHaveStyle({ opacity: "0.5" });
 	});
 
@@ -285,26 +256,12 @@ describe("Toast", () => {
 
 	it("has no accessibility violations", async () => {
 		vi.useRealTimers();
-		await expectNoA11yViolations(
-			<Toast
-				message="A11y check"
-				onClose={noopClose}
-				duration={0}
-				fade={false}
-			/>,
-		);
+		await expectNoA11yViolations(<Toast message="A11y check" onClose={noopClose} duration={0} fade={false} />);
 	});
 
 	describe("placement", () => {
 		it("defaults to floating when standalone", () => {
-			render(
-				<Toast
-					message="Placement"
-					onClose={noopClose}
-					duration={0}
-					fade={false}
-				/>,
-			);
+			render(<Toast message="Placement" onClose={noopClose} duration={0} fade={false} />);
 
 			const node = screen.getByRole("status");
 			expect(node.getAttribute("data-placement")).toBe("floating");
@@ -313,12 +270,7 @@ describe("Toast", () => {
 		it("defaults to stacked inside a ToastViewport", () => {
 			render(
 				<ToastViewport>
-					<Toast
-						message="Placement"
-						onClose={noopClose}
-						duration={0}
-						fade={false}
-					/>
+					<Toast message="Placement" onClose={noopClose} duration={0} fade={false} />
 				</ToastViewport>,
 			);
 			const node = screen.getByRole("status");
@@ -326,15 +278,7 @@ describe("Toast", () => {
 		});
 
 		it("explicit stacked prop overrides standalone default", () => {
-			render(
-				<Toast
-					message="Placement"
-					onClose={noopClose}
-					duration={0}
-					fade={false}
-					placement="stacked"
-				/>,
-			);
+			render(<Toast message="Placement" onClose={noopClose} duration={0} fade={false} placement="stacked" />);
 
 			const node = screen.getByRole("status");
 			expect(node.getAttribute("data-placement")).toBe("stacked");
@@ -343,13 +287,7 @@ describe("Toast", () => {
 		it("explicit floating prop overrides viewport default", () => {
 			render(
 				<ToastViewport>
-					<Toast
-						message="Placement"
-						onClose={noopClose}
-						duration={0}
-						fade={false}
-						placement="floating"
-					/>
+					<Toast message="Placement" onClose={noopClose} duration={0} fade={false} placement="floating" />
 				</ToastViewport>,
 			);
 
@@ -365,15 +303,7 @@ describe("Toast", () => {
 			{ position: "bottom-right" as const },
 			{ position: "bottom-left" as const },
 		])("places floating toast at $position", ({ position }) => {
-			render(
-				<Toast
-					message="Corner"
-					onClose={noopClose}
-					duration={0}
-					fade={false}
-					position={position}
-				/>,
-			);
+			render(<Toast message="Corner" onClose={noopClose} duration={0} fade={false} position={position} />);
 			const node = screen.getByRole("status");
 			expect(node.getAttribute("data-position")).toBe(position);
 		});
@@ -381,37 +311,22 @@ describe("Toast", () => {
 });
 
 describe("ToastViewport", () => {
-	it.each([
-		{ position: "bottom-left" as const },
-		{ position: "top-left" as const },
-	])("honors position $position", ({ position }) => {
-		render(<ToastViewport position={position} />);
+	it.each([{ position: "bottom-left" as const }, { position: "top-left" as const }])(
+		"honors position $position",
+		({ position }) => {
+			render(<ToastViewport position={position} />);
 
-		const viewport = document.querySelector("[data-slot='toast-viewport']");
-		expect(viewport?.getAttribute("data-position")).toBe(position);
-	});
+			const viewport = document.querySelector("[data-slot='toast-viewport']");
+			expect(viewport?.getAttribute("data-position")).toBe(position);
+		},
+	);
 
 	it("stacks multiple toasts as siblings inside the viewport", () => {
 		render(
 			<ToastViewport>
-				<Toast
-					message="First"
-					onClose={noopClose}
-					duration={0}
-					fade={false}
-				/>
-				<Toast
-					message="Second"
-					onClose={noopClose}
-					duration={0}
-					fade={false}
-				/>
-				<Toast
-					message="Third"
-					onClose={noopClose}
-					duration={0}
-					fade={false}
-				/>
+				<Toast message="First" onClose={noopClose} duration={0} fade={false} />
+				<Toast message="Second" onClose={noopClose} duration={0} fade={false} />
+				<Toast message="Third" onClose={noopClose} duration={0} fade={false} />
 			</ToastViewport>,
 		);
 
@@ -426,18 +341,8 @@ describe("ToastViewport", () => {
 	it("has no accessibility violations when populated", async () => {
 		await expectNoA11yViolations(
 			<ToastViewport>
-				<Toast
-					message="A11y A"
-					onClose={noopClose}
-					duration={0}
-					fade={false}
-				/>
-				<Toast
-					message="A11y B"
-					onClose={noopClose}
-					duration={0}
-					fade={false}
-				/>
+				<Toast message="A11y A" onClose={noopClose} duration={0} fade={false} />
+				<Toast message="A11y B" onClose={noopClose} duration={0} fade={false} />
 			</ToastViewport>,
 		);
 	});

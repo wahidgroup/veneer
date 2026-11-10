@@ -13,9 +13,7 @@ interface DeltaBadgeProps extends Omit<BadgeProps, "variant" | "children"> {
 /**
  * Maps delta direction onto Badge tone variants.
  */
-function variantForDelta(
-	direction: DeltaDirection,
-): NonNullable<BadgeProps["variant"]> {
+function variantForDelta(direction: DeltaDirection): NonNullable<BadgeProps["variant"]> {
 	if (direction === "up") {
 		return "success";
 	}
@@ -49,13 +47,7 @@ function prefixForDelta(direction: DeltaDirection): string {
  * Percent / absolute change chip. Visible `+` / `−` / `=` prefix so meaning
  * is not color-only (WCAG 1.4.1).
  */
-function DeltaBadge({
-	direction,
-	value,
-	size,
-	className,
-	...rest
-}: DeltaBadgeProps) {
+function DeltaBadge({ direction, value, size, className, ...rest }: DeltaBadgeProps) {
 	return (
 		<Badge
 			{...rest}

@@ -2,11 +2,7 @@ import type { ComponentProps, ReactNode } from "react";
 import { createContext, useContext, useId, useState } from "react";
 
 import { cn } from "../../utils/cn.js";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "./Collapsible.js";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./Collapsible.js";
 
 type AccordionType = "single" | "multiple";
 type AccordionHeadingLevel = 2 | 3 | 4 | 5 | 6;
@@ -27,9 +23,7 @@ interface AccordionItemContextValue {
 }
 
 const AccordionContext = createContext<AccordionContextValue | null>(null);
-const AccordionItemContext = createContext<AccordionItemContextValue | null>(
-	null,
-);
+const AccordionItemContext = createContext<AccordionItemContextValue | null>(null);
 
 function useAccordionContext(): AccordionContextValue {
 	const ctx = useContext(AccordionContext);
@@ -43,9 +37,7 @@ function useAccordionContext(): AccordionContextValue {
 function useAccordionItemContext(): AccordionItemContextValue {
 	const ctx = useContext(AccordionItemContext);
 	if (ctx === null) {
-		throw new Error(
-			"Accordion item components must be used within AccordionItem",
-		);
+		throw new Error("Accordion item components must be used within AccordionItem");
 	}
 
 	return ctx;
@@ -207,10 +199,7 @@ function Accordion({
 		>
 			<div
 				data-slot="accordion"
-				className={cn(
-					"divide-y divide-border rounded-md border border-border",
-					className,
-				)}
+				className={cn("divide-y divide-border rounded-md border border-border", className)}
 				{...rest}
 			>
 				{children}
@@ -228,12 +217,7 @@ interface AccordionItemProps extends ComponentProps<"div"> {
  * One accordion section keyed by `value`. Wires open state to the parent
  * `Accordion`.
  */
-function AccordionItem({
-	value,
-	children,
-	className,
-	...rest
-}: AccordionItemProps) {
+function AccordionItem({ value, children, className, ...rest }: AccordionItemProps) {
 	const accordion = useAccordionContext();
 	const triggerId = `${accordion.baseId}-trigger-${value}`;
 	const panelId = `${accordion.baseId}-panel-${value}`;
@@ -270,25 +254,15 @@ interface AccordionTriggerProps extends ComponentProps<"button"> {
  * Accordion header control. Renders a heading element wrapping the disclosure
  * button (`aria-expanded`, `aria-controls`). Caret comes from CollapsibleTrigger.
  */
-function AccordionTrigger({
-	children,
-	className,
-	...rest
-}: AccordionTriggerProps) {
+function AccordionTrigger({ children, className, ...rest }: AccordionTriggerProps) {
 	const { headingLevel } = useAccordionContext();
 	useAccordionItemContext();
 
 	return (
-		<AccordionHeading
-			level={headingLevel}
-			className="m-0 text-sm font-medium"
-		>
+		<AccordionHeading level={headingLevel} className="m-0 text-sm font-medium">
 			<CollapsibleTrigger
 				data-slot="accordion-trigger"
-				className={cn(
-					"flex w-full items-center justify-between gap-2 px-4 py-3 text-left",
-					className,
-				)}
+				className={cn("flex w-full items-center justify-between gap-2 px-4 py-3 text-left", className)}
 				{...rest}
 			>
 				{children}
@@ -305,11 +279,7 @@ interface AccordionContentProps extends ComponentProps<"div"> {
  * Accordion panel (`role="region"`, `aria-labelledby`). Shown when its item
  * is expanded.
  */
-function AccordionContent({
-	children,
-	className,
-	...rest
-}: AccordionContentProps) {
+function AccordionContent({ children, className, ...rest }: AccordionContentProps) {
 	useAccordionItemContext();
 
 	return (

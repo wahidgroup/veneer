@@ -48,15 +48,7 @@ describe("ResizablePanel", () => {
 		},
 	])(
 		"resizes with arrow keys on $orientation orientation",
-		async ({
-			orientation,
-			ariaOrientation,
-			growKey,
-			shrinkKey,
-			startLabel,
-			endLabel,
-			defaultSize,
-		}) => {
+		async ({ orientation, ariaOrientation, growKey, shrinkKey, startLabel, endLabel, defaultSize }) => {
 			const user = userEvent.setup();
 
 			render(
@@ -76,27 +68,17 @@ describe("ResizablePanel", () => {
 			handle.focus();
 
 			await user.keyboard(growKey);
-			expect(handle).toHaveAttribute(
-				"aria-valuenow",
-				String(defaultSize + 5),
-			);
+			expect(handle).toHaveAttribute("aria-valuenow", String(defaultSize + 5));
 
 			await user.keyboard(shrinkKey);
-			expect(handle).toHaveAttribute(
-				"aria-valuenow",
-				String(defaultSize),
-			);
+			expect(handle).toHaveAttribute("aria-valuenow", String(defaultSize));
 		},
 	);
 
 	it("resizes with pointer drag on horizontal orientation", () => {
 		const { container } = render(
 			<div style={{ width: 200, height: 100 }}>
-				<ResizablePanel
-					defaultSize={50}
-					start={<div>Start pane</div>}
-					end={<div>End pane</div>}
-				/>
+				<ResizablePanel defaultSize={50} start={<div>Start pane</div>} end={<div>End pane</div>} />
 			</div>,
 		);
 
@@ -148,11 +130,6 @@ describe("ResizablePanel", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<ResizablePanel
-				start={<div>Start pane</div>}
-				end={<div>End pane</div>}
-			/>,
-		);
+		await expectNoA11yViolations(<ResizablePanel start={<div>Start pane</div>} end={<div>End pane</div>} />);
 	});
 });

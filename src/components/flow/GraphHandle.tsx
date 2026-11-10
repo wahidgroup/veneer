@@ -6,10 +6,7 @@ import { Button } from "../forms/Button.js";
 import { portAnchor } from "./flowStatus.js";
 import { handleTintForValueKind } from "./valueKind.js";
 
-interface GraphHandleProps extends Omit<
-	ComponentProps<typeof Button>,
-	"type" | "size" | "variant" | "children"
-> {
+interface GraphHandleProps extends Omit<ComponentProps<typeof Button>, "type" | "size" | "variant" | "children"> {
 	portId: string;
 	side: FlowPortSide;
 	nodeWidth: number;
@@ -41,14 +38,7 @@ function GraphHandle({
 	style,
 	...rest
 }: GraphHandleProps) {
-	const point = portAnchor(
-		side,
-		nodeWidth,
-		nodeHeight,
-		slotIndex,
-		slotCount,
-		anchor,
-	);
+	const point = portAnchor(side, nodeWidth, nodeHeight, slotIndex, slotCount, anchor);
 	const left = point.x - 5;
 	const top = point.y - 5;
 	const tint = handleTintForValueKind(valueKind);

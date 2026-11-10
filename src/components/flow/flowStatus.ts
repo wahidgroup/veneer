@@ -35,10 +35,7 @@ function statusBadgeStatus(status: FlowStatus): StatusBadgeStatus | null {
 /**
  * Read a status from a status map, defaulting to idle when unset.
  */
-function resolveStatus(
-	map: Record<string, FlowStatus> | undefined,
-	id: string,
-): FlowStatus {
+function resolveStatus(map: Record<string, FlowStatus> | undefined, id: string): FlowStatus {
 	if (map === undefined) {
 		return "idle";
 	}
@@ -137,11 +134,4 @@ function statusRingClass(status: FlowStatus): string {
 	return "";
 }
 
-export {
-	portAnchor,
-	portSlotOnSide,
-	resolveStatus,
-	statusBadgeStatus,
-	statusLabel,
-	statusRingClass,
-};
+export { portAnchor, portSlotOnSide, resolveStatus, statusBadgeStatus, statusLabel, statusRingClass };

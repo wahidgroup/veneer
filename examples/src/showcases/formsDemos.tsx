@@ -133,11 +133,7 @@ function FormFieldKnobs() {
 				label="Show validation error"
 				description="When on, an empty stack name shows the required-field error."
 			>
-				<Toggle
-					label="Enabled"
-					checked={demo.showError}
-					onCheckedChange={demo.setShowError}
-				/>
+				<Toggle label="Enabled" checked={demo.showError} onCheckedChange={demo.setShowError} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -165,9 +161,7 @@ function TextSelectDemoProvider({ children }: { children: ReactNode }) {
 	const [region, setRegion] = useState("us-east-1");
 
 	return (
-		<TextSelectDemoContext.Provider
-			value={{ notes, setNotes, region, setRegion }}
-		>
+		<TextSelectDemoContext.Provider value={{ notes, setNotes, region, setRegion }}>
 			{children}
 		</TextSelectDemoContext.Provider>
 	);
@@ -207,10 +201,7 @@ function TextSelectCanvas() {
 
 function TextSelectKnobs() {
 	return (
-		<RailPanel
-			title="TextArea + Select"
-			description="Multi-line notes and region listbox for deploy wizards."
-		/>
+		<RailPanel title="TextArea + Select" description="Multi-line notes and region listbox for deploy wizards." />
 	);
 }
 
@@ -221,9 +212,7 @@ interface FormsComboboxDemoValue {
 	setSecondaryAzs: (value: string[]) => void;
 }
 
-const FormsComboboxDemoContext = createContext<FormsComboboxDemoValue | null>(
-	null,
-);
+const FormsComboboxDemoContext = createContext<FormsComboboxDemoValue | null>(null);
 
 function useFormsComboboxDemo() {
 	const value = useContext(FormsComboboxDemoContext);
@@ -258,12 +247,7 @@ function FormsComboboxCanvas() {
 	return (
 		<Canvas>
 			<div className="grid max-w-3xl gap-4 md:grid-cols-2">
-				<FormField
-					label="Primary AZ"
-					htmlFor="primary-az"
-					hint="Type to filter availability zones"
-					required
-				>
+				<FormField label="Primary AZ" htmlFor="primary-az" hint="Type to filter availability zones" required>
 					<Combobox
 						id="primary-az"
 						options={AZ_OPTIONS}
@@ -272,11 +256,7 @@ function FormsComboboxCanvas() {
 						onChange={demo.setPrimaryAz}
 					/>
 				</FormField>
-				<FormField
-					label="Secondary AZs"
-					htmlFor="secondary-azs"
-					hint="Multi-select with removable chips"
-				>
+				<FormField label="Secondary AZs" htmlFor="secondary-azs" hint="Multi-select with removable chips">
 					<Combobox
 						id="secondary-azs"
 						multiple
@@ -292,12 +272,7 @@ function FormsComboboxCanvas() {
 }
 
 function FormsComboboxKnobs() {
-	return (
-		<RailPanel
-			title="Combobox"
-			description="Searchable listbox. Same component for single and multi."
-		/>
-	);
+	return <RailPanel title="Combobox" description="Searchable listbox. Same component for single and multi." />;
 }
 
 interface ChoicesDemoValue {
@@ -370,14 +345,8 @@ function ChoicesCanvas() {
 					onValueChange={demo.setNetwork}
 				/>
 				<DemoRow label="High availability">
-					<Toggle
-						label="High availability"
-						checked={demo.ha}
-						onCheckedChange={demo.setHa}
-					/>
-					<span className="text-sm text-muted-foreground">
-						{demo.haLabel}
-					</span>
+					<Toggle label="High availability" checked={demo.ha} onCheckedChange={demo.setHa} />
+					<span className="text-sm text-muted-foreground">{demo.haLabel}</span>
 				</DemoRow>
 			</div>
 		</Canvas>
@@ -449,10 +418,7 @@ function SearchCanvas() {
 					onValueChange={demo.setQuery}
 				/>
 				<p className="text-sm text-muted-foreground">
-					Debounced query:{" "}
-					<span className="font-medium text-foreground">
-						{demo.queryDisplay}
-					</span>
+					Debounced query: <span className="font-medium text-foreground">{demo.queryDisplay}</span>
 				</p>
 			</div>
 		</Canvas>
@@ -467,10 +433,7 @@ function SearchKnobs() {
 			title="SearchInput"
 			description="Debounced search for inventory filters. Clear control appears when non-empty."
 		>
-			<DemoRow
-				label="Debounce"
-				description="Milliseconds to wait after typing before onValueChange fires."
-			>
+			<DemoRow label="Debounce" description="Milliseconds to wait after typing before onValueChange fires.">
 				<NumberInput
 					id="search-debounce"
 					min={0}
@@ -553,39 +516,16 @@ function DeployCanvas() {
 
 	return (
 		<Canvas>
-			<FormSection
-				title="Deploy options"
-				description="Capacity, tags, maintenance window, and template upload."
-			>
+			<FormSection title="Deploy options" description="Capacity, tags, maintenance window, and template upload.">
 				<div className="grid max-w-3xl gap-4 md:grid-cols-2">
 					<FormField label="Listener port" htmlFor="port">
-						<NumberInput
-							id="port"
-							min={1}
-							max={65535}
-							value={portValue}
-							onValueChange={demo.setPort}
-						/>
+						<NumberInput id="port" min={1} max={65535} value={portValue} onValueChange={demo.setPort} />
 					</FormField>
 					<FormField label="Desired capacity" htmlFor="capacity">
-						<Slider
-							id="capacity"
-							min={1}
-							max={10}
-							value={demo.capacity}
-							onValueChange={demo.setCapacity}
-						/>
+						<Slider id="capacity" min={1} max={10} value={demo.capacity} onValueChange={demo.setCapacity} />
 					</FormField>
-					<FormField
-						label="Resource tags"
-						htmlFor="tags"
-						hint="Enter or comma to add"
-					>
-						<TagInput
-							id="tags"
-							value={demo.tags}
-							onChange={demo.setTags}
-						/>
+					<FormField label="Resource tags" htmlFor="tags" hint="Enter or comma to add">
+						<TagInput id="tags" value={demo.tags} onChange={demo.setTags} />
 					</FormField>
 					<FormField label="Maintenance window" htmlFor="window">
 						<DateTimePicker
@@ -596,17 +536,8 @@ function DeployCanvas() {
 						/>
 					</FormField>
 				</div>
-				<FormField
-					label="Template file"
-					htmlFor="template"
-					hint="YAML or JSON. Drag and drop supported."
-				>
-					<FileUpload
-						id="template"
-						accept=".yaml,.yml,.json"
-						value={demo.files}
-						onChange={demo.setFiles}
-					/>
+				<FormField label="Template file" htmlFor="template" hint="YAML or JSON. Drag and drop supported.">
+					<FileUpload id="template" accept=".yaml,.yml,.json" value={demo.files} onChange={demo.setFiles} />
 				</FormField>
 			</FormSection>
 		</Canvas>
@@ -615,10 +546,7 @@ function DeployCanvas() {
 
 function DeployKnobs() {
 	return (
-		<RailPanel
-			title="Deploy options"
-			description="TagInput, NumberInput, Slider, DateTimePicker, FileUpload."
-		/>
+		<RailPanel title="Deploy options" description="TagInput, NumberInput, Slider, DateTimePicker, FileUpload." />
 	);
 }
 
@@ -772,12 +700,7 @@ function FieldErrorCanvas() {
 }
 
 function FieldErrorKnobs() {
-	return (
-		<RailPanel
-			title="FieldError"
-			description="Use when composing custom layouts outside FormField."
-		/>
-	);
+	return <RailPanel title="FieldError" description="Use when composing custom layouts outside FormField." />;
 }
 
 type ColorPickerPresentation = "standalone" | "popover";
@@ -816,8 +739,7 @@ function useColorPickerDemo() {
 }
 
 function ColorPickerDemoProvider({ children }: { children: ReactNode }) {
-	const [presentation, setPresentation] =
-		useState<ColorPickerPresentation>("standalone");
+	const [presentation, setPresentation] = useState<ColorPickerPresentation>("standalone");
 	const [color, setColor] = useState("#3b82f6");
 	const [popoverOpen, setPopoverOpen] = useState(false);
 
@@ -862,9 +784,7 @@ function ColorPickerCanvas() {
 							style={{ backgroundColor: demo.color }}
 						/>
 						<span>Pick color</span>
-						<span className="font-mono text-xs text-muted-foreground">
-							{demo.color}
-						</span>
+						<span className="font-mono text-xs text-muted-foreground">{demo.color}</span>
 					</span>
 				}
 				open={demo.popoverOpen}
@@ -887,9 +807,7 @@ function ColorPickerCanvas() {
 	if (demo.presentation === "standalone") {
 		selectedRow = (
 			<DemoRow label="Selected">
-				<span className="font-mono text-sm tabular-nums text-muted-foreground">
-					{demo.color}
-				</span>
+				<span className="font-mono text-sm tabular-nums text-muted-foreground">{demo.color}</span>
 			</DemoRow>
 		);
 	}

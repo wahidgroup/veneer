@@ -1,11 +1,4 @@
-type CategoryId =
-	| "primitives"
-	| "overlays"
-	| "forms"
-	| "combobox"
-	| "shell"
-	| "workflow"
-	| "data";
+type CategoryId = "primitives" | "overlays" | "forms" | "combobox" | "shell" | "workflow" | "data";
 
 interface CatalogComponent {
 	id: string;
@@ -31,56 +24,47 @@ const CATALOG: CatalogCategory[] = [
 			{
 				id: "alert",
 				label: "Alert",
-				description:
-					"Static inline notice for page or panel context. Prefer Toast for ephemeral feedback.",
+				description: "Static inline notice for page or panel context. Prefer Toast for ephemeral feedback.",
 			},
 			{
 				id: "button",
 				label: "Button",
-				description:
-					"Primary actions for consoles and forms. Prefer filled for the main CTA.",
+				description: "Primary actions for consoles and forms. Prefer filled for the main CTA.",
 			},
 			{
 				id: "card",
 				label: "Card",
-				description:
-					"Non-interactive panel chrome for grouping related content.",
+				description: "Non-interactive panel chrome for grouping related content.",
 			},
 			{
 				id: "badge",
 				label: "Badge",
-				description:
-					"Badge family: tone chips, StatusBadge, DeltaBadge, TxStatusBadge.",
+				description: "Badge family: tone chips, StatusBadge, DeltaBadge, TxStatusBadge.",
 			},
 			{
 				id: "avatar",
 				label: "Avatar",
-				description:
-					"User / contact identity with image or initials fallback.",
+				description: "User / contact identity with image or initials fallback.",
 			},
 			{
 				id: "separator",
 				label: "Separator",
-				description:
-					"Thematic hr break. Horizontal default; vertical for toolbars.",
+				description: "Thematic hr break. Horizontal default; vertical for toolbars.",
 			},
 			{
 				id: "accordion",
 				label: "Accordion",
-				description:
-					"APG accordion + Collapsible atom for settings / dense panels.",
+				description: "APG accordion + Collapsible atom for settings / dense panels.",
 			},
 			{
 				id: "resizable-panel",
 				label: "ResizablePanel",
-				description:
-					"Two-pane split with keyboard-resizable separator.",
+				description: "Two-pane split with keyboard-resizable separator.",
 			},
 			{
 				id: "loading",
 				label: "Loading",
-				description:
-					"Spinner, stacked skeleton lines, and single-bone Skeleton shapes.",
+				description: "Spinner, stacked skeleton lines, and single-bone Skeleton shapes.",
 			},
 			{
 				id: "progress-bar",
@@ -92,33 +76,28 @@ const CATALOG: CatalogCategory[] = [
 			{
 				id: "quota-meter",
 				label: "QuotaMeter",
-				description:
-					"Soft-limit gauge (role=meter). Nest consume/release + size/label knobs.",
+				description: "Soft-limit gauge (role=meter). Nest consume/release + size/label knobs.",
 				apiDriven: true,
 			},
 			{
 				id: "visually-hidden",
 				label: "VisuallyHidden",
-				description:
-					"Clip-path hide for screen-reader-only context text.",
+				description: "Clip-path hide for screen-reader-only context text.",
 			},
 			{
 				id: "empty-state",
 				label: "EmptyState",
-				description:
-					"No-results / first-run CTA. Use size sm inside DataTable empty.",
+				description: "No-results / first-run CTA. Use size sm inside DataTable empty.",
 			},
 			{
 				id: "error-state",
 				label: "ErrorState",
-				description:
-					"Failure vs forbidden chrome. Distinct from EmptyState; Retry / Request access.",
+				description: "Failure vs forbidden chrome. Distinct from EmptyState; Retry / Request access.",
 			},
 			{
 				id: "copy-button",
 				label: "CopyButton",
-				description:
-					"Copy ARN/ID to clipboard with brief copied affordance.",
+				description: "Copy ARN/ID to clipboard with brief copied affordance.",
 			},
 		],
 	},
@@ -129,57 +108,48 @@ const CATALOG: CatalogCategory[] = [
 			{
 				id: "modal",
 				label: "Modal",
-				description:
-					"Dialog with backdrop, Esc, focus trap, and scroll lock.",
+				description: "Dialog with backdrop, Esc, focus trap, and scroll lock.",
 			},
 			{
 				id: "drawer",
 				label: "Drawer",
-				description:
-					"Edge sheet dialog (APG modal). Open from a list row; side top|right|bottom|left.",
+				description: "Edge sheet dialog (APG modal). Open from a list row; side top|right|bottom|left.",
 			},
 			{
 				id: "confirm-dialog",
 				label: "ConfirmDialog",
-				description:
-					"Modal confirm with optional typed phrase for destroy.",
+				description: "Modal confirm with optional typed phrase for destroy.",
 			},
 			{
 				id: "tooltip",
 				label: "Tooltip",
-				description:
-					"Hover or focus to reveal truncated IDs and hints.",
+				description: "Hover or focus to reveal truncated IDs and hints.",
 			},
 			{
 				id: "popover",
 				label: "Popover",
-				description:
-					"Non-modal floating panel for interactive extras. Esc / outside dismiss.",
+				description: "Non-modal floating panel for interactive extras. Esc / outside dismiss.",
 			},
 			{
 				id: "command-palette",
 				label: "CommandPalette",
-				description:
-					"Modal jump/command list. Nest catalog + title/placeholder/empty knobs.",
+				description: "Modal jump/command list. Nest catalog + title/placeholder/empty knobs.",
 				apiDriven: true,
 			},
 			{
 				id: "action-menu",
 				label: "ActionMenu",
-				description:
-					"Portaled row actions with keyboard menu navigation.",
+				description: "Portaled row actions with keyboard menu navigation.",
 			},
 			{
 				id: "context-menu",
 				label: "ContextMenu",
-				description:
-					"Right-click APG menu. Esc and outside click dismiss.",
+				description: "Right-click APG menu. Esc and outside click dismiss.",
 			},
 			{
 				id: "toast",
 				label: "Toast",
-				description:
-					"Knobs feed the next push. Stack inherits viewport corner.",
+				description: "Knobs feed the next push. Stack inherits viewport corner.",
 			},
 		],
 	},
@@ -190,56 +160,47 @@ const CATALOG: CatalogCategory[] = [
 			{
 				id: "form-field",
 				label: "FormField",
-				description:
-					"Compose Label / hint / error around controls. Invalid state uses semantic danger tokens.",
+				description: "Compose Label / hint / error around controls. Invalid state uses semantic danger tokens.",
 			},
 			{
 				id: "text-select",
 				label: "TextArea + Select",
-				description:
-					"Multi-line notes and region listbox for deploy wizards.",
+				description: "Multi-line notes and region listbox for deploy wizards.",
 			},
 			{
 				id: "combobox",
 				label: "Combobox",
-				description:
-					"Searchable listbox. Same component for single and multi.",
+				description: "Searchable listbox. Same component for single and multi.",
 			},
 			{
 				id: "choices",
 				label: "Checkbox / Radio / Toggle",
-				description:
-					"Boolean and exclusive choices for network placement and feature flags.",
+				description: "Boolean and exclusive choices for network placement and feature flags.",
 			},
 			{
 				id: "search",
 				label: "SearchInput",
-				description:
-					"Debounced search for inventory filters. Clear control appears when non-empty.",
+				description: "Debounced search for inventory filters. Clear control appears when non-empty.",
 			},
 			{
 				id: "deploy-options",
 				label: "Deploy options",
-				description:
-					"TagInput, NumberInput, Slider, DateTimePicker, FileUpload.",
+				description: "TagInput, NumberInput, Slider, DateTimePicker, FileUpload.",
 			},
 			{
 				id: "money-input",
 				label: "MoneyInput",
-				description:
-					"FormField + amount entry (fiat + built-in BTC). BtcInput + SegmentedControl for unit.",
+				description: "FormField + amount entry (fiat + built-in BTC). BtcInput + SegmentedControl for unit.",
 			},
 			{
 				id: "color-picker",
 				label: "ColorPicker",
-				description:
-					"HSV plane + hue + HEX/RGB + swatches. Knob: standalone panel or Popover.",
+				description: "HSV plane + hue + HEX/RGB + swatches. Knob: standalone panel or Popover.",
 			},
 			{
 				id: "field-error",
 				label: "FieldError",
-				description:
-					"Use when composing custom layouts outside FormField.",
+				description: "Use when composing custom layouts outside FormField.",
 			},
 		],
 	},
@@ -258,14 +219,12 @@ const CATALOG: CatalogCategory[] = [
 			{
 				id: "multi",
 				label: "Multi select",
-				description:
-					"Same component with multiple. Selected values render as removable chips.",
+				description: "Same component with multiple. Selected values render as removable chips.",
 			},
 			{
 				id: "states",
 				label: "States",
-				description:
-					"Loading panel, non-searchable list, and disabled control.",
+				description: "Loading panel, non-searchable list, and disabled control.",
 			},
 		],
 	},
@@ -282,50 +241,42 @@ const CATALOG: CatalogCategory[] = [
 			{
 				id: "top-nav",
 				label: "TopNav",
-				description:
-					"Brand, optional menu toggle, start/center/end slots. Theme control sits in end.",
+				description: "Brand, optional menu toggle, start/center/end slots. Theme control sits in end.",
 			},
 			{
 				id: "side-nav",
 				label: "SideNav",
-				description:
-					"Left category list. Collapse via TopNav menu for icon rail.",
+				description: "Left category list. Collapse via TopNav menu for icon rail.",
 			},
 			{
 				id: "skip-link",
 				label: "SkipLink",
-				description:
-					"Bypass link to main (G1). First Tab reveals the link; AppShell main is id=main.",
+				description: "Bypass link to main (G1). First Tab reveals the link; AppShell main is id=main.",
 			},
 			{
 				id: "breadcrumbs",
 				label: "Breadcrumbs",
-				description:
-					"Trail above the canvas: Examples > category (> component when tabs are used).",
+				description: "Trail above the canvas: Examples > category (> component when tabs are used).",
 			},
 			{
 				id: "tabs",
 				label: "Tabs",
-				description:
-					"Underline tablist + panels. Arrow keys move selection.",
+				description: "Underline tablist + panels. Arrow keys move selection.",
 			},
 			{
 				id: "segmented-control",
 				label: "SegmentedControl",
-				description:
-					"Exclusive radiogroup strip. Skin with --segment-* CSS vars.",
+				description: "Exclusive radiogroup strip. Skin with --segment-* CSS vars.",
 			},
 			{
 				id: "stepper",
 				label: "Stepper",
-				description:
-					"Linear form wizard steps (checkout / KYC). Not Workflow.",
+				description: "Linear form wizard steps (checkout / KYC). Not Workflow.",
 			},
 			{
 				id: "toolbar-select",
 				label: "ToolbarSelect",
-				description:
-					"Ghost chrome single-select for TopNav (account / region compose).",
+				description: "Ghost chrome single-select for TopNav (account / region compose).",
 			},
 		],
 	},
@@ -342,20 +293,17 @@ const CATALOG: CatalogCategory[] = [
 			{
 				id: "diff-view",
 				label: "DiffView",
-				description:
-					"Line diffs (code/docs) and tree diffs (IaC resources + attributes).",
+				description: "Line diffs (code/docs) and tree diffs (IaC resources + attributes).",
 			},
 			{
 				id: "plan-summary",
 				label: "PlanSummary",
-				description:
-					"Create/update/destroy/replace counts with kind filters over DiffView tree.",
+				description: "Create/update/destroy/replace counts with kind filters over DiffView tree.",
 			},
 			{
 				id: "log-viewer",
 				label: "LogViewer",
-				description:
-					"Live-tail panel: Nest stream + WS filters; follow/pause, level chips, copy.",
+				description: "Live-tail panel: Nest stream + WS filters; follow/pause, level chips, copy.",
 				apiDriven: true,
 			},
 		],
@@ -367,27 +315,23 @@ const CATALOG: CatalogCategory[] = [
 			{
 				id: "data-table",
 				label: "DataTable",
-				description:
-					"Nest list with full server query; live WS patches; empty slot.",
+				description: "Nest list with full server query; live WS patches; empty slot.",
 				apiDriven: true,
 			},
 			{
 				id: "pagination",
 				label: "Pagination",
-				description:
-					"Standalone Prev/Next chrome with optional item range. DataTable reuses the same control.",
+				description: "Standalone Prev/Next chrome with optional item range. DataTable reuses the same control.",
 			},
 			{
 				id: "description-list",
 				label: "DescriptionList",
-				description:
-					"Resource attribute key/value pairs for detail panels.",
+				description: "Resource attribute key/value pairs for detail panels.",
 			},
 			{
 				id: "stat-display",
 				label: "StatDisplay",
-				description:
-					"Metric tiles on Card. Tone styles value text and pairs with Badge or caption.",
+				description: "Metric tiles on Card. Tone styles value text and pairs with Badge or caption.",
 			},
 			{
 				id: "money-chrome",
@@ -398,38 +342,32 @@ const CATALOG: CatalogCategory[] = [
 			{
 				id: "activity-surfaces",
 				label: "Activity surfaces",
-				description:
-					"ActivityRow, LedgerRow, FeeRateControl, Sparkline, PaymentUri helpers.",
+				description: "ActivityRow, LedgerRow, FeeRateControl, Sparkline, PaymentUri helpers.",
 			},
 			{
 				id: "code-block",
 				label: "CodeBlock",
-				description:
-					"Read-only plain code with optional language, line numbers, and CopyButton.",
+				description: "Read-only plain code with optional language, line numbers, and CopyButton.",
 			},
 			{
 				id: "chip-group",
 				label: "ChipGroup",
-				description:
-					"Multi-select filter chips with aria-pressed toggles and optional dismiss.",
+				description: "Multi-select filter chips with aria-pressed toggles and optional dismiss.",
 			},
 			{
 				id: "timeline",
 				label: "Timeline",
-				description:
-					"Ordered deploy/event history with rail and optional StatusBadge.",
+				description: "Ordered deploy/event history with rail and optional StatusBadge.",
 			},
 			{
 				id: "tree-view",
 				label: "TreeView",
-				description:
-					"Nested network/inventory tree with APG keyboard and expand.",
+				description: "Nested network/inventory tree with APG keyboard and expand.",
 			},
 			{
 				id: "resource-graph",
 				label: "ResourceGraph",
-				description:
-					"SVG dependency map with accessible edge list. No canvas/pan-zoom in v1.",
+				description: "SVG dependency map with accessible edge list. No canvas/pan-zoom in v1.",
 			},
 			{
 				id: "flow-canvas",
@@ -457,10 +395,7 @@ function getCategory(id: CategoryId): CatalogCategory {
 	return CATALOG[0];
 }
 
-function getComponent(
-	categoryId: CategoryId,
-	componentId: string,
-): CatalogComponent {
+function getComponent(categoryId: CategoryId, componentId: string): CatalogComponent {
 	const category = getCategory(categoryId);
 	for (const component of category.components) {
 		if (component.id === componentId) {

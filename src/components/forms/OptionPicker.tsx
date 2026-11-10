@@ -13,10 +13,7 @@ import { Button } from "./Button.js";
 import { filterFieldOptions, findOptionLabel } from "./fieldOption.js";
 import { controlVariants } from "./FormField.js";
 
-interface OptionPickerBaseProps extends Omit<
-	ComponentProps<"div">,
-	"onChange" | "defaultValue" | "className"
-> {
+interface OptionPickerBaseProps extends Omit<ComponentProps<"div">, "onChange" | "defaultValue" | "className"> {
 	options: FieldOption[];
 	id?: string;
 	/**
@@ -168,12 +165,7 @@ function OptionPicker(props: OptionPickerProps) {
 	});
 
 	const visibleOptions = useMemo(() => {
-		return filterFieldOptions(
-			options,
-			query,
-			isSearchable,
-			resolvedFilterMode,
-		);
+		return filterFieldOptions(options, query, isSearchable, resolvedFilterMode);
 	}, [options, query, isSearchable, resolvedFilterMode]);
 
 	const selectedLabel = findOptionLabel(options, selectedSingle);
@@ -293,10 +285,7 @@ function OptionPicker(props: OptionPickerProps) {
 					return 0;
 				}
 
-				return (
-					(current - 1 + visibleOptions.length) %
-					visibleOptions.length
-				);
+				return (current - 1 + visibleOptions.length) % visibleOptions.length;
 			});
 
 			return;
@@ -341,11 +330,7 @@ function OptionPicker(props: OptionPickerProps) {
 								toggleMulti(item);
 							}}
 						>
-							<Badge
-								variant="primary"
-								size="sm"
-								className="inline-flex items-center gap-1"
-							>
+							<Badge variant="primary" size="sm" className="inline-flex items-center gap-1">
 								{chipLabel}
 								<X className="size-3" aria-hidden="true" />
 							</Badge>
@@ -364,11 +349,7 @@ function OptionPicker(props: OptionPickerProps) {
 			</div>
 		);
 	} else if (visibleOptions.length === 0) {
-		listBody = (
-			<div className="px-3 py-2 text-sm text-muted-foreground">
-				{resolvedNoOptions}
-			</div>
-		);
+		listBody = <div className="px-3 py-2 text-sm text-muted-foreground">{resolvedNoOptions}</div>;
 	} else {
 		listBody = visibleOptions.map((option, index) => {
 			let isSelected = false;
@@ -380,41 +361,25 @@ function OptionPicker(props: OptionPickerProps) {
 
 			const isActive = index === activeIndex;
 
-			let optionClass =
-				"flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm";
+			let optionClass = "flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm";
 
 			if (isSelected) {
-				optionClass = cn(
-					optionClass,
-					"bg-primary/10 font-medium text-primary",
-				);
+				optionClass = cn(optionClass, "bg-primary/10 font-medium text-primary");
 				if (isActive) {
-					optionClass = cn(
-						optionClass,
-						"ring-1 ring-inset ring-primary/40",
-					);
+					optionClass = cn(optionClass, "ring-1 ring-inset ring-primary/40");
 				}
 			} else if (isActive) {
-				optionClass = cn(
-					optionClass,
-					"bg-accent text-accent-foreground",
-				);
+				optionClass = cn(optionClass, "bg-accent text-accent-foreground");
 			} else {
 				optionClass = cn(optionClass, "text-foreground hover:bg-muted");
 			}
 
 			if (option.disabled === true) {
-				optionClass = cn(
-					optionClass,
-					"cursor-not-allowed opacity-50 hover:bg-transparent",
-				);
+				optionClass = cn(optionClass, "cursor-not-allowed opacity-50 hover:bg-transparent");
 			}
 
 			let checkMark: ReactNode = (
-				<span
-					className="inline-flex size-4 shrink-0 items-center justify-center"
-					aria-hidden="true"
-				/>
+				<span className="inline-flex size-4 shrink-0 items-center justify-center" aria-hidden="true" />
 			);
 			if (isSelected) {
 				checkMark = (
@@ -486,18 +451,11 @@ function OptionPicker(props: OptionPickerProps) {
 
 	let hiddenField: ReactNode = null;
 	if (name !== undefined && !isMulti && disabled !== true) {
-		hiddenField = (
-			<input type="hidden" name={name} value={selectedSingle} />
-		);
+		hiddenField = <input type="hidden" name={name} value={selectedSingle} />;
 	}
 
 	return (
-		<div
-			ref={setReference}
-			data-slot={dataSlot}
-			className="relative w-full"
-			{...rest}
-		>
+		<div ref={setReference} data-slot={dataSlot} className="relative w-full" {...rest}>
 			{hiddenField}
 			{chips}
 			<div className="relative">
@@ -551,10 +509,5 @@ function OptionPicker(props: OptionPickerProps) {
 	);
 }
 
-export type {
-	FieldPickerSharedProps,
-	OptionPickerMultiProps,
-	OptionPickerProps,
-	OptionPickerSingleProps,
-};
+export type { FieldPickerSharedProps, OptionPickerMultiProps, OptionPickerProps, OptionPickerSingleProps };
 export { OptionPicker };

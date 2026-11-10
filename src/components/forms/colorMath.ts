@@ -173,13 +173,4 @@ function hexToHsv(input: string): HsvColor | null {
 }
 
 export type { HsvColor, RgbColor };
-export {
-	clampChannel,
-	hexToHsv,
-	hexToRgb,
-	hsvToHex,
-	hsvToRgb,
-	normalizeHex,
-	rgbToHex,
-	rgbToHsv,
-};
+export { clampChannel, hexToHsv, hexToRgb, hsvToHex, hsvToRgb, normalizeHex, rgbToHex, rgbToHsv };

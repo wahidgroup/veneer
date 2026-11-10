@@ -10,13 +10,10 @@ interface ShellChromeValue {
 const ShellChromeContext = createContext<ShellChromeValue | null>(null);
 
 function ShellChromeProvider({ children }: { children: ReactNode }) {
-	const [railPosition, setRailPosition] =
-		useState<AppShellRailPosition>("end");
+	const [railPosition, setRailPosition] = useState<AppShellRailPosition>("end");
 
 	return (
-		<ShellChromeContext.Provider value={{ railPosition, setRailPosition }}>
-			{children}
-		</ShellChromeContext.Provider>
+		<ShellChromeContext.Provider value={{ railPosition, setRailPosition }}>{children}</ShellChromeContext.Provider>
 	);
 }
 

@@ -18,11 +18,7 @@ describe("applyRowTransaction", () => {
 			{ id: "b", name: "Beta" },
 		];
 
-		const next = applyRowTransaction(
-			rows,
-			{ update: [{ id: "a", name: "Alpha-2" }] },
-			getRowId,
-		);
+		const next = applyRowTransaction(rows, { update: [{ id: "a", name: "Alpha-2" }] }, getRowId);
 
 		expect(next).toEqual([
 			{ id: "a", name: "Alpha-2" },
@@ -86,11 +82,7 @@ describe("applyRowTransaction", () => {
 	it("ignores update ids that are not in the current rows", () => {
 		const rows: Row[] = [{ id: "a", name: "Alpha" }];
 
-		const next = applyRowTransaction(
-			rows,
-			{ update: [{ id: "missing", name: "Nope" }] },
-			getRowId,
-		);
+		const next = applyRowTransaction(rows, { update: [{ id: "missing", name: "Nope" }] }, getRowId);
 
 		expect(next).toEqual([{ id: "a", name: "Alpha" }]);
 	});

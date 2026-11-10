@@ -25,10 +25,7 @@ describe("NumberInput", () => {
 
 	it("sets aria-invalid when invalid", () => {
 		render(<NumberInput aria-label="Port" invalid />);
-		expect(screen.getByRole("spinbutton")).toHaveAttribute(
-			"aria-invalid",
-			"true",
-		);
+		expect(screen.getByRole("spinbutton")).toHaveAttribute("aria-invalid", "true");
 	});
 
 	it("has no accessibility violations", async () => {

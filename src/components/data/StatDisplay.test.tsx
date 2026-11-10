@@ -7,9 +7,7 @@ import { StatDisplay } from "./StatDisplay.js";
 
 describe("StatDisplay", () => {
 	it("renders label and value on a Card root", () => {
-		const { container } = render(
-			<StatDisplay label="Active stacks" value="42" />,
-		);
+		const { container } = render(<StatDisplay label="Active stacks" value="42" />);
 
 		const root = container.querySelector("[data-slot='stat-display']");
 		expect(root).not.toBeNull();
@@ -20,13 +18,7 @@ describe("StatDisplay", () => {
 	});
 
 	it("renders hint when provided", () => {
-		render(
-			<StatDisplay
-				label="Drift"
-				value="3"
-				hint="Resources out of sync"
-			/>,
-		);
+		render(<StatDisplay label="Drift" value="3" hint="Resources out of sync" />);
 		expect(screen.getByText("Resources out of sync")).toBeInTheDocument();
 	});
 
@@ -47,23 +39,16 @@ describe("StatDisplay", () => {
 		{ tone: "success" as const, caption: "Success" },
 		{ tone: "warning" as const, caption: "Warning" },
 		{ tone: "danger" as const, caption: "Danger" },
-	])(
-		"pairs tone $tone with a visible caption when badge is omitted",
-		({ tone, caption }) => {
-			const { container } = render(
-				<StatDisplay label="Metric" value="1" tone={tone} />,
-			);
+	])("pairs tone $tone with a visible caption when badge is omitted", ({ tone, caption }) => {
+		const { container } = render(<StatDisplay label="Metric" value="1" tone={tone} />);
 
-			const root = container.querySelector("[data-slot='stat-display']");
-			expect(root).toHaveAttribute("data-tone", tone);
-			expect(screen.getByText(caption)).toBeInTheDocument();
-		},
-	);
+		const root = container.querySelector("[data-slot='stat-display']");
+		expect(root).toHaveAttribute("data-tone", tone);
+		expect(screen.getByText(caption)).toBeInTheDocument();
+	});
 
 	it("has no accessibility violations on the default render", async () => {
-		await expectNoA11yViolations(
-			<StatDisplay label="Active stacks" value="42" />,
-		);
+		await expectNoA11yViolations(<StatDisplay label="Active stacks" value="42" />);
 	});
 
 	it("has no accessibility violations with tone and badge", async () => {

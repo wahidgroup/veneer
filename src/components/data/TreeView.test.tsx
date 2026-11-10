@@ -28,16 +28,10 @@ describe("TreeView", () => {
 	it("renders a tree with collapsed parents by default", () => {
 		render(<TreeView aria-label="Network" items={NETWORK} />);
 
-		expect(
-			screen.getByRole("tree", { name: "Network" }),
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole("treeitem", { name: "vpc-prod" }),
-		).toHaveAttribute("aria-expanded", "false");
+		expect(screen.getByRole("tree", { name: "Network" })).toBeInTheDocument();
+		expect(screen.getByRole("treeitem", { name: "vpc-prod" })).toHaveAttribute("aria-expanded", "false");
 		expect(screen.queryByRole("treeitem", { name: "subnet-a" })).toBeNull();
-		expect(
-			screen.getByRole("treeitem", { name: "igw-main" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("treeitem", { name: "igw-main" })).toBeInTheDocument();
 	});
 
 	it("expands on ArrowRight and moves to child on second ArrowRight", async () => {
@@ -49,38 +43,24 @@ describe("TreeView", () => {
 
 		await user.keyboard("{ArrowRight}");
 		expect(vpc).toHaveAttribute("aria-expanded", "true");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-a" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("treeitem", { name: "subnet-a" })).toBeInTheDocument();
 
 		await user.keyboard("{ArrowRight}");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-a" }),
-		).toHaveFocus();
+		expect(screen.getByRole("treeitem", { name: "subnet-a" })).toHaveFocus();
 	});
 
 	it("collapses on ArrowLeft and returns to parent", async () => {
 		const user = userEvent.setup();
-		render(
-			<TreeView
-				aria-label="Network"
-				items={NETWORK}
-				defaultExpandedIds={["vpc", "subnet-a"]}
-			/>,
-		);
+		render(<TreeView aria-label="Network" items={NETWORK} defaultExpandedIds={["vpc", "subnet-a"]} />);
 
 		const eni = screen.getByRole("treeitem", { name: "eni-1a" });
 		eni.focus();
 
 		await user.keyboard("{ArrowLeft}");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-a" }),
-		).toHaveFocus();
+		expect(screen.getByRole("treeitem", { name: "subnet-a" })).toHaveFocus();
 
 		await user.keyboard("{ArrowLeft}");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-a" }),
-		).toHaveAttribute("aria-expanded", "false");
+		expect(screen.getByRole("treeitem", { name: "subnet-a" })).toHaveAttribute("aria-expanded", "false");
 	});
 
 	it("activates end nodes with Enter and toggles parents", async () => {
@@ -104,28 +84,18 @@ describe("TreeView", () => {
 
 		screen.getByRole("treeitem", { name: "subnet-a" }).focus();
 		await user.keyboard("{Enter}");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-a" }),
-		).toHaveAttribute("aria-expanded", "false");
+		expect(screen.getByRole("treeitem", { name: "subnet-a" })).toHaveAttribute("aria-expanded", "false");
 		expect(activated).toEqual(["eni-1"]);
 	});
 
 	it("skips disabled nodes on ArrowDown", async () => {
 		const user = userEvent.setup();
-		render(
-			<TreeView
-				aria-label="Network"
-				items={NETWORK}
-				defaultExpandedIds={["vpc", "subnet-a"]}
-			/>,
-		);
+		render(<TreeView aria-label="Network" items={NETWORK} defaultExpandedIds={["vpc", "subnet-a"]} />);
 
 		screen.getByRole("treeitem", { name: "eni-1a" }).focus();
 
 		await user.keyboard("{ArrowDown}");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-b" }),
-		).toHaveFocus();
+		expect(screen.getByRole("treeitem", { name: "subnet-b" })).toHaveFocus();
 	});
 
 	it("reports expandedIds when controlled", async () => {
@@ -157,9 +127,7 @@ describe("TreeView", () => {
 				}}
 			/>,
 		);
-		expect(
-			screen.getByRole("treeitem", { name: "vpc-prod" }),
-		).toHaveAttribute("aria-expanded", "false");
+		expect(screen.getByRole("treeitem", { name: "vpc-prod" })).toHaveAttribute("aria-expanded", "false");
 	});
 
 	it("does not collapse ancestors when a child is clicked", async () => {
@@ -179,48 +147,24 @@ describe("TreeView", () => {
 
 		await user.click(screen.getByRole("treeitem", { name: "eni-1a" }));
 		expect(activated).toEqual(["eni-1"]);
-		expect(
-			screen.getByRole("treeitem", { name: "vpc-prod" }),
-		).toHaveAttribute("aria-expanded", "true");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-a" }),
-		).toHaveAttribute("aria-expanded", "true");
-		expect(
-			screen.getByRole("treeitem", { name: "eni-1a" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("treeitem", { name: "vpc-prod" })).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("treeitem", { name: "subnet-a" })).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("treeitem", { name: "eni-1a" })).toBeInTheDocument();
 
 		await user.click(screen.getByRole("treeitem", { name: "subnet-b" }));
-		expect(
-			screen.getByRole("treeitem", { name: "vpc-prod" }),
-		).toHaveAttribute("aria-expanded", "true");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-a" }),
-		).toHaveAttribute("aria-expanded", "true");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-b" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("treeitem", { name: "vpc-prod" })).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("treeitem", { name: "subnet-a" })).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("treeitem", { name: "subnet-b" })).toBeInTheDocument();
 	});
 
 	it("expands a nested parent on click without collapsing its ancestor", async () => {
 		const user = userEvent.setup();
-		render(
-			<TreeView
-				aria-label="Network"
-				items={NETWORK}
-				defaultExpandedIds={["vpc"]}
-			/>,
-		);
+		render(<TreeView aria-label="Network" items={NETWORK} defaultExpandedIds={["vpc"]} />);
 
 		await user.click(screen.getByRole("treeitem", { name: "subnet-a" }));
-		expect(
-			screen.getByRole("treeitem", { name: "vpc-prod" }),
-		).toHaveAttribute("aria-expanded", "true");
-		expect(
-			screen.getByRole("treeitem", { name: "subnet-a" }),
-		).toHaveAttribute("aria-expanded", "true");
-		expect(
-			screen.getByRole("treeitem", { name: "eni-1a" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("treeitem", { name: "vpc-prod" })).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("treeitem", { name: "subnet-a" })).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("treeitem", { name: "eni-1a" })).toBeInTheDocument();
 	});
 
 	it("renders item.end without changing the accessible name", () => {
@@ -237,13 +181,9 @@ describe("TreeView", () => {
 			/>,
 		);
 
-		expect(
-			screen.getByRole("treeitem", { name: "vpc-prod" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("treeitem", { name: "vpc-prod" })).toBeInTheDocument();
 		expect(screen.getByTestId("vpc-pill")).toHaveTextContent("3 AZ");
-		expect(
-			container.querySelector("[data-slot='tree-view-end']"),
-		).not.toBeNull();
+		expect(container.querySelector("[data-slot='tree-view-end']")).not.toBeNull();
 	});
 
 	it("aligns item.end snug or justify", () => {
@@ -260,9 +200,7 @@ describe("TreeView", () => {
 				]}
 			/>,
 		);
-		expect(
-			container.querySelector("[data-slot='tree-view-end']"),
-		).toHaveAttribute("data-align", "snug");
+		expect(container.querySelector("[data-slot='tree-view-end']")).toHaveAttribute("data-align", "snug");
 
 		rerender(
 			<TreeView
@@ -277,9 +215,7 @@ describe("TreeView", () => {
 				]}
 			/>,
 		);
-		expect(
-			container.querySelector("[data-slot='tree-view-end']"),
-		).toHaveAttribute("data-align", "justify");
+		expect(container.querySelector("[data-slot='tree-view-end']")).toHaveAttribute("data-align", "justify");
 	});
 
 	it("does not toggle expand when clicking item.end", async () => {
@@ -299,20 +235,12 @@ describe("TreeView", () => {
 			/>,
 		);
 
-		expect(
-			screen.getByRole("treeitem", { name: "vpc-prod" }),
-		).toHaveAttribute("aria-expanded", "true");
-		expect(
-			screen.getByRole("treeitem", { name: "child" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("treeitem", { name: "vpc-prod" })).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("treeitem", { name: "child" })).toBeInTheDocument();
 
 		await user.click(screen.getByTestId("vpc-pill"));
-		expect(
-			screen.getByRole("treeitem", { name: "vpc-prod" }),
-		).toHaveAttribute("aria-expanded", "true");
-		expect(
-			screen.getByRole("treeitem", { name: "child" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("treeitem", { name: "vpc-prod" })).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("treeitem", { name: "child" })).toBeInTheDocument();
 	});
 
 	it("moves focus with typeahead", async () => {
@@ -322,18 +250,10 @@ describe("TreeView", () => {
 		screen.getByRole("treeitem", { name: "vpc-prod" }).focus();
 
 		await user.keyboard("i");
-		expect(
-			screen.getByRole("treeitem", { name: "igw-main" }),
-		).toHaveFocus();
+		expect(screen.getByRole("treeitem", { name: "igw-main" })).toHaveFocus();
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<TreeView
-				aria-label="Network"
-				items={NETWORK}
-				defaultExpandedIds={["vpc"]}
-			/>,
-		);
+		await expectNoA11yViolations(<TreeView aria-label="Network" items={NETWORK} defaultExpandedIds={["vpc"]} />);
 	});
 });

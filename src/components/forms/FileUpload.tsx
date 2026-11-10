@@ -5,10 +5,7 @@ import { Trash2, Upload } from "lucide-react";
 import { cn } from "../../utils/cn.js";
 import { Button } from "./Button.js";
 
-interface FileUploadProps extends Omit<
-	ComponentProps<"div">,
-	"onChange" | "defaultValue"
-> {
+interface FileUploadProps extends Omit<ComponentProps<"div">, "onChange" | "defaultValue"> {
 	value?: File[];
 	defaultValue?: File[];
 	onChange?: (files: File[]) => void;
@@ -158,10 +155,7 @@ function FileUpload({
 			<ul className="mt-3 flex flex-col gap-1 text-sm">
 				{files.map((file, index) => {
 					return (
-						<li
-							key={`${file.name}-${file.size}-${index}`}
-							className="flex items-center gap-2"
-						>
+						<li key={`${file.name}-${file.size}-${index}`} className="flex items-center gap-2">
 							<Button
 								variant="danger"
 								size="icon"
@@ -177,9 +171,7 @@ function FileUpload({
 							>
 								<Trash2 className="size-4" aria-hidden="true" />
 							</Button>
-							<span className="min-w-0 truncate text-foreground">
-								{file.name}
-							</span>
+							<span className="min-w-0 truncate text-foreground">{file.name}</span>
 						</li>
 					);
 				})}
@@ -189,13 +181,10 @@ function FileUpload({
 
 	let rejectNode: ReactNode = null;
 	if (rejectMessage !== undefined) {
-		rejectNode = (
-			<p className="mt-2 text-sm text-destructive">{rejectMessage}</p>
-		);
+		rejectNode = <p className="mt-2 text-sm text-destructive">{rejectMessage}</p>;
 	}
 
-	let dropClass =
-		"block rounded-md border border-dashed bg-secondary px-4 py-6 text-center transition-colors";
+	let dropClass = "block rounded-md border border-dashed bg-secondary px-4 py-6 text-center transition-colors";
 	dropClass = cn(dropClass, borderClass);
 	if (disabled === true) {
 		dropClass = cn(dropClass, "cursor-not-allowed opacity-50");
@@ -204,11 +193,7 @@ function FileUpload({
 	}
 
 	return (
-		<div
-			data-slot="file-upload"
-			className={cn("w-full", className)}
-			{...rest}
-		>
+		<div data-slot="file-upload" className={cn("w-full", className)} {...rest}>
 			<label
 				htmlFor={inputId}
 				aria-disabled={disabled === true}

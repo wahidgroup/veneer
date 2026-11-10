@@ -6,18 +6,10 @@ import { X } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
 import { lockBodyScroll } from "../../utils/lockBodyScroll.js";
-import {
-	DISMISS_LAYER_TIER_CLASS,
-	useDismissLayer,
-} from "../../overlays/dismissLayerStack.js";
+import { DISMISS_LAYER_TIER_CLASS, useDismissLayer } from "../../overlays/dismissLayerStack.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
-import {
-	captureFocusRestore,
-	focusInitial,
-	restoreFocus,
-	trapTabKey,
-} from "../../utils/focusScope.js";
+import { captureFocusRestore, focusInitial, restoreFocus, trapTabKey } from "../../utils/focusScope.js";
 
 type DrawerSide = "right" | "left" | "top" | "bottom";
 
@@ -41,10 +33,7 @@ const drawerPanelVariants = cva(
 	},
 );
 
-interface DrawerProps
-	extends
-		Omit<ComponentProps<"div">, "title">,
-		VariantProps<typeof drawerPanelVariants> {
+interface DrawerProps extends Omit<ComponentProps<"div">, "title">, VariantProps<typeof drawerPanelVariants> {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	title: string;
@@ -161,11 +150,7 @@ function Drawer({
 
 	return (
 		<Portal>
-			<div
-				data-slot="drawer"
-				data-side={resolvedSide}
-				className={shellClass}
-			>
+			<div data-slot="drawer" data-side={resolvedSide} className={shellClass}>
 				<div
 					data-slot="drawer-backdrop"
 					aria-hidden="true"
@@ -183,24 +168,16 @@ function Drawer({
 					aria-modal="true"
 					aria-labelledby={titleId}
 					tabIndex={-1}
-					className={cn(
-						drawerPanelVariants({ side: resolvedSide }),
-						className,
-					)}
+					className={cn(drawerPanelVariants({ side: resolvedSide }), className)}
 					{...rest}
 				>
 					<div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-5 py-4">
-						<h2
-							id={titleId}
-							className="text-lg font-semibold text-foreground"
-						>
+						<h2 id={titleId} className="text-lg font-semibold text-foreground">
 							{title}
 						</h2>
 						{closeControl}
 					</div>
-					<div className="flex-1 overflow-auto px-5 py-4 text-sm text-foreground">
-						{children}
-					</div>
+					<div className="flex-1 overflow-auto px-5 py-4 text-sm text-foreground">{children}</div>
 				</div>
 			</div>
 		</Portal>

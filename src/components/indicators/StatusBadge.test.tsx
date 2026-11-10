@@ -32,8 +32,6 @@ describe("StatusBadge", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<StatusBadge status="drifted">Drifted</StatusBadge>,
-		);
+		await expectNoA11yViolations(<StatusBadge status="drifted">Drifted</StatusBadge>);
 	});
 });

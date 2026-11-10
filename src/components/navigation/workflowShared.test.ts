@@ -40,13 +40,10 @@ describe("stepEdgeFlags", () => {
 			isFirst: true,
 			isLast: true,
 		},
-	])(
-		"flags $value in [$stepIds] as first=$isFirst last=$isLast",
-		({ stepIds, value, isFirst, isLast }) => {
-			expect(stepEdgeFlags(stepIds, value)).toEqual({
-				isFirst,
-				isLast,
-			});
-		},
-	);
+	])("flags $value in [$stepIds] as first=$isFirst last=$isLast", ({ stepIds, value, isFirst, isLast }) => {
+		expect(stepEdgeFlags(stepIds, value)).toEqual({
+			isFirst,
+			isLast,
+		});
+	});
 });

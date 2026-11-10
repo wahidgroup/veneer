@@ -1,14 +1,7 @@
 import ELK from "elkjs/lib/elk.bundled.js";
 import type { ElkExtendedEdge, ElkNode, ElkPort } from "elkjs/lib/elk-api.js";
 
-import type {
-	FlowEdge,
-	FlowNode,
-	FlowPoint,
-	FlowPort,
-	LayoutGraphInput,
-	LayoutGraphResult,
-} from "./flowTypes.js";
+import type { FlowEdge, FlowNode, FlowPoint, FlowPort, LayoutGraphInput, LayoutGraphResult } from "./flowTypes.js";
 
 interface ElkEngine {
 	layout(graph: ElkNode): Promise<ElkNode>;
@@ -38,10 +31,7 @@ function elkPortId(nodeId: string, portId: string): string {
 	return `${nodeId}::${portId}`;
 }
 
-function buildElkPorts(
-	nodeId: string,
-	ports: FlowPort[] | undefined,
-): ElkPort[] | undefined {
+function buildElkPorts(nodeId: string, ports: FlowPort[] | undefined): ElkPort[] | undefined {
 	if (ports === undefined || ports.length === 0) {
 		return undefined;
 	}
@@ -90,9 +80,7 @@ function collectBendPoints(edge: ElkExtendedEdge): FlowPoint[] | undefined {
  * Layered ELK layout with optional ports (FIXED_SIDE / FIXED_ORDER).
  * Requires the optional `elkjs` peer.
  */
-async function layoutGraph(
-	input: LayoutGraphInput,
-): Promise<LayoutGraphResult> {
+async function layoutGraph(input: LayoutGraphInput): Promise<LayoutGraphResult> {
 	const elk = createElkEngine();
 	let direction = DEFAULT_DIRECTION;
 	if (input.direction !== undefined) {

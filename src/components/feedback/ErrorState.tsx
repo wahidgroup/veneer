@@ -5,20 +5,17 @@ import { CircleAlert, ShieldAlert } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
 
-const errorStateVariants = cva(
-	"flex w-full flex-col items-center justify-center text-center",
-	{
-		variants: {
-			size: {
-				sm: "gap-2 px-3 py-4",
-				md: "gap-3 px-6 py-10",
-			},
-		},
-		defaultVariants: {
-			size: "md",
+const errorStateVariants = cva("flex w-full flex-col items-center justify-center text-center", {
+	variants: {
+		size: {
+			sm: "gap-2 px-3 py-4",
+			md: "gap-3 px-6 py-10",
 		},
 	},
-);
+	defaultVariants: {
+		size: "md",
+	},
+});
 
 const errorStateTitleVariants = cva("font-semibold text-foreground", {
 	variants: {
@@ -63,10 +60,7 @@ const errorStateIconVariants = cva("shrink-0", {
 
 type ErrorStateKind = "error" | "forbidden";
 
-interface ErrorStateProps
-	extends
-		Omit<ComponentProps<"div">, "title">,
-		VariantProps<typeof errorStateVariants> {
+interface ErrorStateProps extends Omit<ComponentProps<"div">, "title">, VariantProps<typeof errorStateVariants> {
 	kind?: ErrorStateKind;
 	title?: ReactNode;
 	children?: ReactNode;
@@ -79,16 +73,7 @@ interface ErrorStateProps
  * defaults by `kind`. Parent decides when to render. Pass `action` as
  * composed Button chrome (Retry vs Request access).
  */
-function ErrorState({
-	kind = "error",
-	title,
-	children,
-	icon,
-	action,
-	size,
-	className,
-	...rest
-}: ErrorStateProps) {
+function ErrorState({ kind = "error", title, children, icon, action, size, className, ...rest }: ErrorStateProps) {
 	let resolvedSize: "sm" | "md" = "md";
 	if (size === "sm") {
 		resolvedSize = "sm";
@@ -108,21 +93,9 @@ function ErrorState({
 		kind,
 	});
 
-	let iconNode: ReactNode = (
-		<CircleAlert
-			data-slot="error-state-icon"
-			className={iconClass}
-			aria-hidden="true"
-		/>
-	);
+	let iconNode: ReactNode = <CircleAlert data-slot="error-state-icon" className={iconClass} aria-hidden="true" />;
 	if (kind === "forbidden") {
-		iconNode = (
-			<ShieldAlert
-				data-slot="error-state-icon"
-				className={iconClass}
-				aria-hidden="true"
-			/>
-		);
+		iconNode = <ShieldAlert data-slot="error-state-icon" className={iconClass} aria-hidden="true" />;
 	}
 	if (icon === null) {
 		iconNode = null;
@@ -145,11 +118,7 @@ function ErrorState({
 
 	let actionNode: ReactNode = null;
 	if (action !== undefined) {
-		actionNode = (
-			<div className="mt-1 flex flex-wrap justify-center gap-2">
-				{action}
-			</div>
-		);
+		actionNode = <div className="mt-1 flex flex-wrap justify-center gap-2">{action}</div>;
 	}
 
 	const root = (
@@ -158,19 +127,12 @@ function ErrorState({
 			data-kind={kind}
 			data-size={resolvedSize}
 			role="alert"
-			className={cn(
-				errorStateVariants({ size: resolvedSize }),
-				className,
-			)}
+			className={cn(errorStateVariants({ size: resolvedSize }), className)}
 			{...rest}
 		>
 			{iconNode}
 			<div className="flex max-w-md flex-col items-center gap-1">
-				<div
-					className={errorStateTitleVariants({ size: resolvedSize })}
-				>
-					{resolvedTitle}
-				</div>
+				<div className={errorStateTitleVariants({ size: resolvedSize })}>{resolvedTitle}</div>
 				{descriptionNode}
 			</div>
 			{actionNode}

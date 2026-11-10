@@ -7,9 +7,7 @@
 		"paths": {
 			"@/*": ["./src/*"],
 			"vitest-axe/matchers": ["./node_modules/vitest-axe/matchers.d.ts"],
-			"vitest-axe/extend-expect": [
-				"./node_modules/vitest-axe/extend-expect.d.ts"
-			]
+			"vitest-axe/extend-expect": ["./node_modules/vitest-axe/extend-expect.d.ts"]
 		}
 	},
 	"include": ["src", "scripts", "vitest.config.ts"],

@@ -22,10 +22,7 @@ function Input({ className, invalid, type, ...rest }: InputProps) {
 			data-slot="input"
 			type={resolvedType}
 			aria-invalid={resolvedInvalid}
-			className={cn(
-				controlVariants({ invalid: resolvedInvalid }),
-				className,
-			)}
+			className={cn(controlVariants({ invalid: resolvedInvalid }), className)}
 			{...rest}
 		/>
 	);

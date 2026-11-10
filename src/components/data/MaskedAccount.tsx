@@ -44,15 +44,7 @@ function maskValue(value: string, visibleEnd: number): string {
  * Account / IBAN display with optional masking. Copy always uses the full
  * `value` (masking is shoulder-privacy UX, not security).
  */
-function MaskedAccount({
-	value,
-	visibleEnd,
-	masked,
-	format,
-	showCopy,
-	className,
-	...rest
-}: MaskedAccountProps) {
+function MaskedAccount({ value, visibleEnd, masked, format, showCopy, className, ...rest }: MaskedAccountProps) {
 	let resolvedVisibleEnd = 4;
 	if (visibleEnd !== undefined) {
 		resolvedVisibleEnd = visibleEnd;
@@ -92,9 +84,7 @@ function MaskedAccount({
 
 	let copyControl = null;
 	if (resolvedShowCopy) {
-		copyControl = (
-			<CopyButton value={value} aria-label="Copy account number" />
-		);
+		copyControl = <CopyButton value={value} aria-label="Copy account number" />;
 	}
 
 	return (
@@ -105,11 +95,7 @@ function MaskedAccount({
 			className={cn("inline-flex items-center gap-1", className)}
 			{...rest}
 		>
-			<span
-				data-slot="masked-account-text"
-				className="font-mono text-sm tabular-nums"
-				aria-label={ariaLabel}
-			>
+			<span data-slot="masked-account-text" className="font-mono text-sm tabular-nums" aria-label={ariaLabel}>
 				{display}
 			</span>
 			{copyControl}

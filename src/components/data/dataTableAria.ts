@@ -1,10 +1,7 @@
 /**
  * APG ARIA row count: data rows plus header rows; empty tables keep one body slot.
  */
-function computeAriaRowCount(
-	resolvedRowCount: number,
-	headerRowCount: number,
-): number {
+function computeAriaRowCount(resolvedRowCount: number, headerRowCount: number): number {
 	let ariaRowCount = resolvedRowCount + headerRowCount;
 	if (resolvedRowCount === 0) {
 		ariaRowCount = headerRowCount + 1;
@@ -16,12 +13,7 @@ function computeAriaRowCount(
 /**
  * Absolute ARIA row index for a body row on the current page.
  */
-function computeBodyAriaRowIndex(
-	headerRowCount: number,
-	pageIndex: number,
-	pageSize: number,
-	index: number,
-): number {
+function computeBodyAriaRowIndex(headerRowCount: number, pageIndex: number, pageSize: number, index: number): number {
 	const ariaRowIndex = headerRowCount + pageIndex * pageSize + index + 1;
 	return ariaRowIndex;
 }
@@ -29,10 +21,7 @@ function computeBodyAriaRowIndex(
 /**
  * Whether to announce ARIA column indices (only when some leaf columns are hidden).
  */
-function shouldAnnounceColIndices(
-	visibleLeafCount: number,
-	allLeafCount: number,
-): boolean {
+function shouldAnnounceColIndices(visibleLeafCount: number, allLeafCount: number): boolean {
 	const announce = visibleLeafCount < allLeafCount;
 	return announce;
 }
@@ -60,9 +49,4 @@ function leafAriaColIndex(
 	return undefined;
 }
 
-export {
-	computeAriaRowCount,
-	computeBodyAriaRowIndex,
-	leafAriaColIndex,
-	shouldAnnounceColIndices,
-};
+export { computeAriaRowCount, computeBodyAriaRowIndex, leafAriaColIndex, shouldAnnounceColIndices };

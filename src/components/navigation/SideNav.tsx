@@ -29,13 +29,7 @@ interface SideNavProps extends Omit<ComponentProps<"nav">, "children"> {
 /**
  * Flat section nav for AppShell sidebar. Supports `renderLink` for app routers.
  */
-function SideNav({
-	items,
-	collapsed,
-	renderLink,
-	className,
-	...rest
-}: SideNavProps) {
+function SideNav({ items, collapsed, renderLink, className, ...rest }: SideNavProps) {
 	let isCollapsed = collapsed;
 	isCollapsed ??= false;
 
@@ -48,18 +42,11 @@ function SideNav({
 			{...rest}
 		>
 			{items.map((item) => {
-				let itemClass =
-					"flex items-center gap-2 rounded-md px-2.5 py-2 text-sm outline-none transition-colors";
+				let itemClass = "flex items-center gap-2 rounded-md px-2.5 py-2 text-sm outline-none transition-colors";
 				if (item.active === true) {
-					itemClass = cn(
-						itemClass,
-						"bg-accent text-accent-foreground",
-					);
+					itemClass = cn(itemClass, "bg-accent text-accent-foreground");
 				} else {
-					itemClass = cn(
-						itemClass,
-						"text-muted-foreground hover:bg-accent hover:text-foreground",
-					);
+					itemClass = cn(itemClass, "text-muted-foreground hover:bg-accent hover:text-foreground");
 				}
 				if (item.disabled === true) {
 					itemClass = cn(itemClass, "pointer-events-none opacity-50");
@@ -75,11 +62,7 @@ function SideNav({
 
 				let labelNode: ReactNode = null;
 				if (!isCollapsed) {
-					labelNode = (
-						<span className="min-w-0 flex-1 truncate">
-							{item.label}
-						</span>
-					);
+					labelNode = <span className="min-w-0 flex-1 truncate">{item.label}</span>;
 				}
 
 				const content = (

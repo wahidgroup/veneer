@@ -45,9 +45,7 @@ function readFlowRun(body: unknown): Record<string, unknown> {
 	return data.run;
 }
 
-function readOutputsByNode(
-	run: Record<string, unknown>,
-): Record<string, Record<string, unknown>> {
+function readOutputsByNode(run: Record<string, unknown>): Record<string, Record<string, unknown>> {
 	const outputsByNode = run.outputsByNode;
 	if (!isRecord(outputsByNode)) {
 		throw new Error("expected outputsByNode");
@@ -190,11 +188,7 @@ describe("examples api", () => {
 			.poll(() => {
 				return messages;
 			})
-			.toEqual(
-				expect.arrayContaining([
-					expect.objectContaining({ type: "line" }),
-				]),
-			);
+			.toEqual(expect.arrayContaining([expect.objectContaining({ type: "line" })]));
 
 		ws.close();
 		await fetch(`${baseUrl}/v1/logs/stream/stop`, { method: "POST" });
@@ -203,9 +197,7 @@ describe("examples api", () => {
 	it("lists and mutates table rows", async () => {
 		await fetch(`${baseUrl}/v1/tables/inventory/reset`, { method: "POST" });
 
-		let response = await fetch(
-			`${baseUrl}/v1/tables/inventory?page=1&limit=10`,
-		);
+		let response = await fetch(`${baseUrl}/v1/tables/inventory?page=1&limit=10`);
 		expect(response.status).toBe(200);
 
 		const listed = await readBody(response);
@@ -230,12 +222,7 @@ describe("examples api", () => {
 			},
 		});
 
-		if (
-			listed === null ||
-			typeof listed !== "object" ||
-			!("data" in listed) ||
-			!Array.isArray(listed.data)
-		) {
+		if (listed === null || typeof listed !== "object" || !("data" in listed) || !Array.isArray(listed.data)) {
 			throw new Error("expected list envelope");
 		}
 
@@ -258,9 +245,7 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		response = await fetch(
-			`${baseUrl}/v1/tables/inventory?page=1&limit=10&sortBy=name&sortDesc=true`,
-		);
+		response = await fetch(`${baseUrl}/v1/tables/inventory?page=1&limit=10&sortBy=name&sortDesc=true`);
 		const afterAdd = await readBody(response);
 		expect(afterAdd).toEqual({
 			data: expect.any(Array),
@@ -275,9 +260,7 @@ describe("examples api", () => {
 			},
 		});
 
-		response = await fetch(
-			`${baseUrl}/v1/tables/inventory?page=1&limit=10&queries=edge-c`,
-		);
+		response = await fetch(`${baseUrl}/v1/tables/inventory?page=1&limit=10&queries=edge-c`);
 		expect(await readBody(response)).toEqual({
 			data: [
 				expect.objectContaining({
@@ -303,9 +286,7 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		response = await fetch(
-			`${baseUrl}/v1/tables/inventory?page=1&limit=10&filterRegion=us-east-1`,
-		);
+		response = await fetch(`${baseUrl}/v1/tables/inventory?page=1&limit=10&filterRegion=us-east-1`);
 		const filtered = await readBody(response);
 		expect(filtered).toEqual({
 			data: expect.any(Array),
@@ -336,9 +317,7 @@ describe("examples api", () => {
 			}, 5000);
 
 			ws.on("open", () => {
-				ws.send(
-					JSON.stringify({ type: "subscribe", tableId: "inventory" }),
-				);
+				ws.send(JSON.stringify({ type: "subscribe", tableId: "inventory" }));
 			});
 
 			ws.on("message", (raw: WsRawData) => {
@@ -352,17 +331,10 @@ describe("examples api", () => {
 
 		expect(messages[0]).toEqual({
 			type: "snapshot",
-			rows: expect.arrayContaining([
-				expect.objectContaining({ id: "1" }),
-			]),
+			rows: expect.arrayContaining([expect.objectContaining({ id: "1" })]),
 		});
 		const first = messages[0];
-		if (
-			first === null ||
-			typeof first !== "object" ||
-			!("rows" in first) ||
-			!Array.isArray(first.rows)
-		) {
+		if (first === null || typeof first !== "object" || !("rows" in first) || !Array.isArray(first.rows)) {
 			throw new Error("expected snapshot");
 		}
 		expect(first.rows).toHaveLength(87);
@@ -416,9 +388,7 @@ describe("examples api", () => {
 		const listed = await readBody(response);
 		expect(listed).toEqual({
 			data: {
-				items: expect.arrayContaining([
-					expect.objectContaining({ value: "t3.micro" }),
-				]),
+				items: expect.arrayContaining([expect.objectContaining({ value: "t3.micro" })]),
 			},
 			meta: {
 				timestamp: expect.any(String),
@@ -479,10 +449,9 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(409);
 
-		response = await fetch(
-			`${baseUrl}/v1/options/instances/${encodeURIComponent("custom-1")}`,
-			{ method: "DELETE" },
-		);
+		response = await fetch(`${baseUrl}/v1/options/instances/${encodeURIComponent("custom-1")}`, {
+			method: "DELETE",
+		});
 		expect(response.status).toBe(200);
 		expect(await readBody(response)).toEqual({
 			data: { count: 8 },
@@ -491,10 +460,9 @@ describe("examples api", () => {
 			},
 		});
 
-		response = await fetch(
-			`${baseUrl}/v1/options/instances/${encodeURIComponent("missing")}`,
-			{ method: "DELETE" },
-		);
+		response = await fetch(`${baseUrl}/v1/options/instances/${encodeURIComponent("missing")}`, {
+			method: "DELETE",
+		});
 		expect(response.status).toBe(404);
 
 		response = await fetch(`${baseUrl}/v1/options/instances`, {
@@ -708,10 +676,7 @@ describe("examples api", () => {
 			},
 		});
 
-		response = await fetch(
-			`${baseUrl}/v1/commands/${encodeURIComponent("custom-cmd")}`,
-			{ method: "DELETE" },
-		);
+		response = await fetch(`${baseUrl}/v1/commands/${encodeURIComponent("custom-cmd")}`, { method: "DELETE" });
 		expect(response.status).toBe(200);
 		expect(await readBody(response)).toEqual({
 			data: { count: 6 },
@@ -720,10 +685,7 @@ describe("examples api", () => {
 			},
 		});
 
-		response = await fetch(
-			`${baseUrl}/v1/commands/${encodeURIComponent("missing")}`,
-			{ method: "DELETE" },
-		);
+		response = await fetch(`${baseUrl}/v1/commands/${encodeURIComponent("missing")}`, { method: "DELETE" });
 		expect(response.status).toBe(404);
 
 		response = await fetch(`${baseUrl}/v1/commands/reset`, {
@@ -746,10 +708,7 @@ describe("examples api", () => {
 		const resetData = readEnvelopeData(await readBody(response));
 		expect(Array.isArray(resetData.nodes)).toBe(true);
 		expect(Array.isArray(resetData.edges)).toBe(true);
-		if (
-			!Array.isArray(resetData.nodes) ||
-			!Array.isArray(resetData.edges)
-		) {
+		if (!Array.isArray(resetData.nodes) || !Array.isArray(resetData.edges)) {
 			throw new Error("expected nodes and edges arrays");
 		}
 
@@ -759,20 +718,15 @@ describe("examples api", () => {
 				if (!isRecord(edge)) {
 					return false;
 				}
-				return (
-					edge.valueKind === "number" || edge.valueKind === "string"
-				);
+				return edge.valueKind === "number" || edge.valueKind === "string";
 			}),
 		).toBe(true);
 
-		response = await fetch(
-			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
-			{
-				method: "PATCH",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({ config: { minAmount: 50 } }),
-			},
-		);
+		response = await fetch(`${baseUrl}/v1/flows/demo/nodes/split-half/config`, {
+			method: "PATCH",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ config: { minAmount: 50 } }),
+		});
 		expect(response.status).toBe(200);
 
 		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
@@ -794,14 +748,11 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		response = await fetch(
-			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
-			{
-				method: "PATCH",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({ config: { minAmount: 50 } }),
-			},
-		);
+		response = await fetch(`${baseUrl}/v1/flows/demo/nodes/split-half/config`, {
+			method: "PATCH",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ config: { minAmount: 50 } }),
+		});
 		expect(response.status).toBe(200);
 
 		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
@@ -831,14 +782,11 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		response = await fetch(
-			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
-			{
-				method: "PATCH",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({ config: { minAmount: 0 } }),
-			},
-		);
+		response = await fetch(`${baseUrl}/v1/flows/demo/nodes/split-half/config`, {
+			method: "PATCH",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ config: { minAmount: 0 } }),
+		});
 		expect(response.status).toBe(200);
 
 		for (let i = 0; i < 10; i += 1) {
@@ -881,36 +829,27 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(400);
 
-		response = await fetch(
-			`${baseUrl}/v1/flows/demo/nodes/missing-node/config`,
-			{
-				method: "PATCH",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({ config: { minAmount: 1 } }),
-			},
-		);
+		response = await fetch(`${baseUrl}/v1/flows/demo/nodes/missing-node/config`, {
+			method: "PATCH",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ config: { minAmount: 1 } }),
+		});
 		expect(response.status).toBe(400);
 
-		response = await fetch(
-			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
-			{
-				method: "PATCH",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({ config: { minAmount: -1 } }),
-			},
-		);
+		response = await fetch(`${baseUrl}/v1/flows/demo/nodes/split-half/config`, {
+			method: "PATCH",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ config: { minAmount: -1 } }),
+		});
 		expect(response.status).toBe(400);
 
-		response = await fetch(
-			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
-			{
-				method: "PATCH",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({
-					config: { minAmount: 5, extra: "nope" },
-				}),
-			},
-		);
+		response = await fetch(`${baseUrl}/v1/flows/demo/nodes/split-half/config`, {
+			method: "PATCH",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({
+				config: { minAmount: 5, extra: "nope" },
+			}),
+		});
 		expect(response.status).toBe(400);
 	});
 
@@ -920,14 +859,11 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		response = await fetch(
-			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
-			{
-				method: "PATCH",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({ config: { minAmount: 0 } }),
-			},
-		);
+		response = await fetch(`${baseUrl}/v1/flows/demo/nodes/split-half/config`, {
+			method: "PATCH",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ config: { minAmount: 0 } }),
+		});
 		expect(response.status).toBe(200);
 
 		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
@@ -942,14 +878,11 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		response = await fetch(
-			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
-			{
-				method: "PATCH",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({ config: { minAmount: 0 } }),
-			},
-		);
+		response = await fetch(`${baseUrl}/v1/flows/demo/nodes/split-half/config`, {
+			method: "PATCH",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ config: { minAmount: 0 } }),
+		});
 		expect(response.status).toBe(200);
 
 		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {
@@ -959,9 +892,7 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		const outputsByNode = readOutputsByNode(
-			readFlowRun(await readBody(response)),
-		);
+		const outputsByNode = readOutputsByNode(readFlowRun(await readBody(response)));
 		expect(outputsByNode["account-listener"]?.amount).toBe(2);
 	});
 
@@ -971,14 +902,11 @@ describe("examples api", () => {
 		});
 		expect(response.status).toBe(201);
 
-		response = await fetch(
-			`${baseUrl}/v1/flows/demo/nodes/split-half/config`,
-			{
-				method: "PATCH",
-				headers: { "content-type": "application/json" },
-				body: JSON.stringify({ config: { minAmount: 0 } }),
-			},
-		);
+		response = await fetch(`${baseUrl}/v1/flows/demo/nodes/split-half/config`, {
+			method: "PATCH",
+			headers: { "content-type": "application/json" },
+			body: JSON.stringify({ config: { minAmount: 0 } }),
+		});
 		expect(response.status).toBe(200);
 
 		response = await fetch(`${baseUrl}/v1/flows/demo/trigger`, {

@@ -1,9 +1,4 @@
-import type {
-	ComponentProps,
-	KeyboardEvent,
-	MouseEvent,
-	ReactNode,
-} from "react";
+import type { ComponentProps, KeyboardEvent, MouseEvent, ReactNode } from "react";
 import { ChevronRight } from "lucide-react";
 import { useRef, useState } from "react";
 
@@ -58,11 +53,7 @@ function itemHasChildren(item: TreeViewItem): boolean {
 	return item.children.length > 0;
 }
 
-function flattenVisible(
-	items: TreeViewItem[],
-	expanded: ReadonlySet<string>,
-	parentId: string | null,
-): FlatNode[] {
+function flattenVisible(items: TreeViewItem[], expanded: ReadonlySet<string>, parentId: string | null): FlatNode[] {
 	const out: FlatNode[] = [];
 
 	for (const item of items) {
@@ -80,11 +71,7 @@ function flattenVisible(
 			disabled,
 		});
 
-		if (
-			hasChildren &&
-			expanded.has(item.id) &&
-			item.children !== undefined
-		) {
+		if (hasChildren && expanded.has(item.id) && item.children !== undefined) {
 			const nested = flattenVisible(item.children, expanded, item.id);
 			for (const child of nested) {
 				out.push(child);
@@ -112,11 +99,7 @@ function findItem(items: TreeViewItem[], id: string): TreeViewItem | undefined {
 	return undefined;
 }
 
-function findParentId(
-	items: TreeViewItem[],
-	id: string,
-	parentId: string | null,
-): string | null | undefined {
+function findParentId(items: TreeViewItem[], id: string, parentId: string | null): string | null | undefined {
 	for (const item of items) {
 		if (item.id === id) {
 			return parentId;
@@ -207,8 +190,7 @@ function TreeNode({
 
 	let chevron: ReactNode = <span className="inline-block size-4 shrink-0" />;
 	if (hasChildren) {
-		let chevronClass =
-			"size-4 shrink-0 text-muted-foreground transition-transform";
+		let chevronClass = "size-4 shrink-0 text-muted-foreground transition-transform";
 		if (isExpanded) {
 			chevronClass = cn(chevronClass, "rotate-90");
 		}
@@ -219,11 +201,7 @@ function TreeNode({
 	let groupNode: ReactNode = null;
 	if (hasChildren && isExpanded && item.children !== undefined) {
 		groupNode = (
-			<ul
-				role="group"
-				data-slot="tree-view-group"
-				className="m-0 list-none p-0"
-			>
+			<ul role="group" data-slot="tree-view-group" className="m-0 list-none p-0">
 				{item.children.map((child) => {
 					return (
 						<TreeNode
@@ -286,11 +264,7 @@ function TreeNode({
 		}
 
 		endNode = (
-			<span
-				data-slot="tree-view-end"
-				data-align={endAlign}
-				className={endClass}
-			>
+			<span data-slot="tree-view-end" data-align={endAlign} className={endClass}>
 				{item.end}
 			</span>
 		);
@@ -356,15 +330,13 @@ function TreeView({
 		resolvedEndAlign = "snug";
 	}
 	const isControlled = expandedIds !== undefined;
-	const [uncontrolledExpanded, setUncontrolledExpanded] = useState<string[]>(
-		() => {
-			if (defaultExpandedIds !== undefined) {
-				return defaultExpandedIds;
-			}
+	const [uncontrolledExpanded, setUncontrolledExpanded] = useState<string[]>(() => {
+		if (defaultExpandedIds !== undefined) {
+			return defaultExpandedIds;
+		}
 
-			return [];
-		},
-	);
+		return [];
+	});
 
 	let currentExpanded = uncontrolledExpanded;
 	if (isControlled) {
@@ -375,9 +347,7 @@ function TreeView({
 	const visible = flattenVisible(items, expandedSet, null);
 
 	const [focusedId, setFocusedId] = useState<string | null>(() => {
-		return firstEnabledId(
-			flattenVisible(items, new Set(currentExpanded), null),
-		);
+		return firstEnabledId(flattenVisible(items, new Set(currentExpanded), null));
 	});
 
 	let activeFocusId = focusedId;
@@ -409,9 +379,7 @@ function TreeView({
 			return;
 		}
 
-		const el = root.querySelector<HTMLElement>(
-			`[data-tree-id="${CSS.escape(id)}"]`,
-		);
+		const el = root.querySelector<HTMLElement>(`[data-tree-id="${CSS.escape(id)}"]`);
 		if (el !== null) {
 			el.focus();
 		}
@@ -669,12 +637,7 @@ function TreeView({
 			return;
 		}
 
-		if (
-			event.key.length === 1 &&
-			!event.ctrlKey &&
-			!event.metaKey &&
-			!event.altKey
-		) {
+		if (event.key.length === 1 && !event.ctrlKey && !event.metaKey && !event.altKey) {
 			event.preventDefault();
 			handleTypeahead(event.key, focusId);
 		}

@@ -1,29 +1,6 @@
-import {
-	IsArray,
-	IsBoolean,
-	IsOptional,
-	IsString,
-	MinLength,
-} from "class-validator";
-import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Inject,
-	Param,
-	Post,
-	Query,
-} from "@nestjs/common";
-import {
-	ApiBody,
-	ApiOkResponse,
-	ApiParam,
-	ApiProperty,
-	ApiPropertyOptional,
-	ApiQuery,
-	ApiTags,
-} from "@nestjs/swagger";
+import { IsArray, IsBoolean, IsOptional, IsString, MinLength } from "class-validator";
+import { Body, Controller, Delete, Get, Inject, Param, Post, Query } from "@nestjs/common";
+import { ApiBody, ApiOkResponse, ApiParam, ApiProperty, ApiPropertyOptional, ApiQuery, ApiTags } from "@nestjs/swagger";
 
 import type { CommandItem } from "./command-types.js";
 import { CommandsService } from "./commands.service.js";
@@ -76,9 +53,7 @@ class CommandCountDto {
 @ApiTags("commands")
 @Controller("v1/commands")
 export class CommandsController {
-	constructor(
-		@Inject(CommandsService) private readonly commands: CommandsService,
-	) {}
+	constructor(@Inject(CommandsService) private readonly commands: CommandsService) {}
 
 	@Get()
 	@ApiQuery({ name: "q", required: false, type: String })

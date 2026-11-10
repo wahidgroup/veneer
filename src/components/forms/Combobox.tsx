@@ -36,17 +36,8 @@ function Combobox(props: ComboboxProps) {
 	let searchable = props.searchable;
 	searchable ??= true;
 
-	return (
-		<OptionPicker {...props} searchable={searchable} dataSlot="combobox" />
-	);
+	return <OptionPicker {...props} searchable={searchable} dataSlot="combobox" />;
 }
 
-export type {
-	ComboboxMultiProps,
-	ComboboxOption,
-	ComboboxProps,
-	ComboboxSingleProps,
-	FieldOption,
-	OptionFilterMode,
-};
+export type { ComboboxMultiProps, ComboboxOption, ComboboxProps, ComboboxSingleProps, FieldOption, OptionFilterMode };
 export { Combobox };

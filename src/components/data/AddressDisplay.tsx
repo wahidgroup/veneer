@@ -17,15 +17,7 @@ interface AddressDisplayProps extends Omit<ComponentProps<"span">, "children"> {
  * CopyButton with the full address. Validation stays with the consumer
  * (`invalid` is visual only).
  */
-function AddressDisplay({
-	address,
-	startChars,
-	endChars,
-	showCopy,
-	invalid,
-	className,
-	...rest
-}: AddressDisplayProps) {
+function AddressDisplay({ address, startChars, endChars, showCopy, invalid, className, ...rest }: AddressDisplayProps) {
 	let resolvedStart = 6;
 	if (startChars !== undefined) {
 		resolvedStart = startChars;
@@ -68,12 +60,7 @@ function AddressDisplay({
 			className={cn("inline-flex items-center gap-1", className)}
 			{...rest}
 		>
-			<span
-				data-slot="address-display-text"
-				className={textClass}
-				title={address}
-				aria-label={address}
-			>
+			<span data-slot="address-display-text" className={textClass} title={address} aria-label={address}>
 				{display}
 			</span>
 			{copyControl}

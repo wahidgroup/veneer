@@ -36,11 +36,7 @@ function DataTableBody<TData>({
 	if (loading === true) {
 		return (
 			<tr aria-rowindex={placeholderRowIndex}>
-				<td
-					colSpan={visibleLeafCount}
-					aria-colindex={placeholderColIndex}
-					className="px-3 py-8 text-center"
-				>
+				<td colSpan={visibleLeafCount} aria-colindex={placeholderColIndex} className="px-3 py-8 text-center">
 					<Loading text="Loading rows" />
 				</td>
 			</tr>
@@ -48,9 +44,7 @@ function DataTableBody<TData>({
 	}
 
 	if (rows.length === 0) {
-		let emptyNode: ReactNode = (
-			<span className="text-sm text-muted-foreground">No results.</span>
-		);
+		let emptyNode: ReactNode = <span className="text-sm text-muted-foreground">No results.</span>;
 
 		if (empty !== undefined) {
 			emptyNode = empty;
@@ -58,11 +52,7 @@ function DataTableBody<TData>({
 
 		return (
 			<tr aria-rowindex={placeholderRowIndex}>
-				<td
-					colSpan={visibleLeafCount}
-					aria-colindex={placeholderColIndex}
-					className="px-3 py-8 text-center"
-				>
+				<td colSpan={visibleLeafCount} aria-colindex={placeholderColIndex} className="px-3 py-8 text-center">
 					{emptyNode}
 				</td>
 			</tr>
@@ -72,12 +62,7 @@ function DataTableBody<TData>({
 	return (
 		<>
 			{rows.map((row, index) => {
-				const ariaRowIndex = computeBodyAriaRowIndex(
-					headerRowCount,
-					pageIndex,
-					pageSize,
-					index,
-				);
+				const ariaRowIndex = computeBodyAriaRowIndex(headerRowCount, pageIndex, pageSize, index);
 				return (
 					<tr
 						key={row.id}
@@ -90,16 +75,11 @@ function DataTableBody<TData>({
 								<td
 									key={cell.id}
 									data-slot="data-table-cell"
-									aria-colindex={leafAriaColIndexFor(
-										cell.column.id,
-									)}
+									aria-colindex={leafAriaColIndexFor(cell.column.id)}
 									className="truncate px-3 py-2 text-sm text-foreground"
 									style={{ width: cell.column.getSize() }}
 								>
-									{flexRender(
-										cell.column.columnDef.cell,
-										cell.getContext(),
-									)}
+									{flexRender(cell.column.columnDef.cell, cell.getContext())}
 								</td>
 							);
 						})}

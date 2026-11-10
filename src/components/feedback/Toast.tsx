@@ -59,11 +59,9 @@ const toastVariants = cva(
 	{
 		variants: {
 			type: {
-				success:
-					"border-success text-success-muted-foreground [--toast-wash:var(--success-muted)]",
+				success: "border-success text-success-muted-foreground [--toast-wash:var(--success-muted)]",
 				error: "border-destructive text-destructive-muted-foreground [--toast-wash:var(--destructive-muted)]",
-				warning:
-					"border-warning text-warning-foreground [--toast-wash:var(--warning)]",
+				warning: "border-warning text-warning-foreground [--toast-wash:var(--warning)]",
 				info: "border-info text-info-foreground [--toast-wash:var(--info)]",
 			},
 			placement: {
@@ -79,9 +77,7 @@ const toastVariants = cva(
 );
 
 interface ToastProps
-	extends
-		Omit<ComponentProps<"div">, "children">,
-		Omit<VariantProps<typeof toastVariants>, "placement" | "type"> {
+	extends Omit<ComponentProps<"div">, "children">, Omit<VariantProps<typeof toastVariants>, "placement" | "type"> {
 	message: string;
 	type?: ToastType;
 	/**
@@ -325,12 +321,7 @@ function Toast({
 		>
 			<p className="min-w-0 flex-1 font-medium">{message}</p>
 			{actionNode}
-			<Button
-				variant="ghost"
-				size="icon"
-				aria-label="Close toast"
-				onClick={dismiss}
-			>
+			<Button variant="ghost" size="icon" aria-label="Close toast" onClick={dismiss}>
 				<X className="size-4" aria-hidden="true" />
 			</Button>
 		</div>
@@ -351,12 +342,7 @@ interface ToastViewportProps extends ComponentProps<"div"> {
 /**
  * Fixed stack host for toasts. Portaled; pointer-events pass through except on each toast.
  */
-function ToastViewport({
-	className,
-	children,
-	position,
-	...props
-}: ToastViewportProps) {
+function ToastViewport({ className, children, position, ...props }: ToastViewportProps) {
 	let resolvedPosition = position;
 	resolvedPosition ??= DEFAULT_POSITION;
 

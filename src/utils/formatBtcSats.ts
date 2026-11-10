@@ -47,9 +47,7 @@ function formatBtcSats(options: FormatBtcSatsOptions): string {
 	assertIntegerSats(options.amountSats);
 
 	if (options.unit === "sats") {
-		const grouped = new Intl.NumberFormat(options.locale).format(
-			options.amountSats,
-		);
+		const grouped = new Intl.NumberFormat(options.locale).format(options.amountSats);
 
 		const label = satsUnitLabel(options.amountSats, options.locale);
 		return `${grouped} ${label}`;
@@ -60,9 +58,7 @@ function formatBtcSats(options: FormatBtcSatsOptions): string {
 		maximumFractionDigits: SATOSHI_FRACTION_DIGITS,
 	});
 
-	const major = Number(
-		`${options.amountSats}e-${String(SATOSHI_FRACTION_DIGITS)}`,
-	);
+	const major = Number(`${options.amountSats}e-${String(SATOSHI_FRACTION_DIGITS)}`);
 	if (!Number.isFinite(major)) {
 		throw new Error("amountSats is out of range for Number formatting");
 	}

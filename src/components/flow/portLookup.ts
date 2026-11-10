@@ -3,15 +3,8 @@ import type { FlowNode, FlowPort } from "./flowTypes.js";
 /**
  * Resolve a port on a node by id.
  */
-function findPort(
-	node: FlowNode | undefined,
-	portId: string | undefined,
-): FlowPort | undefined {
-	if (
-		node === undefined ||
-		portId === undefined ||
-		node.ports === undefined
-	) {
+function findPort(node: FlowNode | undefined, portId: string | undefined): FlowPort | undefined {
+	if (node === undefined || portId === undefined || node.ports === undefined) {
 		return undefined;
 	}
 

@@ -11,11 +11,7 @@ interface GraphSidecarProps {
  * Accessible node/edge structure parallel to the visual canvas
  * (WCAG dense-graph fallback).
  */
-function GraphSidecar({
-	nodes,
-	edges,
-	"aria-label": ariaLabel,
-}: GraphSidecarProps) {
+function GraphSidecar({ nodes, edges, "aria-label": ariaLabel }: GraphSidecarProps) {
 	const items = [
 		...nodes.map((node) => {
 			return {
@@ -28,10 +24,7 @@ function GraphSidecar({
 			if (edge.label !== undefined && edge.label.length > 0) {
 				description = `${description} (${edge.label})`;
 			}
-			if (
-				edge.sourcePort !== undefined &&
-				edge.targetPort !== undefined
-			) {
+			if (edge.sourcePort !== undefined && edge.targetPort !== undefined) {
 				description = `${description} [${edge.sourcePort}->${edge.targetPort}]`;
 			}
 
@@ -42,14 +35,7 @@ function GraphSidecar({
 		}),
 	];
 
-	return (
-		<DescriptionList
-			data-slot="graph-sidecar"
-			aria-label={ariaLabel}
-			items={items}
-			columns={1}
-		/>
-	);
+	return <DescriptionList data-slot="graph-sidecar" aria-label={ariaLabel} items={items} columns={1} />;
 }
 
 export type { GraphSidecarProps };

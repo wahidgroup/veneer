@@ -29,17 +29,12 @@ describe("cn", () => {
 			expected: "text-blue-500",
 			label: "color",
 		},
-	])(
-		"resolves conflicting $label utilities to the last one",
-		({ input, expected }) => {
-			expect(cn(...input)).toBe(expected);
-		},
-	);
+	])("resolves conflicting $label utilities to the last one", ({ input, expected }) => {
+		expect(cn(...input)).toBe(expected);
+	});
 
 	it("supports conditional class objects", () => {
-		expect(cn("base", { "text-bold": true, "text-italic": false })).toBe(
-			"base text-bold",
-		);
+		expect(cn("base", { "text-bold": true, "text-italic": false })).toBe("base text-bold");
 	});
 
 	it("supports arrays of classes", () => {

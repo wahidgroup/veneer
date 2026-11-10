@@ -7,10 +7,7 @@ import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
 import { stepEdgeFlags, useWorkflowContext } from "./workflowShared.js";
 
-interface WorkflowStepProps extends Omit<
-	ComponentProps<"li">,
-	"value" | "children"
-> {
+interface WorkflowStepProps extends Omit<ComponentProps<"li">, "value" | "children"> {
 	value: string;
 	status?: WorkflowStepStatus;
 	children: ReactNode;
@@ -20,21 +17,8 @@ interface WorkflowStepProps extends Omit<
  * One step in the track. Unique `value` id. Jump allowed only for complete
  * or error. Current step gets aria-current="step" from active value only.
  */
-function WorkflowStep({
-	value,
-	status,
-	children,
-	className,
-	...rest
-}: WorkflowStepProps) {
-	const {
-		value: active,
-		setValue,
-		orientation,
-		stepIds,
-		statusById,
-		reportStepStatus,
-	} = useWorkflowContext();
+function WorkflowStep({ value, status, children, className, ...rest }: WorkflowStepProps) {
+	const { value: active, setValue, orientation, stepIds, statusById, reportStepStatus } = useWorkflowContext();
 
 	let resolvedStatus: WorkflowStepStatus = "pending";
 	if (status !== undefined) {
@@ -48,8 +32,7 @@ function WorkflowStep({
 	}, [value, resolvedStatus, reportStepStatus]);
 
 	const isActive = value === active;
-	const jumpable =
-		resolvedStatus === "complete" || resolvedStatus === "error";
+	const jumpable = resolvedStatus === "complete" || resolvedStatus === "error";
 
 	const index = stepIds.indexOf(value);
 	const { isFirst, isLast } = stepEdgeFlags(stepIds, value);
@@ -174,10 +157,7 @@ function WorkflowStep({
 				className={cn("flex gap-3", className)}
 				{...rest}
 			>
-				<div
-					className="flex flex-col items-center self-stretch"
-					aria-hidden="true"
-				>
+				<div className="flex flex-col items-center self-stretch" aria-hidden="true">
 					{marker}
 					{connector}
 				</div>
@@ -202,16 +182,7 @@ function WorkflowStep({
 		outClass = cn(outClass, outgoingClass);
 	}
 
-	let text: ReactNode = (
-		<span
-			className={cn(
-				"mt-2 block px-1 text-center break-words",
-				labelClass,
-			)}
-		>
-			{children}
-		</span>
-	);
+	let text: ReactNode = <span className={cn("mt-2 block px-1 text-center break-words", labelClass)}>{children}</span>;
 	if (jumpable && !isActive) {
 		text = (
 			<Button
@@ -236,26 +207,13 @@ function WorkflowStep({
 			data-value={value}
 			data-status={resolvedStatus}
 			aria-current={ariaCurrent}
-			className={cn(
-				"flex min-w-0 flex-1 flex-col items-stretch",
-				className,
-			)}
+			className={cn("flex min-w-0 flex-1 flex-col items-stretch", className)}
 			{...rest}
 		>
 			<div className="grid w-full grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center">
-				<div
-					data-slot="workflow-connector"
-					data-edge="in"
-					aria-hidden="true"
-					className={inClass}
-				/>
+				<div data-slot="workflow-connector" data-edge="in" aria-hidden="true" className={inClass} />
 				{marker}
-				<div
-					data-slot="workflow-connector"
-					data-edge="out"
-					aria-hidden="true"
-					className={outClass}
-				/>
+				<div data-slot="workflow-connector" data-edge="out" aria-hidden="true" className={outClass} />
 			</div>
 			{text}
 		</li>

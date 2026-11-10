@@ -31,14 +31,7 @@ interface TabsProps extends Omit<ComponentProps<"div">, "onChange"> {
 /**
  * Tabbed interface root. Compose `TabsList` / `TabsTrigger` / `TabsPanel`.
  */
-function Tabs({
-	value,
-	defaultValue,
-	onValueChange,
-	children,
-	className,
-	...rest
-}: TabsProps) {
+function Tabs({ value, defaultValue, onValueChange, children, className, ...rest }: TabsProps) {
 	const baseId = useId();
 	const isControlled = value !== undefined;
 	const [uncontrolled, setUncontrolled] = useState(() => {
@@ -89,10 +82,7 @@ function TabsList({ children, className, ...rest }: TabsListProps) {
 		<div
 			data-slot="tabs-list"
 			role="tablist"
-			className={cn(
-				"flex flex-wrap items-end gap-6 border-b border-border",
-				className,
-			)}
+			className={cn("flex flex-wrap items-end gap-6 border-b border-border", className)}
 			{...rest}
 		>
 			{children}
@@ -108,14 +98,7 @@ interface TabsTriggerProps extends ComponentProps<"button"> {
 /**
  * Individual tab control. Activates matching `TabsPanel`.
  */
-function TabsTrigger({
-	value,
-	children,
-	className,
-	disabled,
-	onKeyDown,
-	...rest
-}: TabsTriggerProps) {
+function TabsTrigger({ value, children, className, disabled, onKeyDown, ...rest }: TabsTriggerProps) {
 	const { value: active, setValue, baseId } = useTabsContext();
 	const selected = active === value;
 	const triggerId = `${baseId}-tab-${value}`;
@@ -131,16 +114,10 @@ function TabsTrigger({
 	if (selected) {
 		tabClass = cn(tabClass, "border-primary text-foreground");
 	} else {
-		tabClass = cn(
-			tabClass,
-			"border-transparent text-muted-foreground hover:border-border hover:text-foreground",
-		);
+		tabClass = cn(tabClass, "border-transparent text-muted-foreground hover:border-border hover:text-foreground");
 	}
 	if (disabled === true) {
-		tabClass = cn(
-			tabClass,
-			"opacity-50 hover:border-transparent hover:text-muted-foreground",
-		);
+		tabClass = cn(tabClass, "opacity-50 hover:border-transparent hover:text-muted-foreground");
 	}
 
 	tabClass = cn(tabClass, className);
@@ -158,11 +135,7 @@ function TabsTrigger({
 			return;
 		}
 
-		const tabs = Array.from(
-			list.querySelectorAll<HTMLButtonElement>(
-				'[role="tab"]:not([disabled])',
-			),
-		);
+		const tabs = Array.from(list.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'));
 		if (tabs.length === 0) {
 			return;
 		}

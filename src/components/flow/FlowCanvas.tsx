@@ -1,13 +1,7 @@
 import type { ReactNode } from "react";
 import { useEffect, useRef } from "react";
 
-import type {
-	FlowConnection,
-	FlowEdge,
-	FlowNode,
-	FlowNodeRenderer,
-	FlowStatus,
-} from "./flowTypes.js";
+import type { FlowConnection, FlowEdge, FlowNode, FlowNodeRenderer, FlowStatus } from "./flowTypes.js";
 import type { FlowFocusMode } from "./useFlowCanvasInteraction.js";
 import type { GraphViewportHandle } from "./GraphViewport.js";
 import { cn } from "../../utils/cn.js";
@@ -241,15 +235,8 @@ function FlowCanvas({
 				</div>
 			</GraphViewport>
 			{connectingHint}
-			<GraphStatusRegion
-				message={statusMessage}
-				nodeStatuses={nodeStatus}
-			/>
-			<GraphSidecar
-				nodes={nodes}
-				edges={edges}
-				aria-label={`${ariaLabel} structure`}
-			/>
+			<GraphStatusRegion message={statusMessage} nodeStatuses={nodeStatus} />
+			<GraphSidecar nodes={nodes} edges={edges} aria-label={`${ariaLabel} structure`} />
 		</div>
 	);
 }

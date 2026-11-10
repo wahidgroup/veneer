@@ -24,17 +24,8 @@ import { DataTableHeaderCell } from "./DataTableHeaderCell.js";
 import { DataTableToolbar } from "./DataTableToolbar.js";
 import { buildSelectColumnDef, toColumnDefs } from "./dataTableColumns.js";
 import { useDataTableSelection } from "./useDataTableSelection.js";
-import {
-	computeAriaRowCount,
-	leafAriaColIndex,
-	shouldAnnounceColIndices,
-} from "./dataTableAria.js";
-import {
-	buildDefaultQuery,
-	clampPageSize,
-	queriesEqual,
-	resolveUpdater,
-} from "./dataTableQuery.js";
+import { computeAriaRowCount, leafAriaColIndex, shouldAnnounceColIndices } from "./dataTableAria.js";
+import { buildDefaultQuery, clampPageSize, queriesEqual, resolveUpdater } from "./dataTableQuery.js";
 
 /**
  * Server-first data table. Default mode treats `data` as one page and emits
@@ -83,20 +74,17 @@ function DataTable<TData>({
 
 	const pageSize = clampPageSize(activeQuery.pageSize);
 
-	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>(
-		{},
-	);
+	const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
 	const [columnsOpen, setColumnsOpen] = useState(false);
 
-	const { rowSelection, onRowSelectionChange: handleRowSelectionChange } =
-		useDataTableSelection({
-			controlledSelection,
-			onRowSelectionChange,
-			activeQuery,
-			pageSize,
-			data,
-			getRowId,
-		});
+	const { rowSelection, onRowSelectionChange: handleRowSelectionChange } = useDataTableSelection({
+		controlledSelection,
+		onRowSelectionChange,
+		activeQuery,
+		pageSize,
+		data,
+		getRowId,
+	});
 
 	const setQuery = (next: DataTableQuery) => {
 		const clamped: DataTableQuery = {
@@ -137,10 +125,9 @@ function DataTable<TData>({
 		return { id: item.id, desc: item.desc };
 	});
 
-	const columnFiltersState: ColumnFiltersState =
-		activeQuery.columnFilters.map((item) => {
-			return { id: item.id, value: item.value };
-		});
+	const columnFiltersState: ColumnFiltersState = activeQuery.columnFilters.map((item) => {
+		return { id: item.id, value: item.value };
+	});
 
 	const paginationState: PaginationState = {
 		pageIndex: activeQuery.pageIndex,
@@ -244,21 +231,14 @@ function DataTable<TData>({
 
 	const allLeafColumns = table.getAllLeafColumns();
 	const visibleLeafColumns = table.getVisibleLeafColumns();
-	const announceColIndices = shouldAnnounceColIndices(
-		visibleLeafColumns.length,
-		allLeafColumns.length,
-	);
+	const announceColIndices = shouldAnnounceColIndices(visibleLeafColumns.length, allLeafColumns.length);
 	let ariaColCount: number | undefined;
 	if (announceColIndices) {
 		ariaColCount = allLeafColumns.length;
 	}
 
 	function leafAriaColIndexFor(columnId: string): number | undefined {
-		const colIndex = leafAriaColIndex(
-			allLeafColumns,
-			columnId,
-			announceColIndices,
-		);
+		const colIndex = leafAriaColIndex(allLeafColumns, columnId, announceColIndices);
 		return colIndex;
 	}
 
@@ -275,11 +255,7 @@ function DataTable<TData>({
 	const ariaRowCount = computeAriaRowCount(resolvedRowCount, headerRowCount);
 
 	return (
-		<div
-			data-slot="data-table"
-			className={cn("flex w-full min-w-0 flex-col gap-3", className)}
-			{...rest}
-		>
+		<div data-slot="data-table" className={cn("flex w-full min-w-0 flex-col gap-3", className)} {...rest}>
 			<DataTableToolbar
 				baseId={baseId}
 				globalFilter={activeQuery.globalFilter}
@@ -290,10 +266,7 @@ function DataTable<TData>({
 				table={table}
 			/>
 
-			<div
-				data-slot="data-table-frame"
-				className="w-full min-w-0 overflow-auto rounded-md border border-border"
-			>
+			<div data-slot="data-table-frame" className="w-full min-w-0 overflow-auto rounded-md border border-border">
 				<table
 					data-slot="data-table-grid"
 					aria-rowcount={ariaRowCount}
@@ -301,10 +274,7 @@ function DataTable<TData>({
 					className="w-full table-fixed border-collapse"
 					style={{ minWidth: table.getCenterTotalSize() }}
 				>
-					<thead
-						data-slot="data-table-header"
-						className="sticky top-0 z-10 bg-card"
-					>
+					<thead data-slot="data-table-header" className="sticky top-0 z-10 bg-card">
 						{headerGroups.map((headerGroup, headerIndex) => {
 							return (
 								<tr
@@ -317,9 +287,7 @@ function DataTable<TData>({
 											<DataTableHeaderCell
 												key={header.id}
 												header={header}
-												ariaColIndex={leafAriaColIndexFor(
-													header.column.id,
-												)}
+												ariaColIndex={leafAriaColIndexFor(header.column.id)}
 											/>
 										);
 									})}

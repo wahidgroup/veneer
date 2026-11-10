@@ -20,11 +20,7 @@ function Label({ children, className, required, ...rest }: LabelProps) {
 	}
 
 	return (
-		<label
-			data-slot="label"
-			className={cn("text-foreground text-sm font-medium", className)}
-			{...rest}
-		>
+		<label data-slot="label" className={cn("text-foreground text-sm font-medium", className)} {...rest}>
 			{children}
 			{marker}
 		</label>

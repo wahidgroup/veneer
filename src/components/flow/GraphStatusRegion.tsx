@@ -15,11 +15,7 @@ interface GraphStatusRegionProps {
 /**
  * Polite status region for flow liveness (WCAG 2.2 SC 4.1.3). Throttles chatter.
  */
-function GraphStatusRegion({
-	message,
-	nodeStatuses,
-	throttleMs = 800,
-}: GraphStatusRegionProps) {
+function GraphStatusRegion({ message, nodeStatuses, throttleMs = 800 }: GraphStatusRegionProps) {
 	const [announced, setAnnounced] = useState(message);
 	const lastAt = useRef(0);
 	const pending = useRef<string | null>(null);
@@ -85,12 +81,7 @@ function GraphStatusRegion({
 	}
 
 	return (
-		<div
-			data-slot="graph-status-region"
-			role="status"
-			aria-live="polite"
-			className="flex flex-col gap-2"
-		>
+		<div data-slot="graph-status-region" role="status" aria-live="polite" className="flex flex-col gap-2">
 			<VisuallyHidden>{announced}</VisuallyHidden>
 			<p className="text-xs text-muted-foreground">{announced}</p>
 			{badgeRow}

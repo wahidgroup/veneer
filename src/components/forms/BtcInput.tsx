@@ -31,14 +31,7 @@ interface BtcInputProps extends Omit<
  * Bitcoin amount field. Public value is always satoshi integers.
  * Built on {@link MoneyInput} with first-class BTC only.
  */
-function BtcInput({
-	amountSats,
-	defaultAmountSats,
-	onAmountSatsChange,
-	unit,
-	startAdornment,
-	...rest
-}: BtcInputProps) {
+function BtcInput({ amountSats, defaultAmountSats, onAmountSatsChange, unit, startAdornment, ...rest }: BtcInputProps) {
 	let resolvedUnit: BtcDisplayUnit = "btc";
 	if (unit === "sats") {
 		resolvedUnit = "sats";

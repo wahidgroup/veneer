@@ -33,8 +33,6 @@ describe("Slider", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<Slider aria-label="Capacity" value={5} />,
-		);
+		await expectNoA11yViolations(<Slider aria-label="Capacity" value={5} />);
 	});
 });

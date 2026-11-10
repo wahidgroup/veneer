@@ -46,40 +46,18 @@ const SAMPLE_RESOURCES: DiffResource[] = [
 
 describe("DiffView", () => {
 	it("renders unified line markers and announces kinds", () => {
-		render(
-			<DiffView
-				mode="lines"
-				lines={SAMPLE_LINES}
-				path="main.tf"
-				aria-label="Template diff"
-			/>,
-		);
+		render(<DiffView mode="lines" lines={SAMPLE_LINES} path="main.tf" aria-label="Template diff" />);
 		expect(screen.getByText("main.tf")).toBeInTheDocument();
 		expect(screen.getByText("+1")).toBeInTheDocument();
 		expect(screen.getByText("−1")).toBeInTheDocument();
-		expect(
-			screen.getByRole("row", { name: /removed line 2: old/ }),
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole("row", { name: /added line 2: new/ }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("row", { name: /removed line 2: old/ })).toBeInTheDocument();
+		expect(screen.getByRole("row", { name: /added line 2: new/ })).toBeInTheDocument();
 	});
 
 	it("builds lines from oldText and newText", () => {
-		render(
-			<DiffView
-				mode="lines"
-				oldText={"a\nb\n"}
-				newText={"a\nc\n"}
-				aria-label="Built diff"
-			/>,
-		);
-		expect(
-			screen.getByRole("row", { name: /removed line 2: b/ }),
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole("row", { name: /added line 2: c/ }),
-		).toBeInTheDocument();
+		render(<DiffView mode="lines" oldText={"a\nb\n"} newText={"a\nc\n"} aria-label="Built diff" />);
+		expect(screen.getByRole("row", { name: /removed line 2: b/ })).toBeInTheDocument();
+		expect(screen.getByRole("row", { name: /added line 2: c/ })).toBeInTheDocument();
 	});
 
 	it("truncates when maxLines is exceeded", () => {
@@ -92,14 +70,7 @@ describe("DiffView", () => {
 			});
 		}
 
-		render(
-			<DiffView
-				mode="lines"
-				lines={many}
-				maxLines={2}
-				aria-label="Truncated"
-			/>,
-		);
+		render(<DiffView mode="lines" lines={many} maxLines={2} aria-label="Truncated" />);
 		expect(screen.getByText("Showing 2 of 5 lines")).toBeInTheDocument();
 	});
 
@@ -126,16 +97,8 @@ describe("DiffView", () => {
 
 	it("expands attribute diffs", async () => {
 		const user = userEvent.setup();
-		render(
-			<DiffView
-				mode="tree"
-				resources={SAMPLE_RESOURCES}
-				aria-label="Plan diff"
-			/>,
-		);
-		expect(
-			screen.queryByText("ingress.0.cidr_blocks"),
-		).not.toBeInTheDocument();
+		render(<DiffView mode="tree" resources={SAMPLE_RESOURCES} aria-label="Plan diff" />);
+		expect(screen.queryByText("ingress.0.cidr_blocks")).not.toBeInTheDocument();
 
 		await user.click(screen.getByRole("button", { name: "Expand" }));
 		expect(screen.getByText("ingress.0.cidr_blocks")).toBeInTheDocument();
@@ -149,26 +112,15 @@ describe("DiffView", () => {
 	});
 
 	it("has no accessibility violations in lines mode", async () => {
-		await expectNoA11yViolations(
-			<DiffView mode="lines" lines={SAMPLE_LINES} path="a.ts" />,
-		);
+		await expectNoA11yViolations(<DiffView mode="lines" lines={SAMPLE_LINES} path="a.ts" />);
 	});
 
 	it("has no accessibility violations in tree mode", async () => {
-		await expectNoA11yViolations(
-			<DiffView mode="tree" resources={SAMPLE_RESOURCES} />,
-		);
+		await expectNoA11yViolations(<DiffView mode="tree" resources={SAMPLE_RESOURCES} />);
 	});
 
 	it("renders split layout without losing rows", () => {
-		render(
-			<DiffView
-				mode="lines"
-				lines={SAMPLE_LINES}
-				layout="split"
-				aria-label="Split diff"
-			/>,
-		);
+		render(<DiffView mode="lines" lines={SAMPLE_LINES} layout="split" aria-label="Split diff" />);
 
 		const table = screen.getByRole("table", { name: "Split diff" });
 		expect(within(table).getAllByRole("row").length).toBeGreaterThan(0);

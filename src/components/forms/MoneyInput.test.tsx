@@ -46,50 +46,34 @@ describe("MoneyInput", () => {
 			expectedMinor: 15000,
 			expectedDisplay: "0.00015",
 		},
-	])(
-		"commits $label",
-		async ({
-			currency,
-			ariaLabel,
-			typed,
-			expectedMinor,
-			expectedDisplay,
-		}) => {
-			const user = userEvent.setup();
-			const { values, onAmountMinorChange } = collectMinors();
+	])("commits $label", async ({ currency, ariaLabel, typed, expectedMinor, expectedDisplay }) => {
+		const user = userEvent.setup();
+		const { values, onAmountMinorChange } = collectMinors();
 
-			render(
-				<MoneyInput
-					currency={currency}
-					locale="en-US"
-					aria-label={ariaLabel}
-					onAmountMinorChange={onAmountMinorChange}
-				/>,
-			);
+		render(
+			<MoneyInput
+				currency={currency}
+				locale="en-US"
+				aria-label={ariaLabel}
+				onAmountMinorChange={onAmountMinorChange}
+			/>,
+		);
 
-			const input = screen.getByRole("textbox", { name: ariaLabel });
-			await user.type(input, typed);
-			await user.tab();
+		const input = screen.getByRole("textbox", { name: ariaLabel });
+		await user.type(input, typed);
+		await user.tab();
 
-			const committedMinor = values.at(-1);
-			expect(committedMinor).toBe(expectedMinor);
-			expect(input).toHaveValue(expectedDisplay);
-		},
-	);
+		const committedMinor = values.at(-1);
+		expect(committedMinor).toBe(expectedMinor);
+		expect(input).toHaveValue(expectedDisplay);
+	});
 
 	it("commits on Enter", async () => {
 		const user = userEvent.setup();
 		const { values, onAmountMinorChange } = collectMinors();
 		const yenWholeUnits = 1980;
 
-		render(
-			<MoneyInput
-				currency="JPY"
-				locale="en-US"
-				aria-label="Yen"
-				onAmountMinorChange={onAmountMinorChange}
-			/>,
-		);
+		render(<MoneyInput currency="JPY" locale="en-US" aria-label="Yen" onAmountMinorChange={onAmountMinorChange} />);
 
 		const input = screen.getByRole("textbox", { name: "Yen" });
 		await user.type(input, String(yenWholeUnits));
@@ -151,10 +135,7 @@ describe("MoneyInput", () => {
 			const [minor, setMinor] = useState<number | null>(initialUsdCents);
 			return (
 				<>
-					<button
-						type="button"
-						onClick={() => setMinor(bumpedUsdCents)}
-					>
+					<button type="button" onClick={() => setMinor(bumpedUsdCents)}>
 						Bump
 					</button>
 					<MoneyInput
@@ -305,18 +286,8 @@ describe("MoneyInput", () => {
 	});
 
 	it("sets aria-invalid when invalid", () => {
-		render(
-			<MoneyInput
-				currency="USD"
-				locale="en-US"
-				aria-label="Amount"
-				invalid
-			/>,
-		);
-		expect(screen.getByRole("textbox", { name: "Amount" })).toHaveAttribute(
-			"aria-invalid",
-			"true",
-		);
+		render(<MoneyInput currency="USD" locale="en-US" aria-label="Amount" invalid />);
+		expect(screen.getByRole("textbox", { name: "Amount" })).toHaveAttribute("aria-invalid", "true");
 	});
 
 	it("pairs with FormField for accessible labeling", () => {
@@ -329,8 +300,6 @@ describe("MoneyInput", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<MoneyInput currency="USD" locale="en-US" aria-label="Amount" />,
-		);
+		await expectNoA11yViolations(<MoneyInput currency="USD" locale="en-US" aria-label="Amount" />);
 	});
 });

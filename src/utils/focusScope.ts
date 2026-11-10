@@ -88,10 +88,4 @@ function restoreFocus(target: HTMLElement | null): void {
 	target.focus();
 }
 
-export {
-	captureFocusRestore,
-	focusInitial,
-	listFocusable,
-	restoreFocus,
-	trapTabKey,
-};
+export { captureFocusRestore, focusInitial, listFocusable, restoreFocus, trapTabKey };

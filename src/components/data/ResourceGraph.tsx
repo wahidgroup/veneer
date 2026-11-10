@@ -177,16 +177,7 @@ function ResourceGraph({
 
 		let ring: ReactNode = null;
 		if (isFocused) {
-			ring = (
-				<circle
-					cx={node.x}
-					cy={node.y}
-					r={28}
-					fill="none"
-					className="stroke-ring"
-					strokeWidth={2}
-				/>
-			);
+			ring = <circle cx={node.x} cy={node.y} r={28} fill="none" className="stroke-ring" strokeWidth={2} />;
 		}
 
 		return (
@@ -237,11 +228,7 @@ function ResourceGraph({
 	});
 
 	return (
-		<div
-			data-slot="resource-graph"
-			className={cn("flex flex-col gap-4", className)}
-			{...rest}
-		>
+		<div data-slot="resource-graph" className={cn("flex flex-col gap-4", className)} {...rest}>
 			<svg
 				role="group"
 				aria-label={ariaLabel}
@@ -253,11 +240,7 @@ function ResourceGraph({
 				{edgeLines}
 				{nodeShapes}
 			</svg>
-			<DescriptionList
-				aria-label={`${ariaLabel} edges`}
-				items={listItems}
-				columns={1}
-			/>
+			<DescriptionList aria-label={`${ariaLabel} edges`} items={listItems} columns={1} />
 		</div>
 	);
 }

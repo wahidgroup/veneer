@@ -4,26 +4,21 @@ import { cva } from "class-variance-authority";
 
 import { cn } from "../../utils/cn.js";
 
-const quotaMeterTrackVariants = cva(
-	"relative w-full overflow-hidden rounded-full bg-muted",
-	{
-		variants: {
-			size: {
-				sm: "h-1.5",
-				md: "h-2.5",
-				lg: "h-3.5",
-			},
-		},
-		defaultVariants: {
-			size: "md",
+const quotaMeterTrackVariants = cva("relative w-full overflow-hidden rounded-full bg-muted", {
+	variants: {
+		size: {
+			sm: "h-1.5",
+			md: "h-2.5",
+			lg: "h-3.5",
 		},
 	},
-);
+	defaultVariants: {
+		size: "md",
+	},
+});
 
 interface QuotaMeterProps
-	extends
-		Omit<ComponentProps<"div">, "children">,
-		VariantProps<typeof quotaMeterTrackVariants> {
+	extends Omit<ComponentProps<"div">, "children">, VariantProps<typeof quotaMeterTrackVariants> {
 	value: number;
 	max?: number;
 	min?: number;
@@ -66,9 +61,7 @@ function QuotaMeter({
 		resolvedMax = resolvedMin + 1;
 	}
 
-	let resolvedSize: NonNullable<
-		VariantProps<typeof quotaMeterTrackVariants>["size"]
-	> = "md";
+	let resolvedSize: NonNullable<VariantProps<typeof quotaMeterTrackVariants>["size"]> = "md";
 	if (size === "sm") {
 		resolvedSize = "sm";
 	} else if (size === "lg") {
@@ -98,11 +91,7 @@ function QuotaMeter({
 	}
 
 	return (
-		<div
-			data-slot="quota-meter"
-			className={cn("w-full", className)}
-			{...rest}
-		>
+		<div data-slot="quota-meter" className={cn("w-full", className)} {...rest}>
 			{labelNode}
 			<div
 				role="meter"

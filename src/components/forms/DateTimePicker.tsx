@@ -3,10 +3,7 @@ import type { ComponentProps } from "react";
 import { cn } from "../../utils/cn.js";
 import { controlVariants } from "./FormField.js";
 
-interface DateTimePickerProps extends Omit<
-	ComponentProps<"input">,
-	"type" | "onChange"
-> {
+interface DateTimePickerProps extends Omit<ComponentProps<"input">, "type" | "onChange"> {
 	invalid?: boolean;
 	value?: string;
 	defaultValue?: string;

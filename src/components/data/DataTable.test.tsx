@@ -1,10 +1,4 @@
-import {
-	act,
-	fireEvent,
-	render,
-	screen,
-	waitFor,
-} from "@testing-library/react";
+import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { userEvent } from "@testing-library/user-event";
 import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -64,18 +58,12 @@ function getRowId(row: Person): string {
 	return row.id;
 }
 
-function pageSlice(
-	rows: Person[],
-	query: DataTableQuery,
-): { data: Person[]; rowCount: number } {
+function pageSlice(rows: Person[], query: DataTableQuery): { data: Person[]; rowCount: number } {
 	let filtered = rows;
 	if (query.globalFilter.length > 0) {
 		const needle = query.globalFilter.toLowerCase();
 		filtered = filtered.filter((row) => {
-			return (
-				row.name.toLowerCase().includes(needle) ||
-				row.role.toLowerCase().includes(needle)
-			);
+			return row.name.toLowerCase().includes(needle) || row.role.toLowerCase().includes(needle);
 		});
 	}
 	for (const filter of query.columnFilters) {
@@ -129,11 +117,7 @@ function pageSlice(
 	};
 }
 
-function ServerTable({
-	onQueryChange,
-}: {
-	onQueryChange?: (query: DataTableQuery) => void;
-}) {
+function ServerTable({ onQueryChange }: { onQueryChange?: (query: DataTableQuery) => void }) {
 	const [query, setQuery] = useState<DataTableQuery>({
 		pageIndex: 0,
 		pageSize: 10,
@@ -228,9 +212,7 @@ describe("DataTable", () => {
 		);
 
 		await user.selectOptions(screen.getByLabelText("Filter role"), "admin");
-		expect(queries.at(-1)?.columnFilters).toEqual([
-			{ id: "role", value: "admin" },
-		]);
+		expect(queries.at(-1)?.columnFilters).toEqual([{ id: "role", value: "admin" }]);
 		expect(screen.getByText("Person-1")).toBeInTheDocument();
 		expect(screen.queryByText("Person-2")).not.toBeInTheDocument();
 	});
@@ -288,9 +270,7 @@ describe("DataTable", () => {
 
 		function Harness() {
 			const [rows, setRows] = useState(PEOPLE.slice(0, 2));
-			const [selection, setSelection] = useState<Record<string, boolean>>(
-				{},
-			);
+			const [selection, setSelection] = useState<Record<string, boolean>>({});
 
 			return (
 				<div>
@@ -308,11 +288,7 @@ describe("DataTable", () => {
 					<button
 						type="button"
 						onClick={() => {
-							const next = applyRowTransaction(
-								rows,
-								{ remove: ["1"] },
-								getRowId,
-							);
+							const next = applyRowTransaction(rows, { remove: ["1"] }, getRowId);
 							setRows(next);
 						}}
 					>
@@ -386,21 +362,13 @@ describe("DataTable", () => {
 
 	it("indexes empty and loading placeholder rows for APG", () => {
 		const { container, rerender } = render(
-			<DataTable
-				columns={COLUMNS}
-				data={[]}
-				rowCount={0}
-				getRowId={getRowId}
-				loading
-			/>,
+			<DataTable columns={COLUMNS} data={[]} rowCount={0} getRowId={getRowId} loading />,
 		);
 
 		const table = container.querySelector('[data-slot="data-table-grid"]');
 		expect(table?.getAttribute("aria-rowcount")).toBe("2");
 
-		const loadingRow = container.querySelector(
-			'[data-slot="data-table-body"] tr',
-		);
+		const loadingRow = container.querySelector('[data-slot="data-table-body"] tr');
 		expect(loadingRow?.getAttribute("aria-rowindex")).toBe("2");
 		expect(screen.getByRole("status")).toHaveTextContent("Loading rows");
 
@@ -415,9 +383,7 @@ describe("DataTable", () => {
 		);
 		expect(table?.getAttribute("aria-rowcount")).toBe("2");
 
-		const emptyRow = container.querySelector(
-			'[data-slot="data-table-body"] tr',
-		);
+		const emptyRow = container.querySelector('[data-slot="data-table-body"] tr');
 		expect(emptyRow?.getAttribute("aria-rowindex")).toBe("2");
 		expect(screen.getByText("Nothing here")).toBeInTheDocument();
 	});
@@ -425,12 +391,7 @@ describe("DataTable", () => {
 	it("announces aria-colcount when a column is hidden", async () => {
 		const user = userEvent.setup();
 		const { container } = render(
-			<DataTable
-				columns={COLUMNS}
-				data={PEOPLE.slice(0, 1)}
-				rowCount={1}
-				getRowId={getRowId}
-			/>,
+			<DataTable columns={COLUMNS} data={PEOPLE.slice(0, 1)} rowCount={1} getRowId={getRowId} />,
 		);
 
 		const table = container.querySelector('[data-slot="data-table-grid"]');
@@ -440,27 +401,15 @@ describe("DataTable", () => {
 		await user.click(screen.getByRole("checkbox", { name: "role" }));
 		expect(table?.getAttribute("aria-colcount")).toBe("2");
 
-		const nameHeader = container.querySelector(
-			'[data-slot="data-table-columnheader"]',
-		);
+		const nameHeader = container.querySelector('[data-slot="data-table-columnheader"]');
 		expect(nameHeader?.getAttribute("aria-colindex")).toBe("1");
 
-		const bodyCell = container.querySelector(
-			'[data-slot="data-table-cell"]',
-		);
+		const bodyCell = container.querySelector('[data-slot="data-table-cell"]');
 		expect(bodyCell?.getAttribute("aria-colindex")).toBe("1");
 	});
 
 	it("shows loading and empty states", () => {
-		const { rerender } = render(
-			<DataTable
-				columns={COLUMNS}
-				data={[]}
-				rowCount={0}
-				getRowId={getRowId}
-				loading
-			/>,
-		);
+		const { rerender } = render(<DataTable columns={COLUMNS} data={[]} rowCount={0} getRowId={getRowId} loading />);
 		expect(screen.getByRole("status")).toHaveTextContent("Loading rows");
 
 		rerender(
@@ -497,38 +446,24 @@ describe("DataTable", () => {
 				defaultQuery={{ pageSize: 2 }}
 			/>,
 		);
-		expect(
-			screen.queryByLabelText("Select all rows on this page"),
-		).not.toBeInTheDocument();
+		expect(screen.queryByLabelText("Select all rows on this page")).not.toBeInTheDocument();
 		expect(screen.queryByLabelText("Select row 1")).not.toBeInTheDocument();
 	});
 
 	it("exposes table semantics with aria-rowcount", () => {
 		const { container } = render(
-			<DataTable
-				columns={COLUMNS}
-				data={PEOPLE.slice(0, 1)}
-				rowCount={1}
-				getRowId={getRowId}
-			/>,
+			<DataTable columns={COLUMNS} data={PEOPLE.slice(0, 1)} rowCount={1} getRowId={getRowId} />,
 		);
 
 		const table = container.querySelector('[data-slot="data-table-grid"]');
 		expect(table?.getAttribute("aria-rowcount")).toBe("2");
 
-		const headerRow = container.querySelector(
-			'[data-slot="data-table-header"] tr',
-		);
+		const headerRow = container.querySelector('[data-slot="data-table-header"] tr');
 		expect(headerRow?.getAttribute("aria-rowindex")).toBe("1");
 
 		const bodyRow = container.querySelector('[data-slot="data-table-row"]');
 		expect(bodyRow?.getAttribute("aria-rowindex")).toBe("2");
-		expect(
-			container.querySelectorAll('[data-slot="data-table-columnheader"]')
-				.length,
-		).toBeGreaterThan(0);
-		expect(
-			container.querySelectorAll('[data-slot="data-table-cell"]').length,
-		).toBeGreaterThan(0);
+		expect(container.querySelectorAll('[data-slot="data-table-columnheader"]').length).toBeGreaterThan(0);
+		expect(container.querySelectorAll('[data-slot="data-table-cell"]').length).toBeGreaterThan(0);
 	});
 });

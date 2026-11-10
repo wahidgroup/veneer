@@ -85,19 +85,13 @@ function SearchInput({
 		);
 	}
 
-	let resolvedAdornment: ReactNode = (
-		<Search className="size-4" aria-hidden="true" />
-	);
+	let resolvedAdornment: ReactNode = <Search className="size-4" aria-hidden="true" />;
 	if (startAdornment !== undefined) {
 		resolvedAdornment = startAdornment;
 	}
 
 	return (
-		<div
-			data-slot="search-input"
-			className={cn("relative w-full", className)}
-			{...rest}
-		>
+		<div data-slot="search-input" className={cn("relative w-full", className)} {...rest}>
 			<span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
 				{resolvedAdornment}
 			</span>

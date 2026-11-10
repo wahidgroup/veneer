@@ -38,9 +38,7 @@ describe("Tooltip", () => {
 		);
 
 		await user.tab();
-		expect(screen.getByRole("tooltip")).toHaveTextContent(
-			"Disabled reason",
-		);
+		expect(screen.getByRole("tooltip")).toHaveTextContent("Disabled reason");
 	});
 
 	it("does not open when disabled", async () => {

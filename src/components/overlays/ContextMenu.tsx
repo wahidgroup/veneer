@@ -2,17 +2,10 @@ import type { MouseEvent, ReactNode } from "react";
 import { useEffect, useId, useRef, useState } from "react";
 
 import type { ActionMenuEntry } from "./actionMenuList.js";
-import {
-	DISMISS_LAYER_TIER_CLASS,
-	useDismissLayer,
-} from "../../overlays/dismissLayerStack.js";
+import { DISMISS_LAYER_TIER_CLASS, useDismissLayer } from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Portal } from "./Portal.js";
-import {
-	focusFirstMenuItem,
-	onActionMenuKeyDown,
-	renderActionMenuEntries,
-} from "./actionMenuList.js";
+import { focusFirstMenuItem, onActionMenuKeyDown, renderActionMenuEntries } from "./actionMenuList.js";
 
 interface ContextMenuPosition {
 	x: number;
@@ -122,11 +115,7 @@ function ContextMenu({ items, children, className }: ContextMenuProps) {
 	}
 
 	return (
-		<div
-			data-slot="context-menu"
-			className={cn(className)}
-			onContextMenu={onContextMenu}
-		>
+		<div data-slot="context-menu" className={cn(className)} onContextMenu={onContextMenu}>
 			{children}
 			{menuNode}
 		</div>

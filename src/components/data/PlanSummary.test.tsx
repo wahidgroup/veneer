@@ -18,18 +18,10 @@ describe("PlanSummary", () => {
 		render(<PlanSummary resources={RESOURCES} />);
 		const region = screen.getByRole("region", { name: "Plan summary" });
 		expect(region).toHaveAttribute("data-slot", "plan-summary");
-		expect(
-			screen.getByRole("button", { name: "Filter Create" }),
-		).toHaveTextContent("1");
-		expect(
-			screen.getByRole("button", { name: "Filter Update" }),
-		).toHaveTextContent("1");
-		expect(
-			screen.getByRole("button", { name: "Filter Destroy" }),
-		).toHaveTextContent("1");
-		expect(
-			screen.getByRole("button", { name: "Filter Replace" }),
-		).toHaveTextContent("1");
+		expect(screen.getByRole("button", { name: "Filter Create" })).toHaveTextContent("1");
+		expect(screen.getByRole("button", { name: "Filter Update" })).toHaveTextContent("1");
+		expect(screen.getByRole("button", { name: "Filter Destroy" })).toHaveTextContent("1");
+		expect(screen.getByRole("button", { name: "Filter Replace" })).toHaveTextContent("1");
 	});
 
 	it("filters DiffView rows by kind chips", async () => {
@@ -46,24 +38,14 @@ describe("PlanSummary", () => {
 
 	it("resets filters when the last kind would be cleared", async () => {
 		const user = userEvent.setup();
-		render(
-			<PlanSummary
-				resources={[{ id: "a", kind: "create", path: "only.create" }]}
-			/>,
-		);
+		render(<PlanSummary resources={[{ id: "a", kind: "create", path: "only.create" }]} />);
 
 		await user.click(screen.getByRole("button", { name: "Filter Update" }));
-		await user.click(
-			screen.getByRole("button", { name: "Filter Destroy" }),
-		);
-		await user.click(
-			screen.getByRole("button", { name: "Filter Replace" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Filter Destroy" }));
+		await user.click(screen.getByRole("button", { name: "Filter Replace" }));
 		await user.click(screen.getByRole("button", { name: "Filter Create" }));
 		expect(screen.getByText("only.create")).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Filter Create" }),
-		).toHaveAttribute("aria-pressed", "true");
+		expect(screen.getByRole("button", { name: "Filter Create" })).toHaveAttribute("aria-pressed", "true");
 	});
 
 	it("renders DiffView tree body", () => {

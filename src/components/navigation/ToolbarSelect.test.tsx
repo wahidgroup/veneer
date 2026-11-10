@@ -28,9 +28,7 @@ describe("ToolbarSelect", () => {
 			/>,
 		);
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Account: Prod" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Account: Prod" })).toBeInTheDocument();
 
 		await user.click(screen.getByRole("button", { name: "Account: Prod" }));
 		expect(screen.getByRole("listbox")).toBeInTheDocument();
@@ -38,9 +36,7 @@ describe("ToolbarSelect", () => {
 		await user.click(screen.getByRole("option", { name: /Staging/ }));
 		expect(seen).toEqual(["acct-2"]);
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Account: Staging" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Account: Staging" })).toBeInTheDocument();
 	});
 
 	it("supports controlled value", async () => {
@@ -61,13 +57,9 @@ describe("ToolbarSelect", () => {
 			/>,
 		);
 
-		expect(
-			screen.getByRole("button", { name: "Region: N. Virginia" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Region: N. Virginia" })).toBeInTheDocument();
 
-		await user.click(
-			screen.getByRole("button", { name: "Region: N. Virginia" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Region: N. Virginia" }));
 		await user.click(screen.getByRole("option", { name: "Ireland" }));
 		expect(seen).toEqual(["eu-west-1"]);
 
@@ -84,22 +76,12 @@ describe("ToolbarSelect", () => {
 				}}
 			/>,
 		);
-		expect(
-			screen.getByRole("button", { name: "Region: Ireland" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Region: Ireland" })).toBeInTheDocument();
 	});
 
 	it("falls back to the raw value when options lack a match", () => {
-		render(
-			<ToolbarSelect
-				aria-label="Account"
-				options={OPTIONS}
-				value="acct-missing"
-			/>,
-		);
-		expect(
-			screen.getByRole("button", { name: "Account: acct-missing" }),
-		).toBeInTheDocument();
+		render(<ToolbarSelect aria-label="Account" options={OPTIONS} value="acct-missing" />);
+		expect(screen.getByRole("button", { name: "Account: acct-missing" })).toBeInTheDocument();
 	});
 
 	it("skips disabled options", async () => {
@@ -116,9 +98,7 @@ describe("ToolbarSelect", () => {
 			/>,
 		);
 
-		await user.click(
-			screen.getByRole("button", { name: "Account: Select" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Account: Select" }));
 		expect(screen.getByRole("option", { name: "Sandbox" })).toBeDisabled();
 
 		await user.click(screen.getByRole("option", { name: "Sandbox" }));
@@ -143,14 +123,10 @@ describe("ToolbarSelect", () => {
 
 		await user.click(screen.getByRole("button", { name: "Account: Prod" }));
 		const listbox = screen.getByRole("listbox");
-		expect(
-			within(listbox).getByRole("option", { name: /Prod/ }),
-		).toHaveFocus();
+		expect(within(listbox).getByRole("option", { name: /Prod/ })).toHaveFocus();
 
 		await user.keyboard("{ArrowDown}");
-		expect(
-			within(listbox).getByRole("option", { name: /Staging/ }),
-		).toHaveFocus();
+		expect(within(listbox).getByRole("option", { name: /Staging/ })).toHaveFocus();
 
 		await user.keyboard("{Enter}");
 		expect(seen).toEqual(["acct-2"]);
@@ -160,13 +136,7 @@ describe("ToolbarSelect", () => {
 	it("closes once on Escape and restores the trigger", async () => {
 		const user = userEvent.setup();
 
-		render(
-			<ToolbarSelect
-				aria-label="Account"
-				options={OPTIONS}
-				defaultValue="acct-1"
-			/>,
-		);
+		render(<ToolbarSelect aria-label="Account" options={OPTIONS} defaultValue="acct-1" />);
 
 		const trigger = screen.getByRole("button", { name: "Account: Prod" });
 		await user.click(trigger);
@@ -179,44 +149,30 @@ describe("ToolbarSelect", () => {
 	it("supports Home, End, and Escape", async () => {
 		const user = userEvent.setup();
 
-		render(
-			<ToolbarSelect
-				aria-label="Account"
-				options={OPTIONS}
-				defaultValue="acct-1"
-			/>,
-		);
+		render(<ToolbarSelect aria-label="Account" options={OPTIONS} defaultValue="acct-1" />);
 
 		await user.click(screen.getByRole("button", { name: "Account: Prod" }));
 		const listbox = screen.getByRole("listbox");
 
 		await user.keyboard("{End}");
-		expect(
-			within(listbox).getByRole("option", { name: /Staging/ }),
-		).toHaveFocus();
+		expect(within(listbox).getByRole("option", { name: /Staging/ })).toHaveFocus();
 
 		await user.keyboard("{Home}");
-		expect(
-			within(listbox).getByRole("option", { name: /Prod/ }),
-		).toHaveFocus();
+		expect(within(listbox).getByRole("option", { name: /Prod/ })).toHaveFocus();
 
 		await user.keyboard("{Escape}");
 		expect(screen.queryByRole("listbox")).not.toBeInTheDocument();
 	});
 
 	it("has no accessibility violations when closed", async () => {
-		await expectNoA11yViolations(
-			<ToolbarSelect aria-label="Account" options={OPTIONS} />,
-		);
+		await expectNoA11yViolations(<ToolbarSelect aria-label="Account" options={OPTIONS} />);
 	});
 
 	it("has no accessibility violations when open", async () => {
 		const user = userEvent.setup();
 		render(<ToolbarSelect aria-label="Account" options={OPTIONS} />);
 
-		await user.click(
-			screen.getByRole("button", { name: "Account: Select" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Account: Select" }));
 
 		const results = await axe(screen.getByRole("listbox"));
 		expect(results).toHaveNoViolations();

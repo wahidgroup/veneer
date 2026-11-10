@@ -2,17 +2,9 @@ import type { IncomingMessage } from "node:http";
 import type { WebSocketServer as WsServer } from "ws";
 import { Inject, Logger } from "@nestjs/common";
 import { WebSocket } from "ws";
-import {
-	OnGatewayConnection,
-	OnGatewayDisconnect,
-	WebSocketGateway,
-	WebSocketServer,
-} from "@nestjs/websockets";
+import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 
-import type {
-	TableServerMessage,
-	TableSubscribeMessage,
-} from "./table-types.js";
+import type { TableServerMessage, TableSubscribeMessage } from "./table-types.js";
 import { TablesService } from "./tables.service.js";
 
 type WsRawData = Buffer | ArrayBuffer | Buffer[] | string;
@@ -33,9 +25,7 @@ export class TablesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 	@WebSocketServer()
 	server!: WsServer;
 
-	constructor(
-		@Inject(TablesService) private readonly tables: TablesService,
-	) {}
+	constructor(@Inject(TablesService) private readonly tables: TablesService) {}
 
 	handleConnection(client: WebSocket, _request: IncomingMessage): void {
 		const tableId = DEFAULT_TABLE_ID;
@@ -89,11 +79,7 @@ export class TablesGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 
 		if (!isSubscribeMessage(parsed)) {
-			if (
-				parsed === null ||
-				typeof parsed !== "object" ||
-				!("type" in parsed)
-			) {
+			if (parsed === null || typeof parsed !== "object" || !("type" in parsed)) {
 				client.close(1003, "invalid message");
 			}
 

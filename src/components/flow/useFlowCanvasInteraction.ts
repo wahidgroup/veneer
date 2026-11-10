@@ -1,17 +1,7 @@
-import type {
-	DragEvent,
-	KeyboardEvent,
-	PointerEvent as ReactPointerEvent,
-	RefObject,
-} from "react";
+import type { DragEvent, KeyboardEvent, PointerEvent as ReactPointerEvent, RefObject } from "react";
 import { useRef, useState } from "react";
 
-import type {
-	FlowConnection,
-	FlowEdge,
-	FlowNode,
-	FlowPort,
-} from "./flowTypes.js";
+import type { FlowConnection, FlowEdge, FlowNode, FlowPort } from "./flowTypes.js";
 import type { GraphViewportHandle } from "./GraphViewport.js";
 
 type FlowFocusMode = "navigate" | "edit-node";
@@ -45,19 +35,9 @@ interface UseFlowCanvasInteractionResult {
 	connectionHint: string | null;
 	clearConnecting: () => void;
 	selectNode: (nodeId: string | null) => void;
-	onShellKeyDown: (
-		index: number,
-		event: KeyboardEvent<HTMLDivElement>,
-	) => void;
-	onPortClick: (
-		nodeId: string,
-		port: FlowPort,
-		kind: "source" | "target",
-	) => void;
-	onNodePointerDown: (
-		node: FlowNode,
-		event: ReactPointerEvent<HTMLDivElement>,
-	) => void;
+	onShellKeyDown: (index: number, event: KeyboardEvent<HTMLDivElement>) => void;
+	onPortClick: (nodeId: string, port: FlowPort, kind: "source" | "target") => void;
+	onNodePointerDown: (node: FlowNode, event: ReactPointerEvent<HTMLDivElement>) => void;
 	onNodePointerMove: (event: ReactPointerEvent<HTMLDivElement>) => void;
 	onNodePointerUp: (event: ReactPointerEvent<HTMLDivElement>) => void;
 	onDragOver: (event: DragEvent<HTMLDivElement>) => void;
@@ -67,9 +47,7 @@ interface UseFlowCanvasInteractionResult {
 /**
  * Drag, connect-from-handles, delete, focus modes, and palette drop for FlowCanvas.
  */
-function useFlowCanvasInteraction(
-	args: UseFlowCanvasInteractionArgs,
-): UseFlowCanvasInteractionResult {
+function useFlowCanvasInteraction(args: UseFlowCanvasInteractionArgs): UseFlowCanvasInteractionResult {
 	const {
 		nodes,
 		edges,
@@ -157,10 +135,7 @@ function useFlowCanvasInteraction(
 		setConnectionHint(null);
 	}
 
-	function onShellKeyDown(
-		index: number,
-		event: KeyboardEvent<HTMLDivElement>,
-	) {
+	function onShellKeyDown(index: number, event: KeyboardEvent<HTMLDivElement>) {
 		if (focusMode === "edit-node") {
 			if (event.key === "Escape") {
 				event.preventDefault();
@@ -247,9 +222,7 @@ function useFlowCanvasInteraction(
 
 		if (isValidConnection !== undefined && !isValidConnection(connection)) {
 			clearConnecting();
-			setConnectionHint(
-				"Connection rejected: ports must share the same value type.",
-			);
+			setConnectionHint("Connection rejected: ports must share the same value type.");
 
 			return;
 		}
@@ -259,11 +232,7 @@ function useFlowCanvasInteraction(
 		setConnectionHint(null);
 	}
 
-	function onPortClick(
-		nodeId: string,
-		port: FlowPort,
-		kind: "source" | "target",
-	) {
+	function onPortClick(nodeId: string, port: FlowPort, kind: "source" | "target") {
 		if (!editable || onConnect === undefined) {
 			return;
 		}
@@ -276,10 +245,7 @@ function useFlowCanvasInteraction(
 		completeConnect(nodeId, port.id);
 	}
 
-	function onNodePointerDown(
-		node: FlowNode,
-		event: ReactPointerEvent<HTMLDivElement>,
-	) {
+	function onNodePointerDown(node: FlowNode, event: ReactPointerEvent<HTMLDivElement>) {
 		if (!editable || onNodesChange === undefined) {
 			return;
 		}
@@ -400,9 +366,5 @@ function useFlowCanvasInteraction(
 	};
 }
 
-export type {
-	FlowFocusMode,
-	UseFlowCanvasInteractionArgs,
-	UseFlowCanvasInteractionResult,
-};
+export type { FlowFocusMode, UseFlowCanvasInteractionArgs, UseFlowCanvasInteractionResult };
 export { useFlowCanvasInteraction };

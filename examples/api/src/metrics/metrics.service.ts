@@ -1,8 +1,4 @@
-import {
-	BadRequestException,
-	Injectable,
-	OnModuleDestroy,
-} from "@nestjs/common";
+import { BadRequestException, Injectable, OnModuleDestroy } from "@nestjs/common";
 
 import type { ProgressJobState, QuotaState } from "./metric-types.js";
 

@@ -33,14 +33,7 @@ function strokeForStatus(status: FlowStatus): string | null {
  * SVG edge layer under (or over) HTML nodes. Paths use layout bend points or bezier.
  * Idle edges tint by valueKind; status overlays when active.
  */
-function GraphEdgeLayer({
-	nodes,
-	edges,
-	edgeStatus,
-	width,
-	height,
-	className,
-}: GraphEdgeLayerProps) {
+function GraphEdgeLayer({ nodes, edges, edgeStatus, width, height, className }: GraphEdgeLayerProps) {
 	const nodesById = new Map<string, FlowNode>();
 	for (const node of nodes) {
 		nodesById.set(node.id, node);
@@ -79,10 +72,7 @@ function GraphEdgeLayer({
 			data-slot="graph-edge-layer"
 			width={width}
 			height={height}
-			className={cn(
-				"pointer-events-none absolute inset-0 overflow-visible",
-				className,
-			)}
+			className={cn("pointer-events-none absolute inset-0 overflow-visible", className)}
 			aria-hidden="true"
 		>
 			{paths}

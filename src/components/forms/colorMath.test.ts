@@ -1,14 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-	hexToHsv,
-	hexToRgb,
-	hsvToHex,
-	hsvToRgb,
-	normalizeHex,
-	rgbToHex,
-	rgbToHsv,
-} from "./colorMath.js";
+import { hexToHsv, hexToRgb, hsvToHex, hsvToRgb, normalizeHex, rgbToHex, rgbToHsv } from "./colorMath.js";
 
 describe("colorMath", () => {
 	it.each([
@@ -31,14 +23,11 @@ describe("colorMath", () => {
 		expect(normalizeHex(input)).toBe(expected);
 	});
 
-	it.each(["", "#gg0000", "#1234", "not-a-color", "#12345"])(
-		"normalizeHex rejects %s",
-		(input) => {
-			expect(normalizeHex(input)).toBeNull();
-			expect(hexToRgb(input)).toBeNull();
-			expect(hexToHsv(input)).toBeNull();
-		},
-	);
+	it.each(["", "#gg0000", "#1234", "not-a-color", "#12345"])("normalizeHex rejects %s", (input) => {
+		expect(normalizeHex(input)).toBeNull();
+		expect(hexToRgb(input)).toBeNull();
+		expect(hexToHsv(input)).toBeNull();
+	});
 
 	it.each([
 		{ hex: "#ff0000", h: 0, s: 1, v: 1 },

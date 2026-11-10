@@ -1,28 +1,6 @@
-import {
-	Body,
-	Controller,
-	Get,
-	Inject,
-	Param,
-	Patch,
-	Post,
-} from "@nestjs/common";
-import {
-	ApiBody,
-	ApiOkResponse,
-	ApiParam,
-	ApiProperty,
-	ApiTags,
-} from "@nestjs/swagger";
-import {
-	IsInt,
-	IsObject,
-	IsString,
-	Max,
-	MaxLength,
-	Min,
-	MinLength,
-} from "class-validator";
+import { Body, Controller, Get, Inject, Param, Patch, Post } from "@nestjs/common";
+import { ApiBody, ApiOkResponse, ApiParam, ApiProperty, ApiTags } from "@nestjs/swagger";
+import { IsInt, IsObject, IsString, Max, MaxLength, Min, MinLength } from "class-validator";
 
 import { FlowsService } from "./flows.service.js";
 
@@ -153,10 +131,7 @@ export class FlowsController {
 	@ApiParam({ name: "id", type: String })
 	@ApiBody({ type: FlowNodeConfigDto })
 	@ApiOkResponse({ type: FlowDemoSnapshotDto })
-	patchConfig(
-		@Param("id") id: string,
-		@Body() body: FlowNodeConfigDto,
-	): FlowDemoSnapshotDto {
+	patchConfig(@Param("id") id: string, @Body() body: FlowNodeConfigDto): FlowDemoSnapshotDto {
 		return this.flows.patchNodeConfig(id, body.config);
 	}
 }

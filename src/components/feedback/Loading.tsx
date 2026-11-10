@@ -32,10 +32,7 @@ const loadingVariants = cva("", {
 	},
 });
 
-interface LoadingProps
-	extends
-		Omit<ComponentProps<"div">, "children">,
-		VariantProps<typeof loadingVariants> {
+interface LoadingProps extends Omit<ComponentProps<"div">, "children">, VariantProps<typeof loadingVariants> {
 	text?: string;
 	/**
 	 * Bone lines when `variant="skeleton"`. Default `3`.
@@ -47,14 +44,7 @@ interface LoadingProps
  * Busy indicator. `spinner` (default) or `skeleton` placeholder lines.
  * Exposes `role="status"` for assistive tech.
  */
-function Loading({
-	className,
-	text,
-	size,
-	variant,
-	lines,
-	...props
-}: LoadingProps) {
+function Loading({ className, text, size, variant, lines, ...props }: LoadingProps) {
 	let resolvedVariant: LoadingVariant = "spinner";
 	if (variant === "skeleton") {
 		resolvedVariant = "skeleton";
@@ -99,9 +89,7 @@ function Loading({
 			);
 		}
 
-		body = (
-			<div className="flex w-full max-w-md flex-col gap-2">{bones}</div>
-		);
+		body = <div className="flex w-full max-w-md flex-col gap-2">{bones}</div>;
 		if (message !== null) {
 			body = (
 				<div className="flex w-full max-w-md flex-col gap-3">

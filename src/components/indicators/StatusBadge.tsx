@@ -3,8 +3,7 @@ import type { ReactNode } from "react";
 import type { BadgeProps } from "./Badge.js";
 import { Badge } from "./Badge.js";
 
-type StatusBadgeStatus =
-	"running" | "pending" | "success" | "warning" | "danger" | "drifted";
+type StatusBadgeStatus = "running" | "pending" | "success" | "warning" | "danger" | "drifted";
 
 interface StatusBadgeProps extends Omit<BadgeProps, "variant" | "children"> {
 	status: StatusBadgeStatus;
@@ -14,9 +13,7 @@ interface StatusBadgeProps extends Omit<BadgeProps, "variant" | "children"> {
 /**
  * Maps inventory status tokens onto Badge tone variants.
  */
-function variantForStatus(
-	status: StatusBadgeStatus,
-): NonNullable<BadgeProps["variant"]> {
+function variantForStatus(status: StatusBadgeStatus): NonNullable<BadgeProps["variant"]> {
 	if (status === "running") {
 		return "info";
 	}
@@ -44,13 +41,7 @@ function variantForStatus(
  * Inventory status chip. Maps console statuses onto Badge tone variants
  * (`running` -> info, `drifted` -> warning, `pending` -> default, …).
  */
-function StatusBadge({
-	status,
-	children,
-	size,
-	className,
-	...rest
-}: StatusBadgeProps) {
+function StatusBadge({ status, children, size, className, ...rest }: StatusBadgeProps) {
 	return (
 		<Badge
 			{...rest}

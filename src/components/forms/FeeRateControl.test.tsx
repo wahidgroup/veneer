@@ -9,18 +9,10 @@ describe("FeeRateControl", () => {
 	it("renders fee-rate-control with slider and number input", () => {
 		render(<FeeRateControl aria-label="Fee rate" defaultValue={10} />);
 
-		expect(
-			screen.getByRole("radiogroup", { name: "Fee rate presets" }),
-		).toBeInTheDocument();
-		expect(screen.getByRole("slider", { name: "Fee rate" })).toHaveValue(
-			"10",
-		);
-		expect(
-			screen.getByRole("spinbutton", { name: "Fee rate (sat/vB)" }),
-		).toHaveValue(10);
-		expect(
-			document.querySelector("[data-slot='fee-rate-control']"),
-		).toBeInTheDocument();
+		expect(screen.getByRole("radiogroup", { name: "Fee rate presets" })).toBeInTheDocument();
+		expect(screen.getByRole("slider", { name: "Fee rate" })).toHaveValue("10");
+		expect(screen.getByRole("spinbutton", { name: "Fee rate (sat/vB)" })).toHaveValue(10);
+		expect(document.querySelector("[data-slot='fee-rate-control']")).toBeInTheDocument();
 	});
 
 	it("sets rate when a preset is selected", async () => {
@@ -39,9 +31,7 @@ describe("FeeRateControl", () => {
 
 		await user.click(screen.getByRole("radio", { name: "Priority" }));
 		expect(rates.at(-1)).toBe(50);
-		expect(screen.getByRole("slider", { name: "Fee rate" })).toHaveValue(
-			"50",
-		);
+		expect(screen.getByRole("slider", { name: "Fee rate" })).toHaveValue("50");
 	});
 
 	it("updates rate when the slider moves", () => {
@@ -76,10 +66,7 @@ describe("FeeRateControl", () => {
 			/>,
 		);
 
-		fireEvent.change(
-			screen.getByRole("spinbutton", { name: "Fee rate (sat/vB)" }),
-			{ target: { value: "33" } },
-		);
+		fireEvent.change(screen.getByRole("spinbutton", { name: "Fee rate (sat/vB)" }), { target: { value: "33" } });
 		expect(rates.at(-1)).toBe(33);
 	});
 
@@ -111,8 +98,6 @@ describe("FeeRateControl", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<FeeRateControl aria-label="Fee rate" defaultValue={10} />,
-		);
+		await expectNoA11yViolations(<FeeRateControl aria-label="Fee rate" defaultValue={10} />);
 	});
 });

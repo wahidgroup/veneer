@@ -21,10 +21,7 @@ const avatarVariants = cva(
 	},
 );
 
-interface AvatarProps
-	extends
-		Omit<ComponentProps<"span">, "children">,
-		VariantProps<typeof avatarVariants> {
+interface AvatarProps extends Omit<ComponentProps<"span">, "children">, VariantProps<typeof avatarVariants> {
 	src?: string;
 	alt: string;
 	fallback: ReactNode;

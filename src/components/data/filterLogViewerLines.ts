@@ -42,10 +42,7 @@ function lineSearchHaystack(line: LogViewerLine): string {
  * with OR semantics across chips (text or stringified `data`). Not used by
  * LogViewer itself - the panel displays `lines` as given.
  */
-function filterLogViewerLines(
-	lines: LogViewerLine[],
-	opts: FilterLogViewerLinesOptions = {},
-): LogViewerLine[] {
+function filterLogViewerLines(lines: LogViewerLine[], opts: FilterLogViewerLinesOptions = {}): LogViewerLine[] {
 	let levels = opts.levels;
 	levels ??= ["debug", "info", "warn", "error"];
 

@@ -1,12 +1,4 @@
-import {
-	createContext,
-	useContext,
-	useEffect,
-	useRef,
-	useState,
-	type CSSProperties,
-	type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 
 import { X } from "lucide-react";
 
@@ -157,8 +149,7 @@ function useToastDemo(): ToastDemoValue {
 function ToastDemoProvider({ children }: { children: ReactNode }) {
 	const [toasts, setToasts] = useState<DemoToast[]>([]);
 	const [toastSeq, setToastSeq] = useState(0);
-	const [toastPosition, setToastPosition] =
-		useState<ToastPosition>("top-right");
+	const [toastPosition, setToastPosition] = useState<ToastPosition>("top-right");
 	const [toastDuration, setToastDuration] = useState(4000);
 	const [toastOpacity, setToastOpacity] = useState(0.95);
 	const [toastFade, setToastFade] = useState(true);
@@ -222,11 +213,7 @@ function ToastDemoProvider({ children }: { children: ReactNode }) {
 		setLastAction,
 	};
 
-	return (
-		<ToastDemoContext.Provider value={value}>
-			{children}
-		</ToastDemoContext.Provider>
-	);
+	return <ToastDemoContext.Provider value={value}>{children}</ToastDemoContext.Provider>;
 }
 
 function ToastCanvas() {
@@ -309,9 +296,7 @@ function ToastCanvas() {
 					Warning
 				</Button>
 			</DemoRow>
-			<p className="text-sm text-muted-foreground">
-				Last action: {demo.lastAction}
-			</p>
+			<p className="text-sm text-muted-foreground">Last action: {demo.lastAction}</p>
 		</Canvas>
 	);
 }
@@ -320,14 +305,8 @@ function ToastKnobs() {
 	const demo = useToastDemo();
 
 	return (
-		<RailPanel
-			title="Toast"
-			description="Knobs feed the next push. Stack inherits viewport corner."
-		>
-			<DemoRow
-				label="Position"
-				description="Corner of the viewport where the toast stack appears."
-			>
+		<RailPanel title="Toast" description="Knobs feed the next push. Stack inherits viewport corner.">
+			<DemoRow label="Position" description="Corner of the viewport where the toast stack appears.">
 				<Select
 					id="toast-position"
 					options={TOAST_POSITIONS}
@@ -353,10 +332,7 @@ function ToastKnobs() {
 					aria-label="Toast position"
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Duration"
-				description="Auto-dismiss delay in ms. Use 0 to keep the toast until closed."
-			>
+			<DemoRow label="Duration" description="Auto-dismiss delay in ms. Use 0 to keep the toast until closed.">
 				<NumberInput
 					id="toast-duration"
 					min={0}
@@ -389,15 +365,8 @@ function ToastKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Fade"
-				description="Animate enter and exit. Enter/exit ms apply when fade is on."
-			>
-				<Toggle
-					checked={demo.toastFade}
-					label="Fade enter/exit"
-					onCheckedChange={demo.setToastFade}
-				/>
+			<DemoRow label="Fade" description="Animate enter and exit. Enter/exit ms apply when fade is on.">
+				<Toggle checked={demo.toastFade} label="Fade enter/exit" onCheckedChange={demo.setToastFade} />
 				<NumberInput
 					id="toast-enter-ms"
 					min={0}
@@ -431,10 +400,7 @@ function ToastKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Actions"
-				description="Attach Undo and Details action buttons to the next toast."
-			>
+			<DemoRow label="Actions" description="Attach Undo and Details action buttons to the next toast.">
 				<Toggle
 					checked={demo.toastActions}
 					label="Include Undo / Details"
@@ -470,9 +436,7 @@ function AlertDemoProvider({ children }: { children: ReactNode }) {
 	const [showTitle, setShowTitle] = useState(true);
 
 	return (
-		<AlertDemoContext.Provider
-			value={{ type, setType, showTitle, setShowTitle }}
-		>
+		<AlertDemoContext.Provider value={{ type, setType, showTitle, setShowTitle }}>
 			{children}
 		</AlertDemoContext.Provider>
 	);
@@ -496,11 +460,7 @@ function AlertCanvas() {
 	return (
 		<Canvas>
 			<DemoRow label="Playground">
-				<Alert
-					type={demo.type}
-					title={title}
-					className="w-full max-w-lg"
-				>
+				<Alert type={demo.type} title={title} className="w-full max-w-lg">
 					Controls in the rail change this notice type and title.
 				</Alert>
 			</DemoRow>
@@ -561,15 +521,8 @@ function AlertKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Title"
-				description="Show or hide the bold title above the alert body."
-			>
-				<Toggle
-					label="Show title"
-					checked={demo.showTitle}
-					onCheckedChange={demo.setShowTitle}
-				/>
+			<DemoRow label="Title" description="Show or hide the bold title above the alert body.">
+				<Toggle label="Show title" checked={demo.showTitle} onCheckedChange={demo.setShowTitle} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -621,8 +574,7 @@ function ButtonCanvas() {
 	);
 }
 
-type ButtonVariant =
-	"filled" | "outlined" | "text" | "ghost" | "secondary" | "danger";
+type ButtonVariant = "filled" | "outlined" | "text" | "ghost" | "secondary" | "danger";
 type ButtonSize = "sm" | "md" | "icon";
 
 type ButtonColorSlot = "bg" | "fg";
@@ -674,10 +626,7 @@ interface ButtonDemoValue {
 	setColor: (slot: ButtonColorSlot, hex: string) => void;
 	resetColors: () => void;
 	metrics: ButtonSizeMetrics;
-	setMetric: (
-		key: keyof ButtonSizeMetrics,
-		value: number | undefined,
-	) => void;
+	setMetric: (key: keyof ButtonSizeMetrics, value: number | undefined) => void;
 	resetMetrics: () => void;
 }
 
@@ -696,13 +645,9 @@ function ButtonDemoProvider({ children }: { children: ReactNode }) {
 	const [variant, setVariant] = useState<ButtonVariant>("filled");
 	const [size, setSize] = useState<ButtonSize>("md");
 	const [disabled, setDisabled] = useState(false);
-	const [colors, setColors] = useState<ButtonColorState>(
-		BUTTON_COLOR_DEFAULTS,
-	);
+	const [colors, setColors] = useState<ButtonColorState>(BUTTON_COLOR_DEFAULTS);
 	const [slot, setSlot] = useState<ButtonColorSlot>("bg");
-	const [metrics, setMetrics] = useState<ButtonSizeMetrics>(
-		BUTTON_METRICS_DEFAULTS,
-	);
+	const [metrics, setMetrics] = useState<ButtonSizeMetrics>(BUTTON_METRICS_DEFAULTS);
 
 	return (
 		<ButtonDemoContext.Provider
@@ -803,10 +748,7 @@ function ButtonKnobs() {
 			title="Button"
 			description="Playground: --button-bg/fg + optional --button-height/px/fz (Mantine-style). Empty size fields = size preset. Ghost/secondary/danger ignore color skin."
 		>
-			<DemoRow
-				label="Variant"
-				description="Visual style applied to the playground button."
-			>
+			<DemoRow label="Variant" description="Visual style applied to the playground button.">
 				<Select
 					id="button-variant"
 					options={BUTTON_VARIANT_OPTIONS}
@@ -840,10 +782,7 @@ function ButtonKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Size"
-				description="Preset fallbacks. Icon is square; custom height sets both axes."
-			>
+			<DemoRow label="Size" description="Preset fallbacks. Icon is square; custom height sets both axes.">
 				<Select
 					id="button-size"
 					options={BUTTON_SIZE_OPTIONS}
@@ -865,10 +804,7 @@ function ButtonKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Height"
-				description="--button-height in px. Leave empty for size preset."
-			>
+			<DemoRow label="Height" description="--button-height in px. Leave empty for size preset.">
 				<NumberInput
 					aria-label="Button height px"
 					placeholder="preset"
@@ -880,10 +816,7 @@ function ButtonKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Padding X"
-				description="--button-px. Ignored for icon size (p-0)."
-			>
+			<DemoRow label="Padding X" description="--button-px. Ignored for icon size (p-0).">
 				<NumberInput
 					aria-label="Button padding x px"
 					placeholder="preset"
@@ -895,10 +828,7 @@ function ButtonKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Font size"
-				description="--button-fz in px. Leave empty for size preset."
-			>
+			<DemoRow label="Font size" description="--button-fz in px. Leave empty for size preset.">
 				<NumberInput
 					aria-label="Button font size px"
 					placeholder="preset"
@@ -910,15 +840,8 @@ function ButtonKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Disabled"
-				description="Blocks interaction and dims the playground button."
-			>
-				<Toggle
-					label="Disabled"
-					checked={demo.disabled}
-					onCheckedChange={demo.setDisabled}
-				/>
+			<DemoRow label="Disabled" description="Blocks interaction and dims the playground button.">
+				<Toggle label="Disabled" checked={demo.disabled} onCheckedChange={demo.setDisabled} />
 			</DemoRow>
 			<DemoRow label="Color slot">
 				<Select
@@ -981,20 +904,15 @@ function CardCanvas() {
 		<Canvas>
 			<DemoRow label="Medium">
 				<Card className="w-full max-w-md">
-					<div className="text-sm font-semibold text-foreground">
-						Stack settings
-					</div>
+					<div className="text-sm font-semibold text-foreground">Stack settings</div>
 					<p className="mt-1 text-sm text-muted-foreground">
-						Group related fields and summary content in a bordered
-						panel.
+						Group related fields and summary content in a bordered panel.
 					</p>
 				</Card>
 			</DemoRow>
 			<DemoRow label="Small">
 				<Card size="sm" className="w-full max-w-md">
-					<div className="text-sm text-foreground">
-						Compact panel for dense inventory chrome.
-					</div>
+					<div className="text-sm text-foreground">Compact panel for dense inventory chrome.</div>
 				</Card>
 			</DemoRow>
 		</Canvas>
@@ -1010,8 +928,7 @@ function CardKnobs() {
 	);
 }
 
-type BadgeVariant =
-	"default" | "primary" | "success" | "warning" | "danger" | "info";
+type BadgeVariant = "default" | "primary" | "success" | "warning" | "danger" | "info";
 type BadgeSize = "sm" | "md";
 
 interface BadgeDemoValue {
@@ -1037,11 +954,7 @@ function BadgeDemoProvider({ children }: { children: ReactNode }) {
 	const [size, setSize] = useState<BadgeSize>("md");
 
 	return (
-		<BadgeDemoContext.Provider
-			value={{ variant, setVariant, size, setSize }}
-		>
-			{children}
-		</BadgeDemoContext.Provider>
+		<BadgeDemoContext.Provider value={{ variant, setVariant, size, setSize }}>{children}</BadgeDemoContext.Provider>
 	);
 }
 
@@ -1065,10 +978,7 @@ function BadgeCanvas() {
 	return (
 		<div className="flex flex-col gap-2">
 			<section className="flex flex-col border-b border-border pb-2">
-				<DemoSectionHeader
-					title="Badge"
-					description="Tone chips for inventory tables and headers."
-				/>
+				<DemoSectionHeader title="Badge" description="Tone chips for inventory tables and headers." />
 				<Canvas>
 					<DemoRow label="Playground">
 						<Badge variant={demo.variant} size={demo.size}>
@@ -1125,15 +1035,11 @@ function BadgeCanvas() {
 				/>
 				<Canvas>
 					<DemoRow label="Statuses">
-						<TxStatusBadge status="unconfirmed">
-							Unconfirmed
-						</TxStatusBadge>
+						<TxStatusBadge status="unconfirmed">Unconfirmed</TxStatusBadge>
 						<TxStatusBadge status="confirming" confirmations={2}>
 							Confirming (2)
 						</TxStatusBadge>
-						<TxStatusBadge status="confirmed">
-							Confirmed
-						</TxStatusBadge>
+						<TxStatusBadge status="confirmed">Confirmed</TxStatusBadge>
 						<TxStatusBadge status="failed">Failed</TxStatusBadge>
 					</DemoRow>
 				</Canvas>
@@ -1150,10 +1056,7 @@ function BadgeKnobs() {
 			title="Badge"
 			description="Family showcase: Badge, StatusBadge, DeltaBadge, TxStatusBadge. Knobs apply to Badge playground only."
 		>
-			<DemoRow
-				label="Variant"
-				description="Semantic color for the playground badge."
-			>
+			<DemoRow label="Variant" description="Semantic color for the playground badge.">
 				<Select
 					id="badge-variant"
 					options={BADGE_VARIANT_OPTIONS}
@@ -1187,10 +1090,7 @@ function BadgeKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Size"
-				description="Padding and type scale for the playground badge."
-			>
+			<DemoRow label="Size" description="Padding and type scale for the playground badge.">
 				<Select
 					id="badge-size"
 					options={BADGE_SIZE_OPTIONS}
@@ -1299,12 +1199,7 @@ function LoadingCanvas() {
 			</DemoRow>
 			<DemoRow label="Skeleton lines">
 				<Loading variant="skeleton" size="sm" lines={2} />
-				<Loading
-					variant="skeleton"
-					size="md"
-					lines={3}
-					className="w-full max-w-sm"
-				/>
+				<Loading variant="skeleton" size="md" lines={3} className="w-full max-w-sm" />
 			</DemoRow>
 			<DemoRow label="Skeleton shapes">
 				<div className="flex w-full max-w-md flex-col gap-3">
@@ -1333,10 +1228,7 @@ function LoadingKnobs() {
 			title="Loading"
 			description="Spinner, stacked skeleton lines, and single-bone Skeleton shapes for custom layouts."
 		>
-			<DemoRow
-				label="Variant"
-				description="Spinner for indeterminate wait; skeleton for content placeholders."
-			>
+			<DemoRow label="Variant" description="Spinner for indeterminate wait; skeleton for content placeholders.">
 				<Select
 					id="loading-variant"
 					options={LOADING_VARIANT_OPTIONS}
@@ -1354,10 +1246,7 @@ function LoadingKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Size"
-				description="Scale of the spinner ring or skeleton bone height."
-			>
+			<DemoRow label="Size" description="Scale of the spinner ring or skeleton bone height.">
 				<Select
 					id="loading-size"
 					options={LOADING_SIZE_OPTIONS}
@@ -1379,10 +1268,7 @@ function LoadingKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Skeleton lines"
-				description="Number of bone rows when variant is skeleton."
-			>
+			<DemoRow label="Skeleton lines" description="Number of bone rows when variant is skeleton.">
 				<NumberInput
 					id="loading-lines"
 					min={1}
@@ -1403,11 +1289,7 @@ function LoadingKnobs() {
 				label="Status text"
 				description="Optional caption beside the indicator (for example Deploying stack)."
 			>
-				<Toggle
-					label="Show status text"
-					checked={demo.showText}
-					onCheckedChange={demo.setShowText}
-				/>
+				<Toggle label="Show status text" checked={demo.showText} onCheckedChange={demo.setShowText} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -1447,8 +1329,7 @@ function EmptyStateKnobs() {
 		>
 			<DemoRow label="Slots">
 				<span className="text-sm text-muted-foreground">
-					title · children · icon (null hides) · action (compose
-					Button)
+					title · children · icon (null hides) · action (compose Button)
 				</span>
 			</DemoRow>
 		</RailPanel>
@@ -1490,10 +1371,7 @@ function ErrorStateCanvas() {
 
 function ErrorStateKnobs() {
 	return (
-		<RailPanel
-			title="ErrorState"
-			description="Failure / forbidden chrome. Soft titles by kind. Not EmptyState."
-		>
+		<RailPanel title="ErrorState" description="Failure / forbidden chrome. Soft titles by kind. Not EmptyState.">
 			<DemoRow label="kind">
 				<span className="text-sm text-muted-foreground">
 					error (Unable to load) · forbidden (Access denied)
@@ -1513,13 +1391,7 @@ function CopyButtonCanvas() {
 				</span>
 			</DemoRow>
 			<DemoRow label="Labeled">
-				<CopyButton
-					value="stack-abc"
-					size="sm"
-					variant="outlined"
-					label="Copy ID"
-					copiedLabel="Copied"
-				/>
+				<CopyButton value="stack-abc" size="sm" variant="outlined" label="Copy ID" copiedLabel="Copied" />
 			</DemoRow>
 		</Canvas>
 	);
@@ -1577,12 +1449,7 @@ function SeparatorCanvas() {
 }
 
 function SeparatorKnobs() {
-	return (
-		<RailPanel
-			title="Separator"
-			description="Native hr thematic break. Vertical sets aria-orientation."
-		/>
-	);
+	return <RailPanel title="Separator" description="Native hr thematic break. Vertical sets aria-orientation." />;
 }
 
 function TabsCanvas() {
@@ -1596,22 +1463,13 @@ function TabsCanvas() {
 						Logs
 					</TabsTrigger>
 				</TabsList>
-				<TabsPanel
-					value="overview"
-					className="pt-4 text-sm text-foreground"
-				>
+				<TabsPanel value="overview" className="pt-4 text-sm text-foreground">
 					Overview panel body.
 				</TabsPanel>
-				<TabsPanel
-					value="details"
-					className="pt-4 text-sm text-foreground"
-				>
+				<TabsPanel value="details" className="pt-4 text-sm text-foreground">
 					Details panel body.
 				</TabsPanel>
-				<TabsPanel
-					value="logs"
-					className="pt-4 text-sm text-foreground"
-				>
+				<TabsPanel value="logs" className="pt-4 text-sm text-foreground">
 					Logs panel body.
 				</TabsPanel>
 			</Tabs>
@@ -1620,12 +1478,7 @@ function TabsCanvas() {
 }
 
 function TabsKnobs() {
-	return (
-		<RailPanel
-			title="Tabs"
-			description="Underline tablist + panels. Arrow keys move selection."
-		/>
-	);
+	return <RailPanel title="Tabs" description="Underline tablist + panels. Arrow keys move selection." />;
 }
 
 interface ModalDemoValue {
@@ -1690,8 +1543,7 @@ function ModalCanvas() {
 				showCloseButton={demo.showCloseButton}
 			>
 				<p className="text-muted-foreground">
-					Apply this change set to the selected stack? This may update
-					resources in place.
+					Apply this change set to the selected stack? This may update resources in place.
 				</p>
 				<div className="mt-4 flex justify-end gap-2">
 					<Button
@@ -1719,10 +1571,7 @@ function ModalKnobs() {
 	const demo = useModalDemo();
 
 	return (
-		<RailPanel
-			title="Modal"
-			description="Dialog with backdrop, Esc, focus trap, and scroll lock."
-		>
+		<RailPanel title="Modal" description="Dialog with backdrop, Esc, focus trap, and scroll lock.">
 			<DemoRow
 				label="Close on backdrop click"
 				description="When on, clicking the dimmed overlay dismisses the modal."
@@ -1733,15 +1582,8 @@ function ModalKnobs() {
 					onCheckedChange={demo.setCloseOnBackdropClick}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Show close button"
-				description="Shows the X control in the modal header."
-			>
-				<Toggle
-					label="Enabled"
-					checked={demo.showCloseButton}
-					onCheckedChange={demo.setShowCloseButton}
-				/>
+			<DemoRow label="Show close button" description="Shows the X control in the modal header.">
+				<Toggle label="Enabled" checked={demo.showCloseButton} onCheckedChange={demo.setShowCloseButton} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -1814,9 +1656,7 @@ function DrawerCanvas() {
 
 	let selectedDetail: ReactNode = null;
 	if (demo.selectedId !== null) {
-		selectedDetail = (
-			<p className="mt-3 font-mono text-xs">{demo.selectedId}</p>
-		);
+		selectedDetail = <p className="mt-3 font-mono text-xs">{demo.selectedId}</p>;
 	}
 
 	return (
@@ -1835,12 +1675,8 @@ function DrawerCanvas() {
 										demo.setOpen(true);
 									}}
 								>
-									<span className="font-medium text-foreground">
-										{row.label}
-									</span>
-									<span className="font-mono text-xs text-muted-foreground">
-										{row.id}
-									</span>
+									<span className="font-medium text-foreground">{row.label}</span>
+									<span className="font-mono text-xs text-muted-foreground">{row.id}</span>
 								</Button>
 							</li>
 						);
@@ -1861,8 +1697,7 @@ function DrawerCanvas() {
 				showCloseButton={demo.showCloseButton}
 			>
 				<p className="text-muted-foreground">
-					Side detail without leaving the list. Esc always dismisses;
-					backdrop and header X follow the knobs.
+					Side detail without leaving the list. Esc always dismisses; backdrop and header X follow the knobs.
 				</p>
 				{selectedDetail}
 				<div className="mt-4 flex justify-end">
@@ -1933,11 +1768,7 @@ function DrawerKnobs() {
 				label="Show close button"
 				description="Shows the X control in the drawer header. Esc and the in-body Close still work when off."
 			>
-				<Toggle
-					label="Enabled"
-					checked={demo.showCloseButton}
-					onCheckedChange={demo.setShowCloseButton}
-				/>
+				<Toggle label="Enabled" checked={demo.showCloseButton} onCheckedChange={demo.setShowCloseButton} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -2033,14 +1864,8 @@ function ConfirmKnobs() {
 	const demo = useConfirmDemo();
 
 	return (
-		<RailPanel
-			title="ConfirmDialog"
-			description="Modal confirm with optional typed phrase for destroy."
-		>
-			<DemoRow
-				label="Confirm tone"
-				description="Danger for destructive confirms; filled for neutral confirms."
-			>
+		<RailPanel title="ConfirmDialog" description="Modal confirm with optional typed phrase for destroy.">
+			<DemoRow label="Confirm tone" description="Danger for destructive confirms; filled for neutral confirms.">
 				<Select
 					id="confirm-variant"
 					options={CONFIRM_VARIANT_OPTIONS}
@@ -2058,15 +1883,8 @@ function ConfirmKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Require typed phrase"
-				description="Confirm stays disabled until the user types prod-api."
-			>
-				<Toggle
-					label="Enabled"
-					checked={demo.requirePhrase}
-					onCheckedChange={demo.setRequirePhrase}
-				/>
+			<DemoRow label="Require typed phrase" description="Confirm stays disabled until the user types prod-api.">
+				<Toggle label="Enabled" checked={demo.requirePhrase} onCheckedChange={demo.setRequirePhrase} />
 			</DemoRow>
 			<DemoRow
 				label="Close on backdrop click"
@@ -2158,14 +1976,8 @@ function TooltipKnobs() {
 	const demo = useTooltipDemo();
 
 	return (
-		<RailPanel
-			title="Tooltip"
-			description="Hover or focus to reveal truncated IDs and hints."
-		>
-			<DemoRow
-				label="Placement"
-				description="Preferred side relative to the trigger (flips if needed)."
-			>
+		<RailPanel title="Tooltip" description="Hover or focus to reveal truncated IDs and hints.">
+			<DemoRow label="Placement" description="Preferred side relative to the trigger (flips if needed).">
 				<Select
 					id="tooltip-side"
 					options={TOOLTIP_SIDE_OPTIONS}
@@ -2183,10 +1995,7 @@ function TooltipKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Delay"
-				description="Milliseconds to wait before showing on hover or focus."
-			>
+			<DemoRow label="Delay" description="Milliseconds to wait before showing on hover or focus.">
 				<NumberInput
 					id="tooltip-delay"
 					min={0}
@@ -2202,15 +2011,8 @@ function TooltipKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Disabled"
-				description="When on, the playground tooltip never opens."
-			>
-				<Toggle
-					label="Tooltip disabled"
-					checked={demo.disabled}
-					onCheckedChange={demo.setDisabled}
-				/>
+			<DemoRow label="Disabled" description="When on, the playground tooltip never opens.">
+				<Toggle label="Tooltip disabled" checked={demo.disabled} onCheckedChange={demo.setDisabled} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -2274,21 +2076,14 @@ function ActionMenuCanvas() {
 						},
 					]}
 				/>
-				<span className="text-sm text-muted-foreground">
-					Last: {demo.lastAction}
-				</span>
+				<span className="text-sm text-muted-foreground">Last: {demo.lastAction}</span>
 			</DemoRow>
 		</Canvas>
 	);
 }
 
 function ActionMenuKnobs() {
-	return (
-		<RailPanel
-			title="ActionMenu"
-			description="Portaled row actions with keyboard menu navigation."
-		/>
-	);
+	return <RailPanel title="ActionMenu" description="Portaled row actions with keyboard menu navigation." />;
 }
 
 const INITIAL_PROGRESS_TASKS: ProgressTask[] = [
@@ -2478,35 +2273,21 @@ function ProgressJobControls() {
 	);
 }
 
-function ProgressJobKnobsFields({
-	includeLabel = false,
-}: {
-	includeLabel?: boolean;
-}) {
+function ProgressJobKnobsFields({ includeLabel = false }: { includeLabel?: boolean }) {
 	const demo = useProgressJobDemo();
 
 	let labelRow: ReactNode = null;
 	if (includeLabel) {
 		labelRow = (
-			<DemoRow
-				label="Label"
-				description="Optional visible label above ProgressBar."
-			>
-				<Toggle
-					checked={demo.showLabel}
-					label="Show label"
-					onCheckedChange={demo.setShowLabel}
-				/>
+			<DemoRow label="Label" description="Optional visible label above ProgressBar.">
+				<Toggle checked={demo.showLabel} label="Show label" onCheckedChange={demo.setShowLabel} />
 			</DemoRow>
 		);
 	}
 
 	return (
 		<>
-			<DemoRow
-				label="Size"
-				description="Track / ring size variant (sm | md | lg)."
-			>
+			<DemoRow label="Size" description="Track / ring size variant (sm | md | lg).">
 				<Select
 					id="progress-job-size"
 					options={METER_SIZE_OPTIONS}
@@ -2517,10 +2298,7 @@ function ProgressJobKnobsFields({
 					aria-label="Size"
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Indeterminate"
-				description="Omit value so the control shows busy / unknown fraction."
-			>
+			<DemoRow label="Indeterminate" description="Omit value so the control shows busy / unknown fraction.">
 				<Toggle
 					checked={demo.indeterminate}
 					label="Force indeterminate"
@@ -2625,8 +2403,7 @@ function ProgressBarCanvas() {
 								size={demo.size}
 							/>
 							<p className="text-sm text-muted-foreground">
-								value={String(demo.job.value)} /{" "}
-								{String(demo.job.max)} · streaming=
+								value={String(demo.job.value)} / {String(demo.job.max)} · streaming=
 								{String(demo.job.streaming)}
 							</p>
 						</div>
@@ -2642,30 +2419,14 @@ function ProgressBarCanvas() {
 				<Canvas>
 					<DemoRow label="Determinate">
 						<div className="flex w-full max-w-md flex-col gap-4">
-							<ProgressBar
-								aria-label="Deploy progress"
-								value={35}
-								label="Applying stack… 35%"
-							/>
-							<ProgressBar
-								aria-label="Upload progress"
-								value={80}
-								size="sm"
-							/>
-							<ProgressBar
-								aria-label="Migration progress"
-								value={100}
-								size="lg"
-								label="Complete"
-							/>
+							<ProgressBar aria-label="Deploy progress" value={35} label="Applying stack… 35%" />
+							<ProgressBar aria-label="Upload progress" value={80} size="sm" />
+							<ProgressBar aria-label="Migration progress" value={100} size="lg" label="Complete" />
 						</div>
 					</DemoRow>
 					<DemoRow label="Indeterminate">
 						<div className="w-full max-w-md">
-							<ProgressBar
-								aria-label="Syncing"
-								label="Waiting for plan…"
-							/>
+							<ProgressBar aria-label="Syncing" label="Waiting for plan…" />
 						</div>
 					</DemoRow>
 				</Canvas>
@@ -2678,17 +2439,9 @@ function ProgressBarCanvas() {
 				<Canvas>
 					<DemoRow label="Determinate">
 						<div className="flex flex-wrap items-center gap-6">
-							<CircularProgress
-								aria-label="Upload"
-								value={35}
-								size="sm"
-							/>
+							<CircularProgress aria-label="Upload" value={35} size="sm" />
 							<CircularProgress aria-label="Sync" value={70} />
-							<CircularProgress
-								aria-label="Apply"
-								value={100}
-								size="lg"
-							/>
+							<CircularProgress aria-label="Apply" value={100} size="lg" />
 						</div>
 					</DemoRow>
 					<DemoRow label="Indeterminate">
@@ -2703,11 +2456,7 @@ function ProgressBarCanvas() {
 				/>
 				<Canvas>
 					<div className="flex w-full max-w-md flex-col gap-3">
-						<ProgressGroup
-							aria-label="Stack deploy"
-							label="Overall deploy"
-							tasks={tasks}
-						/>
+						<ProgressGroup aria-label="Stack deploy" label="Overall deploy" tasks={tasks} />
 						<div className="flex flex-wrap gap-2">
 							<Button
 								variant="filled"
@@ -2940,26 +2689,16 @@ function QuotaMeterCanvas() {
 						/>
 						<QuotaMeterControls />
 						<p className="text-sm text-muted-foreground">
-							used={String(demo.quota.used)} /{" "}
-							{String(demo.quota.max)}
+							used={String(demo.quota.used)} / {String(demo.quota.max)}
 						</p>
 					</div>
 				</Canvas>
 			</section>
 			<section className="flex flex-col">
-				<DemoSectionHeader
-					title="Static samples"
-					description="Fixed soft-limit gauges for visual reference."
-				/>
+				<DemoSectionHeader title="Static samples" description="Fixed soft-limit gauges for visual reference." />
 				<Canvas>
 					<div className="flex w-full max-w-md flex-col gap-6">
-						<QuotaMeter
-							aria-label="Stack quota"
-							value={42}
-							max={100}
-							label="Stacks"
-							valueText="42 / 100"
-						/>
+						<QuotaMeter aria-label="Stack quota" value={42} max={100} label="Stacks" valueText="42 / 100" />
 						<QuotaMeter
 							aria-label="API quota"
 							value={90}
@@ -2994,25 +2733,11 @@ function QuotaMeterKnobs() {
 					aria-label="Size"
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Label"
-				description="Optional caption above the meter track."
-			>
-				<Toggle
-					checked={demo.showLabel}
-					label="Show label"
-					onCheckedChange={demo.setShowLabel}
-				/>
+			<DemoRow label="Label" description="Optional caption above the meter track.">
+				<Toggle checked={demo.showLabel} label="Show label" onCheckedChange={demo.setShowLabel} />
 			</DemoRow>
-			<DemoRow
-				label="valueText"
-				description="Visible fraction + aria-valuetext when set."
-			>
-				<Toggle
-					checked={demo.showValueText}
-					label="Show valueText"
-					onCheckedChange={demo.setShowValueText}
-				/>
+			<DemoRow label="valueText" description="Visible fraction + aria-valuetext when set.">
+				<Toggle checked={demo.showValueText} label="Show valueText" onCheckedChange={demo.setShowValueText} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -3032,12 +2757,7 @@ function VisuallyHiddenCanvas() {
 }
 
 function VisuallyHiddenKnobs() {
-	return (
-		<RailPanel
-			title="VisuallyHidden"
-			description="Clip-path hide. Keeps text in the accessibility tree."
-		/>
-	);
+	return <RailPanel title="VisuallyHidden" description="Clip-path hide. Keeps text in the accessibility tree." />;
 }
 
 function PopoverCanvas() {
@@ -3051,15 +2771,9 @@ function PopoverCanvas() {
 	return (
 		<Canvas>
 			<DemoRow label="Interactive panel">
-				<Popover
-					trigger="Region help"
-					title={title}
-					open={demo.open}
-					onOpenChange={demo.setOpen}
-				>
+				<Popover trigger="Region help" title={title} open={demo.open} onOpenChange={demo.setOpen}>
 					<p className="text-muted-foreground">
-						Pick the region closest to your users. Changing region
-						does not move existing stacks.
+						Pick the region closest to your users. Changing region does not move existing stacks.
 					</p>
 					<div className="mt-3">
 						<Button type="button" size="sm" variant="secondary">
@@ -3068,9 +2782,7 @@ function PopoverCanvas() {
 					</div>
 				</Popover>
 			</DemoRow>
-			<p className="text-sm text-muted-foreground">
-				open={String(demo.open)}
-			</p>
+			<p className="text-sm text-muted-foreground">open={String(demo.open)}</p>
 		</Canvas>
 	);
 }
@@ -3079,29 +2791,12 @@ function PopoverKnobs() {
 	const demo = usePopoverDemo();
 
 	return (
-		<RailPanel
-			title="Popover"
-			description="Non-modal dialog. Esc and outside press dismiss. No focus trap."
-		>
-			<DemoRow
-				label="Open"
-				description="Controlled open. Trigger / Esc / outside also toggle."
-			>
-				<Toggle
-					checked={demo.open}
-					label="Open"
-					onCheckedChange={demo.setOpen}
-				/>
+		<RailPanel title="Popover" description="Non-modal dialog. Esc and outside press dismiss. No focus trap.">
+			<DemoRow label="Open" description="Controlled open. Trigger / Esc / outside also toggle.">
+				<Toggle checked={demo.open} label="Open" onCheckedChange={demo.setOpen} />
 			</DemoRow>
-			<DemoRow
-				label="Title"
-				description="Optional dialog heading (aria-labelledby)."
-			>
-				<Toggle
-					checked={demo.showTitle}
-					label="Show title"
-					onCheckedChange={demo.setShowTitle}
-				/>
+			<DemoRow label="Title" description="Optional dialog heading (aria-labelledby).">
+				<Toggle checked={demo.showTitle} label="Show title" onCheckedChange={demo.setShowTitle} />
 				<Input
 					id="popover-title"
 					value={demo.title}
@@ -3175,9 +2870,7 @@ interface CommandPaletteDemoValue {
 	resetItems: () => Promise<void>;
 }
 
-const CommandPaletteDemoContext = createContext<CommandPaletteDemoValue | null>(
-	null,
-);
+const CommandPaletteDemoContext = createContext<CommandPaletteDemoValue | null>(null);
 
 function useCommandPaletteDemo() {
 	const value = useContext(CommandPaletteDemoContext);
@@ -3362,9 +3055,7 @@ function CommandPaletteCanvas() {
 						</div>
 					</DemoRow>
 					<DemoRow label="Last selection">{lastLabel}</DemoRow>
-					<p className="text-sm text-muted-foreground">
-						{String(demo.items.length)} commands loaded
-					</p>
+					<p className="text-sm text-muted-foreground">{String(demo.items.length)} commands loaded</p>
 					<CommandPalette
 						open={demo.open}
 						onOpenChange={demo.setOpen}
@@ -3390,10 +3081,7 @@ function CommandPaletteKnobs() {
 			title="CommandPalette"
 			description="App should bind Cmd/K to open. Knobs set chrome strings; Nest owns the item catalog."
 		>
-			<DemoRow
-				label="Title"
-				description="Modal dialog title (aria-labelledby)."
-			>
+			<DemoRow label="Title" description="Modal dialog title (aria-labelledby).">
 				<Input
 					id="palette-title"
 					value={demo.title}
@@ -3403,10 +3091,7 @@ function CommandPaletteKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Placeholder"
-				description="Search field placeholder text."
-			>
+			<DemoRow label="Placeholder" description="Search field placeholder text.">
 				<Input
 					id="palette-placeholder"
 					value={demo.placeholder}
@@ -3416,10 +3101,7 @@ function CommandPaletteKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="emptyText"
-				description="Shown when the local filter matches nothing."
-			>
+			<DemoRow label="emptyText" description="Shown when the local filter matches nothing.">
 				<Input
 					id="palette-empty"
 					value={demo.emptyText}
@@ -3437,30 +3119,19 @@ function AccordionCanvas() {
 	return (
 		<Canvas>
 			<DemoRow label="Single accordion">
-				<Accordion
-					type="single"
-					defaultValue="fees"
-					className="w-full max-w-lg"
-				>
+				<Accordion type="single" defaultValue="fees" className="w-full max-w-lg">
 					<AccordionItem value="fees">
 						<AccordionTrigger>Network fees</AccordionTrigger>
-						<AccordionContent>
-							Economy, normal, and priority presets map to sat/vB.
-						</AccordionContent>
+						<AccordionContent>Economy, normal, and priority presets map to sat/vB.</AccordionContent>
 					</AccordionItem>
 					<AccordionItem value="privacy">
 						<AccordionTrigger>Privacy</AccordionTrigger>
-						<AccordionContent>
-							Address reuse warnings and coin control stay in-app.
-						</AccordionContent>
+						<AccordionContent>Address reuse warnings and coin control stay in-app.</AccordionContent>
 					</AccordionItem>
 				</Accordion>
 			</DemoRow>
 			<DemoRow label="Collapsible atom">
-				<Collapsible
-					defaultOpen
-					className="w-full max-w-lg rounded-md border border-border p-3"
-				>
+				<Collapsible defaultOpen className="w-full max-w-lg rounded-md border border-border p-3">
 					<CollapsibleTrigger>Advanced</CollapsibleTrigger>
 					<CollapsibleContent>
 						<p className="pt-2 text-sm text-muted-foreground">
@@ -3474,22 +3145,14 @@ function AccordionCanvas() {
 }
 
 function AccordionKnobs() {
-	return (
-		<RailPanel
-			title="Accordion"
-			description="APG accordion + Collapsible atom. Heading wraps trigger."
-		/>
-	);
+	return <RailPanel title="Accordion" description="APG accordion + Collapsible atom. Heading wraps trigger." />;
 }
 
 function ResizablePanelDemoProvider({ children }: { children: ReactNode }) {
-	const [orientation, setOrientation] =
-		useState<ResizablePanelOrientation>("horizontal");
+	const [orientation, setOrientation] = useState<ResizablePanelOrientation>("horizontal");
 
 	return (
-		<ResizablePanelDemoContext.Provider
-			value={{ orientation, setOrientation }}
-		>
+		<ResizablePanelDemoContext.Provider value={{ orientation, setOrientation }}>
 			{children}
 		</ResizablePanelDemoContext.Provider>
 	);
@@ -3526,8 +3189,7 @@ function ResizablePanelCanvas() {
 		<Canvas>
 			<div className="flex w-full max-w-3xl flex-col gap-2">
 				<div className="text-sm font-medium text-foreground">
-					{demo.orientation} split: drag the handle or focus it and
-					use arrow keys
+					{demo.orientation} split: drag the handle or focus it and use arrow keys
 				</div>
 				<div className="h-72 w-full overflow-hidden rounded-md border border-border">
 					<ResizablePanel
@@ -3537,15 +3199,9 @@ function ResizablePanelCanvas() {
 						minSize={20}
 						maxSize={80}
 						start={
-							<div className="flex h-full min-h-24 items-start bg-muted/40 p-3 text-sm">
-								{startLabel}
-							</div>
+							<div className="flex h-full min-h-24 items-start bg-muted/40 p-3 text-sm">{startLabel}</div>
 						}
-						end={
-							<div className="flex h-full min-h-24 items-start p-3 text-sm">
-								{endLabel}
-							</div>
-						}
+						end={<div className="flex h-full min-h-24 items-start p-3 text-sm">{endLabel}</div>}
 					/>
 				</div>
 			</div>
@@ -3625,12 +3281,7 @@ function ContextMenuCanvas() {
 }
 
 function ContextMenuKnobs() {
-	return (
-		<RailPanel
-			title="ContextMenu"
-			description="APG menu on contextmenu. Esc and outside click dismiss."
-		/>
-	);
+	return <RailPanel title="ContextMenu" description="APG menu on contextmenu. Esc and outside click dismiss." />;
 }
 
 export {

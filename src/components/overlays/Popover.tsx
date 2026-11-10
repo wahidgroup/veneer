@@ -22,15 +22,7 @@ interface PopoverProps {
  * Non-modal floating panel for interactive help or extras. Esc and outside
  * press dismiss. Not a Tooltip (allows focusable children).
  */
-function Popover({
-	trigger,
-	children,
-	open: openProp,
-	defaultOpen,
-	onOpenChange,
-	title,
-	className,
-}: PopoverProps) {
+function Popover({ trigger, children, open: openProp, defaultOpen, onOpenChange, title, className }: PopoverProps) {
 	let initialOpen = defaultOpen;
 	initialOpen ??= false;
 
@@ -61,10 +53,7 @@ function Popover({
 	let titleNode: ReactNode = null;
 	if (title !== undefined && title.length > 0) {
 		titleNode = (
-			<div
-				id={titleId}
-				className="mb-2 text-sm font-semibold text-foreground"
-			>
+			<div id={titleId} className="mb-2 text-sm font-semibold text-foreground">
 				{title}
 			</div>
 		);

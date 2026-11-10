@@ -25,9 +25,7 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		expect(
-			screen.getByRole("dialog", { name: "Confirm destroy" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("dialog", { name: "Confirm destroy" })).toBeInTheDocument();
 		expect(screen.getByText("Destroy this stack?")).toBeInTheDocument();
 	});
 
@@ -106,11 +104,7 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		await user.click(
-			requireHtmlElement(
-				document.querySelector('[data-slot="modal-backdrop"]'),
-			),
-		);
+		await user.click(requireHtmlElement(document.querySelector('[data-slot="modal-backdrop"]')));
 		expect(open).toBe(false);
 	});
 
@@ -130,11 +124,7 @@ describe("Modal", () => {
 			</Modal>,
 		);
 
-		await user.click(
-			requireHtmlElement(
-				document.querySelector('[data-slot="modal-backdrop"]'),
-			),
-		);
+		await user.click(requireHtmlElement(document.querySelector('[data-slot="modal-backdrop"]')));
 		expect(open).toBe(true);
 	});
 

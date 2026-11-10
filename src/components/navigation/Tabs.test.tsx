@@ -15,12 +15,7 @@ function DemoTabs({
 	className?: string;
 }) {
 	return (
-		<Tabs
-			defaultValue="one"
-			value={value}
-			onValueChange={onValueChange}
-			className={className}
-		>
+		<Tabs defaultValue="one" value={value} onValueChange={onValueChange} className={className}>
 			<TabsList aria-label="Demo tabs">
 				<TabsTrigger value="one">One</TabsTrigger>
 				<TabsTrigger value="two">Two</TabsTrigger>
@@ -42,17 +37,11 @@ describe("Tabs", () => {
 		render(<DemoTabs />);
 
 		expect(screen.getByRole("tabpanel")).toHaveTextContent("Panel one");
-		expect(screen.getByRole("tab", { name: "One" })).toHaveAttribute(
-			"aria-selected",
-			"true",
-		);
+		expect(screen.getByRole("tab", { name: "One" })).toHaveAttribute("aria-selected", "true");
 
 		await user.click(screen.getByRole("tab", { name: "Two" }));
 		expect(screen.getByRole("tabpanel")).toHaveTextContent("Panel two");
-		expect(screen.getByRole("tab", { name: "Two" })).toHaveAttribute(
-			"aria-selected",
-			"true",
-		);
+		expect(screen.getByRole("tab", { name: "Two" })).toHaveAttribute("aria-selected", "true");
 	});
 
 	it("reports value changes when controlled", async () => {

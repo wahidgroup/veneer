@@ -24,9 +24,7 @@ interface FormFieldControlProps {
 	"aria-describedby"?: string;
 }
 
-function isFormFieldControlElement(
-	node: ReactNode,
-): node is ReactElement<FormFieldControlProps> {
+function isFormFieldControlElement(node: ReactNode): node is ReactElement<FormFieldControlProps> {
 	return isValidElement(node);
 }
 
@@ -34,16 +32,7 @@ function isFormFieldControlElement(
  * Layout for label + control + hint/error. Injects `id`,
  * `aria-describedby`, and `invalid` onto a single element child.
  */
-function FormField({
-	label,
-	htmlFor,
-	error,
-	hint,
-	required,
-	children,
-	className,
-	...rest
-}: FormFieldProps) {
+function FormField({ label, htmlFor, error, hint, required, children, className, ...rest }: FormFieldProps) {
 	const autoId = useId();
 	let controlId = htmlFor;
 	controlId ??= autoId;
@@ -79,10 +68,7 @@ function FormField({
 		const existingDescribedBy = children.props["aria-describedby"];
 
 		let mergedDescribedBy = fieldDescribedBy;
-		if (
-			existingDescribedBy !== undefined &&
-			existingDescribedBy.length > 0
-		) {
+		if (existingDescribedBy !== undefined && existingDescribedBy.length > 0) {
 			if (fieldDescribedBy !== undefined) {
 				mergedDescribedBy = `${existingDescribedBy} ${fieldDescribedBy}`;
 			} else {
@@ -106,11 +92,7 @@ function FormField({
 	}
 
 	return (
-		<div
-			data-slot="form-field"
-			className={cn("flex w-full flex-col gap-1", className)}
-			{...rest}
-		>
+		<div data-slot="form-field" className={cn("flex w-full flex-col gap-1", className)} {...rest}>
 			<Label htmlFor={controlId} required={required}>
 				{label}
 			</Label>

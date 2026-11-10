@@ -7,10 +7,7 @@ import { Badge } from "../indicators/Badge.js";
 import { Button } from "./Button.js";
 import { controlVariants } from "./FormField.js";
 
-interface TagInputProps extends Omit<
-	ComponentProps<"div">,
-	"onChange" | "defaultValue"
-> {
+interface TagInputProps extends Omit<ComponentProps<"div">, "onChange" | "defaultValue"> {
 	value?: string[];
 	defaultValue?: string[];
 	onChange?: (tags: string[]) => void;
@@ -115,11 +112,7 @@ function TagInput({
 
 			return;
 		}
-		if (
-			event.key === "Backspace" &&
-			draft.length === 0 &&
-			tags.length > 0
-		) {
+		if (event.key === "Backspace" && draft.length === 0 && tags.length > 0) {
 			event.preventDefault();
 
 			const last = tags[tags.length - 1];
@@ -145,11 +138,7 @@ function TagInput({
 								removeTag(tag);
 							}}
 						>
-							<Badge
-								variant="primary"
-								size="sm"
-								className="inline-flex items-center gap-1"
-							>
+							<Badge variant="primary" size="sm" className="inline-flex items-center gap-1">
 								{tag}
 								<X className="size-3" aria-hidden="true" />
 							</Badge>
@@ -163,11 +152,7 @@ function TagInput({
 	return (
 		<div
 			data-slot="tag-input"
-			className={cn(
-				controlVariants({ invalid: resolvedInvalid }),
-				"flex flex-col gap-2 py-2",
-				className,
-			)}
+			className={cn(controlVariants({ invalid: resolvedInvalid }), "flex flex-col gap-2 py-2", className)}
 			{...rest}
 		>
 			{chips}

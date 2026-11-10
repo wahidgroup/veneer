@@ -16,10 +16,7 @@ const separatorVariants = cva("shrink-0 border-0 bg-border", {
 	},
 });
 
-interface SeparatorProps
-	extends
-		Omit<ComponentProps<"hr">, "children">,
-		VariantProps<typeof separatorVariants> {}
+interface SeparatorProps extends Omit<ComponentProps<"hr">, "children">, VariantProps<typeof separatorVariants> {}
 
 /**
  * Thematic break using a native `hr` (implicit separator role). Vertical
@@ -41,10 +38,7 @@ function Separator({ orientation, className, ...rest }: SeparatorProps) {
 			data-slot="separator"
 			data-orientation={resolvedOrientation}
 			aria-orientation={ariaOrientation}
-			className={cn(
-				separatorVariants({ orientation: resolvedOrientation }),
-				className,
-			)}
+			className={cn(separatorVariants({ orientation: resolvedOrientation }), className)}
 			{...rest}
 		/>
 	);

@@ -15,23 +15,15 @@ describe("AddressDisplay", () => {
 
 	it("wires CopyButton to the full address", () => {
 		render(<AddressDisplay address={SAMPLE} />);
-		expect(
-			screen.getByRole("button", { name: "Copy address" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Copy address" })).toBeInTheDocument();
 	});
 
 	it("marks invalid addresses", () => {
-		const { container } = render(
-			<AddressDisplay address={SAMPLE} invalid showCopy={false} />,
-		);
-		expect(
-			container.querySelector("[data-slot='address-display']"),
-		).toHaveAttribute("data-invalid", "true");
+		const { container } = render(<AddressDisplay address={SAMPLE} invalid showCopy={false} />);
+		expect(container.querySelector("[data-slot='address-display']")).toHaveAttribute("data-invalid", "true");
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<AddressDisplay address={SAMPLE} showCopy={false} />,
-		);
+		await expectNoA11yViolations(<AddressDisplay address={SAMPLE} showCopy={false} />);
 	});
 });

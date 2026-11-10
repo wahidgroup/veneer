@@ -39,9 +39,7 @@ class QuotaAmountDto {
 @ApiTags("metrics")
 @Controller("v1/metrics")
 export class MetricsController {
-	constructor(
-		@Inject(MetricsService) private readonly metrics: MetricsService,
-	) {}
+	constructor(@Inject(MetricsService) private readonly metrics: MetricsService) {}
 
 	@Get("progress")
 	@ApiOkResponse({ type: ProgressJobDto })

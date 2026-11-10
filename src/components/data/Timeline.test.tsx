@@ -35,12 +35,8 @@ describe("Timeline", () => {
 		expect(screen.getByText("2 resources drifted")).toBeInTheDocument();
 		expect(screen.getByText("Success")).toBeInTheDocument();
 		expect(screen.getByText("Drifted")).toBeInTheDocument();
-		expect(
-			container.querySelectorAll("[data-slot='timeline-item']"),
-		).toHaveLength(2);
-		expect(
-			container.querySelectorAll("[data-slot='timeline-connector']"),
-		).toHaveLength(1);
+		expect(container.querySelectorAll("[data-slot='timeline-item']")).toHaveLength(2);
+		expect(container.querySelectorAll("[data-slot='timeline-connector']")).toHaveLength(1);
 	});
 
 	it("omits StatusBadge and connectors for a single item without status", () => {
@@ -57,9 +53,7 @@ describe("Timeline", () => {
 		);
 		expect(screen.getByText("Note")).toBeInTheDocument();
 		expect(screen.queryByText("Success")).not.toBeInTheDocument();
-		expect(
-			container.querySelectorAll("[data-slot='timeline-connector']"),
-		).toHaveLength(0);
+		expect(container.querySelectorAll("[data-slot='timeline-connector']")).toHaveLength(0);
 	});
 
 	it("has no accessibility violations on the default render", async () => {

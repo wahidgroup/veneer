@@ -14,12 +14,7 @@ import type {
 	WorkflowResolveFn,
 	WorkflowStepStatus,
 } from "./workflowShared.js";
-import {
-	readStepIdsFromList,
-	stepIdsEqual,
-	useWorkflowContext,
-	WorkflowContext,
-} from "./workflowShared.js";
+import { readStepIdsFromList, stepIdsEqual, useWorkflowContext, WorkflowContext } from "./workflowShared.js";
 
 interface WorkflowProps extends Omit<ComponentProps<"div">, "onChange"> {
 	value?: string;
@@ -65,9 +60,7 @@ function Workflow({
 		return "";
 	});
 	const [stepIds, setStepIds] = useState<string[]>([]);
-	const [statusById, setStatusById] = useState<
-		Record<string, WorkflowStepStatus>
-	>({});
+	const [statusById, setStatusById] = useState<Record<string, WorkflowStepStatus>>({});
 	const [focusEpoch, setFocusEpoch] = useState(0);
 
 	let current = uncontrolled;
@@ -102,18 +95,15 @@ function Workflow({
 		});
 	}, []);
 
-	const reportStepStatus = useCallback(
-		(id: string, status: WorkflowStepStatus) => {
-			setStatusById((prev) => {
-				if (prev[id] === status) {
-					return prev;
-				}
+	const reportStepStatus = useCallback((id: string, status: WorkflowStepStatus) => {
+		setStatusById((prev) => {
+			if (prev[id] === status) {
+				return prev;
+			}
 
-				return { ...prev, [id]: status };
-			});
-		},
-		[],
-	);
+			return { ...prev, [id]: status };
+		});
+	}, []);
 
 	return (
 		<WorkflowContext.Provider
@@ -169,18 +159,11 @@ function WorkflowTrack({ children, className, ...rest }: WorkflowTrackProps) {
 	if (orientation === "vertical") {
 		listClass = cn(listClass, "flex-col gap-0");
 	} else {
-		listClass = cn(
-			listClass,
-			"flex-row flex-nowrap items-start gap-0 overflow-x-auto",
-		);
+		listClass = cn(listClass, "flex-row flex-nowrap items-start gap-0 overflow-x-auto");
 	}
 
 	return (
-		<nav
-			data-slot="workflow-track"
-			className={cn("w-full", className)}
-			{...rest}
-		>
+		<nav data-slot="workflow-track" className={cn("w-full", className)} {...rest}>
 			<ol ref={listRef} className={listClass}>
 				{children}
 			</ol>
@@ -199,10 +182,4 @@ export type {
 	WorkflowStepStatus,
 	WorkflowTrackProps,
 };
-export {
-	Workflow,
-	WorkflowActions,
-	WorkflowPanel,
-	WorkflowStep,
-	WorkflowTrack,
-};
+export { Workflow, WorkflowActions, WorkflowPanel, WorkflowStep, WorkflowTrack };

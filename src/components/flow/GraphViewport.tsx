@@ -5,15 +5,7 @@ import type {
 	RefObject,
 	WheelEvent as ReactWheelEvent,
 } from "react";
-import {
-	createContext,
-	useCallback,
-	useContext,
-	useImperativeHandle,
-	useMemo,
-	useRef,
-	useState,
-} from "react";
+import { createContext, useCallback, useContext, useImperativeHandle, useMemo, useRef, useState } from "react";
 
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
@@ -25,10 +17,7 @@ interface GraphViewportTransform {
 }
 
 interface GraphViewportHandle {
-	fitView: (
-		bounds: { width: number; height: number },
-		padding?: number,
-	) => void;
+	fitView: (bounds: { width: number; height: number }, padding?: number) => void;
 	screenToFlowPosition: (point: { x: number; y: number }) => {
 		x: number;
 		y: number;
@@ -42,9 +31,7 @@ interface GraphViewportContextValue {
 	containerRef: RefObject<HTMLDivElement | null>;
 }
 
-const GraphViewportContext = createContext<GraphViewportContextValue | null>(
-	null,
-);
+const GraphViewportContext = createContext<GraphViewportContextValue | null>(null);
 
 /**
  * Access the enclosing GraphViewport transform + screen->flow projection.
@@ -237,8 +224,7 @@ function GraphViewport({
 				aria-hidden="true"
 				className="pointer-events-none absolute inset-0 opacity-40"
 				style={{
-					backgroundImage:
-						"radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
+					backgroundImage: "radial-gradient(circle, var(--color-border) 1px, transparent 1px)",
 					backgroundSize: `${String(16 * transform.zoom)}px ${String(16 * transform.zoom)}px`,
 					backgroundPosition: `${String(transform.x)}px ${String(transform.y)}px`,
 				}}
@@ -249,10 +235,7 @@ function GraphViewport({
 	let controls: ReactNode = null;
 	if (showControls) {
 		controls = (
-			<div
-				data-slot="graph-viewport-controls"
-				className="absolute bottom-3 left-3 z-20 flex gap-1"
-			>
+			<div data-slot="graph-viewport-controls" className="absolute bottom-3 left-3 z-20 flex gap-1">
 				<Button
 					type="button"
 					size="sm"

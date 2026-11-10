@@ -80,11 +80,7 @@ function OverlayFocusProof() {
 				Dismiss panel
 			</button>
 			<p data-testid="popover-opens">{popoverOpens.join(",")}</p>
-			<ToolbarSelect
-				aria-label="Account"
-				defaultValue="acct-prod"
-				options={ACCOUNT_OPTIONS}
-			/>
+			<ToolbarSelect aria-label="Account" defaultValue="acct-prod" options={ACCOUNT_OPTIONS} />
 			<Combobox
 				aria-label="Region"
 				options={REGION_OPTIONS}
@@ -107,19 +103,10 @@ function OverlayFocusProof() {
 				Open dialog
 			</button>
 			<Select aria-label="Zone" options={ZONE_OPTIONS} defaultValue="" />
-			<Modal
-				open={dialogOpen}
-				title="Stacked notice"
-				onOpenChange={setDialogOpen}
-			>
+			<Modal open={dialogOpen} title="Stacked notice" onOpenChange={setDialogOpen}>
 				Notice body
 			</Modal>
-			<Popover
-				trigger="Hold"
-				title="Hold"
-				open={holdOpen}
-				onOpenChange={setHoldOpen}
-			>
+			<Popover trigger="Hold" title="Hold" open={holdOpen} onOpenChange={setHoldOpen}>
 				<button
 					type="button"
 					onKeyDown={(event) => {
@@ -139,16 +126,8 @@ function OverlayFocusProof() {
 			>
 				Open drawer
 			</button>
-			<Drawer
-				open={drawerOpen}
-				title="Shelf"
-				onOpenChange={setDrawerOpen}
-			>
-				<Select
-					aria-label="Shelf zone"
-					options={ZONE_OPTIONS}
-					defaultValue=""
-				/>
+			<Drawer open={drawerOpen} title="Shelf" onOpenChange={setDrawerOpen}>
+				<Select aria-label="Shelf zone" options={ZONE_OPTIONS} defaultValue="" />
 				<ContextMenu items={MENU_ITEMS}>
 					<p>Shelf row</p>
 				</ContextMenu>
@@ -162,16 +141,8 @@ function OverlayFocusProof() {
 			>
 				Open select modal
 			</button>
-			<Modal
-				open={selectModalOpen}
-				title="Select modal"
-				onOpenChange={setSelectModalOpen}
-			>
-				<Select
-					aria-label="Modal zone"
-					options={ZONE_OPTIONS}
-					defaultValue=""
-				/>
+			<Modal open={selectModalOpen} title="Select modal" onOpenChange={setSelectModalOpen}>
+				<Select aria-label="Modal zone" options={ZONE_OPTIONS} defaultValue="" />
 			</Modal>
 			<button
 				type="button"
@@ -181,11 +152,7 @@ function OverlayFocusProof() {
 			>
 				Open popover modal
 			</button>
-			<Modal
-				open={popoverModalOpen}
-				title="Popover modal"
-				onOpenChange={setPopoverModalOpen}
-			>
+			<Modal open={popoverModalOpen} title="Popover modal" onOpenChange={setPopoverModalOpen}>
 				<Popover trigger="Modal popover" title="Nested popover">
 					<p>Popover body</p>
 				</Popover>

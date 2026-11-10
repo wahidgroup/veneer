@@ -40,10 +40,7 @@ function clampRate(rate: number, min: number, max: number): number {
 	return rate;
 }
 
-function findPresetIdForRate(
-	presets: FeeRatePreset[],
-	rate: number,
-): string | undefined {
+function findPresetIdForRate(presets: FeeRatePreset[], rate: number): string | undefined {
 	for (const preset of presets) {
 		if (preset.rate === rate) {
 			return preset.id;
@@ -140,11 +137,7 @@ function FeeRateControl({
 	}
 
 	return (
-		<div
-			data-slot="fee-rate-control"
-			className={cn("flex w-full flex-col gap-3", className)}
-			{...rest}
-		>
+		<div data-slot="fee-rate-control" className={cn("flex w-full flex-col gap-3", className)} {...rest}>
 			<SegmentedControl
 				aria-label={`${sliderLabel} presets`}
 				options={segmentOptions}

@@ -1,23 +1,6 @@
 import { IsOptional, IsString, MinLength } from "class-validator";
-import {
-	Body,
-	Controller,
-	Delete,
-	Get,
-	Inject,
-	Param,
-	Post,
-	Query,
-} from "@nestjs/common";
-import {
-	ApiBody,
-	ApiOkResponse,
-	ApiParam,
-	ApiProperty,
-	ApiPropertyOptional,
-	ApiQuery,
-	ApiTags,
-} from "@nestjs/swagger";
+import { Body, Controller, Delete, Get, Inject, Param, Post, Query } from "@nestjs/common";
+import { ApiBody, ApiOkResponse, ApiParam, ApiProperty, ApiPropertyOptional, ApiQuery, ApiTags } from "@nestjs/swagger";
 
 import type { InstanceOption } from "./option-types.js";
 import { OptionsService } from "./options.service.js";
@@ -54,9 +37,7 @@ class OptionCountDto {
 @ApiTags("options")
 @Controller("v1/options/instances")
 export class OptionsController {
-	constructor(
-		@Inject(OptionsService) private readonly options: OptionsService,
-	) {}
+	constructor(@Inject(OptionsService) private readonly options: OptionsService) {}
 
 	@Get()
 	@ApiQuery({ name: "q", required: false, type: String })

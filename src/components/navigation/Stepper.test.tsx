@@ -19,22 +19,10 @@ describe("Stepper", () => {
 	it("marks current, complete, and upcoming steps", () => {
 		render(<Stepper steps={STEPS} value="verify" />);
 
-		expect(screen.getByText("Account").closest("li")).toHaveAttribute(
-			"data-state",
-			"complete",
-		);
-		expect(screen.getByText("Verify").closest("li")).toHaveAttribute(
-			"data-state",
-			"current",
-		);
-		expect(screen.getByText("Done").closest("li")).toHaveAttribute(
-			"data-state",
-			"upcoming",
-		);
-		expect(screen.getByText("Verify").closest("li")).toHaveAttribute(
-			"aria-current",
-			"step",
-		);
+		expect(screen.getByText("Account").closest("li")).toHaveAttribute("data-state", "complete");
+		expect(screen.getByText("Verify").closest("li")).toHaveAttribute("data-state", "current");
+		expect(screen.getByText("Done").closest("li")).toHaveAttribute("data-state", "upcoming");
+		expect(screen.getByText("Verify").closest("li")).toHaveAttribute("aria-current", "step");
 	});
 
 	it("fires onNext and onBack from StepperActions", async () => {
@@ -55,9 +43,7 @@ describe("Stepper", () => {
 		);
 
 		expect(screen.getByRole("button", { name: "Back" })).toBeEnabled();
-		expect(
-			screen.getByRole("button", { name: "Next" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Next" })).toBeInTheDocument();
 
 		await user.click(screen.getByRole("button", { name: "Back" }));
 		expect(events).toEqual(["back"]);
@@ -77,22 +63,17 @@ describe("Stepper", () => {
 			backDisabled: false,
 			forwardLabel: "Finish",
 		},
-	])(
-		"at $step: Back disabled=$backDisabled, forward=$forwardLabel",
-		({ step, backDisabled, forwardLabel }) => {
-			render(
-				<Stepper steps={STEPS} value={step}>
-					<StepperActions onBack={noop} onNext={noop} />
-				</Stepper>,
-			);
+	])("at $step: Back disabled=$backDisabled, forward=$forwardLabel", ({ step, backDisabled, forwardLabel }) => {
+		render(
+			<Stepper steps={STEPS} value={step}>
+				<StepperActions onBack={noop} onNext={noop} />
+			</Stepper>,
+		);
 
-			const back = screen.getByRole("button", { name: "Back" });
-			expect(back).toHaveProperty("disabled", backDisabled);
-			expect(
-				screen.getByRole("button", { name: forwardLabel }),
-			).toBeInTheDocument();
-		},
-	);
+		const back = screen.getByRole("button", { name: "Back" });
+		expect(back).toHaveProperty("disabled", backDisabled);
+		expect(screen.getByRole("button", { name: forwardLabel })).toBeInTheDocument();
+	});
 
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(

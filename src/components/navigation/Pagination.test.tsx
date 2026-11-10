@@ -53,31 +53,14 @@ function PaginationHarness({
 
 describe("Pagination", () => {
 	it("renders a labelled navigation landmark with page status", () => {
-		render(
-			<Pagination
-				pageIndex={0}
-				pageCount={4}
-				onPageChange={noopPageChange}
-			/>,
-		);
-		expect(
-			screen.getByRole("navigation", { name: "Pagination" }),
-		).toBeInTheDocument();
+		render(<Pagination pageIndex={0} pageCount={4} onPageChange={noopPageChange} />);
+		expect(screen.getByRole("navigation", { name: "Pagination" })).toBeInTheDocument();
 		expect(screen.getByText("Page 1 of 4")).toBeInTheDocument();
 	});
 
 	it("uses a custom aria-label on the nav landmark", () => {
-		render(
-			<Pagination
-				pageIndex={0}
-				pageCount={2}
-				aria-label="Stacks"
-				onPageChange={noopPageChange}
-			/>,
-		);
-		expect(
-			screen.getByRole("navigation", { name: "Stacks" }),
-		).toBeInTheDocument();
+		render(<Pagination pageIndex={0} pageCount={2} aria-label="Stacks" onPageChange={noopPageChange} />);
+		expect(screen.getByRole("navigation", { name: "Stacks" })).toBeInTheDocument();
 	});
 
 	it.each([
@@ -99,79 +82,39 @@ describe("Pagination", () => {
 			itemCount: 0,
 			label: "0 rows",
 		},
-	])(
-		"shows range $label for pageIndex $pageIndex",
-		({ pageIndex, pageSize, itemCount, label }) => {
-			render(
-				<Pagination
-					pageIndex={pageIndex}
-					pageCount={9}
-					pageSize={pageSize}
-					itemCount={itemCount}
-					onPageChange={noopPageChange}
-				/>,
-			);
-			expect(screen.getByText(label)).toBeInTheDocument();
-		},
-	);
-
-	it("omits the range when itemCount is not provided", () => {
-		const { container } = render(
+	])("shows range $label for pageIndex $pageIndex", ({ pageIndex, pageSize, itemCount, label }) => {
+		render(
 			<Pagination
-				pageIndex={0}
-				pageCount={3}
+				pageIndex={pageIndex}
+				pageCount={9}
+				pageSize={pageSize}
+				itemCount={itemCount}
 				onPageChange={noopPageChange}
 			/>,
 		);
-		expect(
-			container.querySelector("[data-slot='pagination-range']"),
-		).toBeNull();
+		expect(screen.getByText(label)).toBeInTheDocument();
+	});
+
+	it("omits the range when itemCount is not provided", () => {
+		const { container } = render(<Pagination pageIndex={0} pageCount={3} onPageChange={noopPageChange} />);
+		expect(container.querySelector("[data-slot='pagination-range']")).toBeNull();
 	});
 
 	it("disables Previous on the first page and Next on the last", () => {
-		const { rerender } = render(
-			<Pagination
-				pageIndex={0}
-				pageCount={3}
-				onPageChange={noopPageChange}
-			/>,
-		);
-		expect(
-			screen.getByRole("button", { name: "Previous page" }),
-		).toBeDisabled();
+		const { rerender } = render(<Pagination pageIndex={0} pageCount={3} onPageChange={noopPageChange} />);
+		expect(screen.getByRole("button", { name: "Previous page" })).toBeDisabled();
 		expect(screen.getByRole("button", { name: "Next page" })).toBeEnabled();
 
-		rerender(
-			<Pagination
-				pageIndex={2}
-				pageCount={3}
-				onPageChange={noopPageChange}
-			/>,
-		);
-		expect(
-			screen.getByRole("button", { name: "Previous page" }),
-		).toBeEnabled();
-		expect(
-			screen.getByRole("button", { name: "Next page" }),
-		).toBeDisabled();
+		rerender(<Pagination pageIndex={2} pageCount={3} onPageChange={noopPageChange} />);
+		expect(screen.getByRole("button", { name: "Previous page" })).toBeEnabled();
+		expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
 	});
 
 	it("force-disables both controls when disabled is set", () => {
-		render(
-			<Pagination
-				pageIndex={1}
-				pageCount={4}
-				disabled
-				onPageChange={noopPageChange}
-			/>,
-		);
+		render(<Pagination pageIndex={1} pageCount={4} disabled onPageChange={noopPageChange} />);
 
-		expect(
-			screen.getByRole("button", { name: "Previous page" }),
-		).toBeDisabled();
-		expect(
-			screen.getByRole("button", { name: "Next page" }),
-		).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Previous page" })).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
 	});
 
 	it("advances and retreats the controlled pageIndex", async () => {
@@ -185,9 +128,7 @@ describe("Pagination", () => {
 
 		await user.click(screen.getByRole("button", { name: "Next page" }));
 		expect(screen.getByText("Page 3 of 3")).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Next page" }),
-		).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Next page" })).toBeDisabled();
 
 		await user.click(screen.getByRole("button", { name: "Previous page" }));
 		expect(screen.getByText("Page 2 of 3")).toBeInTheDocument();
@@ -195,13 +136,7 @@ describe("Pagination", () => {
 
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
-			<Pagination
-				pageIndex={1}
-				pageCount={5}
-				pageSize={10}
-				itemCount={47}
-				onPageChange={noopPageChange}
-			/>,
+			<Pagination pageIndex={1} pageCount={5} pageSize={10} itemCount={47} onPageChange={noopPageChange} />,
 		);
 	});
 });

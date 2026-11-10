@@ -4,7 +4,8 @@
 	"description": "A lightweight component library for React apps",
 	"type": "module",
 	"engines": {
-		"node": ">=24"
+		"node": ">=24 <25",
+		"npm": ">=12"
 	},
 	"exports": {
 		".": {
@@ -88,29 +89,29 @@
 		"tailwind-merge": "3.6.0"
 	},
 	"devDependencies": {
-		"@cyclonedx/cyclonedx-npm": "6.0.0",
+		"@cyclonedx/cyclonedx-npm": "6.0.1",
 		"@tanstack/react-table": "8.21.3",
 		"@testing-library/jest-dom": "6.9.1",
 		"@testing-library/react": "16.3.2",
 		"@testing-library/user-event": "14.6.1",
-		"@types/node": "24.0.4",
+		"@types/node": "24.13.3",
 		"@types/react": "19.2.17",
 		"@types/react-dom": "19.2.3",
-		"@vitest/coverage-v8": "4.1.10",
-		"@wahidgroup/lint-rules": "0.1.2",
-		"cspell": "10.0.1",
+		"@vitest/coverage-v8": "4.1.11",
+		"@wahidgroup/lint-rules": "0.2.0",
+		"cspell": "10.1.1",
 		"diff": "9.0.0",
 		"elkjs": "0.12.0",
-		"eslint": "9.39.2",
+		"eslint": "9.39.5",
 		"eslint-plugin-jsx-a11y": "6.10.2",
 		"eslint-plugin-react-hooks": "7.1.1",
 		"husky": "9.1.7",
 		"jsdom": "28.1.0",
-		"prettier": "3.9.5",
+		"prettier": "3.9.6",
 		"react": "19.2.4",
 		"react-dom": "19.2.4",
-		"typescript": "5.9.3",
-		"vitest": "4.1.10",
+		"typescript": "6.0.3",
+		"vitest": "4.1.11",
 		"vitest-axe": "0.1.0"
 	}
 }

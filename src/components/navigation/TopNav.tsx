@@ -53,17 +53,11 @@ function TopNav({
 	return (
 		<div
 			data-slot="top-nav"
-			className={cn(
-				"flex h-12 items-center gap-3 border-b border-border bg-card px-3",
-				className,
-			)}
+			className={cn("flex h-12 items-center gap-3 border-b border-border bg-card px-3", className)}
 			{...rest}
 		>
 			{menuNode}
-			<div
-				data-slot="top-nav-brand"
-				className="shrink-0 font-semibold text-foreground"
-			>
+			<div data-slot="top-nav-brand" className="shrink-0 font-semibold text-foreground">
 				{brand}
 			</div>
 			{start}

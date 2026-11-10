@@ -4,23 +4,19 @@ import { cva } from "class-variance-authority";
 
 import { cn } from "../../utils/cn.js";
 
-const cardVariants = cva(
-	"rounded-md border border-border bg-card text-card-foreground",
-	{
-		variants: {
-			size: {
-				sm: "p-3",
-				md: "p-4",
-			},
-		},
-		defaultVariants: {
-			size: "md",
+const cardVariants = cva("rounded-md border border-border bg-card text-card-foreground", {
+	variants: {
+		size: {
+			sm: "p-3",
+			md: "p-4",
 		},
 	},
-);
+	defaultVariants: {
+		size: "md",
+	},
+});
 
-interface CardProps
-	extends ComponentProps<"div">, VariantProps<typeof cardVariants> {}
+interface CardProps extends ComponentProps<"div">, VariantProps<typeof cardVariants> {}
 
 /**
  * Non-interactive panel chrome for grouping related content

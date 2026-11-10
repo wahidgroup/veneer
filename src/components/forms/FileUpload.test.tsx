@@ -25,9 +25,7 @@ describe("FileUpload", () => {
 		await user.upload(input, file);
 
 		expect(batches.at(-1)?.[0]?.name).toBe("template.yaml");
-		expect(
-			screen.getByRole("button", { name: "Remove template.yaml" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Remove template.yaml" })).toBeInTheDocument();
 	});
 
 	it("has no accessibility violations", async () => {

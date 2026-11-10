@@ -3,11 +3,7 @@ import { describe, expect, it } from "vitest";
 
 import type { ProgressTask } from "./ProgressGroup.js";
 import { expectNoA11yViolations } from "../../test/component-harness.js";
-import {
-	ProgressGroup,
-	compositeProgress,
-	taskFraction,
-} from "./ProgressGroup.js";
+import { ProgressGroup, compositeProgress, taskFraction } from "./ProgressGroup.js";
 
 describe("taskFraction", () => {
 	it.each([
@@ -82,25 +78,12 @@ describe("ProgressGroup", () => {
 	];
 
 	it("renders overall and per-task progress bars", () => {
-		render(
-			<ProgressGroup aria-label="Deploy" tasks={TASKS} label="Overall" />,
-		);
-		expect(screen.getByRole("group", { name: "Deploy" })).toHaveAttribute(
-			"data-slot",
-			"progress-group",
-		);
-		expect(
-			screen.getByRole("progressbar", { name: "Deploy overall" }),
-		).toHaveAttribute("aria-valuenow", "47");
-		expect(
-			screen.getByRole("progressbar", { name: "Plan" }),
-		).toHaveAttribute("aria-valuenow", "100");
-		expect(
-			screen.getByRole("progressbar", { name: "Apply" }),
-		).toHaveAttribute("aria-valuenow", "40");
-		expect(
-			screen.getByRole("progressbar", { name: "Verify" }),
-		).toHaveAttribute("aria-valuenow", "0");
+		render(<ProgressGroup aria-label="Deploy" tasks={TASKS} label="Overall" />);
+		expect(screen.getByRole("group", { name: "Deploy" })).toHaveAttribute("data-slot", "progress-group");
+		expect(screen.getByRole("progressbar", { name: "Deploy overall" })).toHaveAttribute("aria-valuenow", "47");
+		expect(screen.getByRole("progressbar", { name: "Plan" })).toHaveAttribute("aria-valuenow", "100");
+		expect(screen.getByRole("progressbar", { name: "Apply" })).toHaveAttribute("aria-valuenow", "40");
+		expect(screen.getByRole("progressbar", { name: "Verify" })).toHaveAttribute("aria-valuenow", "0");
 	});
 
 	it("shows status badges on lanes", () => {
@@ -112,8 +95,6 @@ describe("ProgressGroup", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<ProgressGroup aria-label="Deploy" tasks={TASKS} />,
-		);
+		await expectNoA11yViolations(<ProgressGroup aria-label="Deploy" tasks={TASKS} />);
 	});
 });

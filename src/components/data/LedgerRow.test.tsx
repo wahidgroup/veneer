@@ -39,35 +39,17 @@ describe("LedgerRow", () => {
 			entry: "credit",
 			expectedSubstring: "15.00",
 		},
-	])(
-		"renders $label entries with signed MoneyAmount",
-		({ amountMinor, entry, expectedSubstring }) => {
-			render(
-				<LedgerRow
-					description="Wire transfer"
-					amountMinor={amountMinor}
-					currency="USD"
-					locale="en-US"
-				/>,
-			);
+	])("renders $label entries with signed MoneyAmount", ({ amountMinor, entry, expectedSubstring }) => {
+		render(<LedgerRow description="Wire transfer" amountMinor={amountMinor} currency="USD" locale="en-US" />);
 
-			const row = screen
-				.getByText("Wire transfer")
-				.closest("[data-slot='ledger-row']");
-			expect(row).toHaveAttribute("data-entry", entry);
-			expect(moneyAmountText()).toContain(expectedSubstring);
-		},
-	);
+		const row = screen.getByText("Wire transfer").closest("[data-slot='ledger-row']");
+		expect(row).toHaveAttribute("data-entry", entry);
+		expect(moneyAmountText()).toContain(expectedSubstring);
+	});
 
 	it("renders optional running balance", () => {
 		render(
-			<LedgerRow
-				description="Purchase"
-				amountMinor={-999}
-				currency="USD"
-				locale="en-US"
-				balanceMinor={10001}
-			/>,
+			<LedgerRow description="Purchase" amountMinor={-999} currency="USD" locale="en-US" balanceMinor={10001} />,
 		);
 
 		expect(balanceText()).toContain("100.01");

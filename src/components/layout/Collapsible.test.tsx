@@ -3,11 +3,7 @@ import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import { expectNoA11yViolations } from "../../test/component-harness.js";
-import {
-	Collapsible,
-	CollapsibleContent,
-	CollapsibleTrigger,
-} from "./Collapsible.js";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./Collapsible.js";
 
 function DemoCollapsible({
 	open,
@@ -21,12 +17,7 @@ function DemoCollapsible({
 	disabled?: boolean;
 }) {
 	return (
-		<Collapsible
-			open={open}
-			defaultOpen={defaultOpen}
-			onOpenChange={onOpenChange}
-			disabled={disabled}
-		>
+		<Collapsible open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange} disabled={disabled}>
 			<CollapsibleTrigger>Toggle section</CollapsibleTrigger>
 			<CollapsibleContent>Hidden details</CollapsibleContent>
 		</Collapsible>
@@ -40,26 +31,18 @@ describe("Collapsible", () => {
 		render(<DemoCollapsible />);
 
 		expect(screen.queryByText("Hidden details")).not.toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Toggle section" }),
-		).toHaveAttribute("aria-expanded", "false");
+		expect(screen.getByRole("button", { name: "Toggle section" })).toHaveAttribute("aria-expanded", "false");
 
-		await user.click(
-			screen.getByRole("button", { name: "Toggle section" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Toggle section" }));
 		expect(screen.getByText("Hidden details")).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Toggle section" }),
-		).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("button", { name: "Toggle section" })).toHaveAttribute("aria-expanded", "true");
 	});
 
 	it("respects defaultOpen", () => {
 		render(<DemoCollapsible defaultOpen />);
 
 		expect(screen.getByText("Hidden details")).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Toggle section" }),
-		).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("button", { name: "Toggle section" })).toHaveAttribute("aria-expanded", "true");
 	});
 
 	it("toggles aria-expanded when opened and closed", async () => {
@@ -69,9 +52,7 @@ describe("Collapsible", () => {
 
 		const trigger = screen.getByRole("button", { name: "Toggle section" });
 		expect(trigger).toHaveAttribute("aria-expanded", "false");
-		expect(
-			trigger.querySelector('[data-slot="collapsible-caret"]'),
-		).not.toBeNull();
+		expect(trigger.querySelector('[data-slot="collapsible-caret"]')).not.toBeNull();
 
 		await user.click(trigger);
 		expect(trigger).toHaveAttribute("aria-expanded", "true");
@@ -92,9 +73,7 @@ describe("Collapsible", () => {
 			/>,
 		);
 
-		await user.click(
-			screen.getByRole("button", { name: "Toggle section" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Toggle section" }));
 		expect(isOpen).toBe(true);
 
 		rerender(
@@ -113,9 +92,7 @@ describe("Collapsible", () => {
 
 		render(<DemoCollapsible disabled />);
 
-		await user.click(
-			screen.getByRole("button", { name: "Toggle section" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Toggle section" }));
 		expect(screen.queryByText("Hidden details")).not.toBeInTheDocument();
 	});
 
@@ -142,24 +119,15 @@ describe("Collapsible", () => {
 		expect(controls).not.toBeNull();
 
 		await user.click(trigger);
-		expect(screen.getByText("Hidden details")).toHaveAttribute(
-			"id",
-			controls,
-		);
+		expect(screen.getByText("Hidden details")).toHaveAttribute("id", controls);
 	});
 
 	it("renders data-slot attributes", () => {
 		const { container } = render(<DemoCollapsible defaultOpen />);
 
-		expect(
-			container.querySelector("[data-slot='collapsible']"),
-		).not.toBeNull();
-		expect(
-			container.querySelector("[data-slot='collapsible-trigger']"),
-		).not.toBeNull();
-		expect(
-			container.querySelector("[data-slot='collapsible-content']"),
-		).not.toBeNull();
+		expect(container.querySelector("[data-slot='collapsible']")).not.toBeNull();
+		expect(container.querySelector("[data-slot='collapsible-trigger']")).not.toBeNull();
+		expect(container.querySelector("[data-slot='collapsible-content']")).not.toBeNull();
 	});
 
 	it("has no accessibility violations", async () => {

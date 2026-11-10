@@ -2,22 +2,11 @@ import type { FlowEdge, FlowNode, FlowPoint } from "./flowTypes.js";
 import { portAnchor, portSlotOnSide } from "./flowStatus.js";
 import { findPort } from "./portLookup.js";
 
-function endpoint(
-	node: FlowNode,
-	portId: string | undefined,
-	fallbackSide: "EAST" | "WEST",
-): FlowPoint {
+function endpoint(node: FlowNode, portId: string | undefined, fallbackSide: "EAST" | "WEST"): FlowPoint {
 	const port = findPort(node, portId);
 	if (port !== undefined) {
 		const slot = portSlotOnSide(node.ports, port.id, port.side);
-		const local = portAnchor(
-			port.side,
-			node.width,
-			node.height,
-			slot.index,
-			slot.count,
-			port.anchor,
-		);
+		const local = portAnchor(port.side, node.width, node.height, slot.index, slot.count, port.anchor);
 
 		const point: FlowPoint = {
 			x: node.x + local.x,
@@ -38,10 +27,7 @@ function endpoint(
  * SVG path for a flow edge. Uses layout bend points when present,
  * otherwise a horizontal cubic bezier between port anchors.
  */
-function edgePath(
-	edge: FlowEdge,
-	nodesById: Map<string, FlowNode>,
-): string | null {
+function edgePath(edge: FlowEdge, nodesById: Map<string, FlowNode>): string | null {
 	const source = nodesById.get(edge.source);
 	const target = nodesById.get(edge.target);
 	if (source === undefined || target === undefined) {

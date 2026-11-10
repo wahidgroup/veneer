@@ -3,10 +3,7 @@ import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import { Button } from "./Button.js";
-import {
-	cssVarStyle,
-	expectNoA11yViolations,
-} from "../../test/component-harness.js";
+import { cssVarStyle, expectNoA11yViolations } from "../../test/component-harness.js";
 
 describe("Button", () => {
 	it("renders children with data-slot", () => {
