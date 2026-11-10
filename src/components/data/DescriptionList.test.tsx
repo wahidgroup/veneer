@@ -20,26 +20,15 @@ describe("DescriptionList", () => {
 		expect(screen.getByText("prod-api")).toBeInTheDocument();
 	});
 
-	it.each([{ columns: 1 as const }, { columns: 2 as const }])(
-		"applies columns $columns",
-		({ columns }) => {
-			const { container } = render(
-				<DescriptionList
-					columns={columns}
-					items={[{ term: "A", description: "1" }]}
-				/>,
-			);
-			expect(
-				container.querySelector("[data-slot='description-list']"),
-			).toHaveAttribute("data-columns", String(columns));
-		},
-	);
+	it.each([{ columns: 1 as const }, { columns: 2 as const }])("applies columns $columns", ({ columns }) => {
+		const { container } = render(<DescriptionList columns={columns} items={[{ term: "A", description: "1" }]} />);
+		expect(container.querySelector("[data-slot='description-list']")).toHaveAttribute(
+			"data-columns",
+			String(columns),
+		);
+	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<DescriptionList
-				items={[{ term: "ARN", description: "arn:aws:…" }]}
-			/>,
-		);
+		await expectNoA11yViolations(<DescriptionList items={[{ term: "ARN", description: "arn:aws:…" }]} />);
 	});
 });

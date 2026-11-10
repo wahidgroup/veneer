@@ -22,11 +22,7 @@ function TextArea({ className, invalid, rows, ...rest }: TextAreaProps) {
 			data-slot="textarea"
 			rows={resolvedRows}
 			aria-invalid={resolvedInvalid}
-			className={cn(
-				controlVariants({ invalid: resolvedInvalid }),
-				"min-h-24 resize-y",
-				className,
-			)}
+			className={cn(controlVariants({ invalid: resolvedInvalid }), "min-h-24 resize-y", className)}
 			{...rest}
 		/>
 	);

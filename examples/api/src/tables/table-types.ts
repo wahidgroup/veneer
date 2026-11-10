@@ -52,8 +52,7 @@ export interface TableServerPatchMessage {
 	transaction: TableRowTransaction;
 }
 
-export type TableServerMessage =
-	TableServerSnapshotMessage | TableServerPatchMessage;
+export type TableServerMessage = TableServerSnapshotMessage | TableServerPatchMessage;
 
 export interface TableSubscribeMessage {
 	type: "subscribe";
@@ -107,10 +106,7 @@ function matchQueries(row: TableRow, queries: string[]): boolean {
 	return false;
 }
 
-function applyRowTransaction(
-	rows: TableRow[],
-	transaction: TableRowTransaction,
-): TableRow[] {
+function applyRowTransaction(rows: TableRow[], transaction: TableRowTransaction): TableRow[] {
 	const removeIds = new Set<string>();
 	if (transaction.remove !== undefined) {
 		for (const id of transaction.remove) {

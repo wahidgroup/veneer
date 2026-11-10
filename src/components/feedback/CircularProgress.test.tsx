@@ -5,17 +5,13 @@ import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { CircularProgress } from "./CircularProgress.js";
 
 describe("CircularProgress", () => {
-	it.each([
-		{ size: "sm" as const },
-		{ size: "md" as const },
-		{ size: "lg" as const },
-	])("sets data-size $size", ({ size }) => {
-		render(<CircularProgress aria-label="Upload" value={40} size={size} />);
-		expect(screen.getByRole("progressbar")).toHaveAttribute(
-			"data-size",
-			size,
-		);
-	});
+	it.each([{ size: "sm" as const }, { size: "md" as const }, { size: "lg" as const }])(
+		"sets data-size $size",
+		({ size }) => {
+			render(<CircularProgress aria-label="Upload" value={40} size={size} />);
+			expect(screen.getByRole("progressbar")).toHaveAttribute("data-size", size);
+		},
+	);
 
 	it("sets aria-valuenow when determinate", () => {
 		render(<CircularProgress aria-label="Upload" value={25} max={50} />);
@@ -32,8 +28,6 @@ describe("CircularProgress", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<CircularProgress aria-label="Upload" value={60} />,
-		);
+		await expectNoA11yViolations(<CircularProgress aria-label="Upload" value={60} />);
 	});
 });

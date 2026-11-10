@@ -28,9 +28,7 @@ describe("SkipLink", () => {
 			</div>,
 		);
 
-		await user.click(
-			screen.getByRole("link", { name: "Skip to main content" }),
-		);
+		await user.click(screen.getByRole("link", { name: "Skip to main content" }));
 		expect(document.activeElement).toBe(screen.getByRole("main"));
 	});
 
@@ -40,17 +38,13 @@ describe("SkipLink", () => {
 
 		render(<SkipLink href="#missing-main" />);
 
-		await user.click(
-			screen.getByRole("link", { name: "Skip to main content" }),
-		);
+		await user.click(screen.getByRole("link", { name: "Skip to main content" }));
 		expect(window.location.hash).toBe(hashBefore);
 	});
 
 	it("honors custom label children", () => {
 		render(<SkipLink>Skip to content</SkipLink>);
-		expect(
-			screen.getByRole("link", { name: "Skip to content" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("link", { name: "Skip to content" })).toBeInTheDocument();
 	});
 
 	it("has no accessibility violations", async () => {

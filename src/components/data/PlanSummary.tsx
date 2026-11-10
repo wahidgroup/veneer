@@ -8,10 +8,7 @@ import { Button } from "../forms/Button.js";
 import { DiffView } from "./DiffView.js";
 import { badgeVariantForKind, labelForKind } from "./diffKind.js";
 
-interface PlanSummaryProps extends Omit<
-	ComponentProps<"div">,
-	"children" | "title"
-> {
+interface PlanSummaryProps extends Omit<ComponentProps<"div">, "children" | "title"> {
 	resources: DiffResource[];
 	title?: ReactNode;
 	"aria-label"?: string;
@@ -39,13 +36,7 @@ function countKinds(resources: DiffResource[]): KindCounts {
 	return counts;
 }
 
-function PlanSummary({
-	resources,
-	title,
-	"aria-label": ariaLabel,
-	className,
-	...rest
-}: PlanSummaryProps) {
+function PlanSummary({ resources, title, "aria-label": ariaLabel, className, ...rest }: PlanSummaryProps) {
 	let resolvedTitle: ReactNode = title;
 	resolvedTitle ??= "Plan summary";
 
@@ -92,16 +83,11 @@ function PlanSummary({
 			data-slot="plan-summary"
 			role="region"
 			aria-label={resolvedAria}
-			className={cn(
-				"overflow-hidden rounded-md border border-border bg-card",
-				className,
-			)}
+			className={cn("overflow-hidden rounded-md border border-border bg-card", className)}
 			{...rest}
 		>
 			<div className="border-b border-border px-3 py-2">
-				<div className="text-sm font-semibold text-foreground">
-					{resolvedTitle}
-				</div>
+				<div className="text-sm font-semibold text-foreground">{resolvedTitle}</div>
 				<div className="mt-2 flex flex-wrap gap-2">
 					{ALL_KINDS.map((kind) => {
 						const count = counts[kind];
@@ -125,13 +111,8 @@ function PlanSummary({
 									toggleKind(kind);
 								}}
 							>
-								<span className="text-xs text-muted-foreground">
-									{labelForKind(kind)}
-								</span>
-								<Badge
-									variant={badgeVariantForKind(kind)}
-									size="sm"
-								>
+								<span className="text-xs text-muted-foreground">{labelForKind(kind)}</span>
+								<Badge variant={badgeVariantForKind(kind)} size="sm">
 									{String(count)}
 								</Badge>
 							</Button>

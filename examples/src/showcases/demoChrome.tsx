@@ -12,18 +12,11 @@ interface RailPanelProps {
 /**
  * Right-rail chrome for demo knobs / descriptions.
  */
-function RailPanel({
-	title,
-	description,
-	children,
-	className,
-}: RailPanelProps) {
+function RailPanel({ title, description, children, className }: RailPanelProps) {
 	return (
 		<div className={cn("flex flex-col gap-4 p-4", className)}>
 			<header className="flex flex-col gap-3">
-				<h2 className="text-sm font-semibold text-foreground">
-					{title} Knobs
-				</h2>
+				<h2 className="text-sm font-semibold text-foreground">{title} Knobs</h2>
 				<hr className="border-0 border-t border-border" />
 				<Alert type="info">{description}</Alert>
 			</header>
@@ -51,9 +44,7 @@ function DemoRow({ label, description, children }: DemoRowProps) {
 	return (
 		<div className="flex flex-col gap-1">
 			<div className="text-sm font-medium text-foreground">{label}</div>
-			<div className="flex min-w-0 flex-wrap items-center gap-3">
-				{children}
-			</div>
+			<div className="flex min-w-0 flex-wrap items-center gap-3">{children}</div>
 			{hint}
 		</div>
 	);
@@ -68,11 +59,7 @@ interface CanvasProps {
  * Main canvas padding for the active component demo.
  */
 function Canvas({ children, className }: CanvasProps) {
-	return (
-		<div className={cn("flex flex-col gap-6 p-6", className)}>
-			{children}
-		</div>
-	);
+	return <div className={cn("flex flex-col gap-6 p-6", className)}>{children}</div>;
 }
 
 /**
@@ -95,11 +82,7 @@ interface DemoSectionHeaderProps {
 /**
  * Stacked-category section title with optional API badge.
  */
-function DemoSectionHeader({
-	title,
-	description,
-	apiDriven,
-}: DemoSectionHeaderProps) {
+function DemoSectionHeader({ title, description, apiDriven }: DemoSectionHeaderProps) {
 	let badge: ReactNode = null;
 	if (apiDriven === true) {
 		badge = <ApiDemoBadge />;
@@ -108,9 +91,7 @@ function DemoSectionHeader({
 	return (
 		<div className="px-6 pt-6">
 			<div className="flex flex-wrap items-center gap-1.5">
-				<h3 className="text-lg font-semibold text-foreground">
-					{title}
-				</h3>
+				<h3 className="text-lg font-semibold text-foreground">{title}</h3>
 				{badge}
 			</div>
 			<p className="text-sm text-muted-foreground">{description}</p>
@@ -122,11 +103,4 @@ function PassthroughProvider({ children }: { children: ReactNode }) {
 	return children;
 }
 
-export {
-	ApiDemoBadge,
-	Canvas,
-	DemoRow,
-	DemoSectionHeader,
-	PassthroughProvider,
-	RailPanel,
-};
+export { ApiDemoBadge, Canvas, DemoRow, DemoSectionHeader, PassthroughProvider, RailPanel };

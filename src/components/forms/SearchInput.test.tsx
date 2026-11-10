@@ -28,9 +28,7 @@ describe("SearchInput", () => {
 	});
 
 	it("syncs draft when controlled value changes", () => {
-		const { rerender } = render(
-			<SearchInput value="alpha" debounceMs={0} />,
-		);
+		const { rerender } = render(<SearchInput value="alpha" debounceMs={0} />);
 		expect(screen.getByRole("searchbox")).toHaveValue("alpha");
 
 		rerender(<SearchInput value="beta" debounceMs={0} />);

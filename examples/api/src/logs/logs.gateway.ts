@@ -2,18 +2,9 @@ import type { IncomingMessage } from "node:http";
 import type { WebSocketServer as WsServer } from "ws";
 import { Inject, Logger } from "@nestjs/common";
 import { WebSocket } from "ws";
-import {
-	OnGatewayConnection,
-	OnGatewayDisconnect,
-	WebSocketGateway,
-	WebSocketServer,
-} from "@nestjs/websockets";
+import { OnGatewayConnection, OnGatewayDisconnect, WebSocketGateway, WebSocketServer } from "@nestjs/websockets";
 
-import type {
-	LogFilter,
-	LogServerMessage,
-	LogSubscribeMessage,
-} from "./log-types.js";
+import type { LogFilter, LogServerMessage, LogSubscribeMessage } from "./log-types.js";
 import { matchLogLine } from "./log-types.js";
 import { LogsService } from "./logs.service.js";
 
@@ -77,11 +68,7 @@ export class LogsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 		}
 
 		if (!isSubscribeMessage(parsed)) {
-			if (
-				parsed === null ||
-				typeof parsed !== "object" ||
-				!("type" in parsed)
-			) {
+			if (parsed === null || typeof parsed !== "object" || !("type" in parsed)) {
 				client.close(1003, "invalid message");
 			}
 

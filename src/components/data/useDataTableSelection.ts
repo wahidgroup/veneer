@@ -1,20 +1,12 @@
-import type {
-	OnChangeFn,
-	RowSelectionState,
-	Updater,
-} from "@tanstack/react-table";
+import type { OnChangeFn, RowSelectionState, Updater } from "@tanstack/react-table";
 import { useEffect, useRef, useState } from "react";
 
-import type {
-	DataTableQuery,
-	DataTableRowSelection,
-} from "./DataTable.types.js";
+import type { DataTableQuery, DataTableRowSelection } from "./DataTable.types.js";
 import { buildQueryKey, resolveUpdater } from "./dataTableQuery.js";
 
 interface UseDataTableSelectionArgs<TData> {
 	controlledSelection: DataTableRowSelection | undefined;
-	onRowSelectionChange:
-		((selection: DataTableRowSelection) => void) | undefined;
+	onRowSelectionChange: ((selection: DataTableRowSelection) => void) | undefined;
 	activeQuery: DataTableQuery;
 	pageSize: number;
 	data: TData[];
@@ -37,8 +29,7 @@ function useDataTableSelection<TData>({
 	data,
 	getRowId,
 }: UseDataTableSelectionArgs<TData>): UseDataTableSelectionResult {
-	const [uncontrolledSelection, setUncontrolledSelection] =
-		useState<DataTableRowSelection>({});
+	const [uncontrolledSelection, setUncontrolledSelection] = useState<DataTableRowSelection>({});
 
 	let rowSelection: DataTableRowSelection = uncontrolledSelection;
 	if (controlledSelection !== undefined) {
@@ -95,9 +86,7 @@ function useDataTableSelection<TData>({
 		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentional prune on data/query identity
 	}, [activeQuery, pageSize, data, getRowId]);
 
-	const handleRowSelectionChange: OnChangeFn<RowSelectionState> = (
-		updater: Updater<RowSelectionState>,
-	) => {
+	const handleRowSelectionChange: OnChangeFn<RowSelectionState> = (updater: Updater<RowSelectionState>) => {
 		if (controlledSelection !== undefined) {
 			const next = resolveUpdater(updater, controlledSelection);
 			if (onRowSelectionChange !== undefined) {

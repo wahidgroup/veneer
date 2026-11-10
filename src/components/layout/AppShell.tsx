@@ -71,8 +71,7 @@ function readAppShellViewport(): AppShellViewport {
 }
 
 function useAppShellViewport(): AppShellViewport {
-	const [viewport, setViewport] =
-		useState<AppShellViewport>(readAppShellViewport);
+	const [viewport, setViewport] = useState<AppShellViewport>(readAppShellViewport);
 
 	useEffect(() => {
 		if (typeof window.matchMedia !== "function") {
@@ -209,10 +208,7 @@ function AppShell({
 	let headerNode: ReactNode = null;
 	if (header !== undefined) {
 		headerNode = (
-			<header
-				data-slot="app-shell-header"
-				className="relative z-20 shrink-0"
-			>
+			<header data-slot="app-shell-header" className="relative z-20 shrink-0">
 				{header}
 			</header>
 		);
@@ -227,10 +223,7 @@ function AppShell({
 
 		if (isMobile) {
 			if (drawerOpen) {
-				asideClass = cn(
-					asideClass,
-					"absolute inset-y-0 left-0 z-40 w-56 shadow-lg",
-				);
+				asideClass = cn(asideClass, "absolute inset-y-0 left-0 z-40 w-56 shadow-lg");
 			} else {
 				asideClass = cn(
 					asideClass,
@@ -270,15 +263,9 @@ function AppShell({
 
 		if (railIsCollapsed) {
 			if (railAtBottom) {
-				railClass = cn(
-					railClass,
-					"h-0 min-h-0 shrink overflow-hidden border-t-0",
-				);
+				railClass = cn(railClass, "h-0 min-h-0 shrink overflow-hidden border-t-0");
 			} else {
-				railClass = cn(
-					railClass,
-					"w-0 min-w-0 shrink overflow-hidden border-l-0",
-				);
+				railClass = cn(railClass, "w-0 min-w-0 shrink overflow-hidden border-l-0");
 			}
 		} else if (isMobile) {
 			if (railAtBottom) {
@@ -288,11 +275,7 @@ function AppShell({
 					"absolute inset-x-0 bottom-0 z-40 max-h-[min(24rem,70%)] shadow-lg",
 				);
 			} else {
-				railClass = cn(
-					railClass,
-					SIDE_PANE_SCROLL,
-					"absolute inset-0 z-40 shadow-lg",
-				);
+				railClass = cn(railClass, SIDE_PANE_SCROLL, "absolute inset-0 z-40 shadow-lg");
 			}
 		} else if (isTablet) {
 			if (railAtBottom) {
@@ -302,24 +285,12 @@ function AppShell({
 					"absolute bottom-0 left-14 right-0 z-40 max-h-[min(24rem,70%)] shadow-lg",
 				);
 			} else {
-				railClass = cn(
-					railClass,
-					SIDE_PANE_SCROLL,
-					"absolute inset-y-0 left-14 right-0 z-40 shadow-lg",
-				);
+				railClass = cn(railClass, SIDE_PANE_SCROLL, "absolute inset-y-0 left-14 right-0 z-40 shadow-lg");
 			}
 		} else if (railAtBottom) {
-			railClass = cn(
-				railClass,
-				SIDE_PANE_SCROLL,
-				"relative z-10 h-64 shrink-0",
-			);
+			railClass = cn(railClass, SIDE_PANE_SCROLL, "relative z-10 h-64 shrink-0");
 		} else {
-			railClass = cn(
-				railClass,
-				SIDE_PANE_SCROLL,
-				"relative z-10 w-72 shrink-0",
-			);
+			railClass = cn(railClass, SIDE_PANE_SCROLL, "relative z-10 w-72 shrink-0");
 		}
 
 		railNode = (
@@ -352,12 +323,7 @@ function AppShell({
 	}
 
 	const mainNode = (
-		<main
-			id="main"
-			tabIndex={-1}
-			data-slot="app-shell-main"
-			className="min-h-0 min-w-0 flex-1 overflow-y-auto"
-		>
+		<main id="main" tabIndex={-1} data-slot="app-shell-main" className="min-h-0 min-w-0 flex-1 overflow-y-auto">
 			{children}
 		</main>
 	);
@@ -386,17 +352,11 @@ function AppShell({
 			data-rail-collapsed={railIsCollapsed}
 			data-rail-position={resolvedRailPosition}
 			data-viewport={viewport}
-			className={cn(
-				"flex h-dvh flex-col overflow-hidden bg-background text-foreground",
-				className,
-			)}
+			className={cn("flex h-dvh flex-col overflow-hidden bg-background text-foreground", className)}
 			{...rest}
 		>
 			{headerNode}
-			<div
-				data-slot="app-shell-body"
-				className="relative flex min-h-0 flex-1"
-			>
+			<div data-slot="app-shell-body" className="relative flex min-h-0 flex-1">
 				{sidebarNode}
 				{mainColumn}
 			</div>

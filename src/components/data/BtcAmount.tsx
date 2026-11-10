@@ -14,22 +14,11 @@ interface BtcAmountProps extends Omit<ComponentProps<"span">, "children"> {
  * Bitcoin amount display from a satoshi integer. Unit toggle belongs to the
  * app; this component is display-only.
  */
-function BtcAmount({
-	amountSats,
-	unit,
-	locale,
-	className,
-	...rest
-}: BtcAmountProps) {
+function BtcAmount({ amountSats, unit, locale, className, ...rest }: BtcAmountProps) {
 	const formatted = formatBtcSats({ amountSats, unit, locale });
 
 	return (
-		<span
-			data-slot="btc-amount"
-			data-unit={unit}
-			className={cn("tabular-nums", className)}
-			{...rest}
-		>
+		<span data-slot="btc-amount" data-unit={unit} className={cn("tabular-nums", className)} {...rest}>
 			{formatted}
 		</span>
 	);

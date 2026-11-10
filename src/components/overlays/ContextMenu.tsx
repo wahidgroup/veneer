@@ -8,11 +8,7 @@ import {
 } from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Portal } from "./Portal.js";
-import {
-	focusFirstMenuItem,
-	onActionMenuKeyDown,
-	renderActionMenuEntries,
-} from "./actionMenuList.js";
+import { focusFirstMenuItem, onActionMenuKeyDown, renderActionMenuEntries } from "./actionMenuList.js";
 
 interface ContextMenuPosition {
 	x: number;
@@ -122,11 +118,7 @@ function ContextMenu({ items, children, className }: ContextMenuProps) {
 	}
 
 	return (
-		<div
-			data-slot="context-menu"
-			className={cn(className)}
-			onContextMenu={onContextMenu}
-		>
+		<div data-slot="context-menu" className={cn(className)} onContextMenu={onContextMenu}>
 			{children}
 			{menuNode}
 		</div>

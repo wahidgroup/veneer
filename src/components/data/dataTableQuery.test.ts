@@ -1,12 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import {
-	buildDefaultQuery,
-	buildQueryKey,
-	clampPageSize,
-	queriesEqual,
-	resolveUpdater,
-} from "./dataTableQuery.js";
+import { buildDefaultQuery, buildQueryKey, clampPageSize, queriesEqual, resolveUpdater } from "./dataTableQuery.js";
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "./DataTable.types.js";
 
 describe("dataTableQuery", () => {

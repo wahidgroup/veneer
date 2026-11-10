@@ -18,14 +18,11 @@ describe("Card", () => {
 		expect(screen.getByText("Settings")).toBeInTheDocument();
 	});
 
-	it.each([{ size: "sm" as const }, { size: "md" as const }])(
-		"applies size $size",
-		({ size }) => {
-			const { container } = render(<Card size={size}>Body</Card>);
-			const root = container.querySelector("[data-slot='card']");
-			expect(root).toHaveAttribute("data-size", size);
-		},
-	);
+	it.each([{ size: "sm" as const }, { size: "md" as const }])("applies size $size", ({ size }) => {
+		const { container } = render(<Card size={size}>Body</Card>);
+		const root = container.querySelector("[data-slot='card']");
+		expect(root).toHaveAttribute("data-size", size);
+	});
 
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(

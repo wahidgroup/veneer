@@ -21,11 +21,23 @@ function ignoreLegacyMatchMediaListener(): void {
 }
 
 /**
+ * jsdom has no `matchMedia`. Capture via Reflect so restore does not
+ * trip `@typescript-eslint/unbound-method` on `window.matchMedia`.
+ */
+function captureMatchMedia(target: Window): typeof window.matchMedia | undefined {
+	const value = Reflect.get(target, "matchMedia");
+	if (typeof value !== "function") {
+		return undefined;
+	}
+	return value.bind(target);
+}
+
+/**
  * jsdom MediaQueryList stand-in. Tracks listeners and re-reads `matches`
  * from the shared map (same contract AppShell relies on).
  */
 function installMatchMedia(map: QueryMap) {
-	const previous = window.matchMedia;
+	const previous = captureMatchMedia(window);
 	const listeners = new Map<string, Set<EventListener>>();
 
 	window.matchMedia = (query: string) => {
@@ -115,13 +127,9 @@ describe("resolveAppShellViewport", () => {
 	it("classifies mobile, tablet, and comfort by Tailwind md/lg ceilings", () => {
 		expect(resolveAppShellViewport(0)).toBe("mobile");
 		expect(resolveAppShellViewport(APP_SHELL_MOBILE_MAX_PX)).toBe("mobile");
-		expect(resolveAppShellViewport(APP_SHELL_MOBILE_MAX_PX + 1)).toBe(
-			"tablet",
-		);
+		expect(resolveAppShellViewport(APP_SHELL_MOBILE_MAX_PX + 1)).toBe("tablet");
 		expect(resolveAppShellViewport(APP_SHELL_TABLET_MAX_PX)).toBe("tablet");
-		expect(resolveAppShellViewport(APP_SHELL_TABLET_MAX_PX + 1)).toBe(
-			"comfort",
-		);
+		expect(resolveAppShellViewport(APP_SHELL_TABLET_MAX_PX + 1)).toBe("comfort");
 	});
 });
 
@@ -161,12 +169,8 @@ describe("AppShell", () => {
 			</AppShell>,
 		);
 
-		expect(
-			screen.getByRole("complementary", { name: "Controls" }),
-		).toHaveTextContent("Knobs");
-		expect(
-			screen.getByRole("complementary", { name: "Sidebar" }),
-		).toHaveTextContent("Nav");
+		expect(screen.getByRole("complementary", { name: "Controls" })).toHaveTextContent("Knobs");
+		expect(screen.getByRole("complementary", { name: "Sidebar" })).toHaveTextContent("Nav");
 	});
 
 	it("marks collapsed state on the root", () => {
@@ -195,19 +199,13 @@ describe("AppShell", () => {
 
 	it("docks the controls rail under main when railPosition is bottom", () => {
 		const { container } = render(
-			<AppShell
-				sidebar={<div>Nav</div>}
-				rail={<div>Knobs</div>}
-				railPosition="bottom"
-			>
+			<AppShell sidebar={<div>Nav</div>} rail={<div>Knobs</div>} railPosition="bottom">
 				Main
 			</AppShell>,
 		);
 
 		const root = container.querySelector("[data-slot='app-shell']");
-		const column = container.querySelector(
-			"[data-slot='app-shell-main-column']",
-		);
+		const column = container.querySelector("[data-slot='app-shell-main-column']");
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(root).toHaveAttribute("data-rail-position", "bottom");
 		expect(column).not.toBeNull();
@@ -216,49 +214,29 @@ describe("AppShell", () => {
 
 	it("keeps the same main element when railPosition toggles", () => {
 		const { container, rerender } = render(
-			<AppShell
-				sidebar={<div>Nav</div>}
-				rail={<div>Knobs</div>}
-				railPosition="end"
-			>
+			<AppShell sidebar={<div>Nav</div>} rail={<div>Knobs</div>} railPosition="end">
 				Main
 			</AppShell>,
 		);
 
 		const main = container.querySelector("[data-slot='app-shell-main']");
-		const column = container.querySelector(
-			"[data-slot='app-shell-main-column']",
-		);
+		const column = container.querySelector("[data-slot='app-shell-main-column']");
 		expect(main).not.toBeNull();
 		expect(column).not.toBeNull();
 		rerender(
-			<AppShell
-				sidebar={<div>Nav</div>}
-				rail={<div>Knobs</div>}
-				railPosition="bottom"
-			>
+			<AppShell sidebar={<div>Nav</div>} rail={<div>Knobs</div>} railPosition="bottom">
 				Main
 			</AppShell>,
 		);
 
-		expect(container.querySelector("[data-slot='app-shell-main']")).toBe(
-			main,
-		);
-		expect(
-			container.querySelector("[data-slot='app-shell-main-column']"),
-		).toBe(column);
-		expect(
-			container.querySelector("[data-slot='app-shell']"),
-		).toHaveAttribute("data-rail-position", "bottom");
+		expect(container.querySelector("[data-slot='app-shell-main']")).toBe(main);
+		expect(container.querySelector("[data-slot='app-shell-main-column']")).toBe(column);
+		expect(container.querySelector("[data-slot='app-shell']")).toHaveAttribute("data-rail-position", "bottom");
 	});
 
 	it("marks bottom rail collapsed", () => {
 		const { container } = render(
-			<AppShell
-				railCollapsed
-				railPosition="bottom"
-				rail={<div>Knobs</div>}
-			>
+			<AppShell railCollapsed railPosition="bottom" rail={<div>Knobs</div>}>
 				Main
 			</AppShell>,
 		);
@@ -274,12 +252,7 @@ describe("AppShell", () => {
 		media.set(APP_SHELL_COMPACT_QUERY, true);
 
 		const { container } = render(
-			<AppShell
-				sidebar={<div>Nav</div>}
-				rail={<div>Knobs</div>}
-				railCollapsed={false}
-				railPosition="bottom"
-			>
+			<AppShell sidebar={<div>Nav</div>} rail={<div>Knobs</div>} railCollapsed={false} railPosition="bottom">
 				Main
 			</AppShell>,
 		);
@@ -291,48 +264,28 @@ describe("AppShell", () => {
 
 	it("renders shell regions", () => {
 		const { container } = render(
-			<AppShell
-				header={<div>Header</div>}
-				sidebar={<div>Nav</div>}
-				rail={<div>Knobs</div>}
-			>
+			<AppShell header={<div>Header</div>} sidebar={<div>Nav</div>} rail={<div>Knobs</div>}>
 				Main
 			</AppShell>,
 		);
-		expect(
-			container.querySelector("[data-slot='app-shell']"),
-		).not.toBeNull();
-		expect(
-			container.querySelector("[data-slot='app-shell-main']"),
-		).not.toBeNull();
-		expect(
-			container.querySelector("[data-slot='app-shell-sidebar']"),
-		).not.toBeNull();
-		expect(
-			container.querySelector("[data-slot='app-shell-rail']"),
-		).not.toBeNull();
-		expect(
-			container.querySelector("[data-slot='app-shell-header']"),
-		).not.toBeNull();
+		expect(container.querySelector("[data-slot='app-shell']")).not.toBeNull();
+		expect(container.querySelector("[data-slot='app-shell-main']")).not.toBeNull();
+		expect(container.querySelector("[data-slot='app-shell-sidebar']")).not.toBeNull();
+		expect(container.querySelector("[data-slot='app-shell-rail']")).not.toBeNull();
+		expect(container.querySelector("[data-slot='app-shell-header']")).not.toBeNull();
 	});
 
 	it("uses tablet icon rail and overlays the knobs pane", () => {
 		media.set(APP_SHELL_COMPACT_QUERY, true);
 
 		const { container } = render(
-			<AppShell
-				sidebar={<div>Nav</div>}
-				rail={<div>Knobs</div>}
-				railCollapsed={false}
-			>
+			<AppShell sidebar={<div>Nav</div>} rail={<div>Knobs</div>} railCollapsed={false}>
 				Main
 			</AppShell>,
 		);
 
 		const root = container.querySelector("[data-slot='app-shell']");
-		const sidebar = container.querySelector(
-			"[data-slot='app-shell-sidebar']",
-		);
+		const sidebar = container.querySelector("[data-slot='app-shell-sidebar']");
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(root).toHaveAttribute("data-viewport", "tablet");
 		expect(sidebar).toHaveAttribute("data-mode", "tablet");
@@ -344,12 +297,7 @@ describe("AppShell", () => {
 		media.set(APP_SHELL_COMPACT_QUERY, true);
 
 		const { container } = render(
-			<AppShell
-				sidebarCollapsed={false}
-				sidebar={<div>Nav</div>}
-				rail={<div>Knobs</div>}
-				railCollapsed={false}
-			>
+			<AppShell sidebarCollapsed={false} sidebar={<div>Nav</div>} rail={<div>Knobs</div>} railCollapsed={false}>
 				Main
 			</AppShell>,
 		);
@@ -358,33 +306,21 @@ describe("AppShell", () => {
 		const rail = container.querySelector("[data-slot='app-shell-rail']");
 		expect(root).toHaveAttribute("data-viewport", "mobile");
 		expect(rail).toHaveAttribute("data-overlay", "true");
-		expect(
-			container.querySelector("[data-slot='app-shell-backdrop']"),
-		).not.toBeNull();
+		expect(container.querySelector("[data-slot='app-shell-backdrop']")).not.toBeNull();
 	});
 
 	it("auto-hides the rail when entering compact from comfort", () => {
-		const { container } = render(
-			<ControlledShell initialRailCollapsed={false} />,
-		);
+		const { container } = render(<ControlledShell initialRailCollapsed={false} />);
 
-		expect(
-			container.querySelector("[data-slot='app-shell']"),
-		).toHaveAttribute("data-viewport", "comfort");
-		expect(
-			container.querySelector("[data-slot='app-shell']"),
-		).toHaveAttribute("data-rail-collapsed", "false");
+		expect(container.querySelector("[data-slot='app-shell']")).toHaveAttribute("data-viewport", "comfort");
+		expect(container.querySelector("[data-slot='app-shell']")).toHaveAttribute("data-rail-collapsed", "false");
 
 		act(() => {
 			media.set(APP_SHELL_COMPACT_QUERY, true);
 		});
 
-		expect(
-			container.querySelector("[data-slot='app-shell']"),
-		).toHaveAttribute("data-viewport", "tablet");
-		expect(
-			container.querySelector("[data-slot='app-shell']"),
-		).toHaveAttribute("data-rail-collapsed", "true");
+		expect(container.querySelector("[data-slot='app-shell']")).toHaveAttribute("data-viewport", "tablet");
+		expect(container.querySelector("[data-slot='app-shell']")).toHaveAttribute("data-rail-collapsed", "true");
 	});
 
 	it("dismisses overlays on Escape after reopen", async () => {
@@ -431,35 +367,22 @@ describe("AppShell", () => {
 		const { container } = render(<Shell />);
 
 		await user.click(screen.getByRole("button", { name: "Open rail" }));
-		expect(
-			container.querySelector("[data-slot='app-shell-backdrop']"),
-		).not.toBeNull();
+		expect(container.querySelector("[data-slot='app-shell-backdrop']")).not.toBeNull();
 
 		await user.keyboard("{Escape}");
-		expect(
-			container.querySelector("[data-slot='app-shell']"),
-		).toHaveAttribute("data-rail-collapsed", "true");
-		expect(
-			container.querySelector("[data-slot='app-shell-backdrop']"),
-		).toBeNull();
+		expect(container.querySelector("[data-slot='app-shell']")).toHaveAttribute("data-rail-collapsed", "true");
+		expect(container.querySelector("[data-slot='app-shell-backdrop']")).toBeNull();
 
 		await user.click(screen.getByRole("button", { name: "Open nav" }));
 		await user.click(screen.getByRole("button", { name: "Open rail" }));
 		await user.click(screen.getByRole("button", { name: "Dismiss panel" }));
-		expect(
-			container.querySelector("[data-slot='app-shell']"),
-		).toHaveAttribute("data-collapsed", "true");
-		expect(
-			container.querySelector("[data-slot='app-shell']"),
-		).toHaveAttribute("data-rail-collapsed", "true");
+		expect(container.querySelector("[data-slot='app-shell']")).toHaveAttribute("data-collapsed", "true");
+		expect(container.querySelector("[data-slot='app-shell']")).toHaveAttribute("data-rail-collapsed", "true");
 	});
 
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
-			<AppShell
-				header={<div>Header</div>}
-				sidebar={<nav aria-label="Sections">Nav</nav>}
-			>
+			<AppShell header={<div>Header</div>} sidebar={<nav aria-label="Sections">Nav</nav>}>
 				<p>Page</p>
 			</AppShell>,
 		);

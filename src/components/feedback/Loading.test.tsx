@@ -28,10 +28,7 @@ describe("Loading", () => {
 		{ size: "lg" as const, expected: "lg", label: "lg" },
 	])("exposes $label size on data-size", ({ size, expected }) => {
 		render(<Loading size={size} />);
-		expect(screen.getByRole("status")).toHaveAttribute(
-			"data-size",
-			expected,
-		);
+		expect(screen.getByRole("status")).toHaveAttribute("data-size", expected);
 	});
 
 	it("renders skeleton bones", () => {

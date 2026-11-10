@@ -27,17 +27,10 @@ interface ToolbarSelectProps {
 }
 
 function listEnabledOptions(root: HTMLElement): HTMLElement[] {
-	return Array.from(
-		root.querySelectorAll<HTMLElement>(
-			'[role="option"]:not([aria-disabled="true"])',
-		),
-	);
+	return Array.from(root.querySelectorAll<HTMLElement>('[role="option"]:not([aria-disabled="true"])'));
 }
 
-function findOptionLabel(
-	options: ToolbarSelectOption[],
-	value: string,
-): string | undefined {
+function findOptionLabel(options: ToolbarSelectOption[], value: string): string | undefined {
 	for (const option of options) {
 		if (option.value === value) {
 			return option.label;
@@ -225,10 +218,7 @@ function ToolbarSelect({
 						if (optionDisabled) {
 							optionClass = cn(optionClass, "opacity-50");
 						} else {
-							optionClass = cn(
-								optionClass,
-								"text-foreground hover:bg-accent focus:bg-accent",
-							);
+							optionClass = cn(optionClass, "text-foreground hover:bg-accent focus:bg-accent");
 						}
 						if (selected) {
 							optionClass = cn(optionClass, "bg-accent/60");
@@ -237,9 +227,7 @@ function ToolbarSelect({
 						let descriptionNode: ReactNode = null;
 						if (option.description !== undefined) {
 							descriptionNode = (
-								<span className="text-xs text-muted-foreground">
-									{option.description}
-								</span>
+								<span className="text-xs text-muted-foreground">{option.description}</span>
 							);
 						}
 
@@ -262,9 +250,7 @@ function ToolbarSelect({
 									commitValue(option.value);
 								}}
 							>
-								<span className="text-sm font-medium">
-									{option.label}
-								</span>
+								<span className="text-sm font-medium">{option.label}</span>
 								{descriptionNode}
 							</Button>
 						);
@@ -275,10 +261,7 @@ function ToolbarSelect({
 	}
 
 	return (
-		<div
-			data-slot="toolbar-select"
-			className={cn("relative inline-flex", className)}
-		>
+		<div data-slot="toolbar-select" className={cn("relative inline-flex", className)}>
 			<span ref={setReference} className="inline-flex">
 				<Button
 					variant="ghost"
@@ -296,10 +279,7 @@ function ToolbarSelect({
 					}}
 				>
 					<span className="max-w-40 truncate">{triggerLabel}</span>
-					<ChevronDown
-						className="size-4 shrink-0"
-						aria-hidden="true"
-					/>
+					<ChevronDown className="size-4 shrink-0" aria-hidden="true" />
 				</Button>
 			</span>
 			{listNode}

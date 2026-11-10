@@ -185,11 +185,7 @@ const EXPECTED_DATA_TABLE_EXPORTS = new Set([
 	"useDataTableRows",
 ]);
 
-const EXPECTED_DIFF_EXPORTS = new Set([
-	"DiffView",
-	"PlanSummary",
-	"buildDiffLines",
-]);
+const EXPECTED_DIFF_EXPORTS = new Set(["DiffView", "PlanSummary", "buildDiffLines"]);
 
 const EXPECTED_FLOW_EXPORTS = new Set([
 	"FlowCanvas",

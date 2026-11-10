@@ -88,11 +88,7 @@ function countLineStats(lines: DiffLine[]): { added: number; removed: number } {
 	return { added, removed };
 }
 
-function resolveLines(props: {
-	lines?: DiffLine[];
-	oldText?: string;
-	newText?: string;
-}): DiffLine[] {
+function resolveLines(props: { lines?: DiffLine[]; oldText?: string; newText?: string }): DiffLine[] {
 	if (props.lines !== undefined) {
 		return props.lines;
 	}
@@ -125,28 +121,16 @@ function UnifiedDiffRow({ line }: { line: DiffLine }) {
 			aria-label={announceForLine(line)}
 			className={cn("flex min-w-0", lineRowClass(line.kind))}
 		>
-			<span
-				role="cell"
-				className="w-10 shrink-0 select-none px-1 text-right text-muted-foreground"
-			>
+			<span role="cell" className="w-10 shrink-0 select-none px-1 text-right text-muted-foreground">
 				{oldNum}
 			</span>
-			<span
-				role="cell"
-				className="w-10 shrink-0 select-none px-1 text-right text-muted-foreground"
-			>
+			<span role="cell" className="w-10 shrink-0 select-none px-1 text-right text-muted-foreground">
 				{newNum}
 			</span>
-			<span
-				aria-hidden="true"
-				className="w-4 shrink-0 select-none text-center"
-			>
+			<span aria-hidden="true" className="w-4 shrink-0 select-none text-center">
 				{marker}
 			</span>
-			<span
-				role="cell"
-				className="min-w-0 flex-1 whitespace-pre-wrap px-2 py-0.5"
-			>
+			<span role="cell" className="min-w-0 flex-1 whitespace-pre-wrap px-2 py-0.5">
 				{line.text}
 			</span>
 		</div>
@@ -212,54 +196,26 @@ function SplitDiffRow({ line }: { line: DiffLine }) {
 	}
 
 	return (
-		<div
-			role="row"
-			data-kind={line.kind}
-			aria-label={announceForLine(line)}
-			className="grid grid-cols-2"
-		>
-			<div
-				className={cn(
-					"flex min-w-0 border-r border-border",
-					lineRowClass(leftKind),
-				)}
-			>
-				<span
-					role="cell"
-					className="w-10 shrink-0 select-none px-1 text-right text-muted-foreground"
-				>
+		<div role="row" data-kind={line.kind} aria-label={announceForLine(line)} className="grid grid-cols-2">
+			<div className={cn("flex min-w-0 border-r border-border", lineRowClass(leftKind))}>
+				<span role="cell" className="w-10 shrink-0 select-none px-1 text-right text-muted-foreground">
 					{leftNum}
 				</span>
-				<span
-					aria-hidden="true"
-					className="w-4 shrink-0 select-none text-center"
-				>
+				<span aria-hidden="true" className="w-4 shrink-0 select-none text-center">
 					{leftMarker}
 				</span>
-				<span
-					role="cell"
-					className="min-w-0 flex-1 whitespace-pre-wrap px-2 py-0.5"
-				>
+				<span role="cell" className="min-w-0 flex-1 whitespace-pre-wrap px-2 py-0.5">
 					{leftText}
 				</span>
 			</div>
 			<div className={cn("flex min-w-0", lineRowClass(rightKind))}>
-				<span
-					role="cell"
-					className="w-10 shrink-0 select-none px-1 text-right text-muted-foreground"
-				>
+				<span role="cell" className="w-10 shrink-0 select-none px-1 text-right text-muted-foreground">
 					{rightNum}
 				</span>
-				<span
-					aria-hidden="true"
-					className="w-4 shrink-0 select-none text-center"
-				>
+				<span aria-hidden="true" className="w-4 shrink-0 select-none text-center">
 					{rightMarker}
 				</span>
-				<span
-					role="cell"
-					className="min-w-0 flex-1 whitespace-pre-wrap px-2 py-0.5"
-				>
+				<span role="cell" className="min-w-0 flex-1 whitespace-pre-wrap px-2 py-0.5">
 					{rightText}
 				</span>
 			</div>
@@ -312,9 +268,7 @@ function DiffLinesView({
 				data-slot="diff-view-header"
 				className="flex flex-wrap items-center gap-2 border-b border-border px-3 py-2"
 			>
-				<span className="font-mono text-sm text-foreground">
-					{path}
-				</span>
+				<span className="font-mono text-sm text-foreground">{path}</span>
 				<Badge variant="success" size="sm">
 					+{String(stats.added)}
 				</Badge>
@@ -329,8 +283,7 @@ function DiffLinesView({
 	if (truncated) {
 		truncateNote = (
 			<p className="border-t border-border px-3 py-2 text-xs text-muted-foreground">
-				Showing {String(visibleLines.length)} of{" "}
-				{String(allLines.length)} lines
+				Showing {String(visibleLines.length)} of {String(allLines.length)} lines
 			</p>
 		);
 	}
@@ -338,35 +291,17 @@ function DiffLinesView({
 	let body: ReactNode;
 	if (resolvedLayout === "split") {
 		body = (
-			<div
-				role="table"
-				aria-label={ariaLabel}
-				className="font-mono text-xs"
-			>
+			<div role="table" aria-label={ariaLabel} className="font-mono text-xs">
 				{visibleLines.map((line, index) => {
-					return (
-						<SplitDiffRow
-							key={`${line.kind}-${String(index)}`}
-							line={line}
-						/>
-					);
+					return <SplitDiffRow key={`${line.kind}-${String(index)}`} line={line} />;
 				})}
 			</div>
 		);
 	} else {
 		body = (
-			<div
-				role="table"
-				aria-label={ariaLabel}
-				className="font-mono text-xs"
-			>
+			<div role="table" aria-label={ariaLabel} className="font-mono text-xs">
 				{visibleLines.map((line, index) => {
-					return (
-						<UnifiedDiffRow
-							key={`${line.kind}-${String(index)}`}
-							line={line}
-						/>
-					);
+					return <UnifiedDiffRow key={`${line.kind}-${String(index)}`} line={line} />;
 				})}
 			</div>
 		);
@@ -377,10 +312,7 @@ function DiffLinesView({
 			data-slot="diff-view"
 			data-mode="lines"
 			data-layout={resolvedLayout}
-			className={cn(
-				"overflow-hidden rounded-md border border-border bg-card",
-				className,
-			)}
+			className={cn("overflow-hidden rounded-md border border-border bg-card", className)}
 			{...rest}
 		>
 			{header}

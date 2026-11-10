@@ -19,18 +19,12 @@ interface ActionMenuDivider {
 
 type ActionMenuEntry = ActionMenuItem | ActionMenuDivider;
 
-function isActionMenuDivider(
-	entry: ActionMenuEntry,
-): entry is ActionMenuDivider {
+function isActionMenuDivider(entry: ActionMenuEntry): entry is ActionMenuDivider {
 	return "type" in entry && entry.type === "divider";
 }
 
 function listEnabledMenuItems(root: HTMLElement): HTMLElement[] {
-	return Array.from(
-		root.querySelectorAll<HTMLElement>(
-			'[role="menuitem"]:not([aria-disabled="true"])',
-		),
-	);
+	return Array.from(root.querySelectorAll<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])'));
 }
 
 function onActionMenuKeyDown(event: KeyboardEvent<HTMLDivElement>): void {
@@ -92,39 +86,20 @@ interface RenderActionMenuEntriesOptions {
 /**
  * Shared APG menu item list for ActionMenu and ContextMenu panels.
  */
-function renderActionMenuEntries({
-	items,
-	onItemSelect,
-}: RenderActionMenuEntriesOptions): ReactNode {
+function renderActionMenuEntries({ items, onItemSelect }: RenderActionMenuEntriesOptions): ReactNode {
 	return items.map((entry) => {
 		if (isActionMenuDivider(entry)) {
-			return (
-				<div
-					key={entry.key}
-					role="separator"
-					className="my-1 border-t border-border"
-				/>
-			);
+			return <div key={entry.key} role="separator" className="my-1 border-t border-border" />;
 		}
 
-		let itemClass =
-			"h-auto w-full justify-start rounded-none px-3 py-2 text-sm";
+		let itemClass = "h-auto w-full justify-start rounded-none px-3 py-2 text-sm";
 		if (entry.variant === "danger") {
-			itemClass = cn(
-				itemClass,
-				"text-destructive hover:bg-destructive-muted focus:bg-destructive-muted",
-			);
+			itemClass = cn(itemClass, "text-destructive hover:bg-destructive-muted focus:bg-destructive-muted");
 		} else {
-			itemClass = cn(
-				itemClass,
-				"text-foreground hover:bg-accent focus:bg-accent",
-			);
+			itemClass = cn(itemClass, "text-foreground hover:bg-accent focus:bg-accent");
 		}
 		if (entry.disabled === true) {
-			itemClass = cn(
-				itemClass,
-				"opacity-50 hover:bg-transparent focus:bg-transparent",
-			);
+			itemClass = cn(itemClass, "opacity-50 hover:bg-transparent focus:bg-transparent");
 		}
 
 		return (
@@ -152,10 +127,4 @@ function renderActionMenuEntries({
 }
 
 export type { ActionMenuDivider, ActionMenuEntry, ActionMenuItem };
-export {
-	focusFirstMenuItem,
-	isActionMenuDivider,
-	listEnabledMenuItems,
-	onActionMenuKeyDown,
-	renderActionMenuEntries,
-};
+export { focusFirstMenuItem, isActionMenuDivider, listEnabledMenuItems, onActionMenuKeyDown, renderActionMenuEntries };

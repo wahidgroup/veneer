@@ -49,11 +49,7 @@ function RadioGroup({
 
 	let legendNode: ReactNode = null;
 	if (legend !== undefined && legend.length > 0) {
-		legendNode = (
-			<legend className="text-sm font-medium text-foreground">
-				{legend}
-			</legend>
-		);
+		legendNode = <legend className="text-sm font-medium text-foreground">{legend}</legend>;
 	}
 
 	return (
@@ -78,11 +74,7 @@ function RadioGroup({
 					}
 
 					return (
-						<label
-							key={option.value}
-							htmlFor={optionId}
-							className="flex cursor-pointer items-center gap-2"
-						>
+						<label key={option.value} htmlFor={optionId} className="flex cursor-pointer items-center gap-2">
 							<input
 								id={optionId}
 								type="radio"
@@ -98,9 +90,7 @@ function RadioGroup({
 								}}
 								className="size-4 accent-primary focus-visible:ring-2 focus-visible:ring-ring"
 							/>
-							<span className="text-sm font-medium text-foreground">
-								{option.label}
-							</span>
+							<span className="text-sm font-medium text-foreground">{option.label}</span>
 						</label>
 					);
 				})}

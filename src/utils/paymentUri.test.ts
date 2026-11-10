@@ -36,17 +36,11 @@ function buildOk(parts: PaymentUriParts): string {
 	return result.value;
 }
 
-function expectParseFail(
-	result: PaymentUriParseResult,
-	code: PaymentUriErrorCode,
-): void {
+function expectParseFail(result: PaymentUriParseResult, code: PaymentUriErrorCode): void {
 	expect(result).toEqual({ ok: false, code });
 }
 
-function expectBuildFail(
-	result: PaymentUriBuildResult,
-	code: PaymentUriErrorCode,
-): void {
+function expectBuildFail(result: PaymentUriBuildResult, code: PaymentUriErrorCode): void {
 	expect(result).toEqual({ ok: false, code });
 }
 

@@ -99,10 +99,7 @@ type DataTableRowSelection = Record<string, boolean>;
 /**
  * Shared DataTable props excluding the rowCount discrimination.
  */
-interface DataTableSharedProps<TData> extends Omit<
-	ComponentProps<"div">,
-	"children"
-> {
+interface DataTableSharedProps<TData> extends Omit<ComponentProps<"div">, "children"> {
 	columns: DataTableColumn<TData>[];
 	data: TData[];
 	getRowId: (row: TData) => string;

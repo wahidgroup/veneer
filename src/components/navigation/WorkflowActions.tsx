@@ -2,12 +2,7 @@ import type { ComponentProps, ReactNode } from "react";
 
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
-import {
-	defaultIsFinish,
-	nextInOrder,
-	prevInOrder,
-	useWorkflowContext,
-} from "./workflowShared.js";
+import { defaultIsFinish, nextInOrder, prevInOrder, useWorkflowContext } from "./workflowShared.js";
 
 interface WorkflowActionsProps extends ComponentProps<"div"> {
 	canNext?: boolean;
@@ -32,8 +27,7 @@ function WorkflowActions({
 	className,
 	...rest
 }: WorkflowActionsProps) {
-	const { value, setValue, stepIds, resolveNext, resolveBack, isFinish } =
-		useWorkflowContext();
+	const { value, setValue, stepIds, resolveNext, resolveBack, isFinish } = useWorkflowContext();
 
 	let allowNext = true;
 	if (canNext !== undefined) {
@@ -119,11 +113,7 @@ function WorkflowActions({
 	}
 
 	return (
-		<div
-			data-slot="workflow-actions"
-			className={cn("flex flex-wrap items-center gap-2", className)}
-			{...rest}
-		>
+		<div data-slot="workflow-actions" className={cn("flex flex-wrap items-center gap-2", className)} {...rest}>
 			<Button
 				type="button"
 				variant="outlined"

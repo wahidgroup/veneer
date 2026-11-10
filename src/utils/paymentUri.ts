@@ -2,11 +2,7 @@ import { SATOSHI_FRACTION_DIGITS } from "./formatBtcSats.js";
 import { formatMajorDraft, majorAsciiToMinor } from "./formatMoneyMinor.js";
 
 type PaymentUriErrorCode =
-	| "invalid_scheme"
-	| "invalid_amount"
-	| "missing_address"
-	| "unsupported_required_param"
-	| "invalid_uri";
+	"invalid_scheme" | "invalid_amount" | "missing_address" | "unsupported_required_param" | "invalid_uri";
 
 interface PaymentUriParts {
 	address: string;
@@ -20,12 +16,9 @@ interface PaymentUriParts {
 	params?: Record<string, string>;
 }
 
-type PaymentUriParseResult =
-	| { ok: true; value: PaymentUriParts }
-	| { ok: false; code: PaymentUriErrorCode };
+type PaymentUriParseResult = { ok: true; value: PaymentUriParts } | { ok: false; code: PaymentUriErrorCode };
 
-type PaymentUriBuildResult =
-	{ ok: true; value: string } | { ok: false; code: PaymentUriErrorCode };
+type PaymentUriBuildResult = { ok: true; value: string } | { ok: false; code: PaymentUriErrorCode };
 
 const BIP21_SCHEME = "bitcoin";
 const RESERVED_QUERY_KEYS = new Set(["amount", "label", "message"]);
@@ -107,9 +100,7 @@ function resolveAmountBtc(parts: PaymentUriParts): string | undefined {
 	return formatMajorDraft(parts.amountSats, SATOSHI_FRACTION_DIGITS);
 }
 
-function parseQueryPairs(
-	query: string,
-): { key: string; value: string }[] | undefined {
+function parseQueryPairs(query: string): { key: string; value: string }[] | undefined {
 	const pairs: { key: string; value: string }[] = [];
 	const segments = query.split("&");
 
@@ -304,9 +295,7 @@ function buildPaymentUri(parts: PaymentUriParts): PaymentUriBuildResult {
 				return fail("unsupported_required_param");
 			}
 
-			queryParts.push(
-				`${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
-			);
+			queryParts.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
 		}
 	}
 
@@ -318,10 +307,5 @@ function buildPaymentUri(parts: PaymentUriParts): PaymentUriBuildResult {
 	return { ok: true, value: uri };
 }
 
-export type {
-	PaymentUriBuildResult,
-	PaymentUriErrorCode,
-	PaymentUriParseResult,
-	PaymentUriParts,
-};
+export type { PaymentUriBuildResult, PaymentUriErrorCode, PaymentUriParseResult, PaymentUriParts };
 export { buildPaymentUri, parsePaymentUri };

@@ -130,13 +130,7 @@ function badgeForStatus(status: ProgressTaskStatus): {
  * for overall + each task. Composite is indeterminate while any running
  * lane lacks a numeric value.
  */
-function ProgressGroup({
-	tasks,
-	label,
-	"aria-label": ariaLabel,
-	className,
-	...rest
-}: ProgressGroupProps) {
+function ProgressGroup({ tasks, label, "aria-label": ariaLabel, className, ...rest }: ProgressGroupProps) {
 	const overall = compositeProgress(tasks);
 
 	return (
@@ -154,10 +148,7 @@ function ProgressGroup({
 				label={label}
 				size="md"
 			/>
-			<ul
-				className="flex flex-col gap-2"
-				aria-label={`${ariaLabel} tasks`}
-			>
+			<ul className="flex flex-col gap-2" aria-label={`${ariaLabel} tasks`}>
 				{tasks.map((task) => {
 					const status = resolveStatus(task);
 					const badge = badgeForStatus(status);
@@ -185,19 +176,12 @@ function ProgressGroup({
 							className="flex flex-col gap-1"
 						>
 							<div className="flex items-center justify-between gap-2">
-								<span className="min-w-0 truncate text-xs text-foreground">
-									{laneLabel}
-								</span>
+								<span className="min-w-0 truncate text-xs text-foreground">{laneLabel}</span>
 								<Badge variant={badge.variant} size="sm">
 									{badge.label}
 								</Badge>
 							</div>
-							<ProgressBar
-								aria-label={laneAria}
-								value={laneValue}
-								max={laneMax}
-								size="sm"
-							/>
+							<ProgressBar aria-label={laneAria} value={laneValue} max={laneMax} size="sm" />
 						</li>
 					);
 				})}
@@ -206,10 +190,5 @@ function ProgressGroup({
 	);
 }
 
-export type {
-	CompositeProgress,
-	ProgressGroupProps,
-	ProgressTask,
-	ProgressTaskStatus,
-};
+export type { CompositeProgress, ProgressGroupProps, ProgressTask, ProgressTaskStatus };
 export { ProgressGroup, compositeProgress, taskFraction };

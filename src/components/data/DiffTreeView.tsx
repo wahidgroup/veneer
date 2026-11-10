@@ -15,13 +15,7 @@ interface DiffTreeViewProps extends Omit<ComponentProps<"div">, "children"> {
 	baseId: string;
 }
 
-function AttrValue({
-	sensitive,
-	value,
-}: {
-	sensitive?: boolean;
-	value?: ReactNode;
-}) {
+function AttrValue({ sensitive, value }: { sensitive?: boolean; value?: ReactNode }) {
 	if (sensitive === true) {
 		return <span className="text-muted-foreground">(sensitive)</span>;
 	}
@@ -65,10 +59,7 @@ function DiffTreeView({
 			<div
 				data-slot="diff-view"
 				data-mode="tree"
-				className={cn(
-					"rounded-md border border-border bg-card",
-					className,
-				)}
+				className={cn("rounded-md border border-border bg-card", className)}
 				{...rest}
 			>
 				<EmptyState size="sm" title="No changes">
@@ -84,26 +75,17 @@ function DiffTreeView({
 			data-mode="tree"
 			role="list"
 			aria-label={ariaLabel}
-			className={cn(
-				"overflow-hidden rounded-md border border-border bg-card",
-				className,
-			)}
+			className={cn("overflow-hidden rounded-md border border-border bg-card", className)}
 			{...rest}
 		>
 			{list.map((resource) => {
 				const isOpen = expanded[resource.id] === true;
 				const panelId = `${baseId}-${resource.id}-attrs`;
-				const hasAttrs =
-					resource.attributes !== undefined &&
-					resource.attributes.length > 0;
+				const hasAttrs = resource.attributes !== undefined && resource.attributes.length > 0;
 
 				let summaryNode: ReactNode = null;
 				if (resource.summary !== undefined) {
-					summaryNode = (
-						<div className="mt-0.5 text-xs text-muted-foreground">
-							{resource.summary}
-						</div>
-					);
+					summaryNode = <div className="mt-0.5 text-xs text-muted-foreground">{resource.summary}</div>;
 				}
 
 				let expandControl: ReactNode = null;
@@ -137,10 +119,7 @@ function DiffTreeView({
 				let attrsPanel: ReactNode = null;
 				if (hasAttrs && isOpen && resource.attributes !== undefined) {
 					attrsPanel = (
-						<ul
-							id={panelId}
-							className="space-y-2 border-t border-border bg-muted/40 px-3 py-2"
-						>
+						<ul id={panelId} className="space-y-2 border-t border-border bg-muted/40 px-3 py-2">
 							{resource.attributes.map((attr) => {
 								let replaceHint = "";
 								if (attr.forcesReplace === true) {
@@ -148,20 +127,14 @@ function DiffTreeView({
 								}
 
 								return (
-									<li
-										key={attr.path}
-										className="font-mono text-xs"
-									>
+									<li key={attr.path} className="font-mono text-xs">
 										<div className="text-muted-foreground">
 											{attr.path}
 											{replaceHint}
 										</div>
 										<div className="mt-1 grid gap-1 sm:grid-cols-[1fr_auto_1fr] sm:items-start">
 											<div className="rounded bg-destructive/10 px-2 py-1 text-foreground break-all">
-												<AttrValue
-													sensitive={attr.sensitive}
-													value={attr.before}
-												/>
+												<AttrValue sensitive={attr.sensitive} value={attr.before} />
 											</div>
 											<span
 												aria-hidden="true"
@@ -170,10 +143,7 @@ function DiffTreeView({
 												→
 											</span>
 											<div className="rounded bg-success/10 px-2 py-1 text-foreground break-all">
-												<AttrValue
-													sensitive={attr.sensitive}
-													value={attr.after}
-												/>
+												<AttrValue sensitive={attr.sensitive} value={attr.after} />
 											</div>
 										</div>
 									</li>
@@ -192,16 +162,11 @@ function DiffTreeView({
 						className="border-b border-border last:border-b-0"
 					>
 						<div className="flex items-start gap-2 px-3 py-2">
-							<Badge
-								variant={badgeVariantForKind(resource.kind)}
-								size="sm"
-							>
+							<Badge variant={badgeVariantForKind(resource.kind)} size="sm">
 								{labelForKind(resource.kind)}
 							</Badge>
 							<div className="min-w-0 flex-1">
-								<div className="font-mono text-sm text-foreground">
-									{resource.path}
-								</div>
+								<div className="font-mono text-sm text-foreground">{resource.path}</div>
 								{summaryNode}
 							</div>
 							{expandControl}

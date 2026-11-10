@@ -4,19 +4,14 @@ import { describe, expect, it } from "vitest";
 
 import type { SegmentedControlProps } from "./SegmentedControl.js";
 import { SegmentedControl } from "./SegmentedControl.js";
-import {
-	cssVarStyle,
-	expectNoA11yViolations,
-} from "../../test/component-harness.js";
+import { cssVarStyle, expectNoA11yViolations } from "../../test/component-harness.js";
 
 const UNIT_OPTIONS = [
 	{ value: "btc", label: "BTC" },
 	{ value: "sats", label: "sats" },
 ];
 
-function renderUnit(
-	overrides: Partial<SegmentedControlProps> = {},
-): ReturnType<typeof render> {
+function renderUnit(overrides: Partial<SegmentedControlProps> = {}): ReturnType<typeof render> {
 	return render(
 		<SegmentedControl
 			aria-label="Unit"
@@ -34,17 +29,9 @@ describe("SegmentedControl", () => {
 	it("renders a radiogroup with checked option", () => {
 		renderUnit();
 
-		expect(
-			screen.getByRole("radiogroup", { name: "Unit" }),
-		).toHaveAttribute("data-slot", "segmented-control");
-		expect(screen.getByRole("radio", { name: "BTC" })).toHaveAttribute(
-			"aria-checked",
-			"true",
-		);
-		expect(screen.getByRole("radio", { name: "sats" })).toHaveAttribute(
-			"aria-checked",
-			"false",
-		);
+		expect(screen.getByRole("radiogroup", { name: "Unit" })).toHaveAttribute("data-slot", "segmented-control");
+		expect(screen.getByRole("radio", { name: "BTC" })).toHaveAttribute("aria-checked", "true");
+		expect(screen.getByRole("radio", { name: "sats" })).toHaveAttribute("aria-checked", "false");
 	});
 
 	it("reports value changes on click", async () => {
@@ -59,10 +46,7 @@ describe("SegmentedControl", () => {
 
 		await user.click(screen.getByRole("radio", { name: "sats" }));
 		expect(last).toBe("sats");
-		expect(screen.getByRole("radio", { name: "sats" })).toHaveAttribute(
-			"aria-checked",
-			"true",
-		);
+		expect(screen.getByRole("radio", { name: "sats" })).toHaveAttribute("aria-checked", "true");
 	});
 
 	it.each([

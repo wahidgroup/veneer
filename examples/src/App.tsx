@@ -30,13 +30,7 @@ import {
 import { getDemo } from "./showcases/demoRegistry.js";
 import { ApiDemoBadge } from "./showcases/demoChrome.js";
 import { ShellChromeProvider, useShellChrome } from "./shellChromeContext.js";
-import {
-	CATALOG,
-	firstComponentId,
-	getCategory,
-	getComponent,
-	type CategoryId,
-} from "./catalog.js";
+import { CATALOG, firstComponentId, getCategory, getComponent, type CategoryId } from "./catalog.js";
 
 type ThemeMode = "light" | "dark";
 
@@ -168,18 +162,13 @@ function AppFrame() {
 	}
 
 	let railLabel = "Collapse controls";
-	let railIcon: ReactNode = (
-		<PanelRightClose className="size-4" aria-hidden="true" />
-	);
+	let railIcon: ReactNode = <PanelRightClose className="size-4" aria-hidden="true" />;
 	if (railCollapsed) {
 		railLabel = "Expand controls";
 		railIcon = <PanelRight className="size-4" aria-hidden="true" />;
 	}
 
-	const breadcrumbItems = [
-		{ label: "Examples" },
-		{ label: activeCategory.label },
-	];
+	const breadcrumbItems = [{ label: "Examples" }, { label: activeCategory.label }];
 	if (showTabs) {
 		breadcrumbItems.push({ label: activeComponent.label });
 	}
@@ -295,12 +284,7 @@ function AppFrame() {
 						<SideNav
 							collapsed={sidebarCollapsed}
 							items={sideItems}
-							renderLink={({
-								href,
-								children,
-								className,
-								...rest
-							}) => {
+							renderLink={({ href, children, className, ...rest }) => {
 								return (
 									<a
 										href={href}
@@ -308,17 +292,13 @@ function AppFrame() {
 										onClick={(event) => {
 											event.preventDefault();
 
-											const next = parseCategoryId(
-												href.replace("#", ""),
-											);
+											const next = parseCategoryId(href.replace("#", ""));
 											if (next === null) {
 												return;
 											}
 
 											setCategory(next);
-											setComponent(
-												firstComponentId(next),
-											);
+											setComponent(firstComponentId(next));
 										}}
 										{...rest}
 									>

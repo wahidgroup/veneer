@@ -5,10 +5,7 @@ import { cn } from "../../utils/cn.js";
 
 type ActivityDirection = "in" | "out";
 
-interface ActivityRowProps extends Omit<
-	ComponentProps<"article">,
-	"children" | "title"
-> {
+interface ActivityRowProps extends Omit<ComponentProps<"article">, "children" | "title"> {
 	direction: ActivityDirection;
 	amount: ReactNode;
 	status?: ReactNode;
@@ -23,20 +20,8 @@ interface ActivityRowProps extends Omit<
  * {@link BtcAmount} as `amount`, {@link TxStatusBadge} as `status`, and
  * {@link ActionMenu} as `end`.
  */
-function ActivityRow({
-	direction,
-	amount,
-	status,
-	title,
-	subtitle,
-	tags,
-	end,
-	className,
-	...rest
-}: ActivityRowProps) {
-	let directionIcon: ReactNode = (
-		<ArrowDownLeft className="size-4" aria-hidden="true" />
-	);
+function ActivityRow({ direction, amount, status, title, subtitle, tags, end, className, ...rest }: ActivityRowProps) {
+	let directionIcon: ReactNode = <ArrowDownLeft className="size-4" aria-hidden="true" />;
 
 	let directionLabel = "Incoming";
 	if (direction === "out") {
@@ -47,10 +32,7 @@ function ActivityRow({
 	let titleNode: ReactNode = null;
 	if (title !== undefined) {
 		titleNode = (
-			<div
-				data-slot="activity-row-title"
-				className="truncate text-sm font-medium text-foreground"
-			>
+			<div data-slot="activity-row-title" className="truncate text-sm font-medium text-foreground">
 				{title}
 			</div>
 		);
@@ -59,10 +41,7 @@ function ActivityRow({
 	let subtitleNode: ReactNode = null;
 	if (subtitle !== undefined) {
 		subtitleNode = (
-			<div
-				data-slot="activity-row-subtitle"
-				className="truncate text-xs text-muted-foreground"
-			>
+			<div data-slot="activity-row-subtitle" className="truncate text-xs text-muted-foreground">
 				{subtitle}
 			</div>
 		);
@@ -71,10 +50,7 @@ function ActivityRow({
 	let tagsNode: ReactNode = null;
 	if (tags !== undefined) {
 		tagsNode = (
-			<div
-				data-slot="activity-row-tags"
-				className="mt-1 flex flex-wrap items-center gap-1"
-			>
+			<div data-slot="activity-row-tags" className="mt-1 flex flex-wrap items-center gap-1">
 				{tags}
 			</div>
 		);
@@ -102,10 +78,7 @@ function ActivityRow({
 		<article
 			data-slot="activity-row"
 			data-direction={direction}
-			className={cn(
-				"flex w-full items-center gap-3 border-b border-border px-4 py-3",
-				className,
-			)}
+			className={cn("flex w-full items-center gap-3 border-b border-border px-4 py-3", className)}
 			{...rest}
 		>
 			<div
@@ -114,8 +87,7 @@ function ActivityRow({
 				aria-label={directionLabel}
 				className={cn(
 					"flex size-9 shrink-0 items-center justify-center rounded-full",
-					direction === "in" &&
-						"bg-success-muted text-success-muted-foreground",
+					direction === "in" && "bg-success-muted text-success-muted-foreground",
 					direction === "out" && "bg-muted text-muted-foreground",
 				)}
 			>
@@ -126,13 +98,8 @@ function ActivityRow({
 				{subtitleNode}
 				{tagsNode}
 			</div>
-			<div
-				data-slot="activity-row-amount"
-				className="flex shrink-0 flex-col items-end gap-1"
-			>
-				<div className="text-sm font-medium tabular-nums text-foreground">
-					{amount}
-				</div>
+			<div data-slot="activity-row-amount" className="flex shrink-0 flex-col items-end gap-1">
+				<div className="text-sm font-medium tabular-nums text-foreground">{amount}</div>
 				{statusNode}
 			</div>
 			{endNode}

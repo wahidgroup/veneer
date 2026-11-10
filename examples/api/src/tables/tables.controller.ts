@@ -1,22 +1,6 @@
 import { Transform, Type } from "class-transformer";
-import {
-	Body,
-	Controller,
-	Get,
-	Inject,
-	Param,
-	Post,
-	Query,
-} from "@nestjs/common";
-import {
-	ApiBody,
-	ApiOkResponse,
-	ApiParam,
-	ApiProperty,
-	ApiPropertyOptional,
-	ApiQuery,
-	ApiTags,
-} from "@nestjs/swagger";
+import { Body, Controller, Get, Inject, Param, Post, Query } from "@nestjs/common";
+import { ApiBody, ApiOkResponse, ApiParam, ApiProperty, ApiPropertyOptional, ApiQuery, ApiTags } from "@nestjs/swagger";
 import {
 	ArrayMinSize,
 	IsArray,
@@ -223,9 +207,7 @@ class ResetStateDto {
 @ApiTags("tables")
 @Controller("v1/tables")
 export class TablesController {
-	constructor(
-		@Inject(TablesService) private readonly tables: TablesService,
-	) {}
+	constructor(@Inject(TablesService) private readonly tables: TablesService) {}
 
 	@Get(":id")
 	@ApiParam({ name: "id", type: String })
@@ -239,10 +221,7 @@ export class TablesController {
 	@ApiQuery({ name: "filterRegion", required: false, type: String })
 	@ApiQuery({ name: "filterStatus", required: false, type: String })
 	@ApiOkResponse({ type: TableRowDto, isArray: true })
-	list(
-		@Param("id") id: string,
-		@Query() query: TableListQueryDto,
-	): ApiEnvelope<TableRow[]> {
+	list(@Param("id") id: string, @Query() query: TableListQueryDto): ApiEnvelope<TableRow[]> {
 		const result = this.tables.list(id, {
 			page: Number(query.page),
 			limit: Number(query.limit),
@@ -276,10 +255,7 @@ export class TablesController {
 	@ApiParam({ name: "id", type: String })
 	@ApiBody({ type: RemoveRowsDto })
 	@ApiOkResponse({ type: TableCountDto })
-	removeRows(
-		@Param("id") id: string,
-		@Body() body: RemoveRowsDto,
-	): TableCountDto {
+	removeRows(@Param("id") id: string, @Body() body: RemoveRowsDto): TableCountDto {
 		return this.tables.removeRows(id, body.ids);
 	}
 

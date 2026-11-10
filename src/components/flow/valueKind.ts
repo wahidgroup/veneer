@@ -4,10 +4,7 @@ import { findPort } from "./portLookup.js";
 /**
  * True when source and target ports share the same valueKind (or either is unset).
  */
-function sameValueKindConnection(
-	nodes: FlowNode[],
-	connection: FlowConnection,
-): boolean {
+function sameValueKindConnection(nodes: FlowNode[], connection: FlowConnection): boolean {
 	let sourceNode: FlowNode | undefined;
 	let targetNode: FlowNode | undefined;
 	for (const node of nodes) {
@@ -24,10 +21,7 @@ function sameValueKindConnection(
 	if (sourcePort === undefined || targetPort === undefined) {
 		return true;
 	}
-	if (
-		sourcePort.valueKind === undefined ||
-		targetPort.valueKind === undefined
-	) {
+	if (sourcePort.valueKind === undefined || targetPort.valueKind === undefined) {
 		return true;
 	}
 

@@ -15,16 +15,11 @@ interface DataTableHeaderCellProps<TData> {
 /**
  * One header cell: sort control, optional filter, optional resize handle.
  */
-function DataTableHeaderCell<TData>({
-	header,
-	ariaColIndex,
-}: DataTableHeaderCellProps<TData>) {
+function DataTableHeaderCell<TData>({ header, ariaColIndex }: DataTableHeaderCellProps<TData>) {
 	const canSort = header.column.getCanSort();
 	const sorted = header.column.getIsSorted();
 
-	let sortIcon: ReactNode = (
-		<ArrowUpDown className="size-3.5 opacity-40" aria-hidden="true" />
-	);
+	let sortIcon: ReactNode = <ArrowUpDown className="size-3.5 opacity-40" aria-hidden="true" />;
 	let ariaSort: "none" | "ascending" | "descending" | undefined;
 	if (canSort) {
 		ariaSort = "none";
@@ -39,15 +34,10 @@ function DataTableHeaderCell<TData>({
 
 	let headerInner: ReactNode = null;
 	if (!header.isPlaceholder) {
-		headerInner = flexRender(
-			header.column.columnDef.header,
-			header.getContext(),
-		);
+		headerInner = flexRender(header.column.columnDef.header, header.getContext());
 	}
 
-	let headerNode: ReactNode = (
-		<div className="flex items-center gap-1 font-medium">{headerInner}</div>
-	);
+	let headerNode: ReactNode = <div className="flex items-center gap-1 font-medium">{headerInner}</div>;
 	if (canSort) {
 		headerNode = (
 			<Button
@@ -66,14 +56,9 @@ function DataTableHeaderCell<TData>({
 	const meta = readColumnMeta(header.column.columnDef.meta);
 	let filterNode: ReactNode = null;
 	if (header.column.getCanFilter()) {
-		filterNode = renderColumnFilter(
-			header.column.id,
-			header.column.getFilterValue(),
-			meta,
-			(value) => {
-				header.column.setFilterValue(value);
-			},
-		);
+		filterNode = renderColumnFilter(header.column.id, header.column.getFilterValue(), meta, (value) => {
+			header.column.setFilterValue(value);
+		});
 	}
 
 	let resizeHandle: ReactNode = null;

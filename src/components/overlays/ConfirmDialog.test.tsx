@@ -59,10 +59,7 @@ describe("ConfirmDialog", () => {
 		const confirm = screen.getByRole("button", { name: "Destroy" });
 		expect(confirm).toBeDisabled();
 
-		await user.type(
-			screen.getByLabelText(/Type prod-api to confirm/),
-			"prod-api",
-		);
+		await user.type(screen.getByLabelText(/Type prod-api to confirm/), "prod-api");
 		expect(confirm).toBeEnabled();
 
 		await user.click(confirm);

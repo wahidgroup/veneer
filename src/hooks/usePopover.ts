@@ -1,11 +1,5 @@
 import type { CSSProperties } from "react";
-import {
-	useCallback,
-	useEffect,
-	useLayoutEffect,
-	useRef,
-	useState,
-} from "react";
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 
 import { useDismissLayer } from "../overlays/dismissLayerStack.js";
 import { captureFocusRestore, restoreFocus } from "../utils/focusScope.js";
@@ -58,13 +52,7 @@ function shouldRestoreTrigger(trigger: HTMLElement): boolean {
  * Positions a portaled panel under a trigger; dismisses on outside press or Escape.
  * The floating node is mounted only while open, so focus that was inside it reads as body at the restore site.
  */
-function usePopover({
-	open,
-	onClose,
-	offset,
-	padding,
-	matchTriggerWidth,
-}: UsePopoverOptions): UsePopoverReturn {
+function usePopover({ open, onClose, offset, padding, matchTriggerWidth }: UsePopoverOptions): UsePopoverReturn {
 	let resolvedOffset = offset;
 	resolvedOffset ??= 4;
 
@@ -79,8 +67,7 @@ function usePopover({
 	const onCloseRef = useRef(onClose);
 	const restoreTargetRef = useRef<HTMLElement | null>(null);
 	const dismissReasonRef = useRef<DismissReason | null>(null);
-	const [floatingStyles, setFloatingStyles] =
-		useState<CSSProperties>(HIDDEN_STYLES);
+	const [floatingStyles, setFloatingStyles] = useState<CSSProperties>(HIDDEN_STYLES);
 
 	useLayoutEffect(() => {
 		onCloseRef.current = onClose;
@@ -97,8 +84,7 @@ function usePopover({
 		const viewportWidth = window.innerWidth;
 		const viewportHeight = window.innerHeight;
 
-		const spaceBelow =
-			viewportHeight - rect.bottom - resolvedOffset - resolvedPadding;
+		const spaceBelow = viewportHeight - rect.bottom - resolvedOffset - resolvedPadding;
 		const spaceAbove = rect.top - resolvedOffset - resolvedPadding;
 		const naturalHeight = floating.scrollHeight;
 

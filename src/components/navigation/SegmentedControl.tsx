@@ -28,14 +28,10 @@ const segmentedControlVariants = cva(
 	},
 );
 
-type SegmentedControlSize = NonNullable<
-	VariantProps<typeof segmentedControlVariants>["size"]
->;
+type SegmentedControlSize = NonNullable<VariantProps<typeof segmentedControlVariants>["size"]>;
 
 interface SegmentedControlProps
-	extends
-		Omit<ComponentProps<"div">, "onChange" | "role">,
-		VariantProps<typeof segmentedControlVariants> {
+	extends Omit<ComponentProps<"div">, "onChange" | "role">, VariantProps<typeof segmentedControlVariants> {
 	options: SegmentedControlOption[];
 	value?: string;
 	defaultValue?: string;
@@ -107,10 +103,7 @@ function SegmentedControl({
 		});
 	}
 
-	function onRadioKeyDown(
-		event: KeyboardEvent<HTMLButtonElement>,
-		optionValue: string,
-	) {
+	function onRadioKeyDown(event: KeyboardEvent<HTMLButtonElement>, optionValue: string) {
 		const enabled = enabledOptions();
 		if (enabled.length === 0) {
 			return;
@@ -152,9 +145,7 @@ function SegmentedControl({
 			return;
 		}
 
-		const nextButton = group.querySelector<HTMLButtonElement>(
-			`[data-segment-value="${CSS.escape(next.value)}"]`,
-		);
+		const nextButton = group.querySelector<HTMLButtonElement>(`[data-segment-value="${CSS.escape(next.value)}"]`);
 		if (nextButton !== null) {
 			nextButton.focus();
 		}
@@ -169,10 +160,7 @@ function SegmentedControl({
 		<div
 			data-slot="segmented-control"
 			role="radiogroup"
-			className={cn(
-				segmentedControlVariants({ size: resolvedSize }),
-				className,
-			)}
+			className={cn(segmentedControlVariants({ size: resolvedSize }), className)}
 			{...rest}
 		>
 			{options.map((option) => {
@@ -239,9 +227,5 @@ function SegmentedControl({
 	);
 }
 
-export type {
-	SegmentedControlOption,
-	SegmentedControlProps,
-	SegmentedControlSize,
-};
+export type { SegmentedControlOption, SegmentedControlProps, SegmentedControlSize };
 export { SegmentedControl, segmentedControlVariants };

@@ -18,9 +18,7 @@ const ledgerAmountVariants = cva("text-sm font-medium tabular-nums", {
 	},
 });
 
-type LedgerEntryKind = NonNullable<
-	VariantProps<typeof ledgerAmountVariants>["entry"]
->;
+type LedgerEntryKind = NonNullable<VariantProps<typeof ledgerAmountVariants>["entry"]>;
 
 interface LedgerRowProps extends Omit<ComponentProps<"li">, "children"> {
 	description: ReactNode;
@@ -46,29 +44,14 @@ function entryKindForAmount(amountMinor: number): LedgerEntryKind {
  * balance. Negative `amountMinor` renders debit styling; positive renders
  * credit styling via {@link MoneyAmount}. Root is `li` for list composition.
  */
-function LedgerRow({
-	description,
-	amountMinor,
-	currency,
-	balanceMinor,
-	locale,
-	className,
-	...rest
-}: LedgerRowProps) {
+function LedgerRow({ description, amountMinor, currency, balanceMinor, locale, className, ...rest }: LedgerRowProps) {
 	const entryKind = entryKindForAmount(amountMinor);
 
 	let balanceNode: ReactNode = null;
 	if (balanceMinor !== undefined) {
 		balanceNode = (
-			<div
-				data-slot="ledger-row-balance"
-				className="text-xs text-muted-foreground"
-			>
-				<MoneyAmount
-					amountMinor={balanceMinor}
-					currency={currency}
-					locale={locale}
-				/>
+			<div data-slot="ledger-row-balance" className="text-xs text-muted-foreground">
+				<MoneyAmount amountMinor={balanceMinor} currency={currency} locale={locale} />
 			</div>
 		);
 	}
@@ -77,22 +60,13 @@ function LedgerRow({
 		<li
 			data-slot="ledger-row"
 			data-entry={entryKind}
-			className={cn(
-				"flex w-full items-start justify-between gap-4 border-b border-border px-4 py-3",
-				className,
-			)}
+			className={cn("flex w-full items-start justify-between gap-4 border-b border-border px-4 py-3", className)}
 			{...rest}
 		>
-			<div
-				data-slot="ledger-row-description"
-				className="min-w-0 flex-1 text-sm text-foreground"
-			>
+			<div data-slot="ledger-row-description" className="min-w-0 flex-1 text-sm text-foreground">
 				{description}
 			</div>
-			<div
-				data-slot="ledger-row-amount"
-				className="flex shrink-0 flex-col items-end gap-0.5"
-			>
+			<div data-slot="ledger-row-amount" className="flex shrink-0 flex-col items-end gap-0.5">
 				<MoneyAmount
 					amountMinor={amountMinor}
 					currency={currency}

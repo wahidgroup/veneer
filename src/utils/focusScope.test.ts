@@ -1,12 +1,6 @@
 import { afterEach, describe, expect, it } from "vitest";
 
-import {
-	captureFocusRestore,
-	focusInitial,
-	listFocusable,
-	restoreFocus,
-	trapTabKey,
-} from "./focusScope.js";
+import { captureFocusRestore, focusInitial, listFocusable, restoreFocus, trapTabKey } from "./focusScope.js";
 
 describe("focusScope", () => {
 	afterEach(() => {

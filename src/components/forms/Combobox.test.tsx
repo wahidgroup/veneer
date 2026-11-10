@@ -176,13 +176,7 @@ describe("Combobox", () => {
 	it("marks the selected single option in the listbox", async () => {
 		const user = userEvent.setup();
 
-		render(
-			<Combobox
-				options={OPTIONS}
-				value="eu-west-1"
-				onChange={ignoreSingle}
-			/>,
-		);
+		render(<Combobox options={OPTIONS} value="eu-west-1" onChange={ignoreSingle} />);
 
 		await user.click(screen.getByRole("combobox"));
 
@@ -198,47 +192,22 @@ describe("Combobox", () => {
 		{ invalid: true, name: "invalid" },
 		{ invalid: false, name: "valid" },
 	] as const)("sets aria-invalid when $name", ({ invalid }) => {
-		render(
-			<Combobox
-				options={OPTIONS}
-				value=""
-				invalid={invalid}
-				onChange={ignoreSingle}
-			/>,
-		);
-		expect(screen.getByRole("combobox")).toHaveAttribute(
-			"aria-invalid",
-			String(invalid),
-		);
+		render(<Combobox options={OPTIONS} value="" invalid={invalid} onChange={ignoreSingle} />);
+		expect(screen.getByRole("combobox")).toHaveAttribute("aria-invalid", String(invalid));
 	});
 
 	it("is disabled when disabled", () => {
-		render(
-			<Combobox
-				options={OPTIONS}
-				value=""
-				disabled
-				onChange={ignoreSingle}
-			/>,
-		);
+		render(<Combobox options={OPTIONS} value="" disabled onChange={ignoreSingle} />);
 		expect(screen.getByRole("combobox")).toBeDisabled();
 	});
 
 	it("wires FormField label via id", () => {
 		render(
 			<FormField label="Region" htmlFor="region-cb">
-				<Combobox
-					id="region-cb"
-					options={OPTIONS}
-					value=""
-					onChange={ignoreSingle}
-				/>
+				<Combobox id="region-cb" options={OPTIONS} value="" onChange={ignoreSingle} />
 			</FormField>,
 		);
-		expect(screen.getByLabelText(/Region/)).toHaveAttribute(
-			"id",
-			"region-cb",
-		);
+		expect(screen.getByLabelText(/Region/)).toHaveAttribute("id", "region-cb");
 	});
 
 	it("closes once on Escape", async () => {
@@ -277,9 +246,7 @@ describe("Combobox", () => {
 	});
 
 	it("has no accessibility violations when closed", async () => {
-		await expectNoA11yViolations(
-			<Combobox options={OPTIONS} value="" onChange={ignoreSingle} />,
-		);
+		await expectNoA11yViolations(<Combobox options={OPTIONS} value="" onChange={ignoreSingle} />);
 	});
 
 	it("has no accessibility violations when open", async () => {

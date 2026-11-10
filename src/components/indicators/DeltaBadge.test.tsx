@@ -21,9 +21,7 @@ describe("DeltaBadge", () => {
 	])("renders $direction with visible prefix", ({ direction, prefix }) => {
 		render(<DeltaBadge direction={direction} value="12.4%" />);
 
-		const badge = screen
-			.getByText("12.4%")
-			.closest("[data-slot='delta-badge']");
+		const badge = screen.getByText("12.4%").closest("[data-slot='delta-badge']");
 		expect(badge).not.toBeNull();
 		expect(badge).toHaveAttribute("data-direction", direction);
 		expect(badge?.textContent).toContain(prefix);

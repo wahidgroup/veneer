@@ -1,14 +1,8 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import type { ReactNode } from "react";
 
-import type {
-	DataTableColumn,
-	DataTableColumnMeta,
-} from "./DataTable.types.js";
-import {
-	COLUMN_FILTER_CLASS,
-	COLUMN_FILTER_SELECT_CLASS,
-} from "./DataTable.types.js";
+import type { DataTableColumn, DataTableColumnMeta } from "./DataTable.types.js";
+import { COLUMN_FILTER_CLASS, COLUMN_FILTER_SELECT_CLASS } from "./DataTable.types.js";
 
 /**
  * Narrow unknown to an array without assertion.
@@ -126,16 +120,12 @@ function renderColumnFilter(
 /**
  * Map Veneer columns to TanStack ColumnDef list.
  */
-function toColumnDefs<TData>(
-	columns: DataTableColumn<TData>[],
-): ColumnDef<TData, unknown>[] {
+function toColumnDefs<TData>(columns: DataTableColumn<TData>[]): ColumnDef<TData, unknown>[] {
 	const defs = columns.map((column) => {
 		const base = {
 			id: column.id,
 			enableSorting: column.enableSorting !== false,
-			enableColumnFilter:
-				column.enableColumnFilter === true ||
-				column.meta?.filterVariant !== undefined,
+			enableColumnFilter: column.enableColumnFilter === true || column.meta?.filterVariant !== undefined,
 			enableHiding: column.enableHiding !== false,
 			enableResizing: column.enableResizing !== false,
 			meta: column.meta,
@@ -148,10 +138,7 @@ function toColumnDefs<TData>(
 				}
 				return column.header;
 			},
-			cell: (info: {
-				row: { original: TData; id: string };
-				getValue: () => unknown;
-			}) => {
+			cell: (info: { row: { original: TData; id: string }; getValue: () => unknown }) => {
 				if (column.cell !== undefined) {
 					return column.cell({
 						row: info.row.original,
@@ -217,8 +204,7 @@ function buildSelectColumnDef<TData>(): ColumnDef<TData, unknown> {
 						if (element === null) {
 							return;
 						}
-						element.indeterminate =
-							table.getIsSomePageRowsSelected();
+						element.indeterminate = table.getIsSomePageRowsSelected();
 					}}
 					onChange={table.getToggleAllPageRowsSelectedHandler()}
 					className="size-4 accent-primary"
@@ -241,9 +227,4 @@ function buildSelectColumnDef<TData>(): ColumnDef<TData, unknown> {
 	return selectColumn;
 }
 
-export {
-	buildSelectColumnDef,
-	readColumnMeta,
-	renderColumnFilter,
-	toColumnDefs,
-};
+export { buildSelectColumnDef, readColumnMeta, renderColumnFilter, toColumnDefs };

@@ -45,20 +45,14 @@ interface MoneyInputProps extends Omit<ComponentProps<"div">, "onChange"> {
 	"aria-describedby"?: string;
 }
 
-function draftFromMinor(
-	amountMinor: number | null | undefined,
-	digits: number,
-	locale: string | undefined,
-): string {
+function draftFromMinor(amountMinor: number | null | undefined, digits: number, locale: string | undefined): string {
 	if (amountMinor === undefined || amountMinor === null) {
 		return "";
 	}
 	return formatMajorDraft(amountMinor, digits, locale);
 }
 
-function resolveCurrencies(
-	currencies: CurrencyUiCatalog | undefined,
-): CurrencyUiCatalog {
+function resolveCurrencies(currencies: CurrencyUiCatalog | undefined): CurrencyUiCatalog {
 	if (currencies !== undefined) {
 		return currencies;
 	}
@@ -81,11 +75,7 @@ function resolveAdornment(options: {
 		return { node: spec.startAdornment, inputPadClass: "pl-9" };
 	}
 
-	const text = currencyAdornmentText(
-		options.currency,
-		options.locale,
-		options.currencyDisplay,
-	);
+	const text = currencyAdornmentText(options.currency, options.locale, options.currencyDisplay);
 	let inputPadClass = "pl-9";
 	if (text.length > 1) {
 		inputPadClass = "pl-12";
@@ -264,11 +254,7 @@ function MoneyInput({
 	}
 
 	return (
-		<div
-			data-slot="money-input"
-			className={cn("relative w-full", className)}
-			{...rest}
-		>
+		<div data-slot="money-input" className={cn("relative w-full", className)} {...rest}>
 			{hiddenField}
 			<span className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
 				{adornment.node}

@@ -5,20 +5,17 @@ import { Inbox } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
 
-const emptyStateVariants = cva(
-	"flex w-full flex-col items-center justify-center text-center",
-	{
-		variants: {
-			size: {
-				sm: "gap-2 px-3 py-4",
-				md: "gap-3 px-6 py-10",
-			},
-		},
-		defaultVariants: {
-			size: "md",
+const emptyStateVariants = cva("flex w-full flex-col items-center justify-center text-center", {
+	variants: {
+		size: {
+			sm: "gap-2 px-3 py-4",
+			md: "gap-3 px-6 py-10",
 		},
 	},
-);
+	defaultVariants: {
+		size: "md",
+	},
+});
 
 const emptyStateTitleVariants = cva("font-semibold text-foreground", {
 	variants: {
@@ -56,10 +53,7 @@ const emptyStateIconVariants = cva("shrink-0 text-muted-foreground", {
 	},
 });
 
-interface EmptyStateProps
-	extends
-		Omit<ComponentProps<"div">, "title">,
-		VariantProps<typeof emptyStateVariants> {
+interface EmptyStateProps extends Omit<ComponentProps<"div">, "title">, VariantProps<typeof emptyStateVariants> {
 	title: ReactNode;
 	children?: ReactNode;
 	icon?: ReactNode;
@@ -71,15 +65,7 @@ interface EmptyStateProps
  * Pass `action` as composed Button (or link) chrome. Use `size="sm"` in
  * DataTable `empty`. Busy waits stay on Loading; errors stay on ErrorState.
  */
-function EmptyState({
-	title,
-	children,
-	icon,
-	action,
-	size,
-	className,
-	...rest
-}: EmptyStateProps) {
+function EmptyState({ title, children, icon, action, size, className, ...rest }: EmptyStateProps) {
 	let resolvedSize: "sm" | "md" = "md";
 	if (size === "sm") {
 		resolvedSize = "sm";
@@ -113,11 +99,7 @@ function EmptyState({
 
 	let actionNode: ReactNode = null;
 	if (action !== undefined) {
-		actionNode = (
-			<div className="mt-1 flex flex-wrap justify-center gap-2">
-				{action}
-			</div>
-		);
+		actionNode = <div className="mt-1 flex flex-wrap justify-center gap-2">{action}</div>;
 	}
 
 	return (
@@ -125,19 +107,12 @@ function EmptyState({
 			data-slot="empty-state"
 			data-size={resolvedSize}
 			role="status"
-			className={cn(
-				emptyStateVariants({ size: resolvedSize }),
-				className,
-			)}
+			className={cn(emptyStateVariants({ size: resolvedSize }), className)}
 			{...rest}
 		>
 			{iconNode}
 			<div className="flex max-w-md flex-col items-center gap-1">
-				<div
-					className={emptyStateTitleVariants({ size: resolvedSize })}
-				>
-					{title}
-				</div>
+				<div className={emptyStateTitleVariants({ size: resolvedSize })}>{title}</div>
 				{descriptionNode}
 			</div>
 			{actionNode}

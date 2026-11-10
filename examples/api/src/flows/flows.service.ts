@@ -1,17 +1,7 @@
 import { BadRequestException, Injectable } from "@nestjs/common";
 
-import type {
-	FlowDemoEdge,
-	FlowDemoNode,
-	FlowDemoRun,
-	FlowDemoSnapshot,
-} from "./flow-types.js";
-import {
-	DEFAULT_MIN_AMOUNT,
-	MAX_ADDRESS_LENGTH,
-	MAX_DEPOSIT_AMOUNT,
-	MAX_MIN_AMOUNT,
-} from "./flow-types.js";
+import type { FlowDemoEdge, FlowDemoNode, FlowDemoRun, FlowDemoSnapshot } from "./flow-types.js";
+import { DEFAULT_MIN_AMOUNT, MAX_ADDRESS_LENGTH, MAX_DEPOSIT_AMOUNT, MAX_MIN_AMOUNT } from "./flow-types.js";
 
 function emptyRun(): FlowDemoRun {
 	return {
@@ -244,11 +234,9 @@ export class FlowsService {
 				...this.run,
 				nodeStates: { ...this.run.nodeStates },
 				outputsByNode: Object.fromEntries(
-					Object.entries(this.run.outputsByNode).map(
-						([id, fields]) => {
-							return [id, { ...fields }];
-						},
-					),
+					Object.entries(this.run.outputsByNode).map(([id, fields]) => {
+						return [id, { ...fields }];
+					}),
 				),
 			},
 		};
@@ -262,17 +250,8 @@ export class FlowsService {
 		return this.getDemo();
 	}
 
-	patchNodeConfig(
-		nodeId: string,
-		config: Record<string, number | string>,
-	): FlowDemoSnapshot {
-		const allowedIds = new Set([
-			"account-listener",
-			"split-half",
-			"send-a",
-			"send-b",
-			"return-dust",
-		]);
+	patchNodeConfig(nodeId: string, config: Record<string, number | string>): FlowDemoSnapshot {
+		const allowedIds = new Set(["account-listener", "split-half", "send-a", "send-b", "return-dust"]);
 		if (!allowedIds.has(nodeId)) {
 			throw new BadRequestException("unknown node");
 		}
@@ -285,34 +264,20 @@ export class FlowsService {
 		}
 
 		if (nodeId !== "split-half") {
-			throw new BadRequestException(
-				"node does not accept config patches",
-			);
+			throw new BadRequestException("node does not accept config patches");
 		}
 
 		const rawMin = config.minAmount;
-		if (
-			typeof rawMin !== "number" ||
-			!Number.isInteger(rawMin) ||
-			rawMin < 0
-		) {
-			throw new BadRequestException(
-				"minAmount must be a non-negative integer",
-			);
+		if (typeof rawMin !== "number" || !Number.isInteger(rawMin) || rawMin < 0) {
+			throw new BadRequestException("minAmount must be a non-negative integer");
 		}
 		if (rawMin > MAX_MIN_AMOUNT) {
-			throw new BadRequestException(
-				`minAmount must be <= ${String(MAX_MIN_AMOUNT)}`,
-			);
+			throw new BadRequestException(`minAmount must be <= ${String(MAX_MIN_AMOUNT)}`);
 		}
 
 		const keys = Object.keys(config);
 		for (const key of keys) {
-			if (
-				key === "__proto__" ||
-				key === "constructor" ||
-				key === "prototype"
-			) {
+			if (key === "__proto__" || key === "constructor" || key === "prototype") {
 				throw new BadRequestException("invalid config key");
 			}
 			if (key !== "minAmount") {
@@ -335,27 +300,17 @@ export class FlowsService {
 	}
 
 	trigger(amount: number, address: string): FlowDemoSnapshot {
-		if (
-			!Number.isFinite(amount) ||
-			amount < 0 ||
-			!Number.isInteger(amount)
-		) {
-			throw new BadRequestException(
-				"amount must be a non-negative integer",
-			);
+		if (!Number.isFinite(amount) || amount < 0 || !Number.isInteger(amount)) {
+			throw new BadRequestException("amount must be a non-negative integer");
 		}
 		if (amount > MAX_DEPOSIT_AMOUNT) {
-			throw new BadRequestException(
-				`amount must be <= ${String(MAX_DEPOSIT_AMOUNT)}`,
-			);
+			throw new BadRequestException(`amount must be <= ${String(MAX_DEPOSIT_AMOUNT)}`);
 		}
 		if (typeof address !== "string" || address.trim().length === 0) {
 			throw new BadRequestException("address must be a non-empty string");
 		}
 		if (address.trim().length > MAX_ADDRESS_LENGTH) {
-			throw new BadRequestException(
-				`address must be <= ${String(MAX_ADDRESS_LENGTH)} characters`,
-			);
+			throw new BadRequestException(`address must be <= ${String(MAX_ADDRESS_LENGTH)} characters`);
 		}
 
 		const trimmed = address.trim();

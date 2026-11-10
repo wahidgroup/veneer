@@ -1,9 +1,4 @@
-import type {
-	ComponentProps,
-	KeyboardEvent,
-	PointerEvent,
-	ReactNode,
-} from "react";
+import type { ComponentProps, KeyboardEvent, PointerEvent, ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 
 import { cn } from "../../utils/cn.js";
@@ -177,11 +172,7 @@ function ResizablePanel({
 			}
 
 			const deltaPercent = (deltaPx / extent) * 100;
-			const next = clampSize(
-				drag.startSize + deltaPercent,
-				resolvedMinSize,
-				resolvedMaxSize,
-			);
+			const next = clampSize(drag.startSize + deltaPercent, resolvedMinSize, resolvedMaxSize);
 			setSize(next);
 		}
 
@@ -268,10 +259,7 @@ function ResizablePanel({
 				onPointerDown={onHandlePointerDown}
 			/>
 			{/* eslint-enable jsx-a11y/no-noninteractive-element-interactions, jsx-a11y/no-noninteractive-tabindex */}
-			<div
-				data-slot="resizable-panel-end"
-				className="min-h-0 min-w-0 flex-1 overflow-auto"
-			>
+			<div data-slot="resizable-panel-end" className="min-h-0 min-w-0 flex-1 overflow-auto">
 				{end}
 			</div>
 		</div>

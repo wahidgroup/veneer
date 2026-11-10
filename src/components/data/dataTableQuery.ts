@@ -1,10 +1,6 @@
 import type { Updater } from "@tanstack/react-table";
 
-import type {
-	DataTableColumnFilter,
-	DataTableQuery,
-	DataTableSort,
-} from "./DataTable.types.js";
+import type { DataTableColumnFilter, DataTableQuery, DataTableSort } from "./DataTable.types.js";
 import { DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE } from "./DataTable.types.js";
 
 /**
@@ -135,10 +131,4 @@ function buildQueryKey(query: DataTableQuery, pageSize: number): string {
 	return key;
 }
 
-export {
-	buildDefaultQuery,
-	buildQueryKey,
-	clampPageSize,
-	queriesEqual,
-	resolveUpdater,
-};
+export { buildDefaultQuery, buildQueryKey, clampPageSize, queriesEqual, resolveUpdater };

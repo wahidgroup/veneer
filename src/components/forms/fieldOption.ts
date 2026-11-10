@@ -14,10 +14,7 @@ interface FieldOption {
  */
 type OptionFilterMode = "local" | "remote";
 
-function findOptionLabel(
-	options: FieldOption[],
-	value: string | undefined,
-): string {
+function findOptionLabel(options: FieldOption[], value: string | undefined): string {
 	if (value === undefined) {
 		return "";
 	}
@@ -50,10 +47,7 @@ function filterFieldOptions(
 	}
 
 	return options.filter((option) => {
-		return (
-			option.value.toLowerCase().includes(normalized) ||
-			option.label.toLowerCase().includes(normalized)
-		);
+		return option.value.toLowerCase().includes(normalized) || option.label.toLowerCase().includes(normalized);
 	});
 }
 

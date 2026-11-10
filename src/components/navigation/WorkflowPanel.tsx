@@ -14,13 +14,7 @@ interface WorkflowPanelProps extends Omit<ComponentProps<"div">, "title"> {
  * Step body. Inactive panels stay mounted and hidden (WCAG 3.3.7).
  * Title receives focus after navigation, not on initial mount.
  */
-function WorkflowPanel({
-	value,
-	title,
-	children,
-	className,
-	...rest
-}: WorkflowPanelProps) {
+function WorkflowPanel({ value, title, children, className, ...rest }: WorkflowPanelProps) {
 	const { value: active, baseId, focusEpoch } = useWorkflowContext();
 	const titleRef = useRef<HTMLHeadingElement>(null);
 	const selected = active === value;

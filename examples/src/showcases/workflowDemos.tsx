@@ -1,19 +1,6 @@
-import {
-	createContext,
-	useContext,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-	type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
-import type {
-	LogViewerLevel,
-	LogViewerLine,
-	WorkflowOrientation,
-	WorkflowStepStatus,
-} from "@wahidgroup/veneer";
+import type { LogViewerLevel, LogViewerLine, WorkflowOrientation, WorkflowStepStatus } from "@wahidgroup/veneer";
 import type { DiffResource } from "@wahidgroup/veneer/diff";
 import {
 	Button,
@@ -32,17 +19,8 @@ import {
 import { DiffView, PlanSummary } from "@wahidgroup/veneer/diff";
 
 import { Canvas, DemoRow, DemoSectionHeader, RailPanel } from "./demoChrome.js";
-import {
-	getLogStreamStatus,
-	resetLogStream,
-	startLogStream,
-	stopLogStream,
-} from "../api/client.js";
-import {
-	connectLogs,
-	type LogLine,
-	type LogsConnectionState,
-} from "../api/logs-ws.js";
+import { getLogStreamStatus, resetLogStream, startLogStream, stopLogStream } from "../api/client.js";
+import { connectLogs, type LogLine, type LogsConnectionState } from "../api/logs-ws.js";
 
 interface EdgeNode {
 	id: string;
@@ -72,11 +50,7 @@ function useWorkflowDemo(): WorkflowDemoValue {
 	return value;
 }
 
-function statusForStep(
-	id: string,
-	current: string,
-	order: string[],
-): WorkflowStepStatus {
+function statusForStep(id: string, current: string, order: string[]): WorkflowStepStatus {
 	if (id === current) {
 		return "current";
 	}
@@ -92,8 +66,7 @@ function statusForStep(
 
 function WorkflowDemoProvider({ children }: { children: ReactNode }) {
 	const [variant, setVariantState] = useState<WorkflowDemoVariant>("linear");
-	const [orientation, setOrientation] =
-		useState<WorkflowOrientation>("horizontal");
+	const [orientation, setOrientation] = useState<WorkflowOrientation>("horizontal");
 	const [nodes, setNodes] = useState<EdgeNode[]>(() => {
 		return [
 			{ id: "edge-1", name: "edge-1" },
@@ -195,11 +168,7 @@ interface WorkflowDemoState {
 	orientation: WorkflowOrientation;
 	nodes: EdgeNode[];
 	names: Record<string, string>;
-	setNames: (
-		update:
-			| Record<string, string>
-			| ((prev: Record<string, string>) => Record<string, string>),
-	) => void;
+	setNames: (update: Record<string, string> | ((prev: Record<string, string>) => Record<string, string>)) => void;
 	step: string;
 	setStep: (value: string) => void;
 	region: string;
@@ -251,28 +220,15 @@ function LinearDeployFlow() {
 	}
 
 	return (
-		<Workflow
-			value={demo.step}
-			onValueChange={demo.setStep}
-			orientation={demo.orientation}
-		>
+		<Workflow value={demo.step} onValueChange={demo.setStep} orientation={demo.orientation}>
 			<WorkflowTrack aria-label="Deploy progress">
-				<WorkflowStep
-					value="region"
-					status={statusForStep("region", demo.step, order)}
-				>
+				<WorkflowStep value="region" status={statusForStep("region", demo.step, order)}>
 					Region
 				</WorkflowStep>
-				<WorkflowStep
-					value="plan"
-					status={statusForStep("plan", demo.step, order)}
-				>
+				<WorkflowStep value="plan" status={statusForStep("plan", demo.step, order)}>
 					Plan
 				</WorkflowStep>
-				<WorkflowStep
-					value="confirm"
-					status={statusForStep("confirm", demo.step, order)}
-				>
+				<WorkflowStep value="confirm" status={statusForStep("confirm", demo.step, order)}>
 					Confirm
 				</WorkflowStep>
 			</WorkflowTrack>
@@ -359,16 +315,9 @@ function MultiNodeFlow() {
 	}
 
 	return (
-		<Workflow
-			value={demo.step}
-			onValueChange={demo.setStep}
-			orientation={demo.orientation}
-		>
+		<Workflow value={demo.step} onValueChange={demo.setStep} orientation={demo.orientation}>
 			<WorkflowTrack aria-label="Cluster setup">
-				<WorkflowStep
-					value="cluster"
-					status={statusForStep("cluster", demo.step, stepIds)}
-				>
+				<WorkflowStep value="cluster" status={statusForStep("cluster", demo.step, stepIds)}>
 					Cluster
 				</WorkflowStep>
 				{demo.nodes.map((node) => {
@@ -376,27 +325,18 @@ function MultiNodeFlow() {
 						<WorkflowStep
 							key={node.id}
 							value={`node:${node.id}`}
-							status={statusForStep(
-								`node:${node.id}`,
-								demo.step,
-								stepIds,
-							)}
+							status={statusForStep(`node:${node.id}`, demo.step, stepIds)}
 						>
 							Node - {node.name}
 						</WorkflowStep>
 					);
 				})}
-				<WorkflowStep
-					value="review"
-					status={statusForStep("review", demo.step, stepIds)}
-				>
+				<WorkflowStep value="review" status={statusForStep("review", demo.step, stepIds)}>
 					Review
 				</WorkflowStep>
 			</WorkflowTrack>
 			<WorkflowPanel value="cluster" title="Cluster">
-				<p className="text-sm text-muted-foreground">
-					Choose a region and capacity profile for the cluster.
-				</p>
+				<p className="text-sm text-muted-foreground">Choose a region and capacity profile for the cluster.</p>
 			</WorkflowPanel>
 			{demo.nodes.map((node) => {
 				const stepId = `node:${node.id}`;
@@ -411,15 +351,9 @@ function MultiNodeFlow() {
 				}
 
 				return (
-					<WorkflowPanel
-						key={node.id}
-						value={stepId}
-						title={`Node - ${node.name}`}
-					>
+					<WorkflowPanel key={node.id} value={stepId} title={`Node - ${node.name}`}>
 						<div className="flex max-w-sm flex-col gap-2">
-							<Label htmlFor={`node-name-${node.id}`}>
-								Hostname
-							</Label>
+							<Label htmlFor={`node-name-${node.id}`}>Hostname</Label>
 							<Input
 								id={`node-name-${node.id}`}
 								value={nameValue}
@@ -479,20 +413,11 @@ function WorkflowKnobs() {
 		}
 
 		addNodeRow = (
-			<DemoRow
-				label="Nodes"
-				description="Add or remove opaque node:* step ids. At least one node remains."
-			>
+			<DemoRow label="Nodes" description="Add or remove opaque node:* step ids. At least one node remains.">
 				<Button type="button" size="sm" onClick={demo.addNode}>
 					Add node
 				</Button>
-				<Button
-					type="button"
-					size="sm"
-					variant="outlined"
-					disabled={removeDisabled}
-					onClick={demo.removeNode}
-				>
+				<Button type="button" size="sm" variant="outlined" disabled={removeDisabled} onClick={demo.removeNode}>
 					Remove node
 				</Button>
 			</DemoRow>
@@ -630,12 +555,7 @@ function DiffViewCanvas() {
 			</DemoRow>
 			<DemoRow label="Tree (IaC)">
 				<div className="w-full max-w-2xl">
-					<DiffView
-						mode="tree"
-						resources={DEMO_RESOURCES}
-						defaultExpanded
-						aria-label="Resource changes"
-					/>
+					<DiffView mode="tree" resources={DEMO_RESOURCES} defaultExpanded aria-label="Resource changes" />
 				</div>
 			</DemoRow>
 		</Canvas>
@@ -656,10 +576,7 @@ function PlanSummaryCanvas() {
 		<Canvas>
 			<DemoRow label="Apply gate">
 				<div className="w-full max-w-2xl">
-					<PlanSummary
-						resources={DEMO_RESOURCES}
-						title="Stack plan"
-					/>
+					<PlanSummary resources={DEMO_RESOURCES} title="Stack plan" />
 				</div>
 			</DemoRow>
 		</Canvas>
@@ -720,25 +637,13 @@ function LogViewerDemoProvider({ children }: { children: ReactNode }) {
 	const [streaming, setStreamingState] = useState(false);
 	const [maxLines, setMaxLines] = useState(50);
 	const [lines, setLines] = useState<LogViewerLine[]>([]);
-	const [connection, setConnection] =
-		useState<LogsConnectionState>("connecting");
+	const [connection, setConnection] = useState<LogsConnectionState>("connecting");
 	const [queries, setQueries] = useState<string[]>([]);
-	const [levels, setLevels] = useState<LogViewerLevel[]>([
-		"debug",
-		"info",
-		"warn",
-		"error",
-	]);
+	const [levels, setLevels] = useState<LogViewerLevel[]>(["debug", "info", "warn", "error"]);
 	const [from, setFrom] = useState("");
 	const [to, setTo] = useState("");
 	const sendSubscribeRef = useRef<
-		| ((message: {
-				levels?: LogViewerLevel[];
-				queries?: string[];
-				from?: string;
-				to?: string;
-		  }) => void)
-		| null
+		((message: { levels?: LogViewerLevel[]; queries?: string[]; from?: string; to?: string }) => void) | null
 	>(null);
 
 	useEffect(() => {
@@ -851,9 +756,7 @@ function LogViewerCanvas() {
 					apiDriven
 				/>
 				<Canvas>
-					<p className="text-sm text-muted-foreground">
-						Connection: {demo.connection}.
-					</p>
+					<p className="text-sm text-muted-foreground">Connection: {demo.connection}.</p>
 					<div className="w-full max-w-3xl">
 						<LogViewer
 							aria-label="Apply logs"
@@ -880,19 +783,9 @@ function LogViewerKnobs() {
 	const demo = useLogViewerDemo();
 
 	return (
-		<RailPanel
-			title="LogViewer"
-			description="HTTP knobs control Nest stream. Filters resubscribe on WS."
-		>
-			<DemoRow
-				label="Stream"
-				description="POST /v1/logs/stream/start|stop"
-			>
-				<Toggle
-					label="Streaming"
-					checked={demo.streaming}
-					onCheckedChange={demo.setStreaming}
-				/>
+		<RailPanel title="LogViewer" description="HTTP knobs control Nest stream. Filters resubscribe on WS.">
+			<DemoRow label="Stream" description="POST /v1/logs/stream/start|stop">
+				<Toggle label="Streaming" checked={demo.streaming} onCheckedChange={demo.setStreaming} />
 			</DemoRow>
 			<DemoRow label="Reset" description="POST /v1/logs/stream/reset">
 				<Button
@@ -906,10 +799,7 @@ function LogViewerKnobs() {
 					Reset
 				</Button>
 			</DemoRow>
-			<DemoRow
-				label="Max lines"
-				description="Display truncate of parent buffer."
-			>
+			<DemoRow label="Max lines" description="Display truncate of parent buffer.">
 				<Select
 					id="log-max-lines"
 					aria-label="Max lines"

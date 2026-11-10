@@ -11,13 +11,7 @@ interface SkipLinkProps extends ComponentProps<"a"> {
  * Bypass link to main content (WCAG 2.4.1 / technique G1). Place as the
  * first focusable control on the page. Hidden until focused.
  */
-function SkipLink({
-	href,
-	children,
-	className,
-	onClick,
-	...rest
-}: SkipLinkProps) {
+function SkipLink({ href, children, className, onClick, ...rest }: SkipLinkProps) {
 	let resolvedHref = href;
 	resolvedHref ??= "#main";
 

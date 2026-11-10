@@ -1,10 +1,4 @@
-import {
-	createContext,
-	useContext,
-	useState,
-	type CSSProperties,
-	type ReactNode,
-} from "react";
+import { createContext, useContext, useState, type CSSProperties, type ReactNode } from "react";
 
 import {
 	Button,
@@ -25,11 +19,9 @@ function AppShellCanvas() {
 	return (
 		<Canvas>
 			<p className="max-w-xl text-sm text-muted-foreground">
-				This examples app is the live AppShell: TopNav header, sticky
-				SideNav and Controls rail, and page-level scroll for main.
-				Toggle the menu to collapse the left nav; use the panel control
-				to collapse the rail. Rail position End|Bottom docks the knobs
-				pane (comfort pushes layout; compact still overlays).
+				This examples app is the live AppShell: TopNav header, sticky SideNav and Controls rail, and page-level
+				scroll for main. Toggle the menu to collapse the left nav; use the panel control to collapse the rail.
+				Rail position End|Bottom docks the knobs pane (comfort pushes layout; compact still overlays).
 			</p>
 		</Canvas>
 	);
@@ -74,8 +66,8 @@ function TopNavCanvas() {
 	return (
 		<Canvas>
 			<p className="max-w-xl text-sm text-muted-foreground">
-				TopNav brand is @wahidgroup/veneer. Menu button toggles SideNav
-				collapse. End slot holds the theme Moon/Sun control.
+				TopNav brand is @wahidgroup/veneer. Menu button toggles SideNav collapse. End slot holds the theme
+				Moon/Sun control.
 			</p>
 		</Canvas>
 	);
@@ -94,21 +86,15 @@ function SideNavCanvas() {
 	return (
 		<Canvas>
 			<p className="max-w-xl text-sm text-muted-foreground">
-				Left SideNav switches categories (Primitives, Forms, Combobox,
-				Shell). Active item uses aria-current. Collapsed mode keeps
-				aria-label from the item label.
+				Left SideNav switches categories (Primitives, Forms, Combobox, Shell). Active item uses aria-current.
+				Collapsed mode keeps aria-label from the item label.
 			</p>
 		</Canvas>
 	);
 }
 
 function SideNavKnobs() {
-	return (
-		<RailPanel
-			title="SideNav"
-			description="Left category list. Collapse via TopNav menu for icon rail."
-		/>
-	);
+	return <RailPanel title="SideNav" description="Left category list. Collapse via TopNav menu for icon rail." />;
 }
 
 function SkipLinkCanvas() {
@@ -118,13 +104,9 @@ function SkipLinkCanvas() {
 				<div className="relative w-full max-w-md rounded-md border border-border p-4">
 					<SkipLink href="#skip-demo-main" />
 					<p className="mb-3 text-sm text-muted-foreground">
-						Tab into this panel. SkipLink appears on focus, then
-						activates focus on the main landmark below.
+						Tab into this panel. SkipLink appears on focus, then activates focus on the main landmark below.
 					</p>
-					<a
-						href="#skip-demo-main"
-						className="mr-3 text-sm text-primary underline"
-					>
+					<a href="#skip-demo-main" className="mr-3 text-sm text-primary underline">
 						Nav link
 					</a>
 					<main
@@ -153,20 +135,15 @@ function BreadcrumbsCanvas() {
 	return (
 		<Canvas>
 			<p className="max-w-xl text-sm text-muted-foreground">
-				Breadcrumbs above the component tabs track Examples, the active
-				category, and the active component. Last crumb is plain text.
+				Breadcrumbs above the component tabs track Examples, the active category, and the active component. Last
+				crumb is plain text.
 			</p>
 		</Canvas>
 	);
 }
 
 function BreadcrumbsKnobs() {
-	return (
-		<RailPanel
-			title="Breadcrumbs"
-			description="Trail above component tabs: Examples > category > component."
-		/>
-	);
+	return <RailPanel title="Breadcrumbs" description="Trail above component tabs: Examples > category > component." />;
 }
 
 function ToolbarSelectCanvas() {
@@ -177,9 +154,7 @@ function ToolbarSelectCanvas() {
 		<Canvas>
 			<DemoRow label="TopNav start compose">
 				<TopNav
-					brand={
-						<span className="text-sm font-semibold">console</span>
-					}
+					brand={<span className="text-sm font-semibold">console</span>}
 					start={
 						<div className="flex items-center gap-1">
 							<ToolbarSelect
@@ -239,8 +214,7 @@ function ToolbarSelectKnobs() {
 	);
 }
 
-type SegmentColorSlot =
-	"trackBg" | "activeBg" | "activeFg" | "inactiveFg" | "activeRing";
+type SegmentColorSlot = "trackBg" | "activeBg" | "activeFg" | "inactiveFg" | "activeRing";
 
 interface SegmentColorState {
 	trackBg: string;
@@ -289,9 +263,7 @@ function useSegmentedControlDemo() {
 }
 
 function SegmentedControlDemoProvider({ children }: { children: ReactNode }) {
-	const [colors, setColors] = useState<SegmentColorState>(
-		SEGMENT_COLOR_DEFAULTS,
-	);
+	const [colors, setColors] = useState<SegmentColorState>(SEGMENT_COLOR_DEFAULTS);
 	const [slot, setSlot] = useState<SegmentColorSlot>("activeBg");
 
 	return (
@@ -492,12 +464,7 @@ function StepperCanvas() {
 }
 
 function StepperKnobs() {
-	return (
-		<RailPanel
-			title="Stepper"
-			description="Linear form wizard. Not Workflow (ops deploy track)."
-		/>
-	);
+	return <RailPanel title="Stepper" description="Linear form wizard. Not Workflow (ops deploy track)." />;
 }
 
 export {

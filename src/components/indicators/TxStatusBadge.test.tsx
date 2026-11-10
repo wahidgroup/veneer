@@ -36,15 +36,10 @@ describe("TxStatusBadge", () => {
 				Confirming
 			</TxStatusBadge>,
 		);
-		expect(screen.getByText("Confirming")).toHaveAttribute(
-			"data-confirmations",
-			"3",
-		);
+		expect(screen.getByText("Confirming")).toHaveAttribute("data-confirmations", "3");
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<TxStatusBadge status="confirmed">Confirmed</TxStatusBadge>,
-		);
+		await expectNoA11yViolations(<TxStatusBadge status="confirmed">Confirmed</TxStatusBadge>);
 	});
 });

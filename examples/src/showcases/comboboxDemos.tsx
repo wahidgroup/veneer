@@ -1,21 +1,10 @@
 import type { ReactNode } from "react";
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 
-import {
-	Button,
-	Combobox,
-	FormField,
-	Toggle,
-	useDebounce,
-} from "@wahidgroup/veneer";
+import { Button, Combobox, FormField, Toggle, useDebounce } from "@wahidgroup/veneer";
 
 import type { InstanceOption } from "../api/client.js";
-import {
-	addInstanceOption,
-	listInstanceOptions,
-	removeInstanceOption,
-	resetInstanceOptions,
-} from "../api/client.js";
+import { addInstanceOption, listInstanceOptions, removeInstanceOption, resetInstanceOptions } from "../api/client.js";
 import { Canvas, DemoRow, DemoSectionHeader, RailPanel } from "./demoChrome.js";
 
 const AZ_OPTIONS = [
@@ -286,11 +275,7 @@ function SingleKnobs() {
 				label="Require instance type"
 				description="When on, an empty selection shows the required-field error."
 			>
-				<Toggle
-					label="Enabled"
-					checked={demo.showError}
-					onCheckedChange={demo.setShowError}
-				/>
+				<Toggle label="Enabled" checked={demo.showError} onCheckedChange={demo.setShowError} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -314,11 +299,7 @@ function useMultiDemo() {
 function MultiDemoProvider({ children }: { children: ReactNode }) {
 	const [secondaryAzs, setSecondaryAzs] = useState<string[]>([]);
 
-	return (
-		<MultiDemoContext.Provider value={{ secondaryAzs, setSecondaryAzs }}>
-			{children}
-		</MultiDemoContext.Provider>
-	);
+	return <MultiDemoContext.Provider value={{ secondaryAzs, setSecondaryAzs }}>{children}</MultiDemoContext.Provider>;
 }
 
 function MultiCanvas() {
@@ -327,11 +308,7 @@ function MultiCanvas() {
 	return (
 		<Canvas>
 			<div className="max-w-md">
-				<FormField
-					label="Secondary AZs"
-					htmlFor="demo-secondary-azs"
-					hint="Click a chip to remove"
-				>
+				<FormField label="Secondary AZs" htmlFor="demo-secondary-azs" hint="Click a chip to remove">
 					<Combobox
 						id="demo-secondary-azs"
 						multiple
@@ -377,9 +354,7 @@ function StatesDemoProvider({ children }: { children: ReactNode }) {
 	const [loading, setLoading] = useState(false);
 
 	return (
-		<StatesDemoContext.Provider
-			value={{ instance, setInstance, loading, setLoading }}
-		>
+		<StatesDemoContext.Provider value={{ instance, setInstance, loading, setLoading }}>
 			{children}
 		</StatesDemoContext.Provider>
 	);
@@ -418,13 +393,7 @@ function StatesCanvas() {
 						/>
 					</FormField>
 					<FormField label="Disabled" htmlFor="demo-disabled">
-						<Combobox
-							id="demo-disabled"
-							options={AZ_OPTIONS}
-							value="b"
-							disabled
-							placeholder="Disabled"
-						/>
+						<Combobox id="demo-disabled" options={AZ_OPTIONS} value="b" disabled placeholder="Disabled" />
 					</FormField>
 				</div>
 			</div>
@@ -436,19 +405,9 @@ function StatesKnobs() {
 	const demo = useStatesDemo();
 
 	return (
-		<RailPanel
-			title="States"
-			description="Loading panel, non-searchable list, and disabled control."
-		>
-			<DemoRow
-				label="Show loading"
-				description="Shows the loading state on the instance type combobox."
-			>
-				<Toggle
-					label="Enabled"
-					checked={demo.loading}
-					onCheckedChange={demo.setLoading}
-				/>
+		<RailPanel title="States" description="Loading panel, non-searchable list, and disabled control.">
+			<DemoRow label="Show loading" description="Shows the loading state on the instance type combobox.">
+				<Toggle label="Enabled" checked={demo.loading} onCheckedChange={demo.setLoading} />
 			</DemoRow>
 		</RailPanel>
 	);
@@ -506,21 +465,10 @@ function ComboboxCategoryKnobs() {
 				label="Require instance type"
 				description="When on, an empty single-select shows the required-field error."
 			>
-				<Toggle
-					label="Enabled"
-					checked={single.showError}
-					onCheckedChange={single.setShowError}
-				/>
+				<Toggle label="Enabled" checked={single.showError} onCheckedChange={single.setShowError} />
 			</DemoRow>
-			<DemoRow
-				label="Show loading"
-				description="Shows the loading state on the local instance type combobox."
-			>
-				<Toggle
-					label="Enabled"
-					checked={states.loading}
-					onCheckedChange={states.setLoading}
-				/>
+			<DemoRow label="Show loading" description="Shows the loading state on the local instance type combobox.">
+				<Toggle label="Enabled" checked={states.loading} onCheckedChange={states.setLoading} />
 			</DemoRow>
 		</RailPanel>
 	);

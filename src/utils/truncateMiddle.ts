@@ -6,10 +6,7 @@ interface TruncateMiddleOptions {
 /**
  * Middle-ellipsis truncation so leading and trailing characters stay visible.
  */
-function truncateMiddle(
-	value: string,
-	options?: TruncateMiddleOptions,
-): string {
+function truncateMiddle(value: string, options?: TruncateMiddleOptions): string {
 	let start = 6;
 	if (options?.start !== undefined) {
 		start = options.start;

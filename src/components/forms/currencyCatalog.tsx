@@ -28,10 +28,7 @@ const CRYPTO_CURRENCY_UI: CurrencyUiCatalog = {
 	},
 };
 
-function lookupCurrencyUiSpec(
-	currency: string,
-	catalog: CurrencyUiCatalog | undefined,
-): CurrencyUiSpec | undefined {
+function lookupCurrencyUiSpec(currency: string, catalog: CurrencyUiCatalog | undefined): CurrencyUiSpec | undefined {
 	if (catalog === undefined) {
 		return undefined;
 	}

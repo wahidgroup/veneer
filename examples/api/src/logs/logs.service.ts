@@ -175,8 +175,7 @@ export class LogsService implements OnModuleDestroy {
 	}
 
 	private appendNext(): void {
-		const template =
-			STREAM_TEMPLATES[this.streamIndex % STREAM_TEMPLATES.length];
+		const template = STREAM_TEMPLATES[this.streamIndex % STREAM_TEMPLATES.length];
 		const index = this.streamIndex;
 		this.streamIndex = index + 1;
 		this.clockMs += 1000;

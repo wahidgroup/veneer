@@ -53,19 +53,16 @@ describe("formatMoneyMinor", () => {
 			currencies: undefined,
 			expectedSubstring: "0.50",
 		},
-	])(
-		"formats $label",
-		({ amountMinor, currency, locale, currencies, expectedSubstring }) => {
-			const formatted = formatMoneyMinor({
-				amountMinor,
-				currency,
-				locale,
-				currencies,
-			});
-			const display = normalizeSpaces(formatted);
-			expect(display).toContain(expectedSubstring);
-		},
-	);
+	])("formats $label", ({ amountMinor, currency, locale, currencies, expectedSubstring }) => {
+		const formatted = formatMoneyMinor({
+			amountMinor,
+			currency,
+			locale,
+			currencies,
+		});
+		const display = normalizeSpaces(formatted);
+		expect(display).toContain(expectedSubstring);
+	});
 
 	it("formats JPY without a decimal point", () => {
 		const formatted = formatMoneyMinor({
@@ -125,13 +122,10 @@ describe("currencyFractionDigits", () => {
 			currencies: CRYPTO_CURRENCIES,
 			expected: 8,
 		},
-	])(
-		"returns $expected for $label",
-		({ currency, locale, currencies, expected }) => {
-			const digits = currencyFractionDigits(currency, locale, currencies);
-			expect(digits).toBe(expected);
-		},
-	);
+	])("returns $expected for $label", ({ currency, locale, currencies, expected }) => {
+		const digits = currencyFractionDigits(currency, locale, currencies);
+		expect(digits).toBe(expected);
+	});
 
 	it("exposes satoshi fraction digits on the crypto catalog", () => {
 		const btcSpec = CRYPTO_CURRENCIES.BTC;
@@ -181,13 +175,10 @@ describe("majorNumberToMinor / parseMajorInput / formatMajorDraft", () => {
 		{ major: 19.99, fractionDigits: 2, expectedMinor: 1999 },
 		{ major: 19.994, fractionDigits: 2, expectedMinor: 1999 },
 		{ major: 19.995, fractionDigits: 2, expectedMinor: 2000 },
-	])(
-		"rounds major $major to minor $expectedMinor",
-		({ major, fractionDigits, expectedMinor }) => {
-			const minor = majorNumberToMinor(major, fractionDigits);
-			expect(minor).toBe(expectedMinor);
-		},
-	);
+	])("rounds major $major to minor $expectedMinor", ({ major, fractionDigits, expectedMinor }) => {
+		const minor = majorNumberToMinor(major, fractionDigits);
+		expect(minor).toBe(expectedMinor);
+	});
 
 	it.each([
 		{
@@ -246,24 +237,18 @@ describe("majorNumberToMinor / parseMajorInput / formatMajorDraft", () => {
 			fractionDigits: 8,
 			expectedMinor: 100_000_000,
 		},
-	])(
-		"parses $label into minor units",
-		({ draft, locale, fractionDigits, expectedMinor }) => {
-			const minor = parseMajorInput(draft, locale, fractionDigits);
-			expect(minor).toBe(expectedMinor);
-		},
-	);
+	])("parses $label into minor units", ({ draft, locale, fractionDigits, expectedMinor }) => {
+		const minor = parseMajorInput(draft, locale, fractionDigits);
+		expect(minor).toBe(expectedMinor);
+	});
 
 	it.each([
 		{ ascii: "0.1", fractionDigits: 1, expectedMinor: 1 },
 		{ ascii: "1.005", fractionDigits: 2, expectedMinor: 101 },
-	])(
-		"scales ascii major $ascii with digit-string path",
-		({ ascii, fractionDigits, expectedMinor }) => {
-			const minor = majorAsciiToMinor(ascii, fractionDigits);
-			expect(minor).toBe(expectedMinor);
-		},
-	);
+	])("scales ascii major $ascii with digit-string path", ({ ascii, fractionDigits, expectedMinor }) => {
+		const minor = majorAsciiToMinor(ascii, fractionDigits);
+		expect(minor).toBe(expectedMinor);
+	});
 
 	it.each([
 		{
@@ -287,11 +272,8 @@ describe("majorNumberToMinor / parseMajorInput / formatMajorDraft", () => {
 			locale: "en-US",
 			expectedDraft: "0.00015",
 		},
-	])(
-		"formats editable $label draft without grouping",
-		({ amountMinor, fractionDigits, locale, expectedDraft }) => {
-			const draft = formatMajorDraft(amountMinor, fractionDigits, locale);
-			expect(draft).toBe(expectedDraft);
-		},
-	);
+	])("formats editable $label draft without grouping", ({ amountMinor, fractionDigits, locale, expectedDraft }) => {
+		const draft = formatMajorDraft(amountMinor, fractionDigits, locale);
+		expect(draft).toBe(expectedDraft);
+	});
 });

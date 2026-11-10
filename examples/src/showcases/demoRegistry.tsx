@@ -2,11 +2,7 @@ import type { ComponentType, ReactNode } from "react";
 
 import type { CategoryId } from "../catalog.js";
 import { PassthroughProvider } from "./demoChrome.js";
-import {
-	ComboboxCategoryCanvas,
-	ComboboxCategoryKnobs,
-	ComboboxCategoryProvider,
-} from "./comboboxDemos.js";
+import { ComboboxCategoryCanvas, ComboboxCategoryKnobs, ComboboxCategoryProvider } from "./comboboxDemos.js";
 import {
 	ActivitySurfacesCanvas,
 	ActivitySurfacesKnobs,
@@ -42,11 +38,7 @@ import {
 	TreeViewDemoProvider,
 	TreeViewKnobs,
 } from "./dataDemos.js";
-import {
-	FlowCanvasCanvas,
-	FlowCanvasDemoProvider,
-	FlowCanvasKnobs,
-} from "./flowDemos.js";
+import { FlowCanvasCanvas, FlowCanvasDemoProvider, FlowCanvasKnobs } from "./flowDemos.js";
 import {
 	ChoicesCanvas,
 	ChoicesDemoProvider,

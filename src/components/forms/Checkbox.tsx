@@ -10,19 +10,10 @@ interface CheckboxProps extends Omit<ComponentProps<"input">, "type"> {
 /**
  * Labeled checkbox. `label` is required for an accessible name.
  */
-function Checkbox({
-	label,
-	description,
-	className,
-	id,
-	disabled,
-	...rest
-}: CheckboxProps) {
+function Checkbox({ label, description, className, id, disabled, ...rest }: CheckboxProps) {
 	let descriptionNode: ReactNode = null;
 	if (description !== undefined && description.length > 0) {
-		descriptionNode = (
-			<span className="text-sm text-muted-foreground">{description}</span>
-		);
+		descriptionNode = <span className="text-sm text-muted-foreground">{description}</span>;
 	}
 
 	let labelClass = "flex w-full cursor-pointer items-start gap-2";
@@ -31,11 +22,7 @@ function Checkbox({
 	}
 
 	return (
-		<label
-			data-slot="checkbox"
-			htmlFor={id}
-			className={cn(labelClass, className)}
-		>
+		<label data-slot="checkbox" htmlFor={id} className={cn(labelClass, className)}>
 			<input
 				id={id}
 				type="checkbox"
@@ -48,9 +35,7 @@ function Checkbox({
 				{...rest}
 			/>
 			<span className="flex min-w-0 flex-1 flex-col">
-				<span className="text-sm font-medium text-foreground">
-					{label}
-				</span>
+				<span className="text-sm font-medium text-foreground">{label}</span>
 				{descriptionNode}
 			</span>
 		</label>

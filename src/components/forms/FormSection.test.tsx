@@ -12,9 +12,7 @@ describe("FormSection", () => {
 			</FormSection>,
 		);
 
-		expect(
-			screen.getByRole("heading", { name: "Network" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("heading", { name: "Network" })).toBeInTheDocument();
 		expect(screen.getByText("VPC placement")).toBeInTheDocument();
 		expect(screen.getByText("Child")).toBeInTheDocument();
 	});

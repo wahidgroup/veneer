@@ -182,10 +182,7 @@ function connectTables(options: ConnectTablesOptions): {
 	}
 
 	function discardSocket(ws: WebSocket, reason: string): void {
-		if (
-			ws.readyState === WebSocket.CONNECTING ||
-			ws.readyState === WebSocket.OPEN
-		) {
+		if (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN) {
 			ws.close(1000, reason);
 		}
 	}

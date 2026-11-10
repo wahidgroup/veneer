@@ -1,33 +1,11 @@
 import { Alert, Button, Card, Input, NumberInput } from "@wahidgroup/veneer";
-import type {
-	FlowConnection,
-	FlowEdge,
-	FlowNode,
-	FlowPort,
-	FlowStatus,
-	FlowValueKind,
-} from "@wahidgroup/veneer/flow";
+import type { FlowConnection, FlowEdge, FlowNode, FlowPort, FlowStatus, FlowValueKind } from "@wahidgroup/veneer/flow";
 import { FlowCanvas, sameValueKindConnection } from "@wahidgroup/veneer/flow";
 import { layoutGraph } from "@wahidgroup/veneer/flow/layout";
-import {
-	createContext,
-	useContext,
-	useEffect,
-	useState,
-	type ReactNode,
-} from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 
-import type {
-	FlowDemoField,
-	FlowDemoSnapshot,
-	FlowFieldKind,
-} from "../api/client.js";
-import {
-	getFlowDemo,
-	patchFlowNodeConfig,
-	resetFlowDemo,
-	triggerFlowDemo,
-} from "../api/client.js";
+import type { FlowDemoField, FlowDemoSnapshot, FlowFieldKind } from "../api/client.js";
+import { getFlowDemo, patchFlowNodeConfig, resetFlowDemo, triggerFlowDemo } from "../api/client.js";
 import { Canvas, DemoRow, DemoSectionHeader, RailPanel } from "./demoChrome.js";
 
 const DROP_MIME = "application/x-veneer-flow-type";
@@ -332,11 +310,7 @@ interface FlowCanvasDemoValue {
 	runAutoLayout: () => Promise<void>;
 	setNodes: (nodes: FlowNode[]) => void;
 	setEdges: (edges: FlowEdge[]) => void;
-	addPort: (
-		nodeId: string,
-		direction: "in" | "out",
-		kind: FlowFieldKind,
-	) => void;
+	addPort: (nodeId: string, direction: "in" | "out", kind: FlowFieldKind) => void;
 	connect: (connection: FlowConnection) => void;
 	isValidConnection: (connection: FlowConnection) => boolean;
 	onDropType: (type: string, position: { x: number; y: number }) => void;
@@ -423,9 +397,7 @@ function applySnapshotState(
 	setNodes: (nodes: FlowNode[]) => void,
 	setEdges: (edges: FlowEdge[]) => void,
 	setFieldsByNode: (value: Record<string, FlowDemoField[]>) => void,
-	setValuesByNode: (
-		value: Record<string, Record<string, string | number>>,
-	) => void,
+	setValuesByNode: (value: Record<string, Record<string, string | number>>) => void,
 	setNodeStatus: (value: Record<string, FlowStatus>) => void,
 	setRunMessage: (value: string) => void,
 	setMinAmount: (value: number) => void,
@@ -449,9 +421,7 @@ function applySnapshotState(
 					x: prev.x,
 					y: prev.y,
 					width: prev.width,
-					height: nodeHeightForFields(
-						mapped.fieldsByNode[node.id] ?? [],
-					),
+					height: nodeHeightForFields(mapped.fieldsByNode[node.id] ?? []),
 					ports: fieldsToPorts(mapped.fieldsByNode[node.id] ?? []),
 				};
 			}),
@@ -470,15 +440,11 @@ function applySnapshotState(
 function FlowCanvasDemoProvider({ children }: { children: ReactNode }) {
 	const [nodes, setNodes] = useState<FlowNode[]>(DEFAULT_CANVAS.nodes);
 	const [edges, setEdges] = useState<FlowEdge[]>(DEFAULT_CANVAS.edges);
-	const [fieldsByNode, setFieldsByNode] = useState<
-		Record<string, FlowDemoField[]>
-	>(DEFAULT_CANVAS.fieldsByNode);
-	const [valuesByNode, setValuesByNode] = useState<
-		Record<string, Record<string, string | number>>
-	>(DEFAULT_CANVAS.valuesByNode);
-	const [nodeStatus, setNodeStatus] = useState<Record<string, FlowStatus>>(
-		DEFAULT_CANVAS.nodeStatus,
+	const [fieldsByNode, setFieldsByNode] = useState<Record<string, FlowDemoField[]>>(DEFAULT_CANVAS.fieldsByNode);
+	const [valuesByNode, setValuesByNode] = useState<Record<string, Record<string, string | number>>>(
+		DEFAULT_CANVAS.valuesByNode,
 	);
+	const [nodeStatus, setNodeStatus] = useState<Record<string, FlowStatus>>(DEFAULT_CANVAS.nodeStatus);
 	const [runMessage, setRunMessage] = useState(DEFAULT_SNAPSHOT.run.message);
 	const [apiError, setApiError] = useState<string | null>(null);
 	const [selectedId, setSelectedId] = useState<string | undefined>();
@@ -513,10 +479,7 @@ function FlowCanvasDemoProvider({ children }: { children: ReactNode }) {
 	async function fireDeposit() {
 		setBusy(true);
 		try {
-			const snapshot = await triggerFlowDemo(
-				depositAmount,
-				depositAddress,
-			);
+			const snapshot = await triggerFlowDemo(depositAmount, depositAddress);
 			applySnapshotState(
 				snapshot,
 				setNodes,
@@ -647,11 +610,7 @@ function FlowCanvasDemoProvider({ children }: { children: ReactNode }) {
 		}
 	}
 
-	function addPort(
-		nodeId: string,
-		direction: "in" | "out",
-		kind: FlowFieldKind,
-	) {
+	function addPort(nodeId: string, direction: "in" | "out", kind: FlowFieldKind) {
 		const current = fieldsByNode[nodeId] ?? [];
 		const extras = current.filter((field) => {
 			return field.id.startsWith("extra-");
@@ -836,14 +795,9 @@ function FieldRows({
 							className="flex h-[18px] items-center justify-between gap-2 text-[11px] leading-none"
 						>
 							<span className="truncate text-muted-foreground">
-								{field.label}{" "}
-								<span className="text-[10px]">
-									({field.kind})
-								</span>
+								{field.label} <span className="text-[10px]">({field.kind})</span>
 							</span>
-							<span className="shrink-0 font-mono tabular-nums">
-								{formatFieldValue(value)}
-							</span>
+							<span className="shrink-0 font-mono tabular-nums">{formatFieldValue(value)}</span>
 						</li>
 					);
 				})}
@@ -940,11 +894,7 @@ function FlowCanvasCanvas() {
 										size="sm"
 										variant="ghost"
 										onClick={() => {
-											demo.addPort(
-												node.id,
-												"in",
-												"number",
-											);
+											demo.addPort(node.id, "in", "number");
 										}}
 									>
 										+num in
@@ -954,11 +904,7 @@ function FlowCanvasCanvas() {
 										size="sm"
 										variant="ghost"
 										onClick={() => {
-											demo.addPort(
-												node.id,
-												"in",
-												"string",
-											);
+											demo.addPort(node.id, "in", "string");
 										}}
 									>
 										+str in
@@ -968,11 +914,7 @@ function FlowCanvasCanvas() {
 										size="sm"
 										variant="ghost"
 										onClick={() => {
-											demo.addPort(
-												node.id,
-												"out",
-												"number",
-											);
+											demo.addPort(node.id, "out", "number");
 										}}
 									>
 										+num out
@@ -982,11 +924,7 @@ function FlowCanvasCanvas() {
 										size="sm"
 										variant="ghost"
 										onClick={() => {
-											demo.addPort(
-												node.id,
-												"out",
-												"string",
-											);
+											demo.addPort(node.id, "out", "string");
 										}}
 									>
 										+str out
@@ -996,23 +934,10 @@ function FlowCanvasCanvas() {
 						}
 
 						return (
-							<Card
-								size="sm"
-								className="box-border h-full w-full overflow-hidden p-3 shadow-none"
-							>
-								<p className="h-[22px] truncate text-sm font-medium leading-[22px]">
-									{node.label}
-								</p>
-								<FieldRows
-									title="Inputs"
-									fields={inputs}
-									values={values}
-								/>
-								<FieldRows
-									title="Outputs"
-									fields={outputs}
-									values={values}
-								/>
+							<Card size="sm" className="box-border h-full w-full overflow-hidden p-3 shadow-none">
+								<p className="h-[22px] truncate text-sm font-medium leading-[22px]">{node.label}</p>
+								<FieldRows title="Inputs" fields={inputs} values={values} />
+								<FieldRows title="Outputs" fields={outputs} values={values} />
 								{editor}
 							</Card>
 						);
@@ -1031,10 +956,7 @@ function FlowCanvasKnobs() {
 			title="FlowCanvas"
 			description="Each Fire deposit accumulates onto a running total until Reset. split-half runs when total > minAmount. Connect like-typed ports; Delete/Backspace removes the selected node; elk optional peer."
 		>
-			<DemoRow
-				label="Deposit amount"
-				description="Integer added to the cumulative listener total on each fire."
-			>
+			<DemoRow label="Deposit amount" description="Integer added to the cumulative listener total on each fire.">
 				<NumberInput
 					id="flow-deposit-amount"
 					aria-label="Deposit amount"
@@ -1047,10 +969,7 @@ function FlowCanvasKnobs() {
 					}}
 				/>
 			</DemoRow>
-			<DemoRow
-				label="Deposit address"
-				description="Holder address echoed through the graph."
-			>
+			<DemoRow label="Deposit address" description="Holder address echoed through the graph.">
 				<Input
 					id="flow-deposit-address"
 					aria-label="Deposit address"
@@ -1073,10 +992,7 @@ function FlowCanvasKnobs() {
 					Fire deposit
 				</Button>
 			</DemoRow>
-			<DemoRow
-				label="split-half minAmount"
-				description="Gate: amount must be greater than this value."
-			>
+			<DemoRow label="split-half minAmount" description="Gate: amount must be greater than this value.">
 				<NumberInput
 					id="flow-min-amount"
 					aria-label="Minimum amount"

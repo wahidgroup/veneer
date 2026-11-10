@@ -109,9 +109,7 @@ if (
 	rootSource.includes("from 'diff'") ||
 	rootSource.includes("elkjs")
 ) {
-	console.error(
-		"root dist/index.js must not import @tanstack/react-table, diff, or elkjs",
-	);
+	console.error("root dist/index.js must not import @tanstack/react-table, diff, or elkjs");
 
 	failed = true;
 } else {
@@ -146,9 +144,7 @@ if (
 	flowSource.includes("from 'elkjs") ||
 	flowSource.includes('from "elkjs')
 ) {
-	console.error(
-		"dist/flow.js must not import elkjs or layoutGraph (use ./flow/layout)",
-	);
+	console.error("dist/flow.js must not import elkjs or layoutGraph (use ./flow/layout)");
 
 	failed = true;
 } else {

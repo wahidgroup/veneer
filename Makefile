@@ -31,12 +31,6 @@ endif
 
 RELEASE_VERSION := $(version)
 
-ifdef CI
-NPM_INSTALL_CMD := npm ci
-else
-NPM_INSTALL_CMD := npm install
-endif
-
 help:
 	$(call PRINT_PAGER,$(MAKE) help-body)
 
@@ -124,6 +118,7 @@ else
 	npm run lint
 	npm run lint --prefix examples/api
 endif
+	for script in .husky/pre-push scripts/*.sh; do bash -n "$$script" || exit; done
 	npm run spellcheck
 
 test: setup

@@ -64,12 +64,7 @@ describe("filterFieldOptions", () => {
 			expected: OPTIONS,
 		},
 	])("returns $label", ({ query, searchable, filterMode, expected }) => {
-		const filtered = filterFieldOptions(
-			OPTIONS,
-			query,
-			searchable,
-			filterMode,
-		);
+		const filtered = filterFieldOptions(OPTIONS, query, searchable, filterMode);
 		expect(filtered).toEqual(expected);
 	});
 });

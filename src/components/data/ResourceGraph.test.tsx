@@ -37,19 +37,13 @@ describe("ResourceGraph", () => {
 	});
 
 	it("lists edges for assistive technology", () => {
-		render(
-			<ResourceGraph aria-label="Network" nodes={NODES} edges={EDGES} />,
-		);
+		render(<ResourceGraph aria-label="Network" nodes={NODES} edges={EDGES} />);
 
 		expect(screen.getByLabelText("Network edges")).toBeInTheDocument();
-		expect(
-			screen.getByText("vpc -> subnet (contains)"),
-		).toBeInTheDocument();
+		expect(screen.getByText("vpc -> subnet (contains)")).toBeInTheDocument();
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<ResourceGraph aria-label="Network" nodes={NODES} edges={EDGES} />,
-		);
+		await expectNoA11yViolations(<ResourceGraph aria-label="Network" nodes={NODES} edges={EDGES} />);
 	});
 });

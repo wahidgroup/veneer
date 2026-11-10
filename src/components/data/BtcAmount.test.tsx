@@ -17,19 +17,12 @@ describe("BtcAmount", () => {
 			expected: "0.00000100 BTC",
 		},
 	])("formats $unit amounts", ({ unit, amountSats, expected }) => {
-		render(
-			<BtcAmount amountSats={amountSats} unit={unit} locale="en-US" />,
-		);
-		expect(screen.getByText(expected)).toHaveAttribute(
-			"data-slot",
-			"btc-amount",
-		);
+		render(<BtcAmount amountSats={amountSats} unit={unit} locale="en-US" />);
+		expect(screen.getByText(expected)).toHaveAttribute("data-slot", "btc-amount");
 		expect(screen.getByText(expected)).toHaveAttribute("data-unit", unit);
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<BtcAmount amountSats={1} unit="sats" locale="en" />,
-		);
+		await expectNoA11yViolations(<BtcAmount amountSats={1} unit="sats" locale="en" />);
 	});
 });

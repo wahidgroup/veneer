@@ -4,10 +4,7 @@ import { useEffect, useState } from "react";
 
 import { Button } from "./Button.js";
 
-interface CopyButtonProps extends Omit<
-	ComponentProps<typeof Button>,
-	"children" | "onClick" | "value"
-> {
+interface CopyButtonProps extends Omit<ComponentProps<typeof Button>, "children" | "onClick" | "value"> {
 	value: string;
 	label?: ReactNode;
 	copiedLabel?: ReactNode;

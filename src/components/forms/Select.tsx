@@ -26,14 +26,7 @@ function Select({ searchable, filterMode, ...rest }: SelectProps) {
 		resolvedFilterMode = filterMode;
 	}
 
-	return (
-		<OptionPicker
-			{...rest}
-			searchable={isSearchable}
-			filterMode={resolvedFilterMode}
-			dataSlot="select"
-		/>
-	);
+	return <OptionPicker {...rest} searchable={isSearchable} filterMode={resolvedFilterMode} dataSlot="select" />;
 }
 
 export type { SelectOption, SelectProps };

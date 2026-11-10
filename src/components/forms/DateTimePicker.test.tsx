@@ -12,10 +12,7 @@ describe("DateTimePicker", () => {
 		{ granularity: "datetime" as const, label: "Window" },
 	])("renders $granularity control", ({ granularity, label }) => {
 		render(<DateTimePicker aria-label={label} granularity={granularity} />);
-		expect(screen.getByLabelText(label)).toHaveAttribute(
-			"data-slot",
-			"datetime-picker",
-		);
+		expect(screen.getByLabelText(label)).toHaveAttribute("data-slot", "datetime-picker");
 	});
 
 	it("emits value changes", async () => {
@@ -38,15 +35,10 @@ describe("DateTimePicker", () => {
 
 	it("sets aria-invalid when invalid", () => {
 		render(<DateTimePicker aria-label="Window" invalid />);
-		expect(screen.getByLabelText("Window")).toHaveAttribute(
-			"aria-invalid",
-			"true",
-		);
+		expect(screen.getByLabelText("Window")).toHaveAttribute("aria-invalid", "true");
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<DateTimePicker aria-label="Window" granularity="date" />,
-		);
+		await expectNoA11yViolations(<DateTimePicker aria-label="Window" granularity="date" />);
 	});
 });

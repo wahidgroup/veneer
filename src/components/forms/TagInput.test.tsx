@@ -32,9 +32,7 @@ describe("TagInput", () => {
 		await user.type(input, "env:prod{Enter}");
 
 		expect(batches.at(-1)).toEqual(["env:prod"]);
-		expect(
-			screen.getByRole("button", { name: "Remove env:prod" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Remove env:prod" })).toBeInTheDocument();
 	});
 
 	it("removes a tag via chip", async () => {

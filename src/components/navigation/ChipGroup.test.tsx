@@ -22,12 +22,8 @@ describe("ChipGroup", () => {
 
 		const group = screen.getByRole("group", { name: "Regions" });
 		expect(group).toHaveAttribute("data-slot", "chip-group");
-		expect(
-			screen.getByRole("button", { name: "us-east-1" }),
-		).toHaveAttribute("aria-pressed", "true");
-		expect(
-			screen.getByRole("button", { name: "eu-west-1" }),
-		).toHaveAttribute("aria-pressed", "false");
+		expect(screen.getByRole("button", { name: "us-east-1" })).toHaveAttribute("aria-pressed", "true");
+		expect(screen.getByRole("button", { name: "eu-west-1" })).toHaveAttribute("aria-pressed", "false");
 	});
 
 	it("reports pressed changes with the chip id", async () => {
@@ -95,9 +91,7 @@ describe("ChipGroup", () => {
 				}}
 			/>,
 		);
-		expect(
-			screen.queryByRole("button", { name: "Remove prod" }),
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "Remove prod" })).not.toBeInTheDocument();
 	});
 
 	it("invokes onClearAll from the clear control", async () => {
@@ -144,9 +138,7 @@ describe("ChipGroup", () => {
 		);
 
 		expect(screen.getByRole("button", { name: "Locked" })).toBeDisabled();
-		expect(
-			screen.getByRole("button", { name: "Remove Locked" }),
-		).toBeDisabled();
+		expect(screen.getByRole("button", { name: "Remove Locked" })).toBeDisabled();
 	});
 
 	it("has no accessibility violations on the default render", async () => {

@@ -15,19 +15,13 @@ describe("SeedPhrase", () => {
 
 		render(<SeedPhrase words={WORDS} defaultRevealed={false} />);
 
-		expect(
-			screen.getByRole("list", { name: "Seed phrase words" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("list", { name: "Seed phrase words" })).toBeInTheDocument();
 		expect(screen.queryByText("alpha")).not.toBeInTheDocument();
 		expect(screen.getAllByText(MASK)).toHaveLength(4);
 
-		await user.click(
-			screen.getByRole("button", { name: "Reveal seed phrase" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Reveal seed phrase" }));
 		expect(screen.getByText("alpha")).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Hide seed phrase" }),
-		).toHaveAttribute("aria-pressed", "true");
+		expect(screen.getByRole("button", { name: "Hide seed phrase" })).toHaveAttribute("aria-pressed", "true");
 	});
 
 	it.each([
@@ -43,47 +37,12 @@ describe("SeedPhrase", () => {
 		},
 		{
 			label: "15 words default -> 3 cols",
-			words: [
-				"a",
-				"b",
-				"c",
-				"d",
-				"e",
-				"f",
-				"g",
-				"h",
-				"i",
-				"j",
-				"k",
-				"l",
-				"m",
-				"n",
-				"o",
-			],
+			words: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"],
 			expected: "3",
 		},
 		{
 			label: "18 words default -> 3 cols",
-			words: [
-				"a",
-				"b",
-				"c",
-				"d",
-				"e",
-				"f",
-				"g",
-				"h",
-				"i",
-				"j",
-				"k",
-				"l",
-				"m",
-				"n",
-				"o",
-				"p",
-				"q",
-				"r",
-			],
+			words: ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r"],
 			expected: "3",
 		},
 		{
@@ -127,13 +86,9 @@ describe("SeedPhrase", () => {
 	});
 
 	it("honors explicit columns prop", () => {
-		render(
-			<SeedPhrase words={WORDS} columns={2} defaultRevealed={false} />,
-		);
+		render(<SeedPhrase words={WORDS} columns={2} defaultRevealed={false} />);
 
-		expect(
-			screen.getByRole("list", { name: "Seed phrase words" }),
-		).toHaveAttribute("data-columns", "2");
+		expect(screen.getByRole("list", { name: "Seed phrase words" })).toHaveAttribute("data-columns", "2");
 	});
 
 	it("keeps fixed word slot width across reveal toggle", async () => {
@@ -148,9 +103,7 @@ describe("SeedPhrase", () => {
 			width: `${String(DEFAULT_WORD_SLOT_CH)}ch`,
 		});
 
-		await user.click(
-			screen.getByRole("button", { name: "Reveal seed phrase" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Reveal seed phrase" }));
 
 		expect(firstSlot).toHaveStyle({
 			width: `${String(DEFAULT_WORD_SLOT_CH)}ch`,
@@ -195,33 +148,20 @@ describe("SeedPhrase", () => {
 		{ showCopy: true, revealed: false, present: true },
 		{ showCopy: false, revealed: true, present: false },
 		{ showCopy: false, revealed: false, present: false },
-	])(
-		"copy present=$present when showCopy=$showCopy revealed=$revealed",
-		({ showCopy, revealed, present }) => {
-			render(
-				<SeedPhrase
-					words={WORDS}
-					defaultRevealed={revealed}
-					showCopy={showCopy}
-				/>,
-			);
+	])("copy present=$present when showCopy=$showCopy revealed=$revealed", ({ showCopy, revealed, present }) => {
+		render(<SeedPhrase words={WORDS} defaultRevealed={revealed} showCopy={showCopy} />);
 
-			const copy = screen.queryByRole("button", {
-				name: "Copy seed phrase",
-			});
-			expect(copy !== null).toBe(present);
-		},
-	);
+		const copy = screen.queryByRole("button", {
+			name: "Copy seed phrase",
+		});
+		expect(copy !== null).toBe(present);
+	});
 
 	it("has no accessibility violations when hidden", async () => {
-		await expectNoA11yViolations(
-			<SeedPhrase words={WORDS} defaultRevealed={false} />,
-		);
+		await expectNoA11yViolations(<SeedPhrase words={WORDS} defaultRevealed={false} />);
 	});
 
 	it("has no accessibility violations when revealed", async () => {
-		await expectNoA11yViolations(
-			<SeedPhrase words={WORDS} defaultRevealed />,
-		);
+		await expectNoA11yViolations(<SeedPhrase words={WORDS} defaultRevealed />);
 	});
 });

@@ -15,9 +15,7 @@ export async function expectNoA11yViolations(ui: ReactElement): Promise<void> {
 /**
  * Build a style object that carries CSS custom properties.
  */
-export function cssVarStyle(
-	vars: Record<`--${string}`, string>,
-): CSSProperties {
+export function cssVarStyle(vars: Record<`--${string}`, string>): CSSProperties {
 	const style: CSSProperties = Object.assign({}, vars);
 	return style;
 }

@@ -3,12 +3,7 @@ import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import { expectNoA11yViolations } from "../../test/component-harness.js";
-import {
-	Accordion,
-	AccordionContent,
-	AccordionItem,
-	AccordionTrigger,
-} from "./Accordion.js";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "./Accordion.js";
 
 function DemoAccordion({
 	type,
@@ -57,15 +52,11 @@ describe("Accordion", () => {
 		render(<DemoAccordion defaultValue="one" />);
 
 		expect(screen.getByRole("region")).toHaveTextContent("Panel one");
-		expect(
-			screen.getByRole("button", { name: "Section one" }),
-		).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("button", { name: "Section one" })).toHaveAttribute("aria-expanded", "true");
 
 		await user.click(screen.getByRole("button", { name: "Section two" }));
 		expect(screen.getByRole("region")).toHaveTextContent("Panel two");
-		expect(
-			screen.getByRole("button", { name: "Section one" }),
-		).toHaveAttribute("aria-expanded", "false");
+		expect(screen.getByRole("button", { name: "Section one" })).toHaveAttribute("aria-expanded", "false");
 	});
 
 	it("exposes aria-expanded on triggers when sections open and close", async () => {
@@ -79,9 +70,7 @@ describe("Accordion", () => {
 		});
 		expect(openTrigger).toHaveAttribute("aria-expanded", "true");
 		expect(closedTrigger).toHaveAttribute("aria-expanded", "false");
-		expect(
-			openTrigger.querySelector('[data-slot="collapsible-caret"]'),
-		).not.toBeNull();
+		expect(openTrigger.querySelector('[data-slot="collapsible-caret"]')).not.toBeNull();
 
 		await user.click(openTrigger);
 		expect(openTrigger).toHaveAttribute("aria-expanded", "false");
@@ -168,19 +157,13 @@ describe("Accordion", () => {
 		render(<DemoAccordion />);
 
 		await user.tab();
-		expect(
-			screen.getByRole("button", { name: "Section one" }),
-		).toHaveFocus();
+		expect(screen.getByRole("button", { name: "Section one" })).toHaveFocus();
 
 		await user.tab();
-		expect(
-			screen.getByRole("button", { name: "Section two" }),
-		).toHaveFocus();
+		expect(screen.getByRole("button", { name: "Section two" })).toHaveFocus();
 
 		await user.tab();
-		expect(
-			screen.getByRole("button", { name: "Section three" }),
-		).toHaveFocus();
+		expect(screen.getByRole("button", { name: "Section three" })).toHaveFocus();
 	});
 
 	it("links panels with aria-labelledby when open", async () => {
@@ -196,18 +179,10 @@ describe("Accordion", () => {
 
 	it("renders data-slot attributes", () => {
 		const { container } = render(<DemoAccordion defaultValue="one" />);
-		expect(
-			container.querySelector("[data-slot='accordion']"),
-		).not.toBeNull();
-		expect(
-			container.querySelector("[data-slot='accordion-item']"),
-		).not.toBeNull();
-		expect(
-			container.querySelector("[data-slot='accordion-trigger']"),
-		).not.toBeNull();
-		expect(
-			container.querySelector("[data-slot='accordion-content']"),
-		).not.toBeNull();
+		expect(container.querySelector("[data-slot='accordion']")).not.toBeNull();
+		expect(container.querySelector("[data-slot='accordion-item']")).not.toBeNull();
+		expect(container.querySelector("[data-slot='accordion-trigger']")).not.toBeNull();
+		expect(container.querySelector("[data-slot='accordion-content']")).not.toBeNull();
 	});
 
 	it("has no accessibility violations", async () => {
@@ -221,9 +196,7 @@ describe("Accordion", () => {
 					<AccordionTrigger>Orphan</AccordionTrigger>
 				</Accordion>,
 			);
-		}).toThrow(
-			"Accordion item components must be used within AccordionItem",
-		);
+		}).toThrow("Accordion item components must be used within AccordionItem");
 	});
 
 	it("throws when AccordionItem is used outside Accordion", () => {

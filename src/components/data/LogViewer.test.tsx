@@ -31,16 +31,12 @@ const SAMPLE_LINES: LogViewerLine[] = [
 
 describe("LogViewer", () => {
 	it("exposes a log region with aria-live off and a status region", () => {
-		const { container } = render(
-			<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />,
-		);
+		const { container } = render(<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />);
 
 		const log = screen.getByRole("log", { name: "Deploy logs" });
 		expect(log).toHaveAttribute("aria-live", "off");
 		expect(log).toHaveAttribute("tabindex", "0");
-		expect(
-			container.querySelector("[data-slot='log-viewer-status']"),
-		).toHaveAttribute("role", "status");
+		expect(container.querySelector("[data-slot='log-viewer-status']")).toHaveAttribute("role", "status");
 		expect(screen.getByText("boot ok")).toBeInTheDocument();
 		expect(screen.getByText("apply failed")).toBeInTheDocument();
 	});
@@ -65,10 +61,7 @@ describe("LogViewer", () => {
 		expect(screen.getByText("boot ok")).toBeInTheDocument();
 		expect(screen.getByText("cache miss")).toBeInTheDocument();
 		expect(screen.getByText("apply failed")).toBeInTheDocument();
-		expect(screen.getByRole("button", { name: "error" })).toHaveAttribute(
-			"aria-pressed",
-			"true",
-		);
+		expect(screen.getByRole("button", { name: "error" })).toHaveAttribute("aria-pressed", "true");
 		expect(seen.length).toBeGreaterThan(0);
 	});
 
@@ -110,30 +103,18 @@ describe("LogViewer", () => {
 	it("dismisses query chips", async () => {
 		const user = userEvent.setup();
 
-		render(
-			<LogViewer
-				aria-label="Deploy logs"
-				lines={SAMPLE_LINES}
-				defaultQueries={["failed"]}
-			/>,
-		);
+		render(<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} defaultQueries={["failed"]} />);
 
-		expect(
-			screen.getByRole("button", { name: "Remove failed" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Remove failed" })).toBeInTheDocument();
 
 		await user.click(screen.getByRole("button", { name: "Remove failed" }));
-		expect(
-			screen.queryByRole("button", { name: "Remove failed" }),
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "Remove failed" })).not.toBeInTheDocument();
 		expect(screen.getByText("boot ok")).toBeInTheDocument();
 	});
 
 	it("expands and collapses JSON detail for lines with data", async () => {
 		const user = userEvent.setup();
-		const { container } = render(
-			<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />,
-		);
+		const { container } = render(<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />);
 
 		expect(
 			screen.queryByRole("button", {
@@ -148,41 +129,25 @@ describe("LogViewer", () => {
 
 		await user.click(toggle);
 		expect(toggle).toHaveAttribute("aria-expanded", "true");
-		expect(
-			container.querySelector("[data-slot='log-viewer-detail']"),
-		).toHaveTextContent("web-1");
+		expect(container.querySelector("[data-slot='log-viewer-detail']")).toHaveTextContent("web-1");
 
 		await user.click(toggle);
 		expect(toggle).toHaveAttribute("aria-expanded", "false");
-		expect(
-			container.querySelector("[data-slot='log-viewer-detail']"),
-		).toBeNull();
+		expect(container.querySelector("[data-slot='log-viewer-detail']")).toBeNull();
 	});
 
 	it("truncates to maxLines and announces the window", () => {
-		const { container } = render(
-			<LogViewer
-				aria-label="Deploy logs"
-				lines={SAMPLE_LINES}
-				maxLines={1}
-			/>,
-		);
+		const { container } = render(<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} maxLines={1} />);
 
 		expect(screen.getByText("apply failed")).toBeInTheDocument();
 		expect(screen.queryByText("boot ok")).not.toBeInTheDocument();
-		expect(
-			container.querySelector("[data-slot='log-viewer-status']"),
-		).toHaveTextContent("Showing last 1 of 3");
+		expect(container.querySelector("[data-slot='log-viewer-status']")).toHaveTextContent("Showing last 1 of 3");
 	});
 
 	it("renders oldest lines first", () => {
-		const { container } = render(
-			<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />,
-		);
+		const { container } = render(<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />);
 
-		const texts = Array.from(
-			container.querySelectorAll("[data-slot='log-viewer-text']"),
-		).map((node) => {
+		const texts = Array.from(container.querySelectorAll("[data-slot='log-viewer-text']")).map((node) => {
 			return node.textContent;
 		});
 		expect(texts).toEqual(["boot ok", "cache miss", "apply failed"]);
@@ -206,10 +171,7 @@ describe("LogViewer", () => {
 			/>,
 		);
 
-		expect(screen.getByRole("button", { name: "Follow" })).toHaveAttribute(
-			"aria-pressed",
-			"false",
-		);
+		expect(screen.getByRole("button", { name: "Follow" })).toHaveAttribute("aria-pressed", "false");
 
 		rerender(
 			<LogViewer
@@ -231,23 +193,15 @@ describe("LogViewer", () => {
 		);
 
 		expect(screen.getByText("1 new")).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Show new" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Show new" })).toBeInTheDocument();
 	});
 
 	it("renders per-line and visible CopyButton controls", () => {
 		render(<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />);
 
-		expect(
-			screen.getByRole("button", { name: "Copy visible lines" }),
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Copy line 1" }),
-		).toBeInTheDocument();
-		expect(
-			screen.getByRole("button", { name: "Copy line 3" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Copy visible lines" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Copy line 1" })).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: "Copy line 3" })).toBeInTheDocument();
 	});
 
 	it("unfollows when the user scrolls away from the bottom", async () => {
@@ -291,8 +245,6 @@ describe("LogViewer", () => {
 	});
 
 	it("has no accessibility violations on the default render", async () => {
-		await expectNoA11yViolations(
-			<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />,
-		);
+		await expectNoA11yViolations(<LogViewer aria-label="Deploy logs" lines={SAMPLE_LINES} />);
 	});
 });

@@ -66,13 +66,7 @@ describe("GraphSidecar", () => {
 			expected: "Edge: a -> b",
 		},
 	])("formats edge description for $name", ({ edge, expected }) => {
-		render(
-			<GraphSidecar
-				aria-label="Graph structure"
-				nodes={nodes}
-				edges={[edge]}
-			/>,
-		);
+		render(<GraphSidecar aria-label="Graph structure" nodes={nodes} edges={[edge]} />);
 		expect(screen.getByText(expected)).toBeInTheDocument();
 	});
 });

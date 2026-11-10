@@ -53,12 +53,7 @@ function readPaginationMeta(value: unknown): PaginationMeta | undefined {
 	const limit = toPositiveInt(value.limit);
 	const total = toPositiveInt(value.total);
 	const totalPages = toPositiveInt(value.totalPages);
-	if (
-		page === undefined ||
-		limit === undefined ||
-		total === undefined ||
-		totalPages === undefined
-	) {
+	if (page === undefined || limit === undefined || total === undefined || totalPages === undefined) {
 		return undefined;
 	}
 
@@ -103,10 +98,4 @@ function unwrapPaginated(body: unknown): {
 	return result;
 }
 
-export {
-	isEnvelope,
-	isPaginationMeta,
-	readPaginationMeta,
-	unwrap,
-	unwrapPaginated,
-};
+export { isEnvelope, isPaginationMeta, readPaginationMeta, unwrap, unwrapPaginated };

@@ -68,10 +68,9 @@ const buttonVariants = cva(
 					"h-[var(--button-height,2rem)] px-[var(--button-px,0.75rem)] py-0",
 					"text-[length:var(--button-fz,0.75rem)]",
 				].join(" "),
-				icon: [
-					"size-[var(--button-height,2rem)] shrink-0 p-0",
-					"text-[length:var(--button-fz,1rem)]",
-				].join(" "),
+				icon: ["size-[var(--button-height,2rem)] shrink-0 p-0", "text-[length:var(--button-fz,1rem)]"].join(
+					" ",
+				),
 			},
 		},
 		compoundVariants: [
@@ -96,22 +95,13 @@ const buttonVariants = cva(
 	},
 );
 
-interface ButtonProps
-	extends ComponentProps<"button">, VariantProps<typeof buttonVariants> {}
+interface ButtonProps extends ComponentProps<"button">, VariantProps<typeof buttonVariants> {}
 
 /**
  * Button control with CVA variants / sizes. Defaults to `type="button"`.
  * Skin via `--button-*` CSS vars on the element (see `buttonVariants`).
  */
-function Button({
-	children,
-	variant,
-	size,
-	type,
-	className,
-	disabled,
-	...rest
-}: ButtonProps) {
+function Button({ children, variant, size, type, className, disabled, ...rest }: ButtonProps) {
 	let resolvedType = type;
 	resolvedType ??= "button";
 

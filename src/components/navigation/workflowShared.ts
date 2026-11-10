@@ -13,10 +13,7 @@ type WorkflowOrientation = "horizontal" | "vertical";
 /**
  * Parent override for Next adjacency.
  */
-type WorkflowResolveFn = (
-	current: string,
-	stepIds: string[],
-) => string | undefined;
+type WorkflowResolveFn = (current: string, stepIds: string[]) => string | undefined;
 
 /**
  * Parent override for Finish visibility.
@@ -99,10 +96,7 @@ function stepIdsEqual(left: string[], right: string[]): boolean {
 /**
  * First/last for connector chrome. Unknown id MUST NOT count as both ends.
  */
-function stepEdgeFlags(
-	stepIds: string[],
-	value: string,
-): { isFirst: boolean; isLast: boolean } {
+function stepEdgeFlags(stepIds: string[], value: string): { isFirst: boolean; isLast: boolean } {
 	const index = stepIds.indexOf(value);
 	if (index < 0) {
 		return { isFirst: false, isLast: false };
@@ -136,13 +130,7 @@ function readStepIdsFromList(list: HTMLOListElement): string[] {
 	return next;
 }
 
-export type {
-	WorkflowContextValue,
-	WorkflowIsFinishFn,
-	WorkflowOrientation,
-	WorkflowResolveFn,
-	WorkflowStepStatus,
-};
+export type { WorkflowContextValue, WorkflowIsFinishFn, WorkflowOrientation, WorkflowResolveFn, WorkflowStepStatus };
 export {
 	defaultIsFinish,
 	nextInOrder,

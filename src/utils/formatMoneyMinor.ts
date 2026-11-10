@@ -32,10 +32,7 @@ function assertIntegerMinor(amountMinor: number | bigint): void {
 	}
 }
 
-function formatterKey(
-	options: FormatMoneyMinorOptions,
-	digits: number,
-): string {
+function formatterKey(options: FormatMoneyMinorOptions, digits: number): string {
 	let localeKey = "";
 	if (options.locale !== undefined) {
 		localeKey = options.locale;
@@ -54,10 +51,7 @@ function formatterKey(
 	return `${localeKey}|${options.currency.toUpperCase()}|${displayKey}|${signKey}|${String(digits)}`;
 }
 
-function getMoneyFormatter(
-	options: FormatMoneyMinorOptions,
-	digits: number,
-): Intl.NumberFormat {
+function getMoneyFormatter(options: FormatMoneyMinorOptions, digits: number): Intl.NumberFormat {
 	const key = formatterKey(options, digits);
 	const cached = formatterCache.get(key);
 	if (cached !== undefined) {
@@ -88,11 +82,7 @@ function getMoneyFormatter(
 /**
  * Leading adornment text for a currency field (`$`, `€`, `USD`, …).
  */
-function currencyAdornmentText(
-	currency: string,
-	locale?: string,
-	currencyDisplay?: MoneyCurrencyDisplay,
-): string {
+function currencyAdornmentText(currency: string, locale?: string, currencyDisplay?: MoneyCurrencyDisplay): string {
 	const formatOptions: Intl.NumberFormatOptions = {
 		style: "currency",
 		currency: currency.toUpperCase(),
@@ -115,10 +105,7 @@ function currencyAdornmentText(
  * Convert integer minor units to a major-unit Number for Intl formatting.
  * Uses decimal string scaling (avoids `minor / 10**digits` float drift).
  */
-function minorToMajorNumber(
-	amountMinor: number | bigint,
-	digits: number,
-): number {
+function minorToMajorNumber(amountMinor: number | bigint, digits: number): number {
 	if (digits === 0) {
 		return Number(amountMinor);
 	}
@@ -135,10 +122,7 @@ function minorToMajorNumber(
  * Convert a normalized ASCII major string (`19.99`, `-0.00001999`) to
  * integer minor units via digit-string scaling (no `major * 10**digits`).
  */
-function majorAsciiToMinor(
-	normalized: string,
-	digits: number,
-): number | undefined {
+function majorAsciiToMinor(normalized: string, digits: number): number | undefined {
 	let sign = 1n;
 	let body = normalized;
 	if (body.startsWith("-")) {
@@ -235,11 +219,7 @@ function majorNumberToMinor(major: number, digits: number): number | undefined {
 /**
  * Format minor units as an editable major draft (no currency symbol, no grouping).
  */
-function formatMajorDraft(
-	amountMinor: number,
-	digits: number,
-	locale?: string,
-): string {
+function formatMajorDraft(amountMinor: number, digits: number, locale?: string): string {
 	assertIntegerMinor(amountMinor);
 	const major = minorToMajorNumber(amountMinor, digits);
 	return new Intl.NumberFormat(locale, {
@@ -272,11 +252,7 @@ function localeNumberSeparators(locale?: string): {
  * Parse a major-unit draft string into integer minor units.
  * Empty -> undefined. Invalid -> undefined.
  */
-function parseMajorInput(
-	raw: string,
-	locale: string | undefined,
-	digits: number,
-): number | undefined {
+function parseMajorInput(raw: string, locale: string | undefined, digits: number): number | undefined {
 	const trimmed = raw.trim();
 	if (trimmed.length === 0) {
 		return undefined;
@@ -328,22 +304,14 @@ function parseMajorInput(
 function formatMoneyMinor(options: FormatMoneyMinorOptions): string {
 	assertIntegerMinor(options.amountMinor);
 
-	const digits = currencyFractionDigits(
-		options.currency,
-		options.locale,
-		options.currencies,
-	);
+	const digits = currencyFractionDigits(options.currency, options.locale, options.currencies);
 
 	const formatter = getMoneyFormatter(options, digits);
 	const major = minorToMajorNumber(options.amountMinor, digits);
 	return formatter.format(major);
 }
 
-export type {
-	FormatMoneyMinorOptions,
-	MoneyCurrencyDisplay,
-	MoneyCurrencySign,
-};
+export type { FormatMoneyMinorOptions, MoneyCurrencyDisplay, MoneyCurrencySign };
 export {
 	currencyAdornmentText,
 	currencyFractionDigits,

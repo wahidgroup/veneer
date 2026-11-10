@@ -16,10 +16,8 @@ const alertVariants = cva(
 		variants: {
 			type: {
 				info: "border-info text-info-foreground [--alert-wash:var(--info)]",
-				success:
-					"border-success text-success-muted-foreground [--alert-wash:var(--success-muted)]",
-				warning:
-					"border-warning text-warning-foreground [--alert-wash:var(--warning)]",
+				success: "border-success text-success-muted-foreground [--alert-wash:var(--success-muted)]",
+				warning: "border-warning text-warning-foreground [--alert-wash:var(--warning)]",
 				danger: "border-destructive text-destructive-muted-foreground [--alert-wash:var(--destructive-muted)]",
 			},
 		},
@@ -29,10 +27,7 @@ const alertVariants = cva(
 	},
 );
 
-interface AlertProps
-	extends
-		Omit<ComponentProps<"div">, "title">,
-		VariantProps<typeof alertVariants> {
+interface AlertProps extends Omit<ComponentProps<"div">, "title">, VariantProps<typeof alertVariants> {
 	title?: ReactNode;
 	children: ReactNode;
 	icon?: ReactNode;
@@ -58,14 +53,7 @@ function defaultIcon(type: AlertType): ReactNode {
  * feedback. `info`/`success` use `role="status"`; `warning`/`danger` use
  * `role="alert"`.
  */
-function Alert({
-	type,
-	title,
-	children,
-	icon,
-	className,
-	...rest
-}: AlertProps) {
+function Alert({ type, title, children, icon, className, ...rest }: AlertProps) {
 	let resolvedType: AlertType = "info";
 	if (type === "success") {
 		resolvedType = "success";

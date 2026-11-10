@@ -9,23 +9,11 @@ interface BuildDiffLinesOptions {
 /**
  * Turn old/new text into DiffLine rows via jsdiff structuredPatch.
  */
-function buildDiffLines(
-	oldText: string,
-	newText: string,
-	options?: BuildDiffLinesOptions,
-): DiffLine[] {
+function buildDiffLines(oldText: string, newText: string, options?: BuildDiffLinesOptions): DiffLine[] {
 	let context = options?.context;
 	context ??= 3;
 
-	const patch = structuredPatch(
-		"old",
-		"new",
-		oldText,
-		newText,
-		undefined,
-		undefined,
-		{ context },
-	);
+	const patch = structuredPatch("old", "new", oldText, newText, undefined, undefined, { context });
 
 	const lines: DiffLine[] = [];
 	for (const hunk of patch.hunks) {

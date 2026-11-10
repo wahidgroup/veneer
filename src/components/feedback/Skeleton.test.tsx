@@ -12,9 +12,7 @@ describe("Skeleton", () => {
 		{ shape: "block" as const },
 	])("applies shape $shape", ({ shape }) => {
 		const { container } = render(<Skeleton shape={shape} />);
-		expect(
-			container.querySelector("[data-slot='skeleton']"),
-		).toHaveAttribute("data-shape", shape);
+		expect(container.querySelector("[data-slot='skeleton']")).toHaveAttribute("data-shape", shape);
 	});
 
 	it("has no accessibility violations", async () => {

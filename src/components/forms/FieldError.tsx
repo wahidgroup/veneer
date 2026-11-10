@@ -9,12 +9,7 @@ type FieldErrorProps = ComponentProps<"p">;
  */
 function FieldError({ children, className, ...rest }: FieldErrorProps) {
 	return (
-		<p
-			data-slot="field-error"
-			role="alert"
-			className={cn("text-sm text-destructive", className)}
-			{...rest}
-		>
+		<p data-slot="field-error" role="alert" className={cn("text-sm text-destructive", className)} {...rest}>
 			{children}
 		</p>
 	);

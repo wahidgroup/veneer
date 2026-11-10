@@ -18,9 +18,7 @@ const CollapsibleContext = createContext<CollapsibleContextValue | null>(null);
 function useCollapsibleContext(): CollapsibleContextValue {
 	const ctx = useContext(CollapsibleContext);
 	if (ctx === null) {
-		throw new Error(
-			"Collapsible components must be used within Collapsible",
-		);
+		throw new Error("Collapsible components must be used within Collapsible");
 	}
 
 	return ctx;
@@ -117,28 +115,15 @@ interface CollapsibleTriggerProps extends ComponentProps<"button"> {
  * Button that toggles the paired `CollapsibleContent`. Sets `aria-expanded`
  * and `aria-controls` on the trigger. Shows a caret that rotates when open.
  */
-function CollapsibleTrigger({
-	children,
-	className,
-	disabled,
-	onClick,
-	...rest
-}: CollapsibleTriggerProps) {
-	const {
-		open,
-		setOpen,
-		disabled: rootDisabled,
-		triggerId,
-		panelId,
-	} = useCollapsibleContext();
+function CollapsibleTrigger({ children, className, disabled, onClick, ...rest }: CollapsibleTriggerProps) {
+	const { open, setOpen, disabled: rootDisabled, triggerId, panelId } = useCollapsibleContext();
 
 	let resolvedDisabled = rootDisabled;
 	if (disabled === true) {
 		resolvedDisabled = true;
 	}
 
-	let caretClass =
-		"size-4 shrink-0 text-muted-foreground transition-transform";
+	let caretClass = "size-4 shrink-0 text-muted-foreground transition-transform";
 	if (open) {
 		caretClass = cn(caretClass, "rotate-180");
 	}
@@ -153,10 +138,7 @@ function CollapsibleTrigger({
 			aria-expanded={open}
 			aria-controls={panelId}
 			disabled={resolvedDisabled}
-			className={cn(
-				"h-auto w-full items-center justify-between gap-2 px-0 py-0",
-				className,
-			)}
+			className={cn("h-auto w-full items-center justify-between gap-2 px-0 py-0", className)}
 			onClick={(event) => {
 				if (onClick !== undefined) {
 					onClick(event);
@@ -173,11 +155,7 @@ function CollapsibleTrigger({
 			{...rest}
 		>
 			<span className="min-w-0 flex-1 text-left">{children}</span>
-			<ChevronDown
-				data-slot="collapsible-caret"
-				className={caretClass}
-				aria-hidden="true"
-			/>
+			<ChevronDown data-slot="collapsible-caret" className={caretClass} aria-hidden="true" />
 		</Button>
 	);
 }
@@ -190,11 +168,7 @@ interface CollapsibleContentProps extends ComponentProps<"div"> {
  * Region shown when the parent `Collapsible` is open. Removed from the DOM
  * when closed.
  */
-function CollapsibleContent({
-	children,
-	className,
-	...rest
-}: CollapsibleContentProps) {
+function CollapsibleContent({ children, className, ...rest }: CollapsibleContentProps) {
 	const { open, triggerId, panelId } = useCollapsibleContext();
 
 	if (!open) {
@@ -214,9 +188,5 @@ function CollapsibleContent({
 	);
 }
 
-export type {
-	CollapsibleProps,
-	CollapsibleTriggerProps,
-	CollapsibleContentProps,
-};
+export type { CollapsibleProps, CollapsibleTriggerProps, CollapsibleContentProps };
 export { Collapsible, CollapsibleTrigger, CollapsibleContent };

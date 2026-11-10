@@ -22,9 +22,7 @@ interface DescriptionListItem {
 }
 
 interface DescriptionListProps
-	extends
-		Omit<ComponentProps<"dl">, "children">,
-		VariantProps<typeof descriptionListVariants> {
+	extends Omit<ComponentProps<"dl">, "children">, VariantProps<typeof descriptionListVariants> {
 	items: DescriptionListItem[];
 }
 
@@ -32,12 +30,7 @@ interface DescriptionListProps
  * Resource attribute key/value list (`dl` / `dt` / `dd`). Use for stack
  * details and inventory side panels.
  */
-function DescriptionList({
-	items,
-	columns,
-	className,
-	...rest
-}: DescriptionListProps) {
+function DescriptionList({ items, columns, className, ...rest }: DescriptionListProps) {
 	let resolvedColumns: 1 | 2 = 1;
 	if (columns === 2) {
 		resolvedColumns = 2;
@@ -47,26 +40,15 @@ function DescriptionList({
 		<dl
 			data-slot="description-list"
 			data-columns={String(resolvedColumns)}
-			className={cn(
-				descriptionListVariants({ columns: resolvedColumns }),
-				className,
-			)}
+			className={cn(descriptionListVariants({ columns: resolvedColumns }), className)}
 			{...rest}
 		>
 			{items.map((item, index) => {
 				const key = `desc-${String(index)}`;
 				return (
-					<div
-						key={key}
-						data-slot="description-list-item"
-						className="min-w-0"
-					>
-						<dt className="text-xs font-medium text-muted-foreground">
-							{item.term}
-						</dt>
-						<dd className="mt-0.5 text-sm text-foreground break-words">
-							{item.description}
-						</dd>
+					<div key={key} data-slot="description-list-item" className="min-w-0">
+						<dt className="text-xs font-medium text-muted-foreground">{item.term}</dt>
+						<dd className="mt-0.5 text-sm text-foreground break-words">{item.description}</dd>
 					</div>
 				);
 			})}

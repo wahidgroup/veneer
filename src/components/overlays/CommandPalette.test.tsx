@@ -68,10 +68,7 @@ describe("CommandPalette", () => {
 			/>,
 		);
 
-		await user.type(
-			screen.getByRole("combobox", { name: "Filter commands" }),
-			"zzzz",
-		);
+		await user.type(screen.getByRole("combobox", { name: "Filter commands" }), "zzzz");
 		expect(screen.getByText("Nothing here")).toBeInTheDocument();
 	});
 

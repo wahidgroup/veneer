@@ -8,11 +8,7 @@ import { TopNav } from "./TopNav.js";
 describe("TopNav", () => {
 	it("renders brand, center, start, and end slots", () => {
 		render(
-			<TopNav
-				brand="Veneer"
-				start={<span>Start</span>}
-				end={<span>End</span>}
-			>
+			<TopNav brand="Veneer" start={<span>Start</span>} end={<span>End</span>}>
 				Center
 			</TopNav>,
 		);
@@ -36,9 +32,7 @@ describe("TopNav", () => {
 			/>,
 		);
 
-		await user.click(
-			screen.getByRole("button", { name: "Toggle sidebar" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Toggle sidebar" }));
 		expect(clicks).toBe(1);
 	});
 
@@ -52,9 +46,7 @@ describe("TopNav", () => {
 				}}
 			/>,
 		);
-		expect(
-			screen.getByRole("button", { name: "Toggle sidebar" }),
-		).toHaveAttribute("aria-expanded", "true");
+		expect(screen.getByRole("button", { name: "Toggle sidebar" })).toHaveAttribute("aria-expanded", "true");
 	});
 
 	it("has no accessibility violations", async () => {

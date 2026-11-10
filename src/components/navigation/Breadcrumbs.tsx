@@ -18,17 +18,9 @@ interface BreadcrumbsProps extends ComponentProps<"nav"> {
 	renderLink?: (props: BreadcrumbLinkRenderProps) => ReactNode;
 }
 
-function crumbContent(
-	item: BreadcrumbItem,
-	isLast: boolean,
-	renderLink: BreadcrumbsProps["renderLink"],
-): ReactNode {
+function crumbContent(item: BreadcrumbItem, isLast: boolean, renderLink: BreadcrumbsProps["renderLink"]): ReactNode {
 	if (isLast || item.href === undefined) {
-		return (
-			<span className="font-medium text-muted-foreground">
-				{item.label}
-			</span>
-		);
+		return <span className="font-medium text-muted-foreground">{item.label}</span>;
 	}
 
 	if (renderLink !== undefined) {
@@ -36,10 +28,7 @@ function crumbContent(
 	}
 
 	return (
-		<a
-			href={item.href}
-			className="font-medium text-primary hover:underline"
-		>
+		<a href={item.href} className="font-medium text-primary hover:underline">
 			{item.label}
 		</a>
 	);
@@ -48,19 +37,9 @@ function crumbContent(
 /**
  * Hierarchical path trail. Inject `renderLink` for app routers.
  */
-function Breadcrumbs({
-	items,
-	renderLink,
-	className,
-	...props
-}: BreadcrumbsProps) {
+function Breadcrumbs({ items, renderLink, className, ...props }: BreadcrumbsProps) {
 	return (
-		<nav
-			data-slot="breadcrumbs"
-			aria-label="Breadcrumb"
-			className={cn("text-sm", className)}
-			{...props}
-		>
+		<nav data-slot="breadcrumbs" aria-label="Breadcrumb" className={cn("text-sm", className)} {...props}>
 			<ol className="flex flex-wrap items-center gap-1.5">
 				{items.map((item, index) => {
 					const isLast = index === items.length - 1;
@@ -69,10 +48,7 @@ function Breadcrumbs({
 					let separator: ReactNode = null;
 					if (index > 0) {
 						separator = (
-							<ChevronRight
-								className="size-3.5 shrink-0 text-muted-foreground"
-								aria-hidden="true"
-							/>
+							<ChevronRight className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
 						);
 					}
 

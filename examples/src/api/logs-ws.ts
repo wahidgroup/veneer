@@ -41,12 +41,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 function isLogLevel(value: unknown): value is LogLevel {
-	return (
-		value === "debug" ||
-		value === "info" ||
-		value === "warn" ||
-		value === "error"
-	);
+	return value === "debug" || value === "info" || value === "warn" || value === "error";
 }
 
 function isLogLine(value: unknown): value is LogLine {
@@ -140,10 +135,7 @@ function connectLogs(options: ConnectLogsOptions): {
 	}
 
 	function discardSocket(ws: WebSocket, reason: string): void {
-		if (
-			ws.readyState === WebSocket.CONNECTING ||
-			ws.readyState === WebSocket.OPEN
-		) {
+		if (ws.readyState === WebSocket.CONNECTING || ws.readyState === WebSocket.OPEN) {
 			ws.close(1000, reason);
 		}
 	}

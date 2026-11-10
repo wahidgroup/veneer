@@ -13,16 +13,7 @@ interface ToggleProps extends Omit<ComponentProps<"button">, "onChange"> {
 /**
  * Switch control (`role="switch"`). Prefer controlled `checked` + `onCheckedChange` in forms.
  */
-function Toggle({
-	checked,
-	defaultChecked,
-	onCheckedChange,
-	label,
-	className,
-	disabled,
-	id,
-	...rest
-}: ToggleProps) {
+function Toggle({ checked, defaultChecked, onCheckedChange, label, className, disabled, id, ...rest }: ToggleProps) {
 	const isControlled = checked !== undefined;
 	const [uncontrolled, setUncontrolled] = useState(defaultChecked === true);
 
@@ -31,8 +22,7 @@ function Toggle({
 		isOn = checked;
 	}
 
-	let trackClass =
-		"relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors";
+	let trackClass = "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors";
 	trackClass = cn(
 		trackClass,
 		"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2",
@@ -48,8 +38,7 @@ function Toggle({
 		trackClass = cn(trackClass, "cursor-pointer");
 	}
 
-	let thumbClass =
-		"inline-block size-4 transform rounded-full bg-card transition-transform";
+	let thumbClass = "inline-block size-4 transform rounded-full bg-card transition-transform";
 	if (isOn) {
 		thumbClass = cn(thumbClass, "translate-x-6");
 	} else {

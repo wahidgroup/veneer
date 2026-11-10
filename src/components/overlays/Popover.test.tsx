@@ -63,9 +63,7 @@ describe("Popover", () => {
 		);
 
 		await user.click(screen.getByRole("button", { name: "Inside action" }));
-		expect(
-			screen.getByRole("button", { name: "Inside action" }),
-		).toHaveFocus();
+		expect(screen.getByRole("button", { name: "Inside action" })).toHaveFocus();
 	});
 
 	it("has no accessibility violations when open", async () => {

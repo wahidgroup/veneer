@@ -26,28 +26,17 @@ describe("MoneyAmount", () => {
 			currency: "JPY",
 			expectedSubstring: "1,980",
 		},
-	])(
-		"renders formatted $label",
-		({ amountMinor, currency, expectedSubstring }) => {
-			render(
-				<MoneyAmount
-					amountMinor={amountMinor}
-					currency={currency}
-					locale="en-US"
-				/>,
-			);
+	])("renders formatted $label", ({ amountMinor, currency, expectedSubstring }) => {
+		render(<MoneyAmount amountMinor={amountMinor} currency={currency} locale="en-US" />);
 
-			const amount = screen.getByText((content) => {
-				const display = normalizeSpaces(content);
-				return display.includes(expectedSubstring);
-			});
-			expect(amount).toHaveAttribute("data-slot", "money-amount");
-		},
-	);
+		const amount = screen.getByText((content) => {
+			const display = normalizeSpaces(content);
+			return display.includes(expectedSubstring);
+		});
+		expect(amount).toHaveAttribute("data-slot", "money-amount");
+	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<MoneyAmount amountMinor={500} currency="USD" locale="en-US" />,
-		);
+		await expectNoA11yViolations(<MoneyAmount amountMinor={500} currency="USD" locale="en-US" />);
 	});
 });

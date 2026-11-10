@@ -6,10 +6,7 @@ import type { FlowNode, FlowPort, FlowStatus } from "./flowTypes.js";
 import { statusRingClass } from "./flowStatus.js";
 import { GraphHandle } from "./GraphHandle.js";
 
-interface GraphNodeProps extends Omit<
-	ComponentProps<"div">,
-	"children" | "id"
-> {
+interface GraphNodeProps extends Omit<ComponentProps<"div">, "children" | "id"> {
 	node: FlowNode;
 	selected?: boolean;
 	focused?: boolean;
@@ -146,13 +143,7 @@ function GraphNode({
 			aria-roledescription="flow node"
 			tabIndex={tabIndex}
 			data-selected={selectedAttr}
-			className={cn(
-				"absolute box-border",
-				ring,
-				selectedClass,
-				focusClass,
-				className,
-			)}
+			className={cn("absolute box-border", ring, selectedClass, focusClass, className)}
 			style={{
 				...style,
 				left: node.x,
@@ -164,10 +155,7 @@ function GraphNode({
 			{...rest}
 		>
 			{handles}
-			<div
-				data-slot="graph-node-body"
-				className={cn("h-full w-full", bodyPointerClass)}
-			>
+			<div data-slot="graph-node-body" className={cn("h-full w-full", bodyPointerClass)}>
 				{body}
 			</div>
 		</div>

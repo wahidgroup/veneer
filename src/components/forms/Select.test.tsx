@@ -34,10 +34,7 @@ describe("Select", () => {
 
 	it("marks invalid state", () => {
 		render(<Select aria-label="Region" options={OPTIONS} invalid />);
-		expect(screen.getByRole("combobox")).toHaveAttribute(
-			"aria-invalid",
-			"true",
-		);
+		expect(screen.getByRole("combobox")).toHaveAttribute("aria-invalid", "true");
 	});
 
 	it("filters locally when searchable", async () => {
@@ -152,8 +149,6 @@ describe("Select", () => {
 	});
 
 	it("has no accessibility violations", async () => {
-		await expectNoA11yViolations(
-			<Select aria-label="Region" options={OPTIONS} />,
-		);
+		await expectNoA11yViolations(<Select aria-label="Region" options={OPTIONS} />);
 	});
 });

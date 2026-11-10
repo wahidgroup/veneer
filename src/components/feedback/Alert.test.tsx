@@ -6,21 +6,12 @@ import { Alert } from "./Alert.js";
 
 describe("Alert", () => {
 	it("renders title and body with default info status role", () => {
-		render(
-			<Alert title="Heads up">
-				Stack apply finished without errors.
-			</Alert>,
-		);
+		render(<Alert title="Heads up">Stack apply finished without errors.</Alert>);
 
 		expect(screen.getByRole("status")).toHaveAttribute("data-type", "info");
-		expect(screen.getByRole("status")).toHaveAttribute(
-			"data-slot",
-			"alert",
-		);
+		expect(screen.getByRole("status")).toHaveAttribute("data-slot", "alert");
 		expect(screen.getByText("Heads up")).toBeInTheDocument();
-		expect(
-			screen.getByText("Stack apply finished without errors."),
-		).toBeInTheDocument();
+		expect(screen.getByText("Stack apply finished without errors.")).toBeInTheDocument();
 	});
 
 	it.each([
@@ -38,9 +29,7 @@ describe("Alert", () => {
 	});
 
 	it("uses a custom icon when provided", () => {
-		render(
-			<Alert icon={<span data-testid="custom-icon">!</span>}>Body</Alert>,
-		);
+		render(<Alert icon={<span data-testid="custom-icon">!</span>}>Body</Alert>);
 		expect(screen.getByTestId("custom-icon")).toBeInTheDocument();
 	});
 

@@ -17,14 +17,9 @@ const sparklineStrokeVariants = cva("fill-none stroke-2", {
 	},
 });
 
-type SparklineTone = NonNullable<
-	VariantProps<typeof sparklineStrokeVariants>["tone"]
->;
+type SparklineTone = NonNullable<VariantProps<typeof sparklineStrokeVariants>["tone"]>;
 
-interface SparklineProps extends Omit<
-	ComponentProps<"svg">,
-	"children" | "values"
-> {
+interface SparklineProps extends Omit<ComponentProps<"svg">, "children" | "values"> {
 	values: number[];
 	width?: number;
 	height?: number;
@@ -70,11 +65,7 @@ function buildSparklineLabel(summary: SparklineSummary): string {
 	return `Sparkline chart: last value ${String(summary.last)}, minimum ${String(summary.min)}, maximum ${String(summary.max)}`;
 }
 
-function buildPolylinePoints(
-	values: number[],
-	width: number,
-	height: number,
-): string {
+function buildPolylinePoints(values: number[], width: number, height: number): string {
 	if (values.length === 0) {
 		return "";
 	}
@@ -118,14 +109,7 @@ function buildPolylinePoints(
  * Accessible summary via `role="img"` and an `aria-label` derived from
  * last/min/max values. Empty `values` renders a labeled empty chart.
  */
-function Sparkline({
-	values,
-	width,
-	height,
-	tone,
-	className,
-	...rest
-}: SparklineProps) {
+function Sparkline({ values, width, height, tone, className, ...rest }: SparklineProps) {
 	let resolvedWidth = width;
 	resolvedWidth ??= 120;
 
@@ -148,12 +132,7 @@ function Sparkline({
 	const points = buildPolylinePoints(values, resolvedWidth, resolvedHeight);
 	let polylineNode = null;
 	if (points.length > 0) {
-		polylineNode = (
-			<polyline
-				points={points}
-				className={sparklineStrokeVariants({ tone: resolvedTone })}
-			/>
-		);
+		polylineNode = <polyline points={points} className={sparklineStrokeVariants({ tone: resolvedTone })} />;
 	}
 
 	return (

@@ -24,10 +24,7 @@ interface CommandPaletteProps {
 	className?: string;
 }
 
-function filterPaletteItems(
-	items: CommandPaletteItem[],
-	query: string,
-): CommandPaletteItem[] {
+function filterPaletteItems(items: CommandPaletteItem[], query: string): CommandPaletteItem[] {
 	const normalized = query.trim().toLowerCase();
 	if (normalized.length === 0) {
 		return items;
@@ -145,47 +142,24 @@ function CommandPalette({
 
 	let listBody: ReactNode;
 	if (visible.length === 0) {
-		listBody = (
-			<div className="px-3 py-6 text-center text-sm text-muted-foreground">
-				{resolvedEmpty}
-			</div>
-		);
+		listBody = <div className="px-3 py-6 text-center text-sm text-muted-foreground">{resolvedEmpty}</div>;
 	} else {
 		listBody = (
-			<ul
-				id={listboxId}
-				role="listbox"
-				aria-label="Commands"
-				className="max-h-72 overflow-y-auto py-1"
-			>
+			<ul id={listboxId} role="listbox" aria-label="Commands" className="max-h-72 overflow-y-auto py-1">
 				{visible.map((item, index) => {
-					let optionClass =
-						"flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none";
+					let optionClass = "flex cursor-pointer items-center gap-2 px-3 py-2 text-sm outline-none";
 					if (index === safeIndex) {
-						optionClass = cn(
-							optionClass,
-							"bg-accent text-accent-foreground",
-						);
+						optionClass = cn(optionClass, "bg-accent text-accent-foreground");
 					} else {
-						optionClass = cn(
-							optionClass,
-							"text-foreground hover:bg-accent/60",
-						);
+						optionClass = cn(optionClass, "text-foreground hover:bg-accent/60");
 					}
 					if (item.disabled === true) {
-						optionClass = cn(
-							optionClass,
-							"pointer-events-none opacity-50",
-						);
+						optionClass = cn(optionClass, "pointer-events-none opacity-50");
 					}
 
 					let groupNode: ReactNode = null;
 					if (item.group !== undefined && item.group.length > 0) {
-						groupNode = (
-							<span className="ml-auto text-xs text-muted-foreground">
-								{item.group}
-							</span>
-						);
+						groupNode = <span className="ml-auto text-xs text-muted-foreground">{item.group}</span>;
 					}
 
 					let isSelected = false;
@@ -213,10 +187,7 @@ function CommandPalette({
 								selectIndex(index);
 							}}
 							onKeyDown={(event) => {
-								if (
-									event.key === "Enter" ||
-									event.key === " "
-								) {
+								if (event.key === "Enter" || event.key === " ") {
 									event.preventDefault();
 									selectIndex(index);
 								}
@@ -245,10 +216,7 @@ function CommandPalette({
 			className={cn("max-w-lg p-0", className)}
 			showCloseButton={false}
 		>
-			<div
-				data-slot="command-palette"
-				className="-mx-5 -my-4 flex flex-col"
-			>
+			<div data-slot="command-palette" className="-mx-5 -my-4 flex flex-col">
 				<div className="border-b border-border px-3 py-2">
 					<Input
 						role="combobox"

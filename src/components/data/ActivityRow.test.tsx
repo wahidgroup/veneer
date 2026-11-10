@@ -21,32 +21,21 @@ describe("ActivityRow", () => {
 			directionName: "Outgoing",
 			amountSats: 100000,
 		},
-	])(
-		"renders $direction activity with direction chrome",
-		({ direction, title, directionName, amountSats }) => {
-			render(
-				<ActivityRow
-					direction={direction}
-					title={title}
-					amount={
-						<BtcAmount
-							amountSats={amountSats}
-							unit="sats"
-							locale="en-US"
-						/>
-					}
-				/>,
-			);
+	])("renders $direction activity with direction chrome", ({ direction, title, directionName, amountSats }) => {
+		render(
+			<ActivityRow
+				direction={direction}
+				title={title}
+				amount={<BtcAmount amountSats={amountSats} unit="sats" locale="en-US" />}
+			/>,
+		);
 
-			const row = screen.getByRole("article");
-			expect(row).toHaveAttribute("data-slot", "activity-row");
-			expect(row).toHaveAttribute("data-direction", direction);
-			expect(
-				screen.getByRole("img", { name: directionName }),
-			).toBeInTheDocument();
-			expect(screen.getByText(title)).toBeInTheDocument();
-		},
-	);
+		const row = screen.getByRole("article");
+		expect(row).toHaveAttribute("data-slot", "activity-row");
+		expect(row).toHaveAttribute("data-direction", direction);
+		expect(screen.getByRole("img", { name: directionName })).toBeInTheDocument();
+		expect(screen.getByText(title)).toBeInTheDocument();
+	});
 
 	it("renders amount, status, subtitle, and tags slots", () => {
 		render(
@@ -54,12 +43,8 @@ describe("ActivityRow", () => {
 				direction="in"
 				title="Received payment"
 				subtitle="2 hours ago"
-				amount={
-					<BtcAmount amountSats={50000} unit="sats" locale="en-US" />
-				}
-				status={
-					<TxStatusBadge status="confirmed">Confirmed</TxStatusBadge>
-				}
+				amount={<BtcAmount amountSats={50000} unit="sats" locale="en-US" />}
+				status={<TxStatusBadge status="confirmed">Confirmed</TxStatusBadge>}
 				tags={<Badge variant="info">Lightning</Badge>}
 			/>,
 		);
@@ -76,14 +61,8 @@ describe("ActivityRow", () => {
 				direction="in"
 				title="Deposit"
 				subtitle="Today"
-				amount={
-					<BtcAmount amountSats={1000} unit="sats" locale="en-US" />
-				}
-				status={
-					<TxStatusBadge status="confirming">
-						Confirming
-					</TxStatusBadge>
-				}
+				amount={<BtcAmount amountSats={1000} unit="sats" locale="en-US" />}
+				status={<TxStatusBadge status="confirming">Confirming</TxStatusBadge>}
 			/>,
 		);
 	});

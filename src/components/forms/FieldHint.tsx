@@ -9,11 +9,7 @@ type FieldHintProps = ComponentProps<"p">;
  */
 function FieldHint({ children, className, ...rest }: FieldHintProps) {
 	return (
-		<p
-			data-slot="field-hint"
-			className={cn("text-sm text-muted-foreground", className)}
-			{...rest}
-		>
+		<p data-slot="field-hint" className={cn("text-sm text-muted-foreground", className)} {...rest}>
 			{children}
 		</p>
 	);

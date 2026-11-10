@@ -10,12 +10,7 @@ interface VisuallyHiddenProps extends ComponentProps<"span"> {
  * Hides content visually while keeping it in the accessibility tree
  * (clip-path pattern). Do not use for focusable controls that stay hidden.
  */
-function VisuallyHidden({
-	as,
-	className,
-	children,
-	...rest
-}: VisuallyHiddenProps) {
+function VisuallyHidden({ as, className, children, ...rest }: VisuallyHiddenProps) {
 	let Component: ElementType = "span";
 	if (as !== undefined) {
 		Component = as;

@@ -13,9 +13,7 @@ describe("VisuallyHidden", () => {
 			</button>,
 		);
 
-		expect(
-			screen.getByRole("button", { name: /Save\s*stack prod-api/ }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("button", { name: /Save\s*stack prod-api/ })).toBeInTheDocument();
 	});
 
 	it("has no accessibility violations", async () => {

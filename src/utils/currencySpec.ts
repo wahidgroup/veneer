@@ -29,10 +29,7 @@ const CRYPTO_CURRENCIES = {
 /**
  * Look up a catalog entry by currency code (case-insensitive key).
  */
-function lookupCurrencySpec(
-	currency: string,
-	catalog: CurrencyCatalog | undefined,
-): CurrencySpec | undefined {
+function lookupCurrencySpec(currency: string, catalog: CurrencyCatalog | undefined): CurrencySpec | undefined {
 	if (catalog === undefined) {
 		return undefined;
 	}
@@ -44,11 +41,7 @@ function lookupCurrencySpec(
  * Fraction digit count for a currency (ISO via Intl when catalog omits
  * `fractionDigits`; catalog override wins when set).
  */
-function currencyFractionDigits(
-	currency: string,
-	locale?: string,
-	catalog?: CurrencyCatalog,
-): number {
+function currencyFractionDigits(currency: string, locale?: string, catalog?: CurrencyCatalog): number {
 	const spec = lookupCurrencySpec(currency, catalog);
 	if (spec?.fractionDigits !== undefined) {
 		return spec.fractionDigits;

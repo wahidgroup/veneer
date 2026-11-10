@@ -39,10 +39,7 @@ interface StepperProps extends Omit<ComponentProps<"nav">, "onChange"> {
 	children?: ReactNode;
 }
 
-function resolveStepState(
-	index: number,
-	currentIndex: number,
-): StepperStepState {
+function resolveStepState(index: number, currentIndex: number): StepperStepState {
 	if (index < currentIndex) {
 		return "complete";
 	}
@@ -56,15 +53,7 @@ function resolveStepState(
 /**
  * Form-wizard step indicator for checkout/KYC flows.
  */
-function Stepper({
-	steps,
-	value,
-	defaultValue,
-	onValueChange,
-	children,
-	className,
-	...rest
-}: StepperProps) {
+function Stepper({ steps, value, defaultValue, onValueChange, children, className, ...rest }: StepperProps) {
 	const isControlled = value !== undefined;
 	const [uncontrolled, setUncontrolled] = useState(() => {
 		if (defaultValue !== undefined) {
@@ -101,15 +90,8 @@ function Stepper({
 	};
 
 	return (
-		<StepperContext.Provider
-			value={{ steps, currentId, currentIndex, setValue }}
-		>
-			<nav
-				data-slot="stepper"
-				aria-label="Progress"
-				className={cn("flex flex-col gap-4", className)}
-				{...rest}
-			>
+		<StepperContext.Provider value={{ steps, currentId, currentIndex, setValue }}>
+			<nav data-slot="stepper" aria-label="Progress" className={cn("flex flex-col gap-4", className)} {...rest}>
 				<ol className="flex flex-col gap-3 sm:flex-row sm:items-start sm:gap-6">
 					{steps.map((step, index) => {
 						const state = resolveStepState(index, currentIndex);
@@ -118,30 +100,17 @@ function Stepper({
 						let markerClass =
 							"flex size-8 shrink-0 items-center justify-center rounded-full border text-sm font-medium";
 						let labelClass = "text-sm font-medium";
-						const descriptionClass =
-							"text-sm text-muted-foreground";
+						const descriptionClass = "text-sm text-muted-foreground";
 
 						if (state === "complete") {
-							markerClass = cn(
-								markerClass,
-								"border-primary bg-primary text-primary-foreground",
-							);
+							markerClass = cn(markerClass, "border-primary bg-primary text-primary-foreground");
 							labelClass = cn(labelClass, "text-foreground");
 						} else if (state === "current") {
-							markerClass = cn(
-								markerClass,
-								"border-primary bg-card text-primary",
-							);
+							markerClass = cn(markerClass, "border-primary bg-card text-primary");
 							labelClass = cn(labelClass, "text-foreground");
 						} else {
-							markerClass = cn(
-								markerClass,
-								"border-border bg-muted text-muted-foreground",
-							);
-							labelClass = cn(
-								labelClass,
-								"text-muted-foreground",
-							);
+							markerClass = cn(markerClass, "border-border bg-muted text-muted-foreground");
+							labelClass = cn(labelClass, "text-muted-foreground");
 						}
 
 						let ariaCurrent: "step" | undefined;
@@ -151,18 +120,12 @@ function Stepper({
 
 						let markerContent: ReactNode = stepNumber;
 						if (state === "complete") {
-							markerContent = (
-								<Check className="size-4" aria-hidden="true" />
-							);
+							markerContent = <Check className="size-4" aria-hidden="true" />;
 						}
 
 						let descriptionNode: ReactNode = null;
 						if (step.description !== undefined) {
-							descriptionNode = (
-								<p className={descriptionClass}>
-									{step.description}
-								</p>
-							);
+							descriptionNode = <p className={descriptionClass}>{step.description}</p>;
 						}
 
 						return (
@@ -173,10 +136,7 @@ function Stepper({
 								aria-current={ariaCurrent}
 								className="flex min-w-0 flex-1 gap-3"
 							>
-								<span
-									className={markerClass}
-									aria-hidden="true"
-								>
+								<span className={markerClass} aria-hidden="true">
 									{markerContent}
 								</span>
 								<div className="min-w-0 space-y-1">
@@ -204,14 +164,7 @@ interface StepperActionsProps extends Omit<ComponentProps<"div">, "children"> {
  * Optional Back/Next chrome for a parent Stepper. Disables Back on the first
  * step; parent handles advance logic via `onNext` / `onBack`.
  */
-function StepperActions({
-	onNext,
-	onBack,
-	nextLabel,
-	backLabel,
-	className,
-	...rest
-}: StepperActionsProps) {
+function StepperActions({ onNext, onBack, nextLabel, backLabel, className, ...rest }: StepperActionsProps) {
 	const { steps, currentIndex } = useStepperContext();
 
 	let resolvedNextLabel = nextLabel;
@@ -226,12 +179,7 @@ function StepperActions({
 	let backNode: ReactNode = null;
 	if (onBack !== undefined) {
 		backNode = (
-			<Button
-				type="button"
-				variant="outlined"
-				disabled={onFirst}
-				onClick={onBack}
-			>
+			<Button type="button" variant="outlined" disabled={onFirst} onClick={onBack}>
 				{resolvedBackLabel}
 			</Button>
 		);
@@ -252,21 +200,12 @@ function StepperActions({
 	}
 
 	return (
-		<div
-			data-slot="stepper-actions"
-			className={cn("flex items-center justify-between gap-3", className)}
-			{...rest}
-		>
+		<div data-slot="stepper-actions" className={cn("flex items-center justify-between gap-3", className)} {...rest}>
 			{backNode}
 			{nextNode}
 		</div>
 	);
 }
 
-export type {
-	StepperProps,
-	StepperStep,
-	StepperStepState,
-	StepperActionsProps,
-};
+export type { StepperProps, StepperStep, StepperStepState, StepperActionsProps };
 export { Stepper, StepperActions };

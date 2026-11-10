@@ -5,13 +5,7 @@ import { userEvent } from "@testing-library/user-event";
 import { describe, expect, it } from "vitest";
 
 import { expectNoA11yViolations } from "../../test/component-harness.js";
-import {
-	Workflow,
-	WorkflowActions,
-	WorkflowPanel,
-	WorkflowStep,
-	WorkflowTrack,
-} from "./Workflow.js";
+import { Workflow, WorkflowActions, WorkflowPanel, WorkflowStep, WorkflowTrack } from "./Workflow.js";
 
 describe("Workflow", () => {
 	it("emits onValueChange for Next and Back", async () => {
@@ -96,9 +90,7 @@ describe("Workflow", () => {
 				/>
 			</Workflow>,
 		);
-		expect(
-			screen.queryByRole("button", { name: "Next" }),
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: "Next" })).not.toBeInTheDocument();
 
 		await user.click(screen.getByRole("button", { name: "Finish" }));
 		expect(finished).toBe(true);
@@ -172,9 +164,7 @@ describe("Workflow", () => {
 		await user.click(screen.getByRole("button", { name: /Region/ }));
 		expect(values.at(-1)).toBe("region");
 		expect(screen.getByText("Region body")).toBeVisible();
-		expect(
-			screen.queryByRole("button", { name: /Confirm/ }),
-		).not.toBeInTheDocument();
+		expect(screen.queryByRole("button", { name: /Confirm/ })).not.toBeInTheDocument();
 	});
 
 	it("jumps to error steps", async () => {
@@ -228,9 +218,7 @@ describe("Workflow", () => {
 			</Workflow>,
 		);
 
-		const panels = container.querySelectorAll(
-			'[data-slot="workflow-panel"]',
-		);
+		const panels = container.querySelectorAll('[data-slot="workflow-panel"]');
 		expect(panels).toHaveLength(2);
 		expect(panels[0]).not.toHaveAttribute("hidden");
 		expect(panels[1]).toHaveAttribute("hidden");
@@ -566,20 +554,11 @@ describe("Workflow", () => {
 		);
 
 		await waitFor(() => {
-			expect(
-				container.querySelectorAll("[data-slot='workflow-connector']")
-					.length,
-			).toBeGreaterThan(0);
+			expect(container.querySelectorAll("[data-slot='workflow-connector']").length).toBeGreaterThan(0);
 		});
 
-		expect(
-			container.querySelector("[data-slot='workflow']"),
-		).toHaveAttribute("data-orientation", "horizontal");
-		expect(
-			container.querySelector(
-				"[data-slot='workflow-step'][data-value='region']",
-			),
-		).not.toBeNull();
+		expect(container.querySelector("[data-slot='workflow']")).toHaveAttribute("data-orientation", "horizontal");
+		expect(container.querySelector("[data-slot='workflow-step'][data-value='region']")).not.toBeNull();
 	});
 
 	it("uses a vertical rail with connectors when orientation is vertical", async () => {
@@ -603,14 +582,9 @@ describe("Workflow", () => {
 		);
 
 		await waitFor(() => {
-			expect(
-				container.querySelectorAll("[data-slot='workflow-connector']")
-					.length,
-			).toBe(1);
+			expect(container.querySelectorAll("[data-slot='workflow-connector']").length).toBe(1);
 		});
 
-		expect(
-			container.querySelector("[data-slot='workflow']"),
-		).toHaveAttribute("data-orientation", "vertical");
+		expect(container.querySelector("[data-slot='workflow']")).toHaveAttribute("data-orientation", "vertical");
 	});
 });

@@ -48,11 +48,7 @@ function requireStreaming(data: unknown): { streaming: boolean } {
 }
 
 function requireReset(data: unknown): { streaming: boolean; count: number } {
-	if (
-		!isRecord(data) ||
-		typeof data.streaming !== "boolean" ||
-		typeof data.count !== "number"
-	) {
+	if (!isRecord(data) || typeof data.streaming !== "boolean" || typeof data.count !== "number") {
 		throw new Error("reset payload missing streaming/count");
 	}
 
@@ -192,10 +188,7 @@ async function listTableRows(
 	return requireTableRows(unwrapPaginated(result.data));
 }
 
-async function addTableRows(
-	id: string,
-	rows: TableRow[],
-): Promise<{ count: number }> {
+async function addTableRows(id: string, rows: TableRow[]): Promise<{ count: number }> {
 	const result = await client.POST("/v1/tables/{id}/rows", {
 		params: { path: { id } },
 		body: { rows },
@@ -207,10 +200,7 @@ async function addTableRows(
 	return requireCount(unwrap(result.data));
 }
 
-async function removeTableRows(
-	id: string,
-	ids: string[],
-): Promise<{ count: number }> {
+async function removeTableRows(id: string, ids: string[]): Promise<{ count: number }> {
 	const result = await client.POST("/v1/tables/{id}/rows/remove", {
 		params: { path: { id } },
 		body: { ids },
@@ -222,9 +212,7 @@ async function removeTableRows(
 	return requireCount(unwrap(result.data));
 }
 
-async function resetTable(
-	id: string,
-): Promise<{ streaming: boolean; count: number }> {
+async function resetTable(id: string): Promise<{ streaming: boolean; count: number }> {
 	const result = await client.POST("/v1/tables/{id}/reset", {
 		params: { path: { id } },
 	});
@@ -235,9 +223,7 @@ async function resetTable(
 	return requireReset(unwrap(result.data));
 }
 
-async function getTableStreamStatus(
-	id: string,
-): Promise<{ streaming: boolean }> {
+async function getTableStreamStatus(id: string): Promise<{ streaming: boolean }> {
 	const result = await client.GET("/v1/tables/{id}/stream", {
 		params: { path: { id } },
 	});
@@ -279,11 +265,7 @@ function requireInstanceOptions(data: unknown): { items: InstanceOption[] } {
 
 	const items: InstanceOption[] = [];
 	for (const item of data.items) {
-		if (
-			!isRecord(item) ||
-			typeof item.value !== "string" ||
-			typeof item.label !== "string"
-		) {
+		if (!isRecord(item) || typeof item.value !== "string" || typeof item.label !== "string") {
 			throw new Error("option item payload invalid");
 		}
 
@@ -294,20 +276,14 @@ function requireInstanceOptions(data: unknown): { items: InstanceOption[] } {
 }
 
 function requireInstanceOption(data: unknown): InstanceOption {
-	if (
-		!isRecord(data) ||
-		typeof data.value !== "string" ||
-		typeof data.label !== "string"
-	) {
+	if (!isRecord(data) || typeof data.value !== "string" || typeof data.label !== "string") {
 		throw new Error("option payload invalid");
 	}
 
 	return { value: data.value, label: data.label };
 }
 
-async function listInstanceOptions(
-	q?: string,
-): Promise<{ items: InstanceOption[] }> {
+async function listInstanceOptions(q?: string): Promise<{ items: InstanceOption[] }> {
 	const result = await client.GET("/v1/options/instances", {
 		params: { query: { q } },
 	});
@@ -318,9 +294,7 @@ async function listInstanceOptions(
 	return requireInstanceOptions(unwrap(result.data));
 }
 
-async function addInstanceOption(
-	option: InstanceOption,
-): Promise<InstanceOption> {
+async function addInstanceOption(option: InstanceOption): Promise<InstanceOption> {
 	const result = await client.POST("/v1/options/instances", {
 		body: option,
 	});
@@ -482,11 +456,7 @@ function requireCommandItems(data: unknown): { items: CommandItem[] } {
 }
 
 function requireCommandItem(data: unknown): CommandItem {
-	if (
-		!isRecord(data) ||
-		typeof data.id !== "string" ||
-		typeof data.label !== "string"
-	) {
+	if (!isRecord(data) || typeof data.id !== "string" || typeof data.label !== "string") {
 		throw new Error("command payload invalid");
 	}
 
@@ -603,12 +573,7 @@ function isFlowFieldKind(value: unknown): value is FlowFieldKind {
 }
 
 function isFlowNodeStatus(value: unknown): value is FlowNodeStatus {
-	return (
-		value === "idle" ||
-		value === "running" ||
-		value === "ok" ||
-		value === "failed"
-	);
+	return value === "idle" || value === "running" || value === "ok" || value === "failed";
 }
 
 function requireFlowField(data: unknown): FlowDemoField {
@@ -725,12 +690,7 @@ function requireFlowRun(data: unknown): FlowDemoRun {
 }
 
 function requireFlowSnapshot(data: unknown): FlowDemoSnapshot {
-	if (
-		!isRecord(data) ||
-		!Array.isArray(data.nodes) ||
-		!Array.isArray(data.edges) ||
-		!isRecord(data.run)
-	) {
+	if (!isRecord(data) || !Array.isArray(data.nodes) || !Array.isArray(data.edges) || !isRecord(data.run)) {
 		throw new Error("flow snapshot payload invalid");
 	}
 
@@ -769,10 +729,7 @@ async function resetFlowDemo(): Promise<FlowDemoSnapshot> {
 	return requireFlowSnapshot(unwrap(result.data));
 }
 
-async function triggerFlowDemo(
-	amount: number,
-	address: string,
-): Promise<FlowDemoSnapshot> {
+async function triggerFlowDemo(amount: number, address: string): Promise<FlowDemoSnapshot> {
 	const result = await client.POST("/v1/flows/demo/trigger", {
 		body: { amount, address },
 	});
@@ -783,10 +740,7 @@ async function triggerFlowDemo(
 	return requireFlowSnapshot(unwrap(result.data));
 }
 
-async function patchFlowNodeConfig(
-	id: string,
-	config: Record<string, number | string>,
-): Promise<FlowDemoSnapshot> {
+async function patchFlowNodeConfig(id: string, config: Record<string, number | string>): Promise<FlowDemoSnapshot> {
 	const result = await client.PATCH("/v1/flows/demo/nodes/{id}/config", {
 		params: { path: { id } },
 		body: { config },

@@ -31,11 +31,7 @@ const STATUS_LABEL: Record<StatusBadgeStatus, string> = {
  */
 function Timeline({ items, className, ...rest }: TimelineProps) {
 	const root = (
-		<ol
-			data-slot="timeline"
-			className={cn("m-0 list-none p-0", className)}
-			{...rest}
-		>
+		<ol data-slot="timeline" className={cn("m-0 list-none p-0", className)} {...rest}>
 			{items.map((item, index) => {
 				const isLast = index === items.length - 1;
 
@@ -51,10 +47,7 @@ function Timeline({ items, className, ...rest }: TimelineProps) {
 				let descriptionNode: ReactNode = null;
 				if (item.description !== undefined) {
 					descriptionNode = (
-						<div
-							data-slot="timeline-description"
-							className="mt-1 text-sm text-muted-foreground"
-						>
+						<div data-slot="timeline-description" className="mt-1 text-sm text-muted-foreground">
 							{item.description}
 						</div>
 					);
@@ -63,11 +56,7 @@ function Timeline({ items, className, ...rest }: TimelineProps) {
 				let connector: ReactNode = null;
 				if (!isLast) {
 					connector = (
-						<div
-							data-slot="timeline-connector"
-							aria-hidden="true"
-							className="mt-1 w-px flex-1 bg-border"
-						/>
+						<div data-slot="timeline-connector" aria-hidden="true" className="mt-1 w-px flex-1 bg-border" />
 					);
 				}
 
@@ -77,15 +66,8 @@ function Timeline({ items, className, ...rest }: TimelineProps) {
 				}
 
 				return (
-					<li
-						key={item.id}
-						data-slot="timeline-item"
-						className="relative flex gap-3"
-					>
-						<div
-							className="flex w-3 shrink-0 flex-col items-center"
-							aria-hidden="true"
-						>
+					<li key={item.id} data-slot="timeline-item" className="relative flex gap-3">
+						<div className="flex w-3 shrink-0 flex-col items-center" aria-hidden="true">
 							<span
 								data-slot="timeline-marker"
 								className="mt-1.5 size-2.5 shrink-0 rounded-full border-2 border-primary bg-background"
@@ -94,18 +76,12 @@ function Timeline({ items, className, ...rest }: TimelineProps) {
 						</div>
 						<div className={bodyPad}>
 							<div className="flex flex-wrap items-center gap-2">
-								<div
-									data-slot="timeline-title"
-									className="text-sm font-medium text-foreground"
-								>
+								<div data-slot="timeline-title" className="text-sm font-medium text-foreground">
 									{item.title}
 								</div>
 								{statusNode}
 							</div>
-							<div
-								data-slot="timeline-timestamp"
-								className="mt-0.5 text-xs text-muted-foreground"
-							>
+							<div data-slot="timeline-timestamp" className="mt-0.5 text-xs text-muted-foreground">
 								{item.timestamp}
 							</div>
 							{descriptionNode}

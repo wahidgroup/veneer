@@ -8,11 +8,7 @@ interface WorldBounds {
 /**
  * Compute flow world size from nodes or explicit overrides.
  */
-function worldBounds(
-	nodes: FlowNode[],
-	worldWidth: number | undefined,
-	worldHeight: number | undefined,
-): WorldBounds {
+function worldBounds(nodes: FlowNode[], worldWidth: number | undefined, worldHeight: number | undefined): WorldBounds {
 	let width = 640;
 	if (worldWidth !== undefined) {
 		width = worldWidth;

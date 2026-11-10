@@ -18,18 +18,13 @@ const skeletonVariants = cva("animate-pulse rounded-md bg-muted", {
 	},
 });
 
-interface SkeletonProps
-	extends
-		Omit<ComponentProps<"div">, "children">,
-		VariantProps<typeof skeletonVariants> {}
+interface SkeletonProps extends Omit<ComponentProps<"div">, "children">, VariantProps<typeof skeletonVariants> {}
 
 /**
  * Single placeholder bone for table/detail loading composition.
  */
 function Skeleton({ shape, className, ...rest }: SkeletonProps) {
-	let resolvedShape: NonNullable<
-		VariantProps<typeof skeletonVariants>["shape"]
-	> = "line";
+	let resolvedShape: NonNullable<VariantProps<typeof skeletonVariants>["shape"]> = "line";
 	if (shape === "title") {
 		resolvedShape = "title";
 	} else if (shape === "avatar") {
@@ -43,10 +38,7 @@ function Skeleton({ shape, className, ...rest }: SkeletonProps) {
 			data-slot="skeleton"
 			data-shape={resolvedShape}
 			aria-hidden="true"
-			className={cn(
-				skeletonVariants({ shape: resolvedShape }),
-				className,
-			)}
+			className={cn(skeletonVariants({ shape: resolvedShape }), className)}
 			{...rest}
 		/>
 	);

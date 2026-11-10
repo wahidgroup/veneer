@@ -5,12 +5,7 @@
  * Peer: `@tanstack/react-table` (optional for the root package; required here).
  */
 
-export {
-	DataTable,
-	DEFAULT_PAGE_SIZE,
-	MAX_PAGE_SIZE,
-	buildDefaultQuery,
-} from "./components/data/DataTable.js";
+export { DataTable, DEFAULT_PAGE_SIZE, MAX_PAGE_SIZE, buildDefaultQuery } from "./components/data/DataTable.js";
 export type {
 	DataTableColumn,
 	DataTableColumnFilter,

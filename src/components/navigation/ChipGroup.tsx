@@ -12,10 +12,7 @@ interface ChipGroupItem {
 	dismissible?: boolean;
 }
 
-interface ChipGroupProps extends Omit<
-	ComponentProps<"div">,
-	"children" | "role"
-> {
+interface ChipGroupProps extends Omit<ComponentProps<"div">, "children" | "role"> {
 	items: ChipGroupItem[];
 	onPressedChange: (id: string, pressed: boolean) => void;
 	onDismiss?: (id: string) => void;
@@ -27,24 +24,11 @@ interface ChipGroupProps extends Omit<
  * `role="group"`. Provide `aria-label` or `aria-labelledby`. Dismissible
  * chips need `onDismiss` to show the remove control.
  */
-function ChipGroup({
-	items,
-	onPressedChange,
-	onDismiss,
-	onClearAll,
-	className,
-	...rest
-}: ChipGroupProps) {
+function ChipGroup({ items, onPressedChange, onDismiss, onClearAll, className, ...rest }: ChipGroupProps) {
 	let clearNode: ReactNode = null;
 	if (onClearAll !== undefined) {
 		clearNode = (
-			<Button
-				type="button"
-				variant="ghost"
-				size="sm"
-				data-slot="chip-group-clear"
-				onClick={onClearAll}
-			>
+			<Button type="button" variant="ghost" size="sm" data-slot="chip-group-clear" onClick={onClearAll}>
 				Clear all
 			</Button>
 		);
@@ -64,8 +48,7 @@ function ChipGroup({
 				let disabled = item.disabled;
 				disabled ??= false;
 
-				let chipClass =
-					"inline-flex items-center rounded-md border border-border";
+				let chipClass = "inline-flex items-center rounded-md border border-border";
 				if (pressed) {
 					chipClass = cn(chipClass, "bg-accent/60");
 				} else {

@@ -1,17 +1,7 @@
 import { Injectable, NotFoundException, OnModuleDestroy } from "@nestjs/common";
 
-import type {
-	TableEvent,
-	TableEventListener,
-	TableListQuery,
-	TableRow,
-	TableRowTransaction,
-} from "./table-types.js";
-import {
-	applyRowTransaction,
-	buildInventorySeed,
-	matchQueries,
-} from "./table-types.js";
+import type { TableEvent, TableEventListener, TableListQuery, TableRow, TableRowTransaction } from "./table-types.js";
+import { applyRowTransaction, buildInventorySeed, matchQueries } from "./table-types.js";
 
 const SEED_COUNT = 87;
 const STREAM_INTERVAL_MS = 1500;
@@ -158,10 +148,7 @@ export class TablesService implements OnModuleDestroy {
 		};
 	}
 
-	applyTransaction(
-		id: string,
-		transaction: TableRowTransaction,
-	): { count: number } {
+	applyTransaction(id: string, transaction: TableRowTransaction): { count: number } {
 		const store = this.requireStore(id);
 		store.rows = applyRowTransaction(store.rows, transaction);
 		this.emit({

@@ -1,8 +1,4 @@
-import {
-	ConflictException,
-	Injectable,
-	NotFoundException,
-} from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 
 import type { InstanceOption } from "./option-types.js";
 
@@ -27,8 +23,7 @@ export class OptionsService {
 			const normalized = q.trim().toLowerCase();
 			items = this.options.filter((option) => {
 				return (
-					option.value.toLowerCase().includes(normalized) ||
-					option.label.toLowerCase().includes(normalized)
+					option.value.toLowerCase().includes(normalized) || option.label.toLowerCase().includes(normalized)
 				);
 			});
 		}

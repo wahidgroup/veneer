@@ -20,9 +20,7 @@ const logError = logger.error.bind(logger);
 
 logger.error = (msg, options) => {
 	if (typeof msg === "string") {
-		const benignWsProxy =
-			msg.includes("ws proxy socket error:") ||
-			msg.includes("ws proxy error:");
+		const benignWsProxy = msg.includes("ws proxy socket error:") || msg.includes("ws proxy error:");
 		if (benignWsProxy) {
 			if (msg.includes("EPIPE") || msg.includes("ECONNRESET")) {
 				return;
@@ -39,24 +37,15 @@ export default defineConfig({
 	resolve: {
 		dedupe: ["react", "react-dom"],
 		alias: {
-			"@wahidgroup/veneer/data-table": path.join(
-				packageRoot,
-				"src/data-table.ts",
-			),
+			"@wahidgroup/veneer/data-table": path.join(packageRoot, "src/data-table.ts"),
 			"@wahidgroup/veneer/diff": path.join(packageRoot, "src/diff.ts"),
-			"@wahidgroup/veneer/flow/layout": path.join(
-				packageRoot,
-				"src/flow-layout.ts",
-			),
+			"@wahidgroup/veneer/flow/layout": path.join(packageRoot, "src/flow-layout.ts"),
 			"@wahidgroup/veneer/flow": path.join(packageRoot, "src/flow.ts"),
 			"@wahidgroup/veneer": path.join(packageRoot, "src/index.ts"),
 			react: path.join(rootModules, "react"),
 			"react-dom": path.join(rootModules, "react-dom"),
 			"react/jsx-runtime": path.join(rootModules, "react/jsx-runtime.js"),
-			"react/jsx-dev-runtime": path.join(
-				rootModules,
-				"react/jsx-dev-runtime.js",
-			),
+			"react/jsx-dev-runtime": path.join(rootModules, "react/jsx-dev-runtime.js"),
 		},
 	},
 	server: {

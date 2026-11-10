@@ -9,16 +9,9 @@ describe("ColorPicker", () => {
 	it("renders group with default hex and copy control", () => {
 		render(<ColorPicker label="Accent" defaultValue="#ff0000" />);
 
-		expect(screen.getByRole("group", { name: "Accent" })).toHaveAttribute(
-			"data-slot",
-			"color-picker",
-		);
-		expect(screen.getByRole("textbox", { name: "Accent hex" })).toHaveValue(
-			"#ff0000",
-		);
-		expect(
-			screen.getByRole("button", { name: "Copy #ff0000" }),
-		).toBeInTheDocument();
+		expect(screen.getByRole("group", { name: "Accent" })).toHaveAttribute("data-slot", "color-picker");
+		expect(screen.getByRole("textbox", { name: "Accent hex" })).toHaveValue("#ff0000");
+		expect(screen.getByRole("button", { name: "Copy #ff0000" })).toBeInTheDocument();
 	});
 
 	it("copies hex from the copy control", async () => {
@@ -36,9 +29,7 @@ describe("ColorPicker", () => {
 		render(<ColorPicker label="Accent" defaultValue="#ff0000" />);
 
 		await user.click(screen.getByRole("radio", { name: "RGB" }));
-		await user.click(
-			screen.getByRole("button", { name: "Copy rgb(255, 0, 0)" }),
-		);
+		await user.click(screen.getByRole("button", { name: "Copy rgb(255, 0, 0)" }));
 		expect(await navigator.clipboard.readText()).toBe("rgb(255, 0, 0)");
 	});
 
@@ -102,10 +93,7 @@ describe("ColorPicker", () => {
 
 		await user.click(screen.getByRole("radio", { name: "#ff0000" }));
 		expect(last).toBe("#ff0000");
-		expect(screen.getByRole("radio", { name: "#ff0000" })).toHaveAttribute(
-			"aria-checked",
-			"true",
-		);
+		expect(screen.getByRole("radio", { name: "#ff0000" })).toHaveAttribute("aria-checked", "true");
 	});
 
 	it("switches to RGB fields", async () => {
@@ -114,15 +102,9 @@ describe("ColorPicker", () => {
 		render(<ColorPicker label="Accent" defaultValue="#ff0000" />);
 
 		await user.click(screen.getByRole("radio", { name: "RGB" }));
-		expect(
-			screen.getByRole("spinbutton", { name: "Accent red" }),
-		).toHaveValue(255);
-		expect(
-			screen.getByRole("spinbutton", { name: "Accent green" }),
-		).toHaveValue(0);
-		expect(
-			screen.getByRole("spinbutton", { name: "Accent blue" }),
-		).toHaveValue(0);
+		expect(screen.getByRole("spinbutton", { name: "Accent red" })).toHaveValue(255);
+		expect(screen.getByRole("spinbutton", { name: "Accent green" })).toHaveValue(0);
+		expect(screen.getByRole("spinbutton", { name: "Accent blue" })).toHaveValue(0);
 	});
 
 	it("nudges saturation with arrow keys on the SV slider", async () => {
@@ -149,25 +131,13 @@ describe("ColorPicker", () => {
 	});
 
 	it("merges className onto the root", () => {
-		render(
-			<ColorPicker
-				label="Accent"
-				defaultValue="#000000"
-				className="mt-2"
-			/>,
-		);
-		expect(screen.getByRole("group", { name: "Accent" })).toHaveClass(
-			"mt-2",
-		);
+		render(<ColorPicker label="Accent" defaultValue="#000000" className="mt-2" />);
+		expect(screen.getByRole("group", { name: "Accent" })).toHaveClass("mt-2");
 	});
 
 	it("has no accessibility violations", async () => {
 		await expectNoA11yViolations(
-			<ColorPicker
-				label="Accent"
-				defaultValue="#3b82f6"
-				swatches={["#000000", "#ffffff"]}
-			/>,
+			<ColorPicker label="Accent" defaultValue="#3b82f6" swatches={["#000000", "#ffffff"]} />,
 		);
 	});
 });

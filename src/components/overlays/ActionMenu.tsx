@@ -2,21 +2,13 @@ import type { ReactNode } from "react";
 import { useId, useLayoutEffect, useState } from "react";
 import { ChevronDown } from "lucide-react";
 
-import type {
-	ActionMenuDivider,
-	ActionMenuEntry,
-	ActionMenuItem,
-} from "./actionMenuList.js";
+import type { ActionMenuDivider, ActionMenuEntry, ActionMenuItem } from "./actionMenuList.js";
 import { usePopover } from "../../hooks/usePopover.js";
 import { DISMISS_LAYER_TIER_CLASS } from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
-import {
-	focusFirstMenuItem,
-	onActionMenuKeyDown,
-	renderActionMenuEntries,
-} from "./actionMenuList.js";
+import { focusFirstMenuItem, onActionMenuKeyDown, renderActionMenuEntries } from "./actionMenuList.js";
 
 interface ActionMenuProps {
 	label?: string;
@@ -86,10 +78,7 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 	}
 
 	return (
-		<div
-			data-slot="action-menu"
-			className={cn("relative inline-flex", className)}
-		>
+		<div data-slot="action-menu" className={cn("relative inline-flex", className)}>
 			<span ref={setReference} className="inline-flex">
 				<Button
 					variant="outlined"
@@ -114,10 +103,5 @@ function ActionMenu({ label, items, disabled, className }: ActionMenuProps) {
 	);
 }
 
-export type {
-	ActionMenuProps,
-	ActionMenuItem,
-	ActionMenuDivider,
-	ActionMenuEntry,
-};
+export type { ActionMenuProps, ActionMenuItem, ActionMenuDivider, ActionMenuEntry };
 export { ActionMenu };

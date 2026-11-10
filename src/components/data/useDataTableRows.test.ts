@@ -15,10 +15,7 @@ function getRowId(row: Row): string {
 describe("useDataTableRows", () => {
 	it("applies transactions to the local row list", () => {
 		const { result } = renderHook(() => {
-			return useDataTableRows<Row>(
-				[{ id: "a", name: "Alpha" }],
-				getRowId,
-			);
+			return useDataTableRows<Row>([{ id: "a", name: "Alpha" }], getRowId);
 		});
 
 		act(() => {

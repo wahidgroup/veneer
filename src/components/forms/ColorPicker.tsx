@@ -1,31 +1,17 @@
-import type {
-	ComponentProps,
-	KeyboardEvent,
-	PointerEvent as ReactPointerEvent,
-	ReactNode,
-} from "react";
+import type { ComponentProps, KeyboardEvent, PointerEvent as ReactPointerEvent, ReactNode } from "react";
 import { useId, useRef, useState } from "react";
 
 import type { HsvColor } from "./colorMath.js";
 import { cn } from "../../utils/cn.js";
 import { SegmentedControl } from "../navigation/SegmentedControl.js";
-import {
-	hexToHsv,
-	hsvToHex,
-	hsvToRgb,
-	normalizeHex,
-	rgbToHex,
-} from "./colorMath.js";
+import { hexToHsv, hsvToHex, hsvToRgb, normalizeHex, rgbToHex } from "./colorMath.js";
 import { CopyButton } from "./CopyButton.js";
 import { Input } from "./Input.js";
 import { NumberInput } from "./NumberInput.js";
 
 type ColorPickerMode = "hex" | "rgb";
 
-interface ColorPickerProps extends Omit<
-	ComponentProps<"div">,
-	"onChange" | "defaultValue"
-> {
+interface ColorPickerProps extends Omit<ComponentProps<"div">, "onChange" | "defaultValue"> {
 	value?: string;
 	defaultValue?: string;
 	onValueChange?: (hex: string) => void;
@@ -34,8 +20,7 @@ interface ColorPickerProps extends Omit<
 }
 
 const DEFAULT_HEX = "#3b82f6";
-const HUE_GRADIENT =
-	"linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)";
+const HUE_GRADIENT = "linear-gradient(to right, #f00 0%, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00 100%)";
 
 function resolveInitialHsv(hex: string | undefined): HsvColor {
 	if (hex !== undefined) {
@@ -75,15 +60,7 @@ function clampHue(value: number): number {
 	return value;
 }
 
-function formatRgbCss({
-	r,
-	g,
-	b,
-}: {
-	r: number;
-	g: number;
-	b: number;
-}): string {
+function formatRgbCss({ r, g, b }: { r: number; g: number; b: number }): string {
 	return `rgb(${String(r)}, ${String(g)}, ${String(b)})`;
 }
 
@@ -91,15 +68,7 @@ function formatRgbCss({
  * Zero-dependency HSV color picker: S×V plane, hue strip, HEX/RGB fields,
  * optional swatches, and CopyButton for the active format string.
  */
-function ColorPicker({
-	value,
-	defaultValue,
-	onValueChange,
-	swatches,
-	label,
-	className,
-	...rest
-}: ColorPickerProps) {
+function ColorPicker({ value, defaultValue, onValueChange, swatches, label, className, ...rest }: ColorPickerProps) {
 	const baseId = useId();
 	const isControlled = value !== undefined;
 	const [uncontrolledHsv, setUncontrolledHsv] = useState(() => {
@@ -248,10 +217,7 @@ function ColorPicker({
 		setHsv({ h: nextH, s: hsv.s, v: hsv.v });
 	};
 
-	const bindPlanePointer = (
-		node: HTMLDivElement | null,
-		onMove: (event: PointerEvent) => void,
-	) => {
+	const bindPlanePointer = (node: HTMLDivElement | null, onMove: (event: PointerEvent) => void) => {
 		if (node === null) {
 			return;
 		}
@@ -400,11 +366,7 @@ function ColorPicker({
 	let swatchRow: ReactNode = null;
 	if (swatches !== undefined && swatches.length > 0) {
 		swatchRow = (
-			<div
-				role="radiogroup"
-				aria-label={`${groupLabel} swatches`}
-				className="flex flex-wrap gap-1.5"
-			>
+			<div role="radiogroup" aria-label={`${groupLabel} swatches`} className="flex flex-wrap gap-1.5">
 				{swatches.map((swatch) => {
 					const normalized = normalizeHex(swatch);
 					if (normalized === null) {
@@ -421,8 +383,7 @@ function ColorPicker({
 							data-slot="color-picker-swatch"
 							className={cn(
 								"size-6 rounded-md border border-border",
-								selected &&
-									"ring-2 ring-primary ring-offset-1 ring-offset-background",
+								selected && "ring-2 ring-primary ring-offset-1 ring-offset-background",
 							)}
 							style={{ backgroundColor: normalized }}
 							onClick={() => {
@@ -462,9 +423,7 @@ function ColorPicker({
 					className="size-7 shrink-0 rounded-md border border-border"
 					style={{ backgroundColor: hex }}
 				/>
-				<span className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">
-					{previewText}
-				</span>
+				<span className="min-w-0 flex-1 truncate font-mono text-sm text-foreground">{previewText}</span>
 				<CopyButton value={copyValue} aria-label={copyAria} />
 			</div>
 
