@@ -4,6 +4,7 @@ import {
 	ActionMenu,
 	Combobox,
 	Popover,
+	Select,
 	ToolbarSelect,
 } from "@wahidgroup/veneer";
 
@@ -27,19 +28,31 @@ const REGION_OPTIONS = [
 	{ value: "eu-west-1", label: "Ireland" },
 ];
 
+const ZONE_OPTIONS = [
+	{ value: "north", label: "North" },
+	{ value: "south", label: "South" },
+];
+
 /**
  * Playwright-only overlay page. The examples app does not mount this.
  */
 function OverlayFocusProof() {
+	const [detailsOpen, setDetailsOpen] = useState(false);
 	const [popoverOpens, setPopoverOpens] = useState<boolean[]>([]);
 	const [queries, setQueries] = useState<string[]>([]);
 
 	return (
 		<main>
+			<input aria-label="Outside" />
+			<p data-testid="inert-area" style={{ padding: "1rem" }}>
+				Plain notes
+			</p>
 			<ActionMenu label="Stack" items={MENU_ITEMS} />
 			<Popover
 				trigger="Details"
+				open={detailsOpen}
 				onOpenChange={(open) => {
+					setDetailsOpen(open);
 					setPopoverOpens((current) => {
 						return current.concat(open);
 					});
@@ -47,6 +60,14 @@ function OverlayFocusProof() {
 			>
 				<button type="button">Inside</button>
 			</Popover>
+			<button
+				type="button"
+				onClick={() => {
+					setDetailsOpen(false);
+				}}
+			>
+				Dismiss panel
+			</button>
 			<p data-testid="popover-opens">{popoverOpens.join(",")}</p>
 			<ToolbarSelect
 				aria-label="Account"
@@ -66,6 +87,7 @@ function OverlayFocusProof() {
 					});
 				}}
 			/>
+			<Select aria-label="Zone" options={ZONE_OPTIONS} defaultValue="" />
 			<p data-testid="queries">{queries.join("|")}</p>
 		</main>
 	);

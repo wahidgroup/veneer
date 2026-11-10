@@ -35,8 +35,27 @@ const HIDDEN_STYLES: CSSProperties = {
 	visibility: "hidden",
 };
 
+type DismissReason = "escape" | "outside-press";
+
+/**
+ * True when focus is on the document body or absent.
+ * A trigger that already holds focus is not focused again.
+ */
+function shouldRestoreTrigger(trigger: HTMLElement): boolean {
+	const active = document.activeElement;
+	if (active === trigger) {
+		return false;
+	}
+	if (active === null || active === document.body) {
+		return true;
+	}
+
+	return false;
+}
+
 /**
  * Positions a portaled panel under a trigger; dismisses on outside press or Escape.
+ * The floating node is mounted only while open, so focus that was inside it reads as body at the restore site.
  */
 function usePopover({
 	open,
@@ -58,6 +77,7 @@ function usePopover({
 	const floatingRef = useRef<HTMLElement | null>(null);
 	const onCloseRef = useRef(onClose);
 	const restoreTargetRef = useRef<HTMLElement | null>(null);
+	const dismissReasonRef = useRef<DismissReason | null>(null);
 	const [floatingStyles, setFloatingStyles] =
 		useState<CSSProperties>(HIDDEN_STYLES);
 
@@ -148,6 +168,7 @@ function usePopover({
 		}
 
 		event.preventDefault();
+		dismissReasonRef.current = "escape";
 		onCloseRef.current();
 	}, []);
 
@@ -191,10 +212,21 @@ function usePopover({
 
 		return () => {
 			const target = restoreTargetRef.current;
+			const reason = dismissReasonRef.current;
 			restoreTargetRef.current = null;
-			if (target?.isConnected === true) {
-				restoreFocus(target);
+			dismissReasonRef.current = null;
+
+			if (reason === "outside-press") {
+				return;
 			}
+			if (target?.isConnected !== true) {
+				return;
+			}
+			if (!shouldRestoreTrigger(target)) {
+				return;
+			}
+
+			restoreFocus(target);
 		};
 	}, [open]);
 
@@ -263,6 +295,7 @@ function usePopover({
 				return;
 			}
 
+			dismissReasonRef.current = "outside-press";
 			onCloseRef.current();
 		};
 
