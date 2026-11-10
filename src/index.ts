@@ -431,6 +431,7 @@ export type {
 } from "./components/navigation/Workflow.js";
 export { useControllableState } from "./hooks/useControllableState.js";
 export { useDebounce } from "./hooks/useDebounce.js";
+export { useDismissLayer } from "./overlays/dismissLayerStack.js";
 export {
 	formatBtcSats,
 	SATOSHI_FRACTION_DIGITS,

@@ -6,6 +6,7 @@ import { X } from "lucide-react";
 
 import { cn } from "../../utils/cn.js";
 import { lockBodyScroll } from "../../utils/lockBodyScroll.js";
+import { useDismissLayer } from "../../overlays/dismissLayerStack.js";
 import { Button } from "../forms/Button.js";
 import { Portal } from "./Portal.js";
 import {
@@ -84,6 +85,13 @@ function Drawer({
 	const dialogRef = useRef<HTMLDivElement>(null);
 	const restoreFocusRef = useRef<HTMLElement | null>(null);
 
+	useDismissLayer({
+		open,
+		onEscape: () => {
+			onOpenChange(false);
+		},
+	});
+
 	useEffect(() => {
 		if (!open) {
 			return;
@@ -99,16 +107,6 @@ function Drawer({
 		}
 
 		function onKeyDown(event: KeyboardEvent) {
-			if (event.key === "Escape") {
-				if (event.defaultPrevented) {
-					return;
-				}
-
-				event.preventDefault();
-				onOpenChange(false);
-				return;
-			}
-
 			const node = dialogRef.current;
 			if (node === null) {
 				return;

@@ -316,13 +316,6 @@ function OptionPicker(props: OptionPickerProps) {
 
 			return;
 		}
-
-		if (event.key === "Escape") {
-			if (open) {
-				event.preventDefault();
-				close();
-			}
-		}
 	}
 
 	let chips: ReactNode = null;

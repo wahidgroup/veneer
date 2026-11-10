@@ -7,6 +7,7 @@ import {
 	useState,
 } from "react";
 
+import { useDismissLayer } from "../overlays/dismissLayerStack.js";
 import { captureFocusRestore, restoreFocus } from "../utils/focusScope.js";
 
 interface UsePopoverOptions {
@@ -159,18 +160,13 @@ function usePopover({
 		setFloatingStyles(next);
 	}, [resolvedOffset, resolvedPadding, matchWidth]);
 
-	const handleDismissKey = useCallback((event: KeyboardEvent) => {
-		if (event.key !== "Escape") {
-			return;
-		}
-		if (event.defaultPrevented) {
-			return;
-		}
-
-		event.preventDefault();
-		dismissReasonRef.current = "escape";
-		onCloseRef.current();
-	}, []);
+	useDismissLayer({
+		open,
+		onEscape: () => {
+			dismissReasonRef.current = "escape";
+			onCloseRef.current();
+		},
+	});
 
 	const setReference = useCallback(
 		(node: HTMLElement | null) => {
@@ -184,23 +180,12 @@ function usePopover({
 
 	const setFloating = useCallback(
 		(node: HTMLElement | null) => {
-			const previous = floatingRef.current;
-			if (previous !== null && previous !== node) {
-				previous.removeEventListener("keydown", handleDismissKey);
-			}
-
 			floatingRef.current = node;
-			if (node === null) {
-				return;
-			}
-
-			node.removeEventListener("keydown", handleDismissKey);
-			node.addEventListener("keydown", handleDismissKey);
-			if (open) {
+			if (node !== null && open) {
 				update();
 			}
 		},
-		[open, update, handleDismissKey],
+		[open, update],
 	);
 
 	useLayoutEffect(() => {
@@ -300,13 +285,11 @@ function usePopover({
 		};
 
 		document.addEventListener("mousedown", handlePointer);
-		document.addEventListener("keydown", handleDismissKey);
 
 		return () => {
 			document.removeEventListener("mousedown", handlePointer);
-			document.removeEventListener("keydown", handleDismissKey);
 		};
-	}, [open, handleDismissKey]);
+	}, [open]);
 
 	let focusable = false;
 	if (open && floatingStyles.visibility === "visible") {

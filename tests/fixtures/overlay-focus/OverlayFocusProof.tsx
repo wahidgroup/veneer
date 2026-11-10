@@ -3,6 +3,9 @@ import { useState } from "react";
 import {
 	ActionMenu,
 	Combobox,
+	ContextMenu,
+	Drawer,
+	Modal,
 	Popover,
 	Select,
 	ToolbarSelect,
@@ -38,6 +41,9 @@ const ZONE_OPTIONS = [
  */
 function OverlayFocusProof() {
 	const [detailsOpen, setDetailsOpen] = useState(false);
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [drawerOpen, setDrawerOpen] = useState(false);
+	const [holdOpen, setHoldOpen] = useState(false);
 	const [popoverOpens, setPopoverOpens] = useState<boolean[]>([]);
 	const [queries, setQueries] = useState<string[]>([]);
 
@@ -87,7 +93,61 @@ function OverlayFocusProof() {
 					});
 				}}
 			/>
+			<button
+				type="button"
+				onClick={() => {
+					setDialogOpen(true);
+				}}
+			>
+				Open dialog
+			</button>
 			<Select aria-label="Zone" options={ZONE_OPTIONS} defaultValue="" />
+			<Modal
+				open={dialogOpen}
+				title="Stacked notice"
+				onOpenChange={setDialogOpen}
+			>
+				Notice body
+			</Modal>
+			<Popover
+				trigger="Hold"
+				title="Hold"
+				open={holdOpen}
+				onOpenChange={setHoldOpen}
+			>
+				<button
+					type="button"
+					onKeyDown={(event) => {
+						if (event.key === "Escape") {
+							event.preventDefault();
+						}
+					}}
+				>
+					Hold escape
+				</button>
+			</Popover>
+			<button
+				type="button"
+				onClick={() => {
+					setDrawerOpen(true);
+				}}
+			>
+				Open drawer
+			</button>
+			<Drawer
+				open={drawerOpen}
+				title="Shelf"
+				onOpenChange={setDrawerOpen}
+			>
+				<Select
+					aria-label="Shelf zone"
+					options={ZONE_OPTIONS}
+					defaultValue=""
+				/>
+				<ContextMenu items={MENU_ITEMS}>
+					<p>Shelf row</p>
+				</ContextMenu>
+			</Drawer>
 			<p data-testid="queries">{queries.join("|")}</p>
 		</main>
 	);

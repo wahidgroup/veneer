@@ -7,21 +7,21 @@ import { axe } from "vitest-axe";
 import { expectNoA11yViolations } from "../../test/component-harness.js";
 import { ActionMenu } from "./ActionMenu.js";
 
-function EscapeLog({ entries }: { entries: boolean[] }) {
+function EscapeLog({ events }: { events: KeyboardEvent[] }) {
 	useEffect(() => {
 		function onKeyDown(event: KeyboardEvent) {
 			if (event.key !== "Escape") {
 				return;
 			}
 
-			entries.push(event.defaultPrevented);
+			events.push(event);
 		}
 
 		document.body.addEventListener("keydown", onKeyDown);
 		return () => {
 			document.body.removeEventListener("keydown", onKeyDown);
 		};
-	}, [entries]);
+	}, [events]);
 
 	return null;
 }
@@ -132,11 +132,11 @@ describe("ActionMenu", () => {
 
 	it("consumes Escape, keeps it bubbling, and restores the trigger", async () => {
 		const user = userEvent.setup();
-		const prevented: boolean[] = [];
+		const events: KeyboardEvent[] = [];
 
 		render(
 			<>
-				<EscapeLog entries={prevented} />
+				<EscapeLog events={events} />
 				<ActionMenu
 					label="Stack"
 					items={[
@@ -155,18 +155,18 @@ describe("ActionMenu", () => {
 		const trigger = screen.getByRole("button", { name: /Stack/ });
 		await user.click(trigger);
 		await user.keyboard("{Escape}");
-		expect(prevented).toEqual([true]);
+		expect(events.map((event) => event.defaultPrevented)).toEqual([true]);
 		expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 		expect(trigger).toHaveFocus();
 	});
 
 	it("leaves Escape unmarked while the menu is closed", async () => {
 		const user = userEvent.setup();
-		const prevented: boolean[] = [];
+		const events: KeyboardEvent[] = [];
 
 		render(
 			<>
-				<EscapeLog entries={prevented} />
+				<EscapeLog events={events} />
 				<ActionMenu
 					items={[
 						{
@@ -183,7 +183,7 @@ describe("ActionMenu", () => {
 
 		screen.getByRole("button", { name: /Actions/ }).focus();
 		await user.keyboard("{Escape}");
-		expect(prevented).toEqual([false]);
+		expect(events.map((event) => event.defaultPrevented)).toEqual([false]);
 		expect(screen.queryByRole("menu")).not.toBeInTheDocument();
 	});
 

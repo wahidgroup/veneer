@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ComponentProps, ReactNode } from "react";
 
+import { useDismissLayer } from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Button } from "../forms/Button.js";
 
@@ -191,33 +192,22 @@ function AppShell({
 		}
 	}, [viewport, onRailCollapsedChange, onSidebarCollapsedChange]);
 
-	useEffect(() => {
-		if (!drawerOpen && !railOverlayOpen) {
-			return;
-		}
-
-		function onKeyDown(event: KeyboardEvent) {
-			if (event.key !== "Escape") {
-				return;
-			}
-			if (railOverlayOpen && onRailCollapsedChange !== undefined) {
-				onRailCollapsedChange(true);
-			}
-			if (drawerOpen && onSidebarCollapsedChange !== undefined) {
+	useDismissLayer({
+		open: drawerOpen,
+		onEscape: () => {
+			if (onSidebarCollapsedChange !== undefined) {
 				onSidebarCollapsedChange(true);
 			}
-		}
-
-		document.addEventListener("keydown", onKeyDown);
-		return () => {
-			document.removeEventListener("keydown", onKeyDown);
-		};
-	}, [
-		drawerOpen,
-		railOverlayOpen,
-		onRailCollapsedChange,
-		onSidebarCollapsedChange,
-	]);
+		},
+	});
+	useDismissLayer({
+		open: railOverlayOpen,
+		onEscape: () => {
+			if (onRailCollapsedChange !== undefined) {
+				onRailCollapsedChange(true);
+			}
+		},
+	});
 
 	function dismissOverlays() {
 		if (railOverlayOpen && onRailCollapsedChange !== undefined) {

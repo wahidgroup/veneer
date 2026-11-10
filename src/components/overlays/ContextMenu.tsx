@@ -2,6 +2,7 @@ import type { MouseEvent, ReactNode } from "react";
 import { useEffect, useId, useRef, useState } from "react";
 
 import type { ActionMenuEntry } from "./actionMenuList.js";
+import { useDismissLayer } from "../../overlays/dismissLayerStack.js";
 import { cn } from "../../utils/cn.js";
 import { Portal } from "./Portal.js";
 import {
@@ -43,6 +44,13 @@ function ContextMenu({ items, children, className }: ContextMenuProps) {
 		focusFirstMenuItem(menuId);
 	}, [open, menuId]);
 
+	useDismissLayer({
+		open,
+		onEscape: () => {
+			setOpen(false);
+		},
+	});
+
 	useEffect(() => {
 		if (!open) {
 			return;
@@ -62,18 +70,10 @@ function ContextMenu({ items, children, className }: ContextMenuProps) {
 			setOpen(false);
 		};
 
-		const handleKey = (event: globalThis.KeyboardEvent) => {
-			if (event.key === "Escape") {
-				setOpen(false);
-			}
-		};
-
 		document.addEventListener("mousedown", handlePointer);
-		document.addEventListener("keydown", handleKey);
 
 		return () => {
 			document.removeEventListener("mousedown", handlePointer);
-			document.removeEventListener("keydown", handleKey);
 		};
 	}, [open]);
 

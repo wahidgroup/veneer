@@ -35,7 +35,7 @@ test("consumed Escape closes the menu, stays marked, and still bubbles", async (
 	await trigger.click();
 	await expect(page.getByRole("menu")).toBeVisible();
 	await page.evaluate(() => {
-		document.body.addEventListener("keydown", (event) => {
+		document.addEventListener("keydown", (event) => {
 			document.body.dataset.escapeKey = event.key;
 			document.body.dataset.escapePrevented = String(
 				event.defaultPrevented,
@@ -140,6 +140,62 @@ test("consumer close keeps focus on the outside input", async ({ page }) => {
 		.dispatchEvent("click");
 	await expect(page.getByRole("dialog")).toHaveCount(0);
 	await expect(outside).toBeFocused();
+});
+
+test("escape closes a later modal before the combobox", async ({ page }) => {
+	await page.goto("/");
+	await page.getByRole("combobox", { name: "Region" }).click();
+	await expect(page.getByRole("listbox")).toBeVisible();
+	await page.keyboard.press("Tab");
+	await page.keyboard.press("Enter");
+	await expect(
+		page.getByRole("dialog", { name: "Stacked notice" }),
+	).toBeVisible();
+	await expect(page.getByRole("listbox")).toBeVisible();
+	await page.keyboard.press("Escape");
+	await expect(
+		page.getByRole("dialog", { name: "Stacked notice" }),
+	).toHaveCount(0);
+	await expect(page.getByRole("listbox")).toBeVisible();
+	await page.keyboard.press("Escape");
+	await expect(page.getByRole("listbox")).toHaveCount(0);
+});
+
+test("escape closes a select inside a drawer before the drawer", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await page.getByRole("button", { name: "Open drawer" }).click();
+	await expect(page.getByRole("dialog", { name: "Shelf" })).toBeVisible();
+	await page.getByRole("combobox", { name: "Shelf zone" }).click();
+	await expect(page.getByRole("listbox")).toBeVisible();
+	await page.keyboard.press("Escape");
+	await expect(page.getByRole("listbox")).toHaveCount(0);
+	await expect(page.getByRole("dialog", { name: "Shelf" })).toBeVisible();
+	await page.keyboard.press("Escape");
+	await expect(page.getByRole("dialog", { name: "Shelf" })).toHaveCount(0);
+});
+
+test("a child that prevents Escape leaves the popover open", async ({
+	page,
+}) => {
+	await page.goto("/");
+	await page.getByRole("button", { name: "Hold", exact: true }).click();
+	await expect(page.getByRole("dialog", { name: "Hold" })).toBeVisible();
+	await page.getByRole("button", { name: "Hold escape" }).focus();
+	await page.keyboard.press("Escape");
+	await expect(page.getByRole("dialog", { name: "Hold" })).toBeVisible();
+});
+
+test("escape closes a context menu before its drawer", async ({ page }) => {
+	await page.goto("/");
+	await page.getByRole("button", { name: "Open drawer" }).click();
+	await expect(page.getByRole("dialog", { name: "Shelf" })).toBeVisible();
+	await page.getByText("Shelf row").click({ button: "right" });
+	await expect(page.getByRole("menu")).toBeVisible();
+	await page.keyboard.press("Escape");
+	await expect(page.getByRole("menu")).toHaveCount(0);
+	await expect(page.getByRole("dialog", { name: "Shelf" })).toBeVisible();
 });
 
 test("option picker closes once on Escape", async ({ page }) => {

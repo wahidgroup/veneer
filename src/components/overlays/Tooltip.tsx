@@ -177,6 +177,8 @@ function Tooltip({
 			return;
 		}
 
+		// Not a dismiss layer. A tooltip is transient and non-modal
+		// (WCAG 1.4.13), so this observer does not consume Escape.
 		function onKeyDown(event: KeyboardEvent) {
 			if (event.key === "Escape") {
 				clearTimers();
